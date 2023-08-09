@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SdAppVersionMapper">
+    
+    <resultMap type="SdAppVersion" id="SdAppVersionResult">
+        <result property="id"    column="id"    />
+        <result property="appId"    column="app_id"    />
+        <result property="appName"    column="app_name"    />
+        <result property="editionNumber"    column="edition_number"    />
+        <result property="editionName"    column="edition_name"    />
+        <result property="sysType"    column="sys_type"    />
+        <result property="packageType"    column="package_type"    />
+        <result property="editionIssue"    column="edition_issue"    />
+        <result property="editionSilence"    column="edition_silence"    />
+        <result property="editionForce"    column="edition_force"    />
+        <result property="editionUrl"    column="edition_url"    />
+        <result property="describe"    column="describe"    />
+    </resultMap>
+
+    <sql id="selectSdAppVersionVo">
+        select id, app_id, app_name, edition_number, edition_name, sys_type, package_type, edition_issue, edition_silence, edition_force, edition_url, `describe` from sd_app_version
+    </sql>
+
+    <select id="selectSdAppVersionList" parameterType="SdAppVersion" resultMap="SdAppVersionResult">
+        <include refid="selectSdAppVersionVo"/>
+        <where>  
+            <if test="appId != null "> and app_id = #{appId}</if>
+            <if test="appName != null  and appName != ''"> and app_name like concat('%', #{appName}, '%')</if>
+            <if test="editionNumber != null "> and edition_number = #{editionNumber}</if>
+            <if test="editionName != null  and editionName != ''"> and edition_name like concat('%', #{editionName}, '%')</if>
+            <if test="searchValue != null  and searchValue != ''">and CONCAT(app_id,app_name,edition_number,edition_name) LIKE CONCAT('%',#{searchValue},'%')</if>
+        </where>
+        order by edition_number desc
+    </select>
+    
+    <select id="selectSdAppVersionById" parameterType="Long" resultMap="SdAppVersionResult">
+        <include refid="selectSdAppVersionVo"/>
+        where id = #{id}
+    </select>
+    <select id="getVersionList" resultType="map">
+        <include refid="selectSdAppVersionVo"/>
+        <where>
+            and edition_issue = 1
+      <!--      <if test="editionNumber != null "> and edition_number = #{editionNumber}</if>-->
+            <if test="versionType != null  and versionType != ''"> and sys_type  = #{versionType}</if>
+            <if test="editionNumber != null  and editionNumber != ''">and edition_number > #{editionNumber}</if>
+        </where>
+        order by edition_number desc
+    </select>
+
+    <insert id="insertSdAppVersion" parameterType="SdAppVersion">
+        insert into sd_app_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appId != null">app_id,</if>
+            <if test="appName != null and appName != ''">app_name,</if>
+            <if test="editionNumber != null">edition_number,</if>
+            <if test="editionName != null and editionName != ''">edition_name,</if>
+            <if test="sysType != null">sys_type,</if>
+            <if test="packageType != null">package_type,</if>
+            <if test="editionIssue != null">edition_issue,</if>
+            <if test="editionSilence != null">edition_silence,</if>
+            <if test="editionForce != null">edition_force,</if>
+            <if test="editionUrl != null and editionUrl != ''">edition_url,</if>
+            <if test="describe != null and describe != ''">`describe`,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appId != null">#{appId},</if>
+            <if test="appName != null and appName != ''">#{appName},</if>
+            <if test="editionNumber != null">#{editionNumber},</if>
+            <if test="editionName != null and editionName != ''">#{editionName},</if>
+            <if test="sysType != null">#{sysType},</if>
+            <if test="packageType != null">#{packageType},</if>
+            <if test="editionIssue != null">#{editionIssue},</if>
+            <if test="editionSilence != null">#{editionSilence},</if>
+            <if test="editionForce != null">#{editionForce},</if>
+            <if test="editionUrl != null and editionUrl != ''">#{editionUrl},</if>
+            <if test="describe != null and describe != ''">#{describe},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdAppVersion" parameterType="SdAppVersion">
+        update sd_app_version
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="appName != null and appName != ''">app_name = #{appName},</if>
+            <if test="editionNumber != null">edition_number = #{editionNumber},</if>
+            <if test="editionName != null and editionName != ''">edition_name = #{editionName},</if>
+            <if test="sysType != null">sys_type = #{sysType},</if>
+            <if test="packageType != null">package_type = #{packageType},</if>
+            <if test="editionIssue != null">edition_issue = #{editionIssue},</if>
+            <if test="editionSilence != null">edition_silence = #{editionSilence},</if>
+            <if test="editionForce != null">edition_force = #{editionForce},</if>
+            <if test="editionUrl != null and editionUrl != ''">edition_url = #{editionUrl},</if>
+            <if test="describe != null and describe != ''">`describe` = #{describe},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateEditionIssueAllFalse">
+        update sd_app_version set edition_issue = 0 where sys_type = #{param.sysType}
+    </update>
+
+    <delete id="deleteSdAppVersionById" parameterType="Long">
+        delete from sd_app_version where id = #{id}
+    </delete>
+
+    <delete id="deleteSdAppVersionByIds" parameterType="String">
+        delete from sd_app_version where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

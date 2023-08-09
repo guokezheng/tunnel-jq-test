@@ -2352,11 +2352,11 @@
       // height: 20px;
       // line-height: 20px;
     }
-    .el-button:hover {
-      background-color: #0a88bd; // #4e5e89
-      border: 1px solid #7f8c98;
-      color: #fff !important;
-    }
+    // .el-button:hover {
+    //   background-color: #0a88bd; // #4e5e89
+      // border: 1px solid #7f8c98;
+    //   color: #fff !important;
+    // }
     .el-button--cyan,.el-button--default{
       color: white !important;
     }
@@ -2601,7 +2601,7 @@
     border-width:50px;
   }
   .content::-webkit-scrollbar {
-      width: 5px;
+      width: 12px;
       height: 10px;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
@@ -2621,6 +2621,10 @@
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
       border-radius: 5px;
+  }
+  // 横竖滚动条夹角样式
+  .content::-webkit-scrollbar-corner{
+    background: #022A54;
   }
   // 隔行变色
   .allTable{

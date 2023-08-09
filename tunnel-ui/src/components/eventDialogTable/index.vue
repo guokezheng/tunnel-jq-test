@@ -251,7 +251,11 @@ export default {
     },
     // 执行批量 并弹窗
     implementBatchManage() {
-      this.$refs.batchRef.init(this.itemEvtIdList, this.handleItem);
+      if(this.itemEvtIdList.length>0){
+        this.$refs.batchRef.init(this.itemEvtIdList, this.handleItem);
+      }else{
+        this.$modal.msgWarning("至少选择一个预警事件");
+      }
     },
     // 取消批量执行
     closeBatchManageDialog() {
@@ -262,6 +266,8 @@ export default {
     // 批量执行
     handleBatch() {
       this.batchManageType = true;
+      this.itemEvtIdList = []
+      this.handleItem = {}
     },
     handleSee(item) {
       console.log(item, "item");

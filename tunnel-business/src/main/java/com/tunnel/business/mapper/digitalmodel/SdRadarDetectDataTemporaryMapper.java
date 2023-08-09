@@ -49,6 +49,13 @@ public interface SdRadarDetectDataTemporaryMapper
     public int updateSdRadarDetectData(SdRadarDetectDataTemporary sdRadarDetectData);
 
     /**
+     * 更新雷达检测数据
+     * @param sdRadarDetectData
+     * @return
+     */
+    public int updateSyncDetectData(SdRadarDetectDataTemporary sdRadarDetectData);
+
+    /**
      * 删除雷达监测感知数据
      *
      * @param id 雷达监测感知数据主键
@@ -85,4 +92,9 @@ public interface SdRadarDetectDataTemporaryMapper
      */
     public int getSdRadarDetectDataCount(@Param("tunnelId")String tunnelId,@Param("roadDir")String roadDir);
 
+    /**
+     * 查询一小时内车辆数据
+     * @return
+     */
+    public List<String> hourVehicleData();
 }

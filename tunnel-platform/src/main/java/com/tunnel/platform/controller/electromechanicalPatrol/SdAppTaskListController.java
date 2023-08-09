@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.service.ISdAppVersionService;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
@@ -32,6 +33,9 @@ public class SdAppTaskListController extends BaseController
 
     @Autowired
     private ISdTeamsListService sdTeamsListService;
+
+    @Autowired
+    private ISdAppVersionService sdAppVersionService;
 
 
     /**
@@ -187,16 +191,7 @@ public class SdAppTaskListController extends BaseController
         return toAjax(sdTaskListService.saveLocal(sdTaskList));
     }
 
-    /**
-     * 巡查点检修情况保存
-     * @param uploadPicture
-     * @return
-     */
-    @PostMapping("/app/uploadPicture")
-    public AjaxResult uploadPicture(@RequestParam(name = "file", required = false) MultipartFile[] file)
-    {
-        return AjaxResult.success(sdTaskListService.uploadPicture(file));
-    }
+
 
 
 
@@ -258,6 +253,38 @@ public class SdAppTaskListController extends BaseController
 
         return Result.success(sdTaskListService.getTaskAllList());
     }
+
+    /**
+     * 巡查点检修情况保存
+     * @param uploadPicture
+     * @return
+     */
+    @PostMapping("/app/uploadPicture")
+    public String uploadPicture(@RequestParam(name = "file", required = false) MultipartFile[] file,
+                                @RequestParam(name = "file1", required = false) MultipartFile file1,
+                                @RequestParam(name = "file2", required = false) MultipartFile file2,
+                                @RequestParam(name = "file3", required = false) MultipartFile file3)
+    {
+
+        MultipartFile[] fileArray = new MultipartFile[]{file1,file2,file3};
+
+        return sdTaskListService.uploadPicture(fileArray);
+    }
+
+
+
+    /**
+     * APP 同步巡检任务信息
+     * @return
+     */
+    @GetMapping("/app/versionList")
+    public Result versionList(String edition_type,String version_type,String edition_number){
+
+        return Result.success(sdAppVersionService.getVersionList(edition_type,version_type,edition_number));
+
+    }
+
+
     /**
      * APP 同步巡检任务信息
      * @return
@@ -268,6 +295,19 @@ public class SdAppTaskListController extends BaseController
         return Result.success(sdTaskListService.modifyTaskData(reqJson));
 
     }
+
+    /**
+     * APP 同步巡检任务资源信息
+     * @return
+     */
+    @PostMapping("/app/modifyTaskFilesData")
+    public Result modifyTaskFilesData(@RequestBody String reqJson){
+        sdTaskListService.modifyTaskFilesData(reqJson);
+        return Result.success();
+
+    }
+
+
 
 
 

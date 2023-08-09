@@ -168,6 +168,28 @@
         where id = #{id}
     </update>
 
+    <update id="updateSyncDetectData" parameterType="sdRadarDetectDataTemporary">
+        update sd_radar_detect_data_temporary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="vehicleColor != null">vehicle_color = #{vehicleColor},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="laneNum != null">lane_num = #{laneNum},</if>
+            <if test="courseAngle != null">course_angle = #{courseAngle},</if>
+            <if test="licenseColor != null">license_color = #{licenseColor},</if>
+            <if test="stakeNum != null">stake_num = #{stakeNum},</if>
+            <if test="detectTime != null">detect_time = #{detectTime},</if>
+            <if test="objectType != null">object_type = #{objectType},</if>
+            <if test="roadDir != null">road_dir = #{roadDir},</if>
+            <if test="recordSerialNumber != null">record_Serial_Number = #{recordSerialNumber}</if>
+        </trim>
+        where vehicle_id = #{vehicleId}
+        AND tunnel_id = #{tunnelId}
+        AND vehicle_license = #{vehicleLicense}
+    </update>
+
     <delete id="deleteSdRadarDetectDataById" parameterType="String">
         delete
         from sd_radar_detect_data_temporary
@@ -209,5 +231,17 @@
             </if>
             GROUP BY t.vehicle_id
         ) s
+    </select>
+
+    <select id="hourVehicleData" resultType="java.lang.String">
+        SELECT
+            ddt.vehicle_license
+        FROM
+            sd_radar_detect_data_temporary ddt
+        WHERE
+            1 = 1
+          AND ddt.detect_time > NOW() - INTERVAL 1 HOUR
+        GROUP BY
+            ddt.vehicle_license
     </select>
 </mapper>

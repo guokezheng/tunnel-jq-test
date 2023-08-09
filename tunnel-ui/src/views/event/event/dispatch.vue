@@ -2241,9 +2241,15 @@ export default {
   }
   .workBenchButton{
     position: fixed;
-    top: 9.1%;
-    right: 23%;
+    top: calc(9% + 9px);
+    right: 34%;
+
+    // right: 22%;
     cursor: pointer;
+    >img{
+      width: 47px;
+      height: 46px;
+    }
   }
   .drawerBox {
     position: fixed;

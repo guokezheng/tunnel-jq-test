@@ -67,7 +67,7 @@
           <el-image class="config-img" id="imageId" :src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
           <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;" ></svg>
           <!-- 辅助线 -->
-          <div id="guide-h" class="guide"></div>
+          <div id="guide-h" class="guide" :style="{width:selectedTunnel.lane.width + 'px'}"></div>
           <div id="guide-v" class="guide"></div>
           <div id="guide-h1" class="guide"></div>
           <div id="guide-v1" class="guide"></div>
@@ -433,6 +433,7 @@ export default {
         oDiv.clientWidth + oDiv.getBoundingClientRect().left - e.pageX < 5 ||
         oDiv.clientHeight + oDiv.getBoundingClientRect().top - e.pageY < 5
       ) {
+        console.log(11111111111111)
         let num = "";
         let selectedIconLists = JSON.parse(
           JSON.stringify(that.selectedIconList)
@@ -457,9 +458,9 @@ export default {
 
   methods: {
     selectEqType(e){
-      debugger
-      console.log(this.deviceEqTypeList)
-      console.log(this.deviceEqType)
+      // debugger
+      // console.log(this.deviceEqTypeList)
+      // console.log(this.deviceEqType)
       let value = e
       let lable = ""
       for (let i = 0; i < this.deviceEqTypeList.length; i++) {
@@ -469,7 +470,7 @@ export default {
       }
 
       var val = value.toString();
-      console.log( img)
+      // console.log( img)
       for (let i = 0; i <  img.length; i++) {
         img[i].attr({
           opacity: 0 , // 设置透明度为0，使图像不可见
@@ -683,7 +684,7 @@ export default {
           let laneId = res.lane;
           for (let i = 0; i < this.laneUrlList.length; i++) {
             if (this.laneUrlList[i].id == laneId) {
-              console.log(this.laneUrlList[i],"this.laneUrlList[i]")
+              // console.log(this.laneUrlList[i],"this.laneUrlList[i]")
               this.selectedTunnel.lane = this.laneUrlList[i];
               this.activeTab = "direction" + this.selectedTunnel.lane.direction;
               this.laneRadio = i;
@@ -1136,7 +1137,7 @@ export default {
     /* 选择设备*/
     getEquipment(item, eqType) {
       console.log(item, eqType, "选择设备");
-      console.log(this.selectedIconList);
+      // console.log(this.selectedIconList);
       // debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
@@ -1618,36 +1619,36 @@ export default {
                     event.toElement.parentNode,
                     null
                   );
-                  debugger
+                  // debugger
                   let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
-                  console.log(paddingL)
+                  // console.log(paddingL,"paddingL")
                   let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
-                  console.log(paddingtop)
+                  // console.log(paddingtop,"paddingtop")
                   let svgs = document.getElementById("svgRow");
-                  console.log(svgs)
+                  // console.log(svgs,"svgs")
                   let svgss = document.querySelector(".config-content");
-                  console.log(svgss)
+                  // console.log(svgss,"svgss")
                   let svgeimage = document.querySelector(".el-image");
-                  console.log(svgeimage)
+                  // console.log(svgeimage,"svgeimage")
                   let stylea = window.getComputedStyle(svgs, null);
-                  console.log(stylea)
+                  // console.log(stylea,"stylea")
                   let styleas = window.getComputedStyle(svgss, null);
-                  console.log(styleas)
+                  // console.log(styleas,"styleas")
                   let styleas1 = window.getComputedStyle(svgeimage, null);
-                  console.log(styleas1)
+                  // console.log(styleas1,"styleas1")
 
                   let paddingLa = parseFloat(
                     stylea.getPropertyValue("padding-top")
                   ); //获取左侧内边距
-                  console.log(paddingLa)
+                  // console.log(paddingLa,"paddingLa")
                   let paddingLa1 = parseFloat(
                     styleas.getPropertyValue("width")
                   ); //获取左侧内边距
-                  console.log(paddingLa1)
+                  // console.log(paddingLa1,"paddingLa1")
                   let paddingLa2 = parseFloat(
                     styleas1.getPropertyValue("width")
                   ); //获取左侧内边距
-                  console.log(paddingLa2)
+                  // console.log(paddingLa2,"paddingLa2")
                   //说明有滚动
                   if(paddingLa1<paddingLa2){
                     paddingLa1 = paddingLa2+30
@@ -2206,7 +2207,7 @@ export default {
   // display: flex;
   // justify-content: center;
   // align-items: center;
-  height: 680px;
+  height: 600px;
   width: 1788px;
   background-size: cover;
   position: relative;
@@ -2214,7 +2215,8 @@ export default {
   // margin-top: 10px;
   margin: 10px auto;
   overflow-x: auto;
-  padding: 38px 0px;
+  overflow-y: hidden;
+  // padding: 38px 0px;
 }
 
 .config-img {
@@ -2274,20 +2276,20 @@ input {
 
 #guide-h {
   border-top: 1px solid red;
-  width: 200%;
+  // width: 200%;
 }
 #guide-h1 {
   border-top: 1px solid red;
-  width: 200%;
+  // width: 200%;
 }
 
 #guide-v {
   border-left: 1px solid red;
-  height: 200%;
+  height: 100%;
 }
 #guide-v1 {
   border-left: 1px solid red;
-  height: 200%;
+  height: 100%;
 }
 </style>
 <style lang="scss">

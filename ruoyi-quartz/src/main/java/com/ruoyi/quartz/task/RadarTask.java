@@ -4,10 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
+import com.tunnel.business.domain.event.SdRadarDetectDataTemporary;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
+import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.zc.common.core.kafka.kafkaTool;
@@ -19,9 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
@@ -51,6 +58,8 @@ public class RadarTask {
     @Autowired
     private ISdEventService sdEventService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public static  List<SdRadarDetectData> sdRadarDetectDatalist = null;
     public static  List<SdRadarDetectData> sdRadarDetectDatalist1 = null;
@@ -268,6 +277,39 @@ public class RadarTask {
         JSONObject object = new JSONObject();
         object.put("sdEventList", sdEventList);
         WebSocketService.broadcast("sdEventList",object.toString());
+    }
+
+    public void redisRadarData(){
+        SdRadarDetectDataTemporaryMapper temporaryMapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
+        //获取前一个小时的数据
+        List<String> hourVehicleData = temporaryMapper.hourVehicleData();
+        Collection<String> keys = redisCache.keys("vehicleSnap:*");
+        List<Map<String, Object>> list = (List<Map<String, Object>>) redisTemplate.opsForValue().multiGet(keys);
+        for(Map<String, Object> item : list){
+            try {
+                SdRadarDetectDataTemporary temporary = new SdRadarDetectDataTemporary();
+                temporary.setTunnelId(item.get("tunnelId").toString());
+                temporary.setRoadDir(item.get("roadDir").toString());
+                temporary.setSpeed(item.get("speed").toString());
+                temporary.setVehicleType(item.get("vehicleType").toString());
+                temporary.setLatitude(item.get("lat").toString());
+                temporary.setLongitude(item.get("lng").toString());
+                temporary.setDistance(item.get("distance").toString());
+                temporary.setVehicleLicense(item.get("vehicleLicense").toString());
+                temporary.setVehicleId(item.get("vehicleId").toString());
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+                Date detectTime1 = sdf.parse(item.get("detectTime").toString());
+                temporary.setDetectTime(detectTime1);
+                boolean contains = hourVehicleData.contains(temporary.getVehicleLicense());
+                if(contains){
+                    temporaryMapper.updateSyncDetectData(temporary);
+                }else {
+                    temporaryMapper.insertSdRadarDetectData(temporary);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }

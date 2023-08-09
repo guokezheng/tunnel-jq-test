@@ -30,7 +30,26 @@
         </div>
         <div id="energyConsumption"></div>
       </div>
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
+        <div class="footTitle">
+          <div class="footTitleCont">
+            <img
+              :src="keyVehiclesIcon"
+              style="width: 0.8vw; margin-right: 5px"
+              v-show="sideTheme != 'theme-blue'"
+            />
+            <p>洞内外速度监测</p>
+            <p>Opening speed</p>
+          </div>
+        </div>
+          <el-radio-group v-model="tabModel" class="tabButton">
+            <el-radio-button label="chartJN">济南方向</el-radio-button>
+            <el-radio-button label="chartWF">潍坊方向</el-radio-button>
+          </el-radio-group>
+        <div id="chartJN" v-show="tabModel == 'chartJN'"></div>
+        <div id="chartWF" v-show="tabModel == 'chartWF'"></div>
 
+      </div>
       <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
           <div class="footTitleCont">
@@ -61,20 +80,7 @@
           <div id="deviceChart"></div>
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
-        <div class="footTitle">
-          <div class="footTitleCont">
-            <img
-              :src="keyVehiclesIcon"
-              style="width: 0.8vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
-            />
-            <p>洞口不降速监测</p>
-            <p>Opening speed</p>
-          </div>
-        </div>
-        <div id="chartBJS"></div>
-      </div>
+      
       <div class="footerRight footMiniBox" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
           <div class="footTitleCont">
@@ -149,20 +155,32 @@
                     <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                         item.eventType.eventType
                       }}事件 -->
-                    <div
-                      style="
-                        width: 145px;
-                        overflow: hidden;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                        z-index: 10;
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :content="
+                        tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'
+                          ? item.eventTitle
+                          : item.frameEventTitle
                       "
+                      placement="top"
                     >
-                      <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{
-                        item.eventTitle
-                      }}</span>
-                      <span v-else>{{ item.frameEventTitle }}</span>
-                    </div>
+                      <div
+                        style="
+                          width: 145px;
+                          overflow: hidden;
+                          white-space: nowrap;
+                          text-overflow: ellipsis;
+                          z-index: 10;
+                        "
+                      >
+                        <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{
+                          item.eventTitle
+                        }}</span>
+                        <span v-else>{{ item.frameEventTitle }}</span>
+                      </div>
+                    </el-tooltip>
+
                     <div
                       style="font-size: 12px; float: right; margin-right: 10px"
                     >
@@ -440,6 +458,7 @@ export default {
       option: null,
       nameArr: [],
       myChart: null,
+      tabModel:'chartJN'
     };
   },
   computed: {
@@ -459,6 +478,11 @@ export default {
         singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
         waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
       };
+    },
+  },
+  watch: {
+    tabModel: function (newValue, oldValue) {
+      this.getNoDecelerationChart();
     },
   },
   created() {
@@ -559,19 +583,19 @@ export default {
       // console.log(res,"洞口不降速监测")
       let data = {
         oneLane: {
-          oneListOne: [133, 130, 125, 110],
-          oneListTwo: [100, 96, 106, 116, 120],
+          oneListOne: [118, 114, 105, 100],
+          oneListTwo: [100, 103, 106, 116, 118],
         },
         twoLane: {
-          twoListOne: [128, 126, 128, 113],
-          twoListTwo: [103, 108, 110, 112, 118],
+          twoListOne: [105, 100, 98, 90],
+          twoListTwo: [86, 84, 86, 89, 98],
         },
         threeLane: {
-          threeListOne: [110, 108, 96, 90],
-          threeListTwo: [80, 90, 100, 100, 103],
+          threeListOne: [76, 73, 68, 66],
+          threeListTwo: [64, 69, 75, 82, 85],
         },
       };
-      console.log(data, "洞口不降速监测");
+      // console.log(data, "洞口不降速监测");
       let oneListOne = data.oneLane.oneListOne;
       let oneListTwo = data.oneLane.oneListTwo;
       let twoListOne = data.twoLane.twoListOne;
@@ -587,11 +611,11 @@ export default {
         ...threeListTwo,
       ];
       let max = this.getMax(arr);
-      console.log(max, "洞口不降速监测111");
+      // console.log(max, "洞口不降速监测111");
       let oneList = [...oneListOne, ...oneListTwo];
       let twoList = [...twoListOne, ...twoListTwo];
       let threeList = [...threeListOne, ...threeListTwo];
-      console.log(oneList, twoList, threeList, "洞口不降速监测222");
+      // console.log(oneList, twoList, threeList, "洞口不降速监测222");
       this.initNoDecelerationChart(oneList, twoList, threeList);
       // })
     },
@@ -723,46 +747,42 @@ export default {
       });
       //然后异步执行echarts的初始化函数
       newPromise.then(() => {
+        let tab = ''
+        
         //	此dom为echarts图标展示dom
-        var chartBJS = echarts.init(document.getElementById("chartBJS"));
-        let lineColor = ["red","yellow","green"];
-        let lineColor2 = ["white","grey","blue"];
+        var chartBJS = echarts.init(document.getElementById(this.tabModel));
+
         const option = {
           tooltip: {
             trigger: "axis",
-            backgroundColor: "rgba(1, 29, 63, .8)", // 设置背景颜色
+            backgroundColor: "rgba(1, 29, 63, .8)", //设置背景颜色
             textStyle: {
               color: "#fff",
               fontSize: 12,
             },
             borderColor: "rgba(1, 29, 63,.8)",
             axisPointer: {
-              type: "shadow",
-              shadowStyle: {
-                fontSize: 12,
-                color: "rgba(0, 11, 34, 0)",
-              },
+              type: "none",
             },
             formatter: function (param) {
-              var tooltip = param[0].name == '0' ||param[0].name == '1'||param[0].name == '2'||param[0].name == '3'?"洞外" + "<br>" :"洞内" + "<br>";
-              tooltip +=
-                param[0].marker +
-                param[0].seriesName +
-                " : " +
-                param[0].value +
-                "km/h<br>";
-              tooltip +=
-                param[1].marker +
-                param[1].seriesName +
-                " : " +
-                param[1].value +
-                "km/h<br>";
+              var tooltip = "";
+              if (param.length > 0) {
                 tooltip +=
-                param[2].marker +
-                param[2].seriesName +
-                " : " +
-                param[2].value +
-                "km/h<br>";
+                  param[0].name == "0" ||
+                  param[0].name == "1" ||
+                  param[0].name == "2" ||
+                  param[0].name == "3"
+                    ? "洞外" + "<br>"
+                    : "洞内" + "<br>";
+              }
+              for (let item of param) {
+                tooltip +=
+                  item.marker +
+                  item.seriesName +
+                  " : " +
+                  item.value +
+                  "km/h<br>";
+              }
               return tooltip;
             },
             //   提示框超出范围时调整位置
@@ -815,14 +835,14 @@ export default {
             itemStyle: {},
             top: "top",
             left: "center",
-            padding: [20, 15, 0, 15],
+            padding: [10, 15, 0, 15],
             icon: "circle",
             orient: "horizontal",
           },
           grid: {
             left: "6%",
             right: "8%",
-            bottom: "1%",
+            bottom: "3%",
             top: "25%",
             containLabel: true,
           },
@@ -840,12 +860,12 @@ export default {
               formatter: function (value, index) {
                 if (value == "0") {
                   return "洞外";
-                } else if(value == "4"){
-                  return "洞口"
-                } else if(value == "8"){
-                  return "洞内"
+                } else if (value == "4") {
+                  return "洞口";
+                } else if (value == "8") {
+                  return "洞内";
                 } else {
-                  return '';
+                  return "";
                 }
               },
             },
@@ -860,12 +880,12 @@ export default {
             },
           },
           yAxis: {
-            // name: "km/h",
-            // nameTextStyle: {
-            //   color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
-            //   fontSize: 10,
-            //   padding: [0, 20, 0, 0],
-            // },
+            name: "km/h",
+            nameTextStyle: {
+              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              fontSize: 10,
+              padding: [0, 20, 0, 0],
+            },
             type: "value",
             min: 0,
             // max: max,
@@ -909,44 +929,74 @@ export default {
           //     },
           //   ],
           // },
-          
+
           series: [
             {
               type: "line",
               smooth: true,
-              color:"#31CEFF",
-              lineStyle:{
-                normal:{
-                  width:2,
-                }
+              color: "#31CEFF",
+              lineStyle: {
+                normal: {
+                  width: 2,
+                },
+              },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
               },
               markLine: {
-                    silent: true,
-                    symbol: ["circle", "circle"],
-                    lineStyle: {
-                        color: "#AFAFAF",
-                    },
-                    animation: false, //关闭动画
-                    label: {
-                        show: false,
-                    },
-                    data: [
-                        {
-                            xAxis: 4,//在x轴12格处设置一条参考线
-                        },
-                    ],
+                silent: true,
+                symbol: ["circle", "circle"],
+                lineStyle: {
+                  color: "#33b0ee",
                 },
+                animation: false, //关闭动画
+                label: {
+                  show: false,
+                },
+                data: [
+                  {
+                    xAxis: 4, //在x轴12格处设置一条参考线
+                  },
+                ],
+              },
               name: "一车道",
               data: oneList,
             },
             {
               type: "line",
               smooth: true, // 平滑曲线显示
-              color:"yellow",
-              lineStyle:{
-                normal:{
-                  width:2,
-                }
+              color: "#FAC858",
+              lineStyle: {
+                normal: {
+                  width: 2,
+                },
+              },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              markLine: {
+                silent: true,
+                symbol: ["circle", "circle"],
+                lineStyle: {
+                  color: "#AFAFAF",
+                },
+                animation: false, //关闭动画
+                label: {
+                  show: false,
+                },
+                data: [
+                  {
+                    xAxis: 4, //在x轴12格处设置一条参考线
+                  },
+                ],
               },
               name: "二车道",
               data: twoList,
@@ -954,11 +1004,34 @@ export default {
             {
               type: "line",
               smooth: true, // 平滑曲线显示
-              color:"#00E15C",
-              lineStyle:{
-                normal:{
-                  width:2,
-                }
+              color: "#7BE748",
+              lineStyle: {
+                normal: {
+                  width: 2,
+                },
+              },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              markLine: {
+                silent: true,
+                symbol: ["circle", "circle"],
+                lineStyle: {
+                  color: "#AFAFAF",
+                },
+                animation: false, //关闭动画
+                label: {
+                  show: false,
+                },
+                data: [
+                  {
+                    xAxis: 4, //在x轴12格处设置一条参考线
+                  },
+                ],
               },
               name: "三车道",
               data: threeList,
@@ -1059,7 +1132,7 @@ export default {
           grid: {
             left: "6%",
             right: "8%",
-            bottom: "1%",
+            bottom: "2%",
             top: "25%",
             containLabel: true,
           },
@@ -1380,7 +1453,7 @@ export default {
         calculable: true,
         grid: {
           top: "24%",
-          bottom: "12%",
+          bottom: "13%",
           left: "10%",
           right: "10%",
         },
@@ -1998,9 +2071,9 @@ export default {
       }
     }
   }
-  #chartBJS {
+  #chartJN,#chartWF {
     width: 100%;
-    height: calc(100% - 2vw);
+    height: calc(100% - 2vw - 22px);
   }
 }
 #vehicle,
@@ -2017,4 +2090,26 @@ export default {
   height: calc(100% - 2.4vh - 10px);
   margin-top: 10px;
 }
+.tabButton {
+    margin: 4px 0;
+    .el-radio-button {
+      margin-right: 4px;
+    }
+    ::v-deep .el-radio-button--medium .el-radio-button__inner {
+      padding: 4px 20px !important;
+    }
+  }
+  ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+    background: linear-gradient(180deg, #ffc606, #ff8200) !important;
+    border: none;
+  }
+  ::v-deep .el-radio-group .el-radio-button__inner {
+    background: linear-gradient(
+      180deg,
+      rgba($color: #00aced, $alpha: 0.8),
+      rgba($color: #0079db, $alpha: 0.8)
+    ) !important;
+    border: none;
+    color: #fff;
+  }
 </style>

@@ -242,4 +242,10 @@ public interface ISdTaskListService
      * @return
      */
     Map modifyTaskData(String reqJson);
+
+    /**
+     * 同步巡检任务资源信息
+     * @param reqJson
+     */
+    void modifyTaskFilesData(String reqJson);
 }

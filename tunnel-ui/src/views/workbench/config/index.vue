@@ -179,7 +179,7 @@
             @click="strategyPage2"
           >
             <img src="../../../assets/icons/kzcl.png" />
-            <span>照明配置</span>
+            <span>智慧调光</span>
           </el-button>
 <!--          <el-button-->
 <!--            class="buttons"-->
@@ -292,6 +292,7 @@
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
+          @mousewheel="mouseSrollAuto"
           @contextmenu.prevent
           @mouseover="mouseoversImage"
           @mouseleave="mouseleaveImage"
@@ -1884,8 +1885,11 @@
         class="paginationWorkbench"
       />
     </el-dialog>
-<!--    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>-->
-    <jointControlStrategy ref ='jointControlStrategy'  :show="jointControlShow"></jointControlStrategy>
+    <!--    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>-->
+    <jointControlStrategy
+      ref="jointControlStrategy"
+      :show="jointControlShow"
+    ></jointControlStrategy>
   </div>
 </template>
 
@@ -2093,6 +2097,7 @@ export default {
 
   data() {
     return {
+      parentScreenLeft:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -2912,6 +2917,11 @@ export default {
     },
   },
   mounted() {
+    // 获取指定元素
+    const scrollview = this.$refs['divRoller']
+    // 添加滚动监听，该滚动监听了拖拽滚动条
+    // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
+    scrollview.addEventListener('scroll', this.mouseSrollAuto, true)
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
@@ -2941,6 +2951,14 @@ export default {
   },
 
   methods: {
+    mouseSrollAuto(e){
+      console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      if(e.target.scrollLeft > 0){
+        this.resetCanvasFlag = true
+      }else{
+        this.resetCanvasFlag = false
+      }
+    },
     // 管理站级联回显选中效果
     cascaderHandleChange() {
       console.log(1);
@@ -3087,6 +3105,10 @@ export default {
       document.removeEventListener("click", this.bodyCloseMenus1);
       document.removeEventListener("click", this.bodyCloseMenus2);
       document.removeEventListener("click", this.bodyCloseMenus3);
+      // 获取指定元素
+      const scrollview = this.$refs['divRoller']
+      // 移除监听
+      scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
     },
     bodyCloseMenus(e) {
       let self = this;
@@ -3575,17 +3597,16 @@ export default {
                 this.currentTunnel.lane.width - item.position.left > 864 &&
                 item.position.left > 864
               ) {
-                this.$refs.dragImgDom.style.left =
-                  -item.position.left + 864 + "px";
+              // 中间
+              param[0].scrollLeft = item.position.left - 864;
               } else if (item.position.left < 864) {
                 param[0].scrollLeft = 0;
-                this.$refs.dragImgDom.style.left = "0px";
               } else if (
                 this.currentTunnel.lane.width - item.position.left <
                 864
               ) {
-                this.$refs.dragImgDom.style.left =
-                  1728 - this.currentTunnel.lane.width + "px";
+              // 右边
+              param[0].scrollLeft = this.currentTunnel.lane.width - 1728;
               }
               if (
                 item.position.left <= this.currentTunnel.lane.width - 100 &&
@@ -3654,8 +3675,7 @@ export default {
           //     item.click = false;
           //   }
           // }
-          console.log(this.$refs.dragImgDom.style.left,"this.$refs.dragImgDom.style.left")
-          if(this.$refs.dragImgDom.style.left != '0px'){
+          if (param[0].scrollLeft != 0) {
                 this.resetCanvasFlag = true;
               }
         }
@@ -4238,8 +4258,10 @@ export default {
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
-      this.$refs.dragImgDom.style.left = "0px";
-      this.$refs.dragImgDom.style.top = "0px";
+      let param = document.getElementsByClassName("content");
+      param[0].scrollLeft = 0;
+      // this.$refs.dragImgDom.style.left = "0px";
+      // this.$refs.dragImgDom.style.top = "0px";
     },
     //右键拖动
     dragImg(e) {
@@ -4709,6 +4731,10 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
+                if(res.eqList[i].eqType == 16){
+                  console.log(res.eqList[i],"情报板")
+
+                }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -6479,9 +6505,9 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
-  overflow-y: hidden;
+  // overflow-y: hidden;
   zoom: 100%;
-  overflow-x: auto;
+  overflow: overlay;
   display: inline-block;
   margin: 0 auto;
   position: relative;
@@ -7553,7 +7579,7 @@ input {
 }
 .syxt_searchBox {
   position: absolute;
-  top: 121px;
+  top: 140px;
   right: 14px;
   width: 41%;
   z-index: 1996;

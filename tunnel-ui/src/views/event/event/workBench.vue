@@ -11,6 +11,10 @@
       :close-on-click-modal="false"
       :modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="header">
         <div class="headerLeft">
           <div>{{ tunnelStationName }}</div>
@@ -67,7 +71,7 @@
           </div>
           <el-button
             v-if="resetCanvasFlag && currentTunnel.lane.width > 1728"
-            class="flex-row"
+            class="buttons"
             type="primary"
             size="mini"
             icon="el-icon-map-location"
@@ -128,6 +132,7 @@
             class="content"
             ref="divRoller"
             @wheel.prevent="handleTableWheel"
+            @mousewheel="mouseSrollAuto"
             @contextmenu.prevent
             @mouseover="mouseoversImage"
             @mouseleave="mouseleaveImage"
@@ -268,8 +273,8 @@
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
-                          :width="item.iconWidth / 1.2"
-                          :height="item.iconHeight / 1.2"
+                          :width="item.iconWidth / 1.2 + 'px'"
+                          :height="item.iconHeight / 1.2 + 'px'"
                           :key="item.eqId + indexs"
                           :src="url"
                           :class="
@@ -310,21 +315,21 @@
                                   'width',
                                   item.eqType
                                 ) + 'px'
-                              : item.iconWidth + 'px',
+                              : item.iconWidth / 1.2 + 'px',
                             height: item.associated_device_id
                               ? getBoardStyle(
                                   item.associated_device_id,
                                   'height',
                                   item.eqType
                                 ) + 'px'
-                              : item.iconHeight + 'px',
+                              : item.iconHeight / 1.2 + 'px',
                             fontSize: item.associated_device_id
                               ? getBoardStyle(
                                   item.associated_device_id,
                                   'fontSize',
                                   item.eqType
                                 ) + 'px'
-                              : '15px',
+                              : '12.5px',
                           }"
                           :src="getTypePic(item)"
                           :class="
@@ -377,7 +382,7 @@
                                     'width',
                                     item.eqType
                                   ) + 'px'
-                                : item.iconWidth + 'px',
+                                : item.iconWidth / 1.2 + 'px',
                             height:
                               item.associated_device_id != undefined
                                 ? getBoardStyle(
@@ -385,7 +390,7 @@
                                     'height',
                                     item.eqType
                                   ) + 'px'
-                                : item.iconHeight + 'px',
+                                : item.iconHeight / 1.2 + 'px',
                             fontSize:
                               item.associated_device_id != undefined
                                 ? getBoardStyle(
@@ -393,7 +398,7 @@
                                     'fontSize',
                                     item.eqType
                                   ) + 'px'
-                                : '15px',
+                                : '12.5px',
                           }"
                           :src="getTypePic(item)"
                           :class="
@@ -675,6 +680,7 @@ import comXfp from "@/views/workbench/config/components/xfp"; //消防炮
 
 import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
 import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
+
 export default {
   dicts: ["sd_sys_name", "sys_common_status", "sd_control_type"],
   components: {
@@ -768,9 +774,13 @@ export default {
         index: 0,
       },
       timer: null, //定时器
+      // scrollview:null,
     };
   },
   watch: {
+    // "scrollview": function (newVal, oldVal) {
+    //   console.log(newVal, "newVal");
+    // },
     "batchManageForm.state": function (newVal, oldVal) {
       // console.log(newVal, "newVal");
       if ([7, 9].includes(this.itemEqType)) {
@@ -797,7 +807,12 @@ export default {
     },
   },
   created() {},
-  mounted() {},
+  mounted() {
+    
+   // 添加滚动监听，该滚动监听了拖拽滚动条
+   // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
+      window.addEventListener("scroll", this.mouseSrollAuto, true);
+  },
   //实例销毁前清除定时器
   beforeDestroy() {
     clearInterval(this.timer);
@@ -805,6 +820,12 @@ export default {
     clearInterval(this.imageTimer);
     this.imageTimer = null;
     window.removeEventListener("click", this.otherClose);
+    // this.scrollview.removeEventListener("scroll", this.mouseSrollAuto, true);
+  },
+  beforeRouteLeave(to, form, next) {
+    // 离开路由移除滚动事件
+    window.removeEventListener('scroll',this.mouseSrollAuto);
+    next();
   },
   methods: {
     init(workBenchProp) {
@@ -818,13 +839,21 @@ export default {
       this.getEqTypeStateIcon();
       this.lightSwitchFunc();
       this.getDictList();
-      console.log(this.dict.type.sd_sys_name, "this.dict.type.sd_sys_name");
+      // console.log(this.dict.type.sd_sys_name, "this.dict.type.sd_sys_name");
       // 隧道调取数据两秒一次
       this.timer = setInterval(() => {
         setTimeout(this.getRealTimeData, 0);
         setTimeout(this.getBoardContent, 0);
       }, 1000 * 5);
       window.addEventListener("click", this.otherClose);
+      // if (this.$refs["divRoller"]) {
+      //   console.log(111111111)
+        // 获取指定元素
+        // this.scrollview = this.$refs["divRoller"];
+        // // 添加滚动监听，该滚动监听了拖拽滚动条
+        // // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
+        // this.scrollview.addEventListener("scroll", this.mouseSrollAuto, true);
+      // }
     },
     getDict() {
       this.getDicts("brand").then((data) => {
@@ -840,6 +869,15 @@ export default {
     handleClosee() {
       this.visible = false;
     },
+    // 移动滚动条
+    mouseSrollAuto(e) {
+      console.log(e.target.scrollLeft, "e.target.scrollLeft");
+      if (e.target.scrollLeft > 0) {
+        this.resetCanvasFlag = true;
+      } else {
+        this.resetCanvasFlag = false;
+      }
+    },
     otherClose(e) {
       if (this.treeShow == true) {
         if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
@@ -847,13 +885,13 @@ export default {
     },
     getDictList() {
       var newDict = this.dict.type.sd_sys_name;
-      console.log(this.dict.type.sd_sys_name, "this.dict.type.sd_sys_name");
+      // console.log(this.dict.type.sd_sys_name, "this.dict.type.sd_sys_name");
       if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
         this.dictList = newDict.slice(0, 8);
       } else if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
         this.dictList = newDict;
       }
-      console.log(this.dictList, "this.dictList");
+      // console.log(this.dictList, "this.dictList");
     },
     /* 查询设备状态图标*/
     async getEqTypeStateIcon() {
@@ -1407,8 +1445,8 @@ export default {
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
-      this.$refs.dragImgDom.style.left = "0px";
-      this.$refs.dragImgDom.style.top = "0px";
+      let param = document.getElementsByClassName("content");
+      param[0].scrollLeft = 0;
     },
     // 模糊查询
     treeClick() {
@@ -1432,101 +1470,104 @@ export default {
         let bigType = "";
         let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
-          if (treeNodeClick) {
-            if (item.eqName == this.screenEqName) {
-              bigType = item.bigType;
-              this.resetCanvasFlag = true;
-              if (
-                this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
-                  720 &&
-                item.position.left / 1.2 > 720
-              ) {
-                this.$refs.dragImgDom.style.left =
-                  -item.position.left / 1.2 + 720 + "px";
-              } else if (item.position.left / 1.2 < 720) {
-                param[0].scrollLeft = 0;
-                this.$refs.dragImgDom.style.left = "0px";
-              } else if (
-                this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
-                720
-              ) {
-                this.$refs.dragImgDom.style.left =
-                  1440 - this.currentTunnel.lane.width / 1.2 + "px";
-              }
-              if (
-                item.position.left / 1.2 <=
-                  this.currentTunnel.lane.width / 1.2 - 200 &&
-                item.position.top / 1.2 <= 350
-              ) {
-                item.tooltipType = 1;
-              } else if (
-                item.position.left / 1.2 >
-                  this.currentTunnel.lane.width / 1.2 - 200 &&
-                item.position.top / 1.2 <= 350
-              ) {
-                item.tooltipType = 2;
-              } else if (
-                item.position.left / 1.2 <=
-                  this.currentTunnel.lane.width / 1.2 - 200 &&
-                item.position.top / 1.2 > 350
-              ) {
-                item.tooltipType = 3;
-              } else {
-                item.tooltipType = 4;
-              }
-              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-              item.click = true;
-            } else {
-              item.click = false;
+          // if (treeNodeClick) {
+          if (item.eqName == this.screenEqName) {
+            bigType = item.bigType;
+            // this.resetCanvasFlag = true;
+            if (
+              this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
+                720 &&
+              item.position.left / 1.2 > 720
+            ) {
+              // 中间
+              param[0].scrollLeft = item.position.left - 864;
+            } else if (item.position.left / 1.2 < 720) {
+              // 左边
+              param[0].scrollLeft = 0;
+            } else if (
+              this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
+              720
+            ) {
+              // 右边
+              param[0].scrollLeft = this.currentTunnel.lane.width - 1728;
             }
+            if (
+              item.position.left / 1.2 <=
+                this.currentTunnel.lane.width / 1.2 - 200 &&
+              item.position.top / 1.2 <= 350
+            ) {
+              item.tooltipType = 1;
+            } else if (
+              item.position.left / 1.2 >
+                this.currentTunnel.lane.width / 1.2 - 200 &&
+              item.position.top / 1.2 <= 350
+            ) {
+              item.tooltipType = 2;
+            } else if (
+              item.position.left / 1.2 <=
+                this.currentTunnel.lane.width / 1.2 - 200 &&
+              item.position.top / 1.2 > 350
+            ) {
+              item.tooltipType = 3;
+            } else {
+              item.tooltipType = 4;
+            }
+            // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+            item.click = true;
           } else {
-            if (item.eqName.indexOf(this.screenEqName) > -1) {
-              bigType = item.bigType;
-              this.resetCanvasFlag = true;
-              if (
-                this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
-                  720 &&
-                item.position.left / 1.2 > 720
-              ) {
-                this.$refs.dragImgDom.style.left =
-                  -item.position.left / 1.2 + 720 + "px";
-              } else if (item.position.left / 1.2 < 720) {
-                param[0].scrollLeft = 0;
-                this.$refs.dragImgDom.style.left = "0px";
-              } else if (
-                this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
-                720
-              ) {
-                this.$refs.dragImgDom.style.left =
-                  1440 - this.currentTunnel.lane.width / 1.2 + "px";
-              }
-              if (
-                item.position.left / 1.2 <=
-                  this.currentTunnel.lane.width / 1.2 - 200 &&
-                item.position.top / 1.2 <= 350
-              ) {
-                item.tooltipType = 1;
-              } else if (
-                item.position.left / 1.2 >
-                  this.currentTunnel.lane.width / 1.2 - 200 &&
-                item.position.top / 1.2 <= 350
-              ) {
-                item.tooltipType = 2;
-              } else if (
-                item.position.left / 1.2 <=
-                  this.currentTunnel.lane.width / 1.2 - 200 &&
-                item.position.top / 1.2 > 350
-              ) {
-                item.tooltipType = 3;
-              } else {
-                item.tooltipType = 4;
-              }
-              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-              item.click = true;
-            } else {
-              item.click = false;
-            }
+            item.click = false;
           }
+          if (param[0].scrollLeft != 0) {
+            this.resetCanvasFlag = true;
+          }
+          // } else {
+          //   if (item.eqName.indexOf(this.screenEqName) > -1) {
+          //     bigType = item.bigType;
+          //     this.resetCanvasFlag = true;
+          //     if (
+          //       this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
+          //         720 &&
+          //       item.position.left / 1.2 > 720
+          //     ) {
+          //       this.$refs.dragImgDom.style.left =
+          //         -item.position.left / 1.2 + 720 + "px";
+          //     } else if (item.position.left / 1.2 < 720) {
+          //       param[0].scrollLeft = 0;
+          //       this.$refs.dragImgDom.style.left = "0px";
+          //     } else if (
+          //       this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
+          //       720
+          //     ) {
+          //       this.$refs.dragImgDom.style.left =
+          //         1440 - this.currentTunnel.lane.width / 1.2 + "px";
+          //     }
+          //     if (
+          //       item.position.left / 1.2 <=
+          //         this.currentTunnel.lane.width / 1.2 - 200 &&
+          //       item.position.top / 1.2 <= 350
+          //     ) {
+          //       item.tooltipType = 1;
+          //     } else if (
+          //       item.position.left / 1.2 >
+          //         this.currentTunnel.lane.width / 1.2 - 200 &&
+          //       item.position.top / 1.2 <= 350
+          //     ) {
+          //       item.tooltipType = 2;
+          //     } else if (
+          //       item.position.left / 1.2 <=
+          //         this.currentTunnel.lane.width / 1.2 - 200 &&
+          //       item.position.top / 1.2 > 350
+          //     ) {
+          //       item.tooltipType = 3;
+          //     } else {
+          //       item.tooltipType = 4;
+          //     }
+          //     // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+          //     item.click = true;
+          //   } else {
+          //     item.click = false;
+          //   }
+          // }
         }
         if (bigType.includes("0")) {
           this.displayControl(0, "全部设备");
@@ -1864,15 +1905,15 @@ export default {
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
           if (type == "width") {
             if (eqType && eqType == 16) {
-              return devicePixel.split("*")[1] / 2 /1.2;
+              return devicePixel.split("*")[1] / 2 / 1.2;
             } else if (eqType && eqType == 36) {
-              return devicePixel.split("*")[1] / 4 /1.2;
+              return devicePixel.split("*")[1] / 4 / 1.2;
             }
           } else if (type == "height") {
             if (eqType && eqType == 16) {
-              return devicePixel.split("*")[0] / 2 /1.2;
+              return devicePixel.split("*")[0] / 2 / 1.2;
             } else if (eqType && eqType == 36) {
-              return devicePixel.split("*")[0] / 4 /1.2;
+              return devicePixel.split("*")[0] / 4 / 1.2;
             }
           }
           let array = [];
@@ -1895,9 +1936,9 @@ export default {
             return arr;
           } else if (type == "fontSize") {
             if (eqType && eqType == 16) {
-              return fontS / 2 /1.2;
+              return fontS / 2 / 1.2;
             } else if (eqType && eqType == 36) {
-              return fontS / 4 /1.2;
+              return fontS / 4 / 1.2;
             }
           } else if (type == "array") {
             return array;
@@ -1906,20 +1947,20 @@ export default {
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
           if (type == "width") {
             if (eqType && eqType == 16) {
-              return devicePixel.split("*")[1] / 2 /1.2;
+              return devicePixel.split("*")[1] / 2 / 1.2;
             } else if (eqType && eqType == 36) {
-              return devicePixel.split("*")[1] / 4 /1.2;
+              return devicePixel.split("*")[1] / 4 / 1.2;
             }
           } else if (type == "height") {
             if (eqType && eqType == 16) {
-              return devicePixel.split("*")[0] / 2 /1.2;
+              return devicePixel.split("*")[0] / 2 / 1.2;
             } else if (eqType && eqType == 36) {
-              return devicePixel.split("*")[0] / 4 /1.2;
+              return devicePixel.split("*")[0] / 4 / 1.2;
             }
           } else if (type == "content") {
             return "山东高速欢迎您";
           } else if (type == "fontSize") {
-            return 15 /1.2;
+            return 15 / 1.2;
           } else if (type == "array") {
             let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
             return array;
@@ -1927,13 +1968,21 @@ export default {
         }
       } else {
         if (type == "width") {
-          return 24 /1.2;
+          if (eqType && eqType == 16) {
+            return 24 / 1.2;
+          } else if (eqType && eqType == 36) {
+            return 26;
+          }
         } else if (type == "height") {
-          return 72 /1.2;
+          if (eqType && eqType == 16) {
+            return 72 / 1.2;
+          } else if (eqType && eqType == 36) {
+            return 160;
+          }
         } else if (type == "content") {
           return "山东高速欢迎您";
         } else if (type == "fontSize") {
-          return 15 /1.2;
+          return 15 / 1.2;
         } else if (type == "array") {
           let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
           return array;
@@ -2218,9 +2267,9 @@ export default {
     height: 100%;
     display: flex;
     align-items: center;
-    overflow-y: hidden;
+    // overflow-y: hidden;
     zoom: 100%;
-    overflow-x: auto;
+    overflow: overlay;
     display: inline-block;
     margin: 0 auto;
     position: relative;

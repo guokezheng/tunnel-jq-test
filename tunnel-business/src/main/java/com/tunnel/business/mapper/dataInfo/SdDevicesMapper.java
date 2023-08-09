@@ -483,4 +483,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<SdDevices> getDevRight(SdDevices devices);
+
+	/**
+	 * 力电紧急电话根据桩号设备类型查询设备
+	 * @param devices
+	 * @return
+	 */
+	SdDevices getEtDeviceData(SdDevices devices);
 }

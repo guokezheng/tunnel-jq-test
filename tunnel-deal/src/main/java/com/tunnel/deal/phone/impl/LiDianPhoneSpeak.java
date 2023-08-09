@@ -12,6 +12,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventType;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
@@ -54,6 +55,9 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
 
     @Autowired
     private ISdTunnelsService tunnelsService;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     @Override
     public int playVoice(Map<String, Object> map, SdDevices sdDevices) {
@@ -113,6 +117,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
         sdEvent.setDirection(sdDevices.getDirection());
+        sdEvent.setStakeNum(sdDevices.getPile());
         sdEventMapper.insertSdEvent(sdEvent);
         eventSendWeb(sdEvent);
     }
@@ -126,6 +131,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
+        sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
         List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
         List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
         if(collect.size() > 0){
@@ -164,15 +170,22 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
                         List<String> list = Arrays.asList(str.split("@"));
                         String insturct = list.get(2);
                         String offOrOn = list.get(3);
-
+                        String pile = list.get(1);
+                        boolean piltBool = pile.contains("Z");
+                        if(!piltBool){
+                            pile = "Y" + pile;
+                        }
+                        SdDevices device = new SdDevices();
+                        device.setPile(pile);
+                        device.setEqType(DevicesTypeEnum.ET.getCode());
+                        SdDevices etDeviceData = sdDevicesMapper.getEtDeviceData(device);
                         //新增事件
                         if(PhoneSpkEnum.INSTRUCT.getCode().equals(insturct) && PhoneSpkEnum.INSTRUCT_OFF.getCode().equals(offOrOn)){
-                            /*SdDevices sdDevices = new SdDevices();
+                            SdDevices sdDevices = new SdDevices();
                             sdDevices.setEqStatus("4");
-                            sdDevices.setEqId(device.getEqId());
+                            sdDevices.setEqId(etDeviceData.getEqId());
                             sdDevicesMapper.updateSdDevices(sdDevices);
-                            deviceDataService.updateDeviceData(device, data, Long.valueOf(itemId));*/
-                            //setEventData(map.get("tunnelId").toString(),list.get(1),sdDevices);
+                            setEventData(etDeviceData.getEqTunnelId(),pile,etDeviceData);
                         }
                     }
                 }catch (Exception e){

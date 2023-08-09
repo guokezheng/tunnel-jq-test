@@ -12,6 +12,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
@@ -41,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
 import static com.ruoyi.common.utils.DictUtils.getCacheKey;
@@ -200,10 +202,15 @@ public class RadarEventServiceImpl implements RadarEventService {
                 SdEvent sdEvent1 = new SdEvent();
                 sdEvent1.setId(sdEvent.getId());
                 List<SdEvent> sdEvents = sdEventService.querySdEventList(sdEvent1);
-                //新增事件后推送前端  弹出视频
-                JSONObject object = new JSONObject();
-                object.put("sdEventList", sdEvents);
-                WebSocketService.broadcast("sdEventList",object.toString());
+                sdEvents.stream().forEach(item -> item.setIds(item.getId().toString()));
+                List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+                List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEvents.get(0).getTunnelId())).collect(Collectors.toList());
+                if(collect.size() > 0) {
+                    //新增事件后推送前端  弹出视频
+                    JSONObject object = new JSONObject();
+                    object.put("sdEventList", sdEvents);
+                    WebSocketService.broadcast("sdEventList", object.toString());
+                }
                 // 添加事件流程记录
                 eventFlowService.addEventFlowBatch(sdEvents);
             }

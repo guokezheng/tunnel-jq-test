@@ -1425,4 +1425,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           ORDER BY
             pile_num ASC
     </select>
+
+    <select id="getEtDeviceData" parameterType="sdDevices" resultType="sdDevices">
+        SELECT
+            eq_id,
+            eq_tunnel_id,
+            eq_name,
+            eq_type,
+            eq_direction,
+            pile,
+            pile_num
+        FROM
+            sd_devices d
+        WHERE
+            1=1
+        AND d.eq_type = #{eqType}
+        AND d.pile = #{pile}
+    </select>
 </mapper>

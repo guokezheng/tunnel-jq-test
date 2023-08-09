@@ -949,6 +949,7 @@ export default {
         console.log(this.strategyForm.triggers.deviceId )
         this.$modal.msgSuccess("修改策略成功");
         this.submitStrategyLoading = false
+        this.$emit("refreshList");
         this.$emit("dialogVisibleCloseEvent");
         this.getList();
       }).finally(
@@ -973,6 +974,7 @@ export default {
         this.resetForm();
         let data = true;
         this.submitStrategyLoading = false
+        this.$emit("refreshList");
         this.$emit("dialogVisibleClose", data);
         this.$modal.msgSuccess("新增策略成功");
       }).finally(
@@ -1066,8 +1068,18 @@ export default {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
         getCategoryTree().then((data) => {
-          this.$set(autoControl[i], "equipmentTypeData", data.data);
-          this.equipmentTypeData = data.data;
+          debugger
+          let dataNum = 0;
+          for (let j = 0; j < data.data.length; j++) {
+           if( data.data[j].label=="巡检机器人"){
+             dataNum = j
+             break;
+           }
+          }
+          data.data.splice(dataNum, 1);
+          console.log( data.data)
+          this.$set(autoControl[i], "equipmentTypeData",  data.data);
+          this.equipmentTypeData =  data.data;
         });
       }
     },

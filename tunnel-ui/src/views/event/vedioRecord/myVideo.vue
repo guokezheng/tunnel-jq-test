@@ -28,7 +28,8 @@
             return {
                 // id: '1',
                 player: null,
-                loading: true
+                loading: true,
+                timerId:null
             }
         },
         watch: {
@@ -55,9 +56,25 @@
             }
         },
         created(){
+          if(this.timerId){
+            clearInterval(this.timerId)
+            this.timerId=null
+          }
         //   console.info("123");
         //   console.log(this.rtsp,"this.rtsp")
         },
+      destroyed(){
+        console.log("destorying video");
+        if(this.timerId){
+          clearInterval(this.timerId)
+          this.timerId=null
+        }
+        if (this.player) {
+          this.player.unload();
+          this.player.destroy();
+          this.player = null
+        }
+      },
         methods: {
 
             fullScreen () {
@@ -70,6 +87,9 @@
                 }
             },
             playVideo () {
+              if (this.timerId !== null) {
+                clearInterval(this.timerId);
+              }
               const video = document.querySelector('video');
               video.disablePictureInPicture = true;
                 console.log(this.rtsp,"this.rtspthis.rtspthis.rtsp");
@@ -78,7 +98,7 @@
                 if (flvjs.isSupported()) {
                     let video = this.$refs.player;
                     if (video) {
-                        //创建播放器实例
+                        //创建播放器实例"https://sf1-hscdn-tos.pstatp.com/obj/media-fe/xgplayer_doc_video/flv/xgplayer-demo-360p.flv",
                         this.player = flvjs.createPlayer({
                             type: 'flv',
                             isLive: true,
@@ -86,11 +106,9 @@
                             // enableStashBuffer: false,
                             cors: true, // 是否跨域
                             enableWorker: true, // 是否多线程工作
-                            // enableStashBuffer: true, // 是否启用缓存
-                            // stashInitialSize: 384 * 1024, // 缓存大小(kb)  默认384kb
-                            // autoCleanupSourceBuffer: true ,// 是否自动清理缓存
-                            enableAutoQuality:true,
-                            autoReloadOnError:true,
+                            enableStashBuffer: false, // 是否启用缓存
+                            stashInitialSize: 384*1024, // 缓存大小(kb)  默认384kb
+                            autoCleanupSourceBuffer: true // 是否自动清理缓存
                         }
                         // ,{
                         //     cors: true, // 是否跨域
@@ -100,10 +118,6 @@
                         //     autoCleanupSourceBuffer: true // 是否自动清理缓存
                         // }
                         );
-                        debugger
-                      console.log(this.player)
-                        this.playerList.push(this.player)
-                      console.log( this.playerList)
                         this.player.attachMediaElement(video);
                         try {
                             this.player.load();
@@ -123,9 +137,32 @@
                         // if (this.player) {
                         debugger
                         that.destroyFlv();
-                        // that.playVideo();
                         that.init();
                       });
+                      this.timerId = setInterval(function(){
+                        if (that.$refs.player.buffered.length > 0) {
+                          const end = that.$refs.player.buffered.end(0);  // 视频结尾时间
+                          const current = that.$refs.player.currentTime;  //  视频当前时间
+                          const diff = end - current;// 相差时间
+                          console.log(diff);
+                          const diffCritical = 4; // 这里设定了超过4秒以上就进行跳转
+                          const diffSpeedUp = 1; // 这里设置了超过1秒以上则进行视频加速播放
+                          const maxPlaybackRate = 4;// 自定义设置允许的最大播放速度
+                          let playbackRate = 1.0; // 播放速度
+                          if (diff > diffCritical) {
+                            // console.log("相差超过4秒，进行跳转");
+                            that.$refs.player.currentTime = end - 1.5;
+                            playbackRate = Math.max(1, Math.min(diffCritical, 16));
+                          } else if (diff > diffSpeedUp) {
+                            // console.log("相差超过1秒，进行加速");
+                            playbackRate = Math.max(1, Math.min(diff, maxPlaybackRate, 16))
+                          }
+                          that.$refs.player.playbackRate = playbackRate;
+                          if (that.$refs.player.paused) {
+                            that.player.load();
+                          }
+                        }
+                      },1000)
                     }
                 }
             },
@@ -152,11 +189,9 @@
                     // enableStashBuffer: false,
                     cors: true, // 是否跨域
                     enableWorker: true, // 是否多线程工作
-                    // enableStashBuffer: true, // 是否启用缓存
-                    // stashInitialSize: 384 * 1024, // 缓存大小(kb)  默认384kb
-                    // autoCleanupSourceBuffer: true ,// 是否自动清理缓存
-                    enableAutoQuality:true,
-                    autoReloadOnError:true,
+                    enableStashBuffer: false, // 是否启用缓存
+                    stashInitialSize:  384*1024, // 缓存大小(kb)  默认384kb
+                    autoCleanupSourceBuffer: true // 是否自动清理缓存
                   }
                   // ,{
                   //     cors: true, // 是否跨域
@@ -167,9 +202,6 @@
                   // }
                 );
                 debugger
-                console.log(this.player)
-                this.playerList.push(this.player)
-                console.log( this.playerList)
                 this.player.attachMediaElement(video);
                 try {
                   this.player.load();
@@ -183,13 +215,9 @@
                 let that = this
                 this.player.on( flvjs.Events.ERROR, function(errorType, errorDetails) {
                   // 处理错误
+                  console.log(errorType+errorDetails)
                   console.log("3333333333333333333333333333333333333")
-                  // console.error(`FLV.js Error - Type: ${errorType}, Details: ${errorDetails}`);
-                  debugger
-                  // if (this.player) {
-                  debugger
                   that.destroyFlv();
-                  // that.playVideo();
                   that.init();
                 });
               }

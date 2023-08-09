@@ -2263,7 +2263,10 @@ export default {
             this.closeProcessDialog = false;
             this.processType = false;
             this.details = false;
-            this.$modal.msgSuccess("修改成功");
+            if(response.code=="200"){
+              this.$modal.msgSuccess("修改成功");
+            }
+
             this.getList();
             //主动安全
             //策略不为空

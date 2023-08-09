@@ -769,7 +769,8 @@ export default {
   },
   mounted() {
     bus.$on("getPicId", (e) => {
-      this.eventId = e;
+      console.log(e,"e")
+      this.eventId = typeof e == 'String'?Number(e):e;
       this.init(e);
     });
     this.getTunnel();
@@ -967,7 +968,13 @@ export default {
     submitDialog() {
       console.log(this.eventFormDetail,'1123123')
       this.$cache.local.set('currencyId',this.eventFormDetail.currencyId);
-
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+        target: ".hitchDialog",
+      });
       if (this.eventFormDetail.stakeNum1 && this.eventFormDetail.stakeNum2) {
         this.eventFormDetail.stakeNum =
           "K" + this.eventFormDetail.stakeNum1 + "+" + this.eventFormDetail.stakeNum2;
@@ -1004,6 +1011,7 @@ export default {
             this.$modal.msgSuccess("下发指令成功");
           })
         }
+        loading.close();
         // 1.预案不为空
         // 2.当前状态为0
         // 3.普通事件

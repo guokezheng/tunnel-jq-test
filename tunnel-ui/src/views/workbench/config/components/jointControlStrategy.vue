@@ -2,7 +2,7 @@
   <el-dialog
     class="timedControl"
     custom-class="no-scroll"
-    title="联控策略"
+    title="智慧调光"
     :close-on-click-modal="false"
     :visible.sync="visibleSync"
     width="80%"
@@ -584,7 +584,7 @@ export default {
       let queryParams = {pageSize:999,pageNum:1,modeType:0}
       //查询出原有配置并且显示
       listConfig(queryParams).then((response) => {
-        debugger
+        // debugger
         if( response.rows.length>0){
           this.lightStrategyList = []
           for (let i = 0; i < response.rows.length; i++) {
@@ -608,7 +608,7 @@ export default {
       let queryParams = {pageSize:999,pageNum:1,modeType:1}
       //查询出原有配置并且显示
       listConfig(queryParams).then((response) => {
-        debugger
+        // debugger
         if( response.rows.length>0){
           this.catStrategyList = []
           for (let i = 0; i < response.rows.length; i++) {
@@ -634,7 +634,7 @@ export default {
       })
     },
     closeLogin(){
-      debugger
+      // debugger
       this.visibleSync = false
     },
     handleNodeClick(data) {
@@ -695,7 +695,7 @@ export default {
               this.lightFilesModel.tunnelId = tunnelItems.tunnelId
               // let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
               // console.log(tunnel)
-              debugger
+              // debugger
               let queryParams = {tunnelName:tunnelItems.tunnelId,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
               //查询出原有配置并且显示
               this.lightListConfig(queryParams)
@@ -743,7 +743,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds2)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               //昨天光强
               for (let i = 0; i < list1.length; i++) {
@@ -753,14 +753,14 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               //今天
               for (let i = 0; i < list1.length; i++) {
                 this.XDataLight.push(list1[i].createTime)
                 this.yDataLight2.push(list1[i].data)
               }
-              debugger
+              // debugger
               setTimeout(() => {
                 this.$nextTick(() => {
                   this.initLoginChart();
@@ -909,9 +909,9 @@ export default {
     },
     //光强照明配置查询
     lightListConfig(queryParams){
-      debugger
+      // debugger
       listConfig(queryParams).then((response) => {
-        debugger
+        // debugger
         if( response.rows.length>0){
           let rows = response.rows[0];
           this.lightFilesModel.id = rows.id
@@ -974,7 +974,7 @@ export default {
     lightChangeEvent(indextabs) {
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
       console.log(tunnel)
-      debugger
+      // debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
 
       this.lightListConfig(queryParams)
@@ -983,11 +983,11 @@ export default {
     //车辆状态
     changeCattate(e){
       console.log(e)
-      debugger
+      // debugger
     },
     //光照下修比例保存
     submitlightForm(){
-      debugger
+      // debugger
       console.log(this.lightFilesModel)
       //模式1 车辆 0光强
       this.lightFilesModel.modeType = 0
@@ -997,7 +997,7 @@ export default {
         });
       } else {
         addConfig(this.lightFilesModel).then((response) => {
-          debugger
+          // debugger
           this.lightFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
         });
@@ -1034,7 +1034,7 @@ export default {
       }else{
         tunnelItems = this.tunnelLists[0]
       }
-      debugger
+      // debugger
       console.log(this.catFilesModel.tunnelId)
       if(!!tunnelItems.tunnelId&&(this.catFilesModel.tunnelId==null||this.catFilesModel.tunnelId==""||this.catFilesModel.tunnelId=="undefined")){//首次
         // this.queryParamsLight.tunnelId = tunnelItems.tunnelId
@@ -1042,7 +1042,7 @@ export default {
         this.catFilesModel.direction= "1"
         let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
         console.log(tunnel)
-        debugger
+        // debugger
         //车辆
         let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
         this.catListConfig(queryParams)
@@ -1053,7 +1053,7 @@ export default {
         //
         //   let jsonArray = JSON.parse(rows.timeSlot);
         //   console.log(jsonArray)
-        //   debugger
+        //   // debugger
         //   for (let i = 0; i < jsonArray.length; i++) {
         //
         //   }
@@ -1105,7 +1105,7 @@ export default {
       });
       setTimeout(() => {
         this.$nextTick(() => {
-          debugger
+          // debugger
           console.log( this.yData1)
           console.log( this.yData2)
           console.log( this.yData3)
@@ -1119,12 +1119,12 @@ export default {
     catChangeEvent(){
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
       console.log(tunnel)
-      debugger
+      // debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
       this.catListConfig(queryParams)
     },
     beforeLuminanceEvent(e){
-      debugger
+      // debugger
       console.log(e)
       this.catFilesModel.beforeLuminance  = e
       this.$forceUpdate()
@@ -1207,10 +1207,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.formItems.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdate(index){
-      debugger
+      // debugger
       let form={
         label: '',
         startTime: '',
@@ -1280,7 +1280,7 @@ export default {
       this.formItems =  formItemsOne
       console.log(this.formItems)
       console.log(this.catFilesModel)
-      debugger
+      // debugger
       //模式1 车辆 0光强
       this.catFilesModel.modeType = 1
       if (!!this.catFilesModel.id) {
@@ -1292,7 +1292,7 @@ export default {
         });
       } else {
         addConfig(this.catFilesModel).then((response) => {
-          debugger
+          // debugger
           this.catFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
           this.open = false;
@@ -1479,7 +1479,7 @@ export default {
     //编辑策略
     handleUpdate(row){
       this.title = "策略编辑";
-      debugger
+      // debugger
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
 
@@ -1500,7 +1500,7 @@ export default {
     },
     //删除策略
     handleDelete(row){
-      debugger
+      // debugger
       const ids = row.id;
       const rlIds = row.id ;
       const jobRelationId = row.jobRelationId;
@@ -1526,7 +1526,7 @@ export default {
     },
     //删除照明策略
     lightStrategyDelete(row){
-      debugger
+      // debugger
       const ids = row.id;
       const rlIds = row.id ;
       const jobRelationId = row.jobRelationId;
@@ -1561,7 +1561,7 @@ export default {
             break;
 
           case "1":
-            debugger
+            // debugger
             console.log(this.insertStrategyTypeOptions)
             this.insertStrategyTypeOptionsCopy=[]
             let dictLabelStrategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="定时控制")
@@ -1616,7 +1616,7 @@ export default {
   watch:{
     show:{
       async handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
         //查询主策略
         this.selectListStrategy()

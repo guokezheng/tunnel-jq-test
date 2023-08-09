@@ -145,7 +145,7 @@
               ></el-switch>
             </div> -->
           <el-button
-            v-if="resetCanvasFlag && currentTunnel.lane.width>1728"
+            v-if="resetCanvasFlag"
             class="flex-row"
             type="primary"
             size="mini"
@@ -163,15 +163,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="strategyPage1"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/kzcl.png" />-->
-<!--            <span>控制策略1</span>-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            class="buttons"-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            @click="strategyPage1"-->
+          <!--          >-->
+          <!--            <img src="../../../assets/icons/kzcl.png" />-->
+          <!--            <span>控制策略1</span>-->
+          <!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -181,15 +181,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>智慧调光</span>
           </el-button>
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="iconLighting"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/zmpz.png" />-->
-<!--            <span>照明配置</span>-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            class="buttons"-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            @click="iconLighting"-->
+          <!--          >-->
+          <!--            <img src="../../../assets/icons/zmpz.png" />-->
+          <!--            <span>照明配置</span>-->
+          <!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -287,15 +287,18 @@
           </el-col>
         </el-row>
       </el-drawer>
-      <div class="vehicleLane">
+      <div
+        class="vehicleLane"
+        @mouseover="mouseoversImage"
+        @mouseleave="mouseleaveImage"
+      >
         <div
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @mousewheel="mouseSrollAuto"
           @contextmenu.prevent
-          @mouseover="mouseoversImage"
-          @mouseleave="mouseleaveImage"
+          @mousedown="dragImg"
         >
           <!-- 右键拖拽 勿删 -->
           <!-- <div
@@ -1366,7 +1369,7 @@
           width="130"
           :show-overflow-tooltip="true"
         />
-        <el-table-column label="桩号" align="center" prop="pile" width="120"/>
+        <el-table-column label="桩号" align="center" prop="pile" width="120" />
         <el-table-column
           label="操作状态"
           align="center"
@@ -3365,7 +3368,12 @@ export default {
           return 72;
         } else if (type == "content") {
           return "山东高速欢迎您";
-        }
+        } else if (type == "array") {
+            let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
+            return array;
+        }else if (type == "content") {
+            return "山东高速欢迎您";
+        } 
       }
     },
     formatNum(num, length) {
@@ -3585,7 +3593,7 @@ export default {
       let that = this;
       if (this.screenEqName) {
         let bigType = "";
-        let param = document.getElementsByClassName("content");
+        let param = document.getElementsByClassName("vehicleLane");
         for (var item of this.selectedIconList) {
           // if (treeNodeClick) {
             // 根据treeNodeClick 判断是输入框输入还是菜单选择
@@ -3598,15 +3606,26 @@ export default {
                 item.position.left > 864
               ) {
               // 中间
-              param[0].scrollLeft = item.position.left - 864;
+              param[0].scrollLeft = (item.position.left - 864) / 100 * this.zoom;
+              
               } else if (item.position.left < 864) {
                 param[0].scrollLeft = 0;
               } else if (
                 this.currentTunnel.lane.width - item.position.left <
                 864
               ) {
+                console.log(this.zoom,"this.zoom")
+                console.log(this.currentTunnel.lane.width - 1728,"this.currentTunnel.lane.width - 1728")
               // 右边
-              param[0].scrollLeft = this.currentTunnel.lane.width - 1728;
+              param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) * ((this.zoom / 100 ) * 2) ;
+              console.log(param[0].scrollLeft,"param[0].scrollLeft")
+              }
+              if(this.zoom != 100){
+                if(item.position.top <300){
+                  param[0].scrollTop = 0
+                }else{
+                  param[0].scrollTop = 580
+                }
               }
               if (
                 item.position.left <= this.currentTunnel.lane.width - 100 &&
@@ -3739,7 +3758,7 @@ export default {
       if (this.mouseoversImplement == false) {
         return;
       }
-      var parent = document.getElementsByClassName("content");
+      var parent = document.getElementsByClassName("vehicleLane");
       clearInterval(this.imageTimer);
       this.imageTimer = setInterval(() => {
         // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
@@ -3768,7 +3787,7 @@ export default {
     },
 
     mouseoversImage() {
-      clearInterval(this.imageTimer);
+      window.clearInterval(this.imageTimer);
       // this.srollSwitch = false
       this.imageTimer = null;
     },
@@ -4258,31 +4277,59 @@ export default {
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
-      let param = document.getElementsByClassName("content");
+      let param = document.getElementsByClassName("vehicleLane");
       param[0].scrollLeft = 0;
-      // this.$refs.dragImgDom.style.left = "0px";
-      // this.$refs.dragImgDom.style.top = "0px";
+      this.$refs.dragImgDom.style.left = "0px";
+      this.$refs.dragImgDom.style.top = "0px";
     },
     //右键拖动
     dragImg(e) {
-      if (e.button == 0) {
-        return;
-      }
-      this.dragFlag = true;
-      this.mouseLeft = e.clientX - parseInt(this.$refs.dragImgDom.offsetLeft);
-      this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
-      document.onmousemove = (e) => {
-        if (this.dragFlag) {
-          this.resetCanvasFlag = true;
-          this.curX = e.clientX - this.mouseLeft;
-          this.curY = e.clientY - this.mouseTop;
-          this.$refs.dragImgDom.style.left = this.curX + "px";
-          this.$refs.dragImgDom.style.top = this.curY + "px";
-        }
-      };
-      document.onmouseup = () => {
-        this.dragFlag = false;
-      };
+      // if (e.button == 0) {
+      //   return;
+      // }
+      // this.dragFlag = true;
+      // let param = document.getElementsByClassName("content");
+      // this.mouseLeft = e.clientX - parseInt(param[0].scrollLeft);
+      // this.mouseTop = e.clientY - parseInt(param[0].scrollTop);
+      // document.onmousemove = (e) => {
+      //   if (this.dragFlag) {
+      //     this.resetCanvasFlag = true;
+      //     this.curX = e.clientX - this.mouseLeft;
+      //     this.curY = e.clientY - this.mouseTop;
+      //     param[0].scrollLeft = this.curX + "px";
+      //     param[0].scrollTop = this.curY + "px";
+      //   }
+      // };
+      // document.onmouseup = () => {
+      //   this.dragFlag = false;
+      // };
+      let scrollContainer = document.querySelector(".vehicleLane");
+      let dragContainer = document.querySelector(".content");
+      let mouseDownScrollPosition = {
+            scrollLeft: scrollContainer.scrollLeft,
+            scrollTop: scrollContainer.scrollTop
+        };
+        //鼠标按下的位置坐标
+        let mouseDownPoint = {
+            x: e.clientX,
+            y: e.clientY
+        };
+        dragContainer.onmousemove = e => {
+            //鼠标滑动的实时距离
+            let dragMoveDiff = {
+                x: mouseDownPoint.x - e.clientX,
+                y: mouseDownPoint.y - e.clientY
+            };
+            if(dragMoveDiff.x > 0 || dragMoveDiff.y > 0){
+              this.resetCanvasFlag = true;
+            }
+            scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
+            scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+        };
+        document.onmouseup = e => {
+            dragContainer.onmousemove = null;
+            document.onmouseup = null;
+        };
     },
     lightSwitchFunc() {
       this.getConfigKey("lightSwitch").then((response) => {
@@ -4731,10 +4778,6 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                if(res.eqList[i].eqType == 16){
-                  console.log(res.eqList[i],"情报板")
-
-                }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -6206,6 +6249,8 @@ export default {
   position: absolute;
   top: 6%;
   left: 7.35%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .contentTopNav {
   width: 85%;
@@ -6505,9 +6550,7 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
-  // overflow-y: hidden;
   zoom: 100%;
-  overflow: overlay;
   display: inline-block;
   margin: 0 auto;
   position: relative;

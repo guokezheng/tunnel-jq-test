@@ -58,9 +58,9 @@
         </el-tab-pane>
       </el-tabs>
     </el-row>
-    <el-row :gutter="20" style="width: 83%; float: right">
+    <el-row :gutter="20" style="width: 83%; float: right;height: calc(100% - 7vh);">
       <!-- 右侧内容 -->
-      <el-col :span="24">
+      <el-col :span="24" style="height: 100%;">
         <div class="my-card-height rightBox">
           <div style="width: 100%; height: 53%" class="top">
             <!-- tab选择器 -->
@@ -119,7 +119,7 @@
             </div>
             <!-- 图表 -->
             <div class="echart">
-              <div id="chart" style="width: 100%; height: 100%"></div>
+              <div id="chart" style="width: 100%; height: 100%;overflow: hidden;"></div>
             </div>
           </div>
           <!-- 表格 -->
@@ -859,12 +859,12 @@ export default {
 };
 </script>
   <style lang="scss" scoped>
-.app-container {
-  height: calc(100vh - 130px);
-  padding: 5px 20px;
-  background: none;
-  margin: 0px;
-}
+// .app-container {
+//   height: calc(100vh - 130px);
+//   padding: 5px 20px;
+//   background: none;
+//   margin: 0px;
+// }
 .el-select {
   width: 100%;
 }
@@ -946,7 +946,7 @@ export default {
   justify-content: space-between;
 }
 .my-card-height {
-  height: calc(100vh - 200px);
+  height: 100%;
   .right_tabs {
     width: 100%;
     display: flex;
@@ -954,10 +954,10 @@ export default {
     align-items: center;
     padding: 10px 20px;
     p {
-      font-size: 20px;
+      font-size: 0.75vw;
       font-weight: 600;
       height: 100%;
-      line-height: 36px;
+      line-height: 3vh;
     }
     .date-picker {
       width: 7vw;

@@ -2594,20 +2594,20 @@
     }
   }
   // 工作台车道滚动条样式
-  .content::-webkit-scrollbar-track-piece {
+  .vehicleLane::-webkit-scrollbar-track-piece {
     background-color: rgba(0, 0, 0, 0.1);
     border-left: 1px solid rgba(0, 0, 0, 0);
     width: 1000px;
     border-width:50px;
   }
-  .content::-webkit-scrollbar {
+  .vehicleLane::-webkit-scrollbar {
       width: 12px;
       height: 10px;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
       border-radius: 5px;
   }
-  .content::-webkit-scrollbar-thumb {
+  .vehicleLane::-webkit-scrollbar-thumb {
       background-color: rgba($color: #00487F, $alpha: 0.6);
       background-clip: padding-box;
       -webkit-border-radius: 5px;
@@ -2615,7 +2615,7 @@
       border-radius: 5px;
       min-height: 28px;
   }
-  .content::-webkit-scrollbar-thumb:hover {
+  .vehicleLane::-webkit-scrollbar-thumb:hover {
 
       background-color: #0090D8;
       -webkit-border-radius: 5px;
@@ -2623,7 +2623,7 @@
       border-radius: 5px;
   }
   // 横竖滚动条夹角样式
-  .content::-webkit-scrollbar-corner{
+  .vehicleLane::-webkit-scrollbar-corner{
     background: #022A54;
   }
   // 隔行变色

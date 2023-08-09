@@ -27,7 +27,7 @@
           style="
             overflow-x: hidden;
             overflow-y: auto;
-            height: calc(100% - 40px);
+            height: calc(100% - 4vh);
             width: 100%;
           "
         >
@@ -255,16 +255,17 @@ export default {
 // }
 .check {
   padding: 10px 10px;
+  height: 4vh;
   ::v-deep .el-checkbox {
     width: 50%;
-    height: 20px;
+    height: 2vh;
     margin: 0;
-    line-height: 20px;
+    line-height: 2vh;
     color: #fff;
   }
   ::v-deep .el-checkbox__label {
-    font-size: 16px;
-    padding-left: 8px;
+    font-size: 0.75vw;
+    padding-left: 0.5vw;
   }
   ::v-deep .el-checkbox__inner {
     margin-bottom: 2px;

@@ -2215,7 +2215,13 @@ export default {
       this.$refs["eventFormDetail"].validate((valid) => {
         if (valid) {
           this.$cache.local.set("currencyId", this.eventFormDetail.currencyId);
-
+          const loading = this.$loading({
+            lock: true,
+            text: "Loading",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
+            target: ".hitchDialog",
+          });
           if (
             this.eventFormDetail.stakeNum1 &&
             this.eventFormDetail.stakeNum2
@@ -2264,7 +2270,7 @@ export default {
             this.processType = false;
             this.details = false;
             if(response.code=="200"){
-              this.$modal.msgSuccess("修改成功");
+            this.$modal.msgSuccess("修改成功");
             }
 
             this.getList();
@@ -2281,6 +2287,7 @@ export default {
                 this.$modal.msgSuccess("下发指令成功");
               });
             }
+            loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件

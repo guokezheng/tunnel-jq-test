@@ -20,7 +20,7 @@
         <div
           v-for="(item, index) of list"
           :key="index"
-          @click="handleSee(item.id)"
+          @click="handleSee(item.ids)"
         >
           <el-row>
             <el-col :span="2">
@@ -45,7 +45,7 @@
                 <div
                   class="overflowText"
                   style="
-                    width: 248px;
+                    width: 15vw;
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
@@ -107,7 +107,7 @@ export default {
     sdEventList: {
       immediate: true,
       handler: function (event) {
-        // console.log(event, "事件弹窗websockt推送");
+        console.log(event, "事件弹窗websockt推送");
         this.list = event;
       },
     },
@@ -128,8 +128,8 @@ export default {
     });
   },
   methods: {
-    handleSee(id) {
-      bus.$emit("getPicId", id);
+    handleSee(ids) {
+      bus.$emit("getPicId", ids);
     },
 
     // 忽略事件
@@ -177,11 +177,11 @@ export default {
   background-color: rgba($color: #000000, $alpha: 0.1);
 }
 .eventBox {
-  width: 570px;
+  width: 30%;
   max-height: 180px;
   position: absolute;
   top: 0px;
-  left: calc(100% - 600px);
+  left: 68%;
   background-color: #00152b;
   z-index: 2000;
   border-bottom: solid 2px white;
@@ -193,11 +193,11 @@ export default {
     width: 100% !important;
   }
   .title {
-    padding-left: 20px;
-    height: 30px;
-    line-height: 30px;
+    padding-left: 1vw;
+    height: 3.2vh;
+    line-height: 3vh;
     color: white;
-    font-size: 14px;
+    font-size: 0.75vw;
     font-weight: bold;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
     background-repeat: no-repeat;
@@ -213,7 +213,7 @@ export default {
   }
 }
 .listContent {
-  height: 40px;
+  height: 4vh;
   overflow: auto;
   background: #44576f;
   margin: 10px;
@@ -222,13 +222,13 @@ export default {
   }
   .el-row {
     color: white;
-    font-size: 14px;
+    font-size: 0.7vw;
     display: flex;
     align-items: center;
-    height: 30px;
+    height: 3vh;
     .el-col {
       height: 100%;
-      line-height: 37px;
+      line-height: 4vh;
     }
   }
 }

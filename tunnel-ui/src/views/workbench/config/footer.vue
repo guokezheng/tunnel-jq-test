@@ -102,7 +102,7 @@
             margin-top: 80px;
           "
         >
-          暂无交通事件
+          暂无预警事件
         </div>
         <div v-if="trafficList" @click="jumpYingJi" class="jumpBox">
           <vue-seamless-scroll
@@ -470,7 +470,7 @@ export default {
     defaultOption() {
       return {
         step: 0.2, // 数值越大速度滚动越快
-        limitMoveNum: 2, // 开始无缝滚动的数据量 this.dataList.length
+        limitMoveNum: 5, // 开始无缝滚动的数据量 this.dataList.length
         hoverStop: true, // 是否开启鼠标悬停stop
         direction: 1, // 0向下 1向上 2向左 3向右
         openWatch: true, // 开启数据实时监控刷新dom
@@ -494,7 +494,9 @@ export default {
     init(tunnelId) {
       console.log(tunnelId, "tunnelId");
       this.tunnelId = tunnelId;
-      this.getWarnList();
+      setInterval(()=>{
+        this.getWarnList();
+      },2000)
       this.vehicleEcharts();
       // this.specialVehicleEcharts()
       this.getEnergyConsumption();
@@ -581,48 +583,60 @@ export default {
       };
       // getNoDeceleration(param).then((res)=>{
       // console.log(res,"洞口不降速监测")
-      let data = {
-        oneLane: {
-          oneListOne: [118, 114, 105, 100],
-          oneListTwo: [100, 103, 106, 116, 118],
-        },
-        twoLane: {
-          twoListOne: [105, 100, 98, 90],
-          twoListTwo: [86, 84, 86, 89, 98],
-        },
-        threeLane: {
-          threeListOne: [76, 73, 68, 66],
-          threeListTwo: [64, 69, 75, 82, 85],
-        },
-      };
+      // let data = {
+      //   oneLane: {
+      //     oneListOne: [118, 114, 105, 100],
+      //     oneListTwo: [100, 103, 106, 116, 118],
+      //   },
+      //   twoLane: {
+      //     twoListOne: [105, 100, 98, 90],
+      //     twoListTwo: [86, 84, 86, 89, 98],
+      //   },
+      //   threeLane: {
+      //     threeListOne: [76, 73, 68, 66],
+      //     threeListTwo: [64, 69, 75, 82, 85],
+      //   },
+      // };
       // console.log(data, "洞口不降速监测");
-      let oneListOne = data.oneLane.oneListOne;
-      let oneListTwo = data.oneLane.oneListTwo;
-      let twoListOne = data.twoLane.twoListOne;
-      let twoListTwo = data.twoLane.twoListTwo;
-      let threeListOne = data.threeLane.threeListOne;
-      let threeListTwo = data.threeLane.threeListTwo;
-      let arr = [
-        ...oneListOne,
-        ...oneListTwo,
-        ...twoListOne,
-        ...twoListTwo,
-        ...threeListOne,
-        ...threeListTwo,
-      ];
-      let max = this.getMax(arr);
+      // let oneListOne = data.oneLane.oneListOne;
+      // let oneListTwo = data.oneLane.oneListTwo;
+      // let twoListOne = data.twoLane.twoListOne;
+      // let twoListTwo = data.twoLane.twoListTwo;
+      // let threeListOne = data.threeLane.threeListOne;
+      // let threeListTwo = data.threeLane.threeListTwo;
+      // let arr = [
+      //   ...oneListOne,
+      //   ...oneListTwo,
+      //   ...twoListOne,
+      //   ...twoListTwo,
+      //   ...threeListOne,
+      //   ...threeListTwo,
+      // ];
+      // let max = this.getMax(arr);
       // console.log(max, "洞口不降速监测111");
-      let oneList = [...oneListOne, ...oneListTwo];
-      let twoList = [...twoListOne, ...twoListTwo];
-      let threeList = [...threeListOne, ...threeListTwo];
+      // let oneList = [...oneListOne, ...oneListTwo];
+      // let twoList = [...twoListOne, ...twoListTwo];
+      // let threeList = [...threeListOne, ...threeListTwo];
+      let oneList = []
+      let twoList = []
+      let threeList = []
+      if(this.tabModel == 'chartJN'){
+        oneList = [118, 114, 105, 100, 100, 103, 106, 116, 118];
+        twoList =  [105, 100, 98, 90, 86, 84, 86, 89, 98];
+        threeList = [76, 73, 68, 66, 64, 69, 75, 82, 85];
+      }else{
+        oneList = [110, 102, 98, 95, 85, 80, 89, 92, 95];
+        twoList =  [103, 95, 90, 85, 82, 85, 85, 89, 93];
+        threeList = [85, 82, 76, 72, 70, 76, 78, 82, 85];
+      }
       // console.log(oneList, twoList, threeList, "洞口不降速监测222");
       this.initNoDecelerationChart(oneList, twoList, threeList);
       // })
     },
     // 取数组最大值
-    getMax(arr) {
-      return Math.max.apply(Math, arr);
-    },
+    // getMax(arr) {
+    //   return Math.max.apply(Math, arr);
+    // },
     // 预警事件列表
     getWarnList() {
       const param = {
@@ -842,7 +856,7 @@ export default {
           grid: {
             left: "6%",
             right: "8%",
-            bottom: "3%",
+            bottom: "5%",
             top: "25%",
             containLabel: true,
           },
@@ -2091,13 +2105,16 @@ export default {
   margin-top: 10px;
 }
 .tabButton {
-    margin: 4px 0;
+    margin: 4px 0 4px 10px;
     .el-radio-button {
       margin-right: 4px;
     }
     ::v-deep .el-radio-button--medium .el-radio-button__inner {
-      padding: 4px 20px !important;
+      padding: 0.2vw 1vh!important;
     }
+  }
+  ::v-deep .el-radio-button--medium .el-radio-button__inner{
+    font-size: 0.6vw !important;
   }
   ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
     background: linear-gradient(180deg, #ffc606, #ff8200) !important;

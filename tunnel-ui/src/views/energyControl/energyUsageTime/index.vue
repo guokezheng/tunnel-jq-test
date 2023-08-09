@@ -818,10 +818,10 @@ export default {
 </script>
   <style lang="scss" scoped>
 .app-container {
-  height: calc(100vh - 130px);
-  padding: 5px 20px;
-  background: none;
-  margin: 0px;
+  // height: calc(100vh - 130px);
+  // padding: 5px 20px;
+  // background: none;
+  // margin: 0px;
 }
 .el-select {
   width: 100%;

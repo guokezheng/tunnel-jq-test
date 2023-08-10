@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="eqId"    column="eq_id"    />
         <result property="eqType"    column="eq_type"    />
+        <result property="eqName"    column="eq_name"    />
         <result property="itemId"    column="item_id"    />
         <result property="address"    column="address"    />
         <result property="addressIndex"    column="address_index"    />
@@ -29,22 +30,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdDevicePointList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
-        <include refid="selectSdDevicePointVo"/>
+        select A.id,A.function_name,A.address,A.data_type,function_code,A.data_length,A.function_json,A.point_config,A.is_reserved,B.eq_name
+
+        from sd_device_point A left join sd_devices  B on A.eq_id  = B.eq_id
         <where>
-            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
-            <if test="eqType != null "> and eq_type = #{eqType}</if>
-            <if test="itemId != null "> and item_id = #{itemId}</if>
-            <if test="address != null  and address != ''"> and address = #{address}</if>
-            <if test="addressIndex != null "> and address_index = #{addressIndex}</if>
-            <if test="functionCode != null "> and function_code = #{functionCode}</if>
-            <if test="dataLength != null "> and data_length = #{dataLength}</if>
-            <if test="functionName != null  and functionName != ''"> and function_name like concat('%', #{functionName}, '%')</if>
-            <if test="dataType != null  and dataType != ''"> and data_type = #{dataType}</if>
-            <if test="signalName != null  and signalName != ''"> and signal_name like concat('%', #{signalName}, '%')</if>
-            <if test="stateId != null "> and state_id = #{stateId}</if>
-            <if test="dataStatus != null  and dataStatus != ''"> and data_status = #{dataStatus}</if>
-            <if test="functionDescription != null  and functionDescription != ''"> and function_description = #{functionDescription}</if>
-            <if test="isReserved != null "> and is_reserved = #{isReserved}</if>
+            <if test="eqId != null  and eqId != ''"> and A.eq_id = #{eqId}</if>
+            <if test="eqType != null "> and A.eq_type = #{eqType}</if>
+            <if test="itemId != null "> and A.item_id = #{itemId}</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(B.eq_name, B.eq_id) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="address != null  and address != ''"> and A.address = #{address}</if>
+            <if test="addressIndex != null "> and A.address_index = #{addressIndex}</if>
+            <if test="functionCode != null "> and A.function_code = #{functionCode}</if>
+            <if test="dataLength != null "> and A.data_length = #{dataLength}</if>
+            <if test="functionName != null  and functionName != ''"> and A.function_name like concat('%', #{functionName}, '%')</if>
+            <if test="dataType != null  and dataType != ''"> and A.data_type = #{dataType}</if>
+            <if test="signalName != null  and signalName != ''"> and A.signal_name like concat('%', #{signalName}, '%')</if>
+            <if test="stateId != null "> and A.state_id = #{stateId}</if>
+            <if test="dataStatus != null  and dataStatus != ''"> and A.data_status = #{dataStatus}</if>
+            <if test="functionDescription != null  and functionDescription != ''"> and A.function_description = #{functionDescription}</if>
+            <if test="isReserved != null "> and A.is_reserved = #{isReserved}</if>
         </where>
     </select>
 

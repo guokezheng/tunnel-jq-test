@@ -19,8 +19,12 @@ public class SdDevicePoint extends BaseEntity
     private Long id;
 
     /** 设备id */
-    @Excel(name = "设备id",width = 30)
+   // @Excel(name = "设备id",width = 30)
     private String eqId;
+
+    /** 设备类型 */
+    @Excel(name = "设备名称")
+    private String eqName;
 
     /** 设备类型 */
     @Excel(name = "设备类型")
@@ -88,6 +92,15 @@ public class SdDevicePoint extends BaseEntity
     /** 功能描述 */
     @Excel(name = "功能描述")
     private String functionDescription;
+
+
+    public String getEqName() {
+        return eqName;
+    }
+
+    public void setEqName(String eqName) {
+        this.eqName = eqName;
+    }
 
     public String getFunctionJson() {
         return functionJson;

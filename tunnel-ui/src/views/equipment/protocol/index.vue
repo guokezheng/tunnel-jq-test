@@ -6,6 +6,7 @@
         <el-button
           size="small"
           @click="handleAdd"
+          v-if="edit == true"
           v-hasPermi="['system:devices:add']"
         >新增
         </el-button>
@@ -13,6 +14,7 @@
         <el-button
           size="small"
           :disabled="multiple"
+          v-if="edit == true"
           @click="handleDelete"
           v-hasPermi="['system:devices:remove']"
         >删除
@@ -21,6 +23,7 @@
         <el-button
           size="small"
           @click="handleImport"
+          v-if="edit != true"
           v-hasPermi="['system:devices:import']"
         >导入
         </el-button>
@@ -31,7 +34,8 @@
         >导出
         </el-button>
 
-        <el-button size="small" @click="handleClose">关闭</el-button>
+
+        <el-button size="small" v-if="edit == true"  @click="handleClose">关闭</el-button>
         <el-button size="small" @click="resetQuery">刷新</el-button>
         <!--          <el-button-->
         <!--            type="info"-->
@@ -44,7 +48,7 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入设备名称、桩号,回车搜索"
+            placeholder="请输入设备名称,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -72,7 +76,8 @@
 <!--      <el-table-column label="主键" align="center" prop="id" />
       <el-table-column label="设备id" align="center" prop="eqId" />
       <el-table-column label="设备类型" align="center" prop="eqType" />-->
-       <el-table-column label="功能" align="center" prop="functionName" />
+      <el-table-column label="设备名称" width="250" align="center" prop="eqName" />
+       <el-table-column label="功能" width="250" align="center" prop="functionName" />
       <el-table-column label="寄存器点位" align="center" prop="address" />
 <!--      <el-table-column label="二进制点" align="center" prop="addressIndex" />-->
 
@@ -271,16 +276,16 @@
           将文件拖到此处，或
           <em>点击上传</em>
         </div>
-<!--        <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport" />
-          更新已经存在的设备点位数据
+        <div class="el-upload__tip" slot="tip">
+<!--          <el-checkbox v-model="upload.updateSupport" />-->
+<!--          更新已经存在的设备点位数据-->
           <el-link
             type="info"
             style="font-size: 12px; color: #39adff"
             @click="importTemplate"
           >下载模板</el-link
           >
-        </div>-->
+        </div>
         <div class="el-upload__tip" style="color: red" slot="tip">
           提示：仅允许导入“xls”或“xlsx”格式文件！
         </div>
@@ -368,7 +373,8 @@ export default {
         dataStatus: null,
         functionDescription: null,
         isReserved: null,
-        dataLength: null
+        dataLength: null,
+        edit:false
       },
       // 用户导入参数
       upload: {
@@ -400,14 +406,16 @@ export default {
     this.getDicts("sd_device_point_data_type").then(response => {
       this.dataTypeList = response.data;
     });
-/*    this.getDicts("sys_type_control").then((response) => {
-      // console.log(response.data,'response.dataresponse.data')
-      this.isControlOptions = response.data;
-    });*/
 
     this.typeId = this.$route.query.typeId;
     this.eqId = this.$route.query.eqId;
     this.protocolId = this.$route.query.protocolId;
+
+
+    if(this.typeId && this.eqId && this.protocolId){
+      this.edit = true;
+    }
+
 
     if (this.typeId !== undefined &&  this.typeId != 0) {
       //获取设备数据项
@@ -420,8 +428,13 @@ export default {
   methods: {
 
     isReservedFormat(row, column){
+
+      if(row.isReserved == "2"){
+        return "控制";
+      }
+      return "只读";
       // console.log(row)
-      return this.selectDictLabel(this.isControlOptions, row.isReserved);
+      //return this.selectDictLabel(this.isControlOptions, row.isReserved);
     },
 
     // 提交上传文件

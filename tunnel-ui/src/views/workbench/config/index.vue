@@ -2925,6 +2925,7 @@ export default {
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
     scrollview.addEventListener('scroll', this.mouseSrollAuto, true)
+    
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
@@ -3103,16 +3104,9 @@ export default {
         index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
       );
     },
-    beforeDestroy() {
-      document.removeEventListener("click", this.bodyCloseMenus);
-      document.removeEventListener("click", this.bodyCloseMenus1);
-      document.removeEventListener("click", this.bodyCloseMenus2);
-      document.removeEventListener("click", this.bodyCloseMenus3);
-      // 获取指定元素
-      const scrollview = this.$refs['divRoller']
-      // 移除监听
-      scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
-    },
+    // beforeDestroy() {
+      
+    // },
     bodyCloseMenus(e) {
       let self = this;
       if (self.syxt_boxShow == true) {
@@ -3175,7 +3169,15 @@ export default {
     },
     otherClose(e) {
       if (this.treeShow == true) {
-        if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+        if (!this.$refs.treeBox.contains(e.target)){
+          this.treeShow = false;
+            // 点击输入框 折叠之前打开的树形菜单
+          const nodes = this.$refs.tree.store._getAllNodes();
+          nodes.forEach((item) => {
+            item.expanded = false;
+          });
+        } 
+        
       }
     },
     treeClear() {
@@ -3188,11 +3190,11 @@ export default {
     },
     // 模糊查询
     treeClick() {
-      // 点击输入框 折叠之前打开的树形菜单
-      const nodes = this.$refs.tree.store._getAllNodes();
-      nodes.forEach((item) => {
-        item.expanded = false;
-      });
+      // // 点击输入框 折叠之前打开的树形菜单
+      // const nodes = this.$refs.tree.store._getAllNodes();
+      // nodes.forEach((item) => {
+      //   item.expanded = false;
+      // });
       if (this.resetCanvasFlag && this.treeShow) {
         setTimeout(() => {
           this.treeShow = false;
@@ -3595,9 +3597,6 @@ export default {
         let bigType = "";
         let param = document.getElementsByClassName("vehicleLane");
         for (var item of this.selectedIconList) {
-          // if (treeNodeClick) {
-            // 根据treeNodeClick 判断是输入框输入还是菜单选择
-            // 输入框输入的 输入内容要和设备名称相等 防止出现输入测控执行器1 测控执行器11 12 13...也被圈选
             if (item.eqName == this.screenEqName) {
               bigType = item.bigType;
 
@@ -3606,7 +3605,7 @@ export default {
                 item.position.left > 864
               ) {
               // 中间
-              param[0].scrollLeft = (item.position.left - 864) / 100 * this.zoom;
+                param[0].scrollLeft = (item.position.left - 864) / 100 * this.zoom;
               
               } else if (item.position.left < 864) {
                 param[0].scrollLeft = 0;
@@ -3614,8 +3613,6 @@ export default {
                 this.currentTunnel.lane.width - item.position.left <
                 864
               ) {
-                console.log(this.zoom,"this.zoom")
-                console.log(this.currentTunnel.lane.width - 1728,"this.currentTunnel.lane.width - 1728")
               // 右边
               param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) * ((this.zoom / 100 ) * 2) ;
               console.log(param[0].scrollLeft,"param[0].scrollLeft")
@@ -3650,50 +3647,6 @@ export default {
             } else {
               item.click = false;
             }
-          // } else {
-          //   if (item.eqName.indexOf(this.screenEqName) > -1) {
-          //     bigType = item.bigType;
-          //     // this.resetCanvasFlag = true;
-          //     if (
-          //       this.currentTunnel.lane.width - item.position.left > 864 &&
-          //       item.position.left > 864
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         -item.position.left + 864 + "px";
-          //     } else if (item.position.left < 864) {
-          //       param[0].scrollLeft = 0;
-          //       this.$refs.dragImgDom.style.left = "0px";
-          //     } else if (
-          //       this.currentTunnel.lane.width - item.position.left <
-          //       864
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         1728 - this.currentTunnel.lane.width + "px";
-          //     }
-          //     if (
-          //       item.position.left <= this.currentTunnel.lane.width - 100 &&
-          //       item.position.top <= 450
-          //     ) {
-          //       item.tooltipType = 1;
-          //     } else if (
-          //       item.position.left > this.currentTunnel.lane.width - 100 &&
-          //       item.position.top <= 450
-          //     ) {
-          //       item.tooltipType = 2;
-          //     } else if (
-          //       item.position.left <= this.currentTunnel.lane.width - 100 &&
-          //       item.position.top > 450
-          //     ) {
-          //       item.tooltipType = 3;
-          //     } else {
-          //       item.tooltipType = 4;
-          //     }
-          //     // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-          //     item.click = true;
-          //   } else {
-          //     item.click = false;
-          //   }
-          // }
           if (param[0].scrollLeft != 0) {
                 this.resetCanvasFlag = true;
               }
@@ -5955,6 +5908,15 @@ export default {
     clearInterval(this.imageTimer);
     this.imageTimer = null;
     window.removeEventListener("click", this.otherClose);
+
+    document.removeEventListener("click", this.bodyCloseMenus);
+    document.removeEventListener("click", this.bodyCloseMenus1);
+    document.removeEventListener("click", this.bodyCloseMenus2);
+    document.removeEventListener("click", this.bodyCloseMenus3);
+    // 获取指定元素
+    const scrollview = this.$refs['divRoller']
+    // 移除监听
+    scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
   },
 };
 </script>

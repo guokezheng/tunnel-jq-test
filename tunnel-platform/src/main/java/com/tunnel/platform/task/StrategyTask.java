@@ -641,6 +641,7 @@ public class StrategyTask {
             SdEvent event = new SdEvent();
             event.setId(sdEvent.getId());
             List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
+            sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());

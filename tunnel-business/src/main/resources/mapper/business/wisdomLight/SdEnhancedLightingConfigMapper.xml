@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.wisdomLight.SdWisdomLightMapper">
+
+    <resultMap type="SdWisdomLight" id="SdWisdomLightResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="modeType"    column="mode_type"    />
+        <result property="timeSlot"    column="time_slot"    />
+        <result property="beforeLuminance"    column="before_luminance"    />
+        <result property="minLuminance"    column="min_luminance"    />
+        <result property="respondTime"    column="respond_time"    />
+        <result property="maxLuminanceRange"    column="max_luminance_range"    />
+        <result property="minLuminanceRange"    column="min_luminance_range"    />
+        <result property="maxTrafficFlow"    column="max_traffic_flow"    />
+        <result property="isStatus"    column="is_status"    />
+        <result property="isTrafficVolume"    column="is_traffic_volume"    />
+        <result property="direction"    column="direction"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSdEnhancedLightingConfigVo">
+        select id, tunnel_id, mode_type, time_slot, before_luminance, min_luminance, respond_time, max_luminance_range, min_luminance_range, max_traffic_flow, is_status, is_traffic_volume from sd_enhanced_lighting_config
+    </sql>
+
+    <sql id="sdWisdomLightConfigVo">
+        select elc.id, elc.tunnel_id, elc.mode_type, elc.time_slot, elc.before_luminance, elc.min_luminance, elc.respond_time, elc.max_luminance_range, elc.min_luminance_range, elc.max_traffic_flow, elc.is_status, elc.is_traffic_volume
+                     , elc.create_by, elc.create_time, elc.direction,t.tunnel_name
+    </sql>
+
+    <select id="selectSdWisdomLightList" parameterType="SdWisdomLight" resultMap="SdWisdomLightResult">
+        <include refid="sdWisdomLightConfigVo"/>
+        from sd_wisdom_light elc
+        left join sd_tunnels t on elc.tunnel_id = t.tunnel_id
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and elc.tunnel_id = #{tunnelId}</if>
+            <if test="modeType != null "> and elc.mode_type = #{modeType}</if>
+            <if test="timeSlot != null  and timeSlot != ''"> and elc.time_slot = #{timeSlot}</if>
+            <if test="beforeLuminance != null "> and elc.before_luminance = #{beforeLuminance}</if>
+            <if test="minLuminance != null "> and elc.min_luminance = #{minLuminance}</if>
+            <if test="respondTime != null "> and elc.respond_time = #{respondTime}</if>
+            <if test="maxLuminanceRange != null "> and elc.max_luminance_range = #{maxLuminanceRange}</if>
+            <if test="minLuminanceRange != null "> and elc.min_luminance_range = #{minLuminanceRange}</if>
+            <if test="maxTrafficFlow != null "> and elc.max_traffic_flow = #{maxTrafficFlow}</if>
+            <if test="isStatus != null "> and elc.is_status = #{isStatus}</if>
+            <if test="isTrafficVolume != null "> and elc.is_traffic_volume = #{isTrafficVolume}</if>
+            <if test="tunnelName != null and tunnelName != ''"> and INSTR(t.tunnel_name, #{tunnelName}) > 0</if>
+            <if test="direction != null "> and direction = #{direction}</if>
+        </where>
+    </select>
+
+
+    <insert id="insertSdWisdomLight" parameterType="SdWisdomLight"  useGeneratedKeys="true" keyProperty="id">
+        insert into sd_wisdom_light
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="modeType != null">mode_type,</if>
+            <if test="timeSlot != null">time_slot,</if>
+            <if test="beforeLuminance != null">before_luminance,</if>
+            <if test="minLuminance != null">min_luminance,</if>
+            <if test="respondTime != null">respond_time,</if>
+            <if test="maxLuminanceRange != null">max_luminance_range,</if>
+            <if test="minLuminanceRange != null">min_luminance_range,</if>
+            <if test="maxTrafficFlow != null">max_traffic_flow,</if>
+            <if test="isStatus != null">is_status,</if>
+            <if test="isTrafficVolume != null">is_traffic_volume,</if>
+            <if test="direction != null "> direction</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="modeType != null">#{modeType},</if>
+            <if test="timeSlot != null">#{timeSlot},</if>
+            <if test="beforeLuminance != null">#{beforeLuminance},</if>
+            <if test="minLuminance != null">#{minLuminance},</if>
+            <if test="respondTime != null">#{respondTime},</if>
+            <if test="maxLuminanceRange != null">#{maxLuminanceRange},</if>
+            <if test="minLuminanceRange != null">#{minLuminanceRange},</if>
+            <if test="maxTrafficFlow != null">#{maxTrafficFlow},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+            <if test="isTrafficVolume != null">#{isTrafficVolume},</if>
+            <if test="direction != null "> #{direction}</if>
+        </trim>
+    </insert>
+
+    <update id="updateSdWisdomLight" parameterType="SdWisdomLight">
+        update sd_wisdom_light
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="modeType != null">mode_type = #{modeType},</if>
+            <if test="timeSlot != null">time_slot = #{timeSlot},</if>
+            <if test="beforeLuminance != null">before_luminance = #{beforeLuminance},</if>
+            <if test="minLuminance != null">min_luminance = #{minLuminance},</if>
+            <if test="respondTime != null">respond_time = #{respondTime},</if>
+            <if test="maxLuminanceRange != null">max_luminance_range = #{maxLuminanceRange},</if>
+            <if test="minLuminanceRange != null">min_luminance_range = #{minLuminanceRange},</if>
+            <if test="maxTrafficFlow != null">max_traffic_flow = #{maxTrafficFlow},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+            <if test="isTrafficVolume != null">is_traffic_volume = #{isTrafficVolume},</if>
+            <if test="direction != null ">  direction = #{direction}</if>
+        </trim>
+        where id = #{id}
+    </update>
+</mapper>

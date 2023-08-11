@@ -3,6 +3,8 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -197,5 +199,32 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
             }
         }
         return result;
+    }
+
+    /**
+     * 判断当前时间是否在此时间范围
+     * @param startTimeStr 开始
+     * @param endTimeStr 结束
+     * @return
+     */
+    public static  boolean dateCompare(String startTimeStr,String endTimeStr){
+        // 获取当前系统时间
+        LocalTime currentTime = LocalTime.now();
+
+        // 定义起始时间和结束时间
+        LocalTime startTime = LocalTime.parse(startTimeStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
+        LocalTime endTime = LocalTime.parse(endTimeStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+        // 将当前时间格式化为目标格式
+        String formattedCurrentTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+        // 比较当前时间是否在起始时间和结束时间之间
+        boolean isBetween = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+
+        System.out.println("当前系统时间：" + formattedCurrentTime);
+        System.out.println("起始时间：" + startTime);
+        System.out.println("结束时间：" + endTime);
+        System.out.println("当前时间是否在范围内：" + isBetween);
+        return  isBetween;
     }
 }

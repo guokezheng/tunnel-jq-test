@@ -26,6 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="lx"    column="lx"    />
         <result property="fx"    column="fx"    />
         <result property="isAutomatic"    column="is_automatic"    />
+        <result property="timingType"    column="timing_type"    />
         <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
 
@@ -68,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and c.dict_type = 'sys_common_event'
             </if>
             <if test="ids != null and ids != ''"> and FIND_IN_SET(A.id,#{ids}) > 0</if>
+            <if test="timingType != null  and timingType != ''"> and A.timing_type = #{timingType}</if>
         </where>
         order by A.id desc
     </select>
@@ -117,6 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timerOpen != null">timer_open,</if>
             <if test="timerClose != null">timer_close,</if>
             <if test="isAutomatic != null">is_automatic,</if>
+            <if test="timingType != null">timing_type,</if>
         create_time
  		)values(
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -134,6 +137,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timerOpen != null">#{timerOpen},</if>
             <if test="timerClose != null">#{timerClose},</if>
             <if test="isAutomatic != null">#{isAutomatic},</if>
+            <if test="timingType != null">#{timingType},</if>
         sysdate()
           )
     </insert>

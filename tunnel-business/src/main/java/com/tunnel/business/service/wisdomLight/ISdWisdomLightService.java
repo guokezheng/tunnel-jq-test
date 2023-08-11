@@ -1,0 +1,40 @@
+package com.tunnel.business.service.wisdomLight;
+
+import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
+import com.tunnel.business.domain.wisdomLight.SdWisdomLight;
+
+import java.util.List;
+
+/**
+ *智慧调光
+ * @author ruoyi
+ * @date 2023-08-10
+ */
+public interface ISdWisdomLightService
+{
+
+    /**
+     * 查询【智慧调光】列表
+     * 
+     * @param sdWisdomLight 【智慧调光】
+     * @return 【智慧调光】集合
+     */
+    public List<SdWisdomLight> selectSdWisdomLightList(SdWisdomLight sdWisdomLight);
+
+    /**
+     * 新增【智慧调光】
+     * 
+     * @param sdWisdomLight 【智慧调光】
+     * @return 结果
+     */
+    public SdWisdomLight insertSdWisdomLight(SdWisdomLight sdWisdomLight);
+
+    /**
+     * 修改【智慧调光】
+     * 
+     * @param sdWisdomLight 【智慧调光】
+     * @return 结果
+     */
+    public int updateSdWisdomLight(SdWisdomLight sdWisdomLight);
+
+}

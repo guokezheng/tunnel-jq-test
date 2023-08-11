@@ -224,8 +224,12 @@ public class CommonControlServiceImpl implements CommonControlService {
         }
 
         sdOperationLog.setState(String.valueOf(controlState));
-        sdOperationLog.setCreateTime(DateUtils.getNowDate());
-        sdOperationLog.setCreateBy(getUsername());
+        try {
+            sdOperationLog.setCreateTime(DateUtils.getNowDate());
+            sdOperationLog.setCreateBy(getUsername());
+        }catch (Exception e){
+            sdOperationLog.setCreateBy("System");
+        }
         return sdOperationLog;
     }
 

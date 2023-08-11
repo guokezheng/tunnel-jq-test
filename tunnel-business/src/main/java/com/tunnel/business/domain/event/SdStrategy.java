@@ -104,6 +104,9 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("定时策略-执行时间")
     private String execTime;
 
+
+    private String timingType;
+
     public String getExecDate() {
         return execDate;
     }
@@ -320,6 +323,14 @@ public class SdStrategy extends BaseEntity
 
     public String getStrategyState() {
         return strategyState;
+    }
+
+    public String getTimingType() {
+        return timingType;
+    }
+
+    public void setTimingType(String timingType) {
+        this.timingType = timingType;
     }
 
     @Override

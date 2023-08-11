@@ -340,7 +340,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             rl.setStrategyId(list.get(i).getId());
             String strategyType = list.get(i).getStrategyType();
             if ("1".equals(strategyType)) {
-                sList.add(list.get(i).getStrategyInfo());
+                if(StringUtils.isNotEmpty(list.get(i).getStrategyInfo())){
+                    sList.add(list.get(i).getStrategyInfo());
+                }
             }
             List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
             //分时控制策略信息
@@ -429,6 +431,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }
             list.get(i).setStrategyInfo(StringUtils.join(sList,""));
             list.get(i).setSlist(sList);
+            if("1".equals(list.get(i).getStrategyType())){
+                //执行时间转换
+                if(StringUtils.isNotBlank(list.get(i).getSchedulerTime())){
+                    list.get(i).setExecDate(CronUtil.CronConvertDate(list.get(i).getSchedulerTime()));
+                }
+                //定时策略-执行日期
+                if(StringUtils.isNotBlank(list.get(i).getSchedulerTime())) {
+                    list.get(i).setExecTime(CronUtil.CronConvertDateTime(list.get(i).getSchedulerTime()));
+                }
+            }
         }
         return list;
     }
@@ -851,6 +863,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
+        sty.setTimingType(model.getTimingType());
         return sty;
     }
     /**

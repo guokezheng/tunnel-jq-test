@@ -96,6 +96,8 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("手动自动")
     private String isAutomatic;
 
+    private String timingType;
+
     public String getExecTime() {
         return execTime;
     }
@@ -346,6 +348,14 @@ public class SdStrategyModel extends BaseEntity
 
     public void setTimeSharingControl(List<Map> timeSharingControl) {
         this.timeSharingControl = timeSharingControl;
+    }
+
+    public String getTimingType() {
+        return timingType;
+    }
+
+    public void setTimingType(String timingType) {
+        this.timingType = timingType;
     }
 
     @Override

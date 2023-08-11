@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.util.AntPathMatcher;
@@ -558,5 +560,23 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         }
 
         return false;
+    }
+
+    /**
+     * 字符串提取中文
+     *
+     * @param pattern 匹配规则
+     * @return
+     */
+    public static String bringHanziStr(String patternStr)
+    {
+        Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]+");
+        Matcher matcher = pattern.matcher( patternStr);
+
+        while (matcher.find()) {
+            String chineseChar = matcher.group();
+            return chineseChar;
+        }
+        return "";
     }
 }

@@ -6,13 +6,13 @@
     :close-on-click-modal="false"
     :visible.sync="visibleSync"
     width="80%"
-    :destroy-on-close="false"
+    destroy-on-close
     append-to-body
     :lock-scroll="true"
     :before-close="closeLogin"
   >
     <el-row>
-      <el-col :span="3"  style="float: right">
+      <el-col :span="3"  style="float: right; width: 8%;">
 
         <el-button
           size="mini"
@@ -29,7 +29,7 @@
       </el-col>
     </el-row>
         <el-row :gutter="24" style="clear:both;margin-top: 5px ">
-          <el-col :span="17">
+          <el-col :span="14">
 
             <el-row :gutter="24" style="clear:both;">
               <el-col :span="24">
@@ -42,7 +42,7 @@
               </el-col>
             </el-row>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="10">
             <el-form
               ref="loginQueryForm"
               :model="lightFilesModel"
@@ -52,9 +52,10 @@
               height="300px"
             >
               <el-row :gutter="24" style="clear:both; ">
-                <el-col :span="24">
-                  <el-form-item label="隧道名称" prop="tunnelId">
+                <el-col :span="12">
+                  <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                     <el-select
+                      :disabled="tunnelDisabled"
                       style="width: 100%"
                       v-model="lightFilesModel.tunnelId"
                       placeholder="请选择隧道"
@@ -70,11 +71,10 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="24" style="clear:both;">
-                <el-col :span="24">
-                  <el-form-item label="隧道方向" prop="direction">
+                <el-col :span="12">
+                  <el-form-item label="隧道方向" prop="direction" class="el-form-item-data">
                     <el-select
+                      :disabled="tunnelDisabled"
                       clearable
                       v-model="lightFilesModel.direction"
                       placeholder="请选择隧道方向"
@@ -91,6 +91,7 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+
               <el-row :gutter="24" style="clear:both;">
                 <el-col :span="24">
                   <el-form-item label="状态" align="center" prop="schedulerTime">
@@ -108,36 +109,64 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row>
+              <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
                 <el-col :span="24">
-                  <el-form-item label="下修比例"  >
-                    <el-input  v-model="lightFilesModel.beforeLuminance"></el-input>
+                  <el-form-item label="下修比例"  v-for="(item, index) in lightFormItems" :key="index"  class="el-form-item-direction">
+
+                    <el-select
+                      clearable
+                      v-model="item.lightParagraph"
+                      placeholder="请选择"
+                      style="width: 60%"
+                    >
+                      <el-option
+                        v-for="dict in lightParagraphList"
+                        :key="dict.value"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                      />
+                    </el-select>
+                    <el-input style="width: 20%;"  v-model="item.beforeLuminance"   ></el-input>
+                    <div class="buttonBox" style="width: 20% ;float: right;" >
+                      <el-button
+                        class="delete"
+                        @click="deleteHandleUpdate(index)"
+                      ></el-button>
+                      <el-button
+                        class="add"
+                        @click="addHandleUpdate(index)"
+                      ></el-button>
+                    </div>
                   </el-form-item>
                 </el-col>
+<!--                <el-col :span="4">-->
+
+<!--                  -->
+<!--                </el-col>-->
               </el-row>
             </el-form>
           </el-col>
-          <el-col :span="6" style="margin-top: 10%">
+          <el-col :span="10" style="margin-top: 1%">
             <el-row :gutter="24">
-              <el-col :span="10"  style="float: right">
+              <el-col :span="10"  style="float: right; width: 23%;">
 
                 <el-button
                   size="mini"
                   class="tableBlueButtton"
-                  @click="submitlightForm"
+                  @click="submitlightFormWei"
                 >保存</el-button
                 >
                 <el-button
                   size="mini"
                   class="tableBlueButtton"
-                  @click="refreshlightForm"
+                  @click="refreshlightFormWei"
                 >刷新</el-button
                 >
               </el-col>
             </el-row>
             <el-form
-              ref="loginQueryForm"
-              :model="lightFilesModel"
+              ref="loginQueryFormWei"
+              :model="lightFilesModelWei"
               :inline="true"
               class="loginQueryFormClass"
               label-width="100px"
@@ -145,14 +174,15 @@
               height="300px"
             >
               <el-row :gutter="24" style="clear:both; ">
-                <el-col :span="24">
-                  <el-form-item label="隧道名称" prop="tunnelId">
+                <el-col :span="12">
+                  <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                     <el-select
+                      :disabled="tunnelDisabled"
                       style="width: 100%"
-                      v-model="lightFilesModel.tunnelId"
+                      v-model="lightFilesModelWei.tunnelId"
                       placeholder="请选择隧道"
                       clearable
-                      @change="lightChangeEvent"
+                      @change="lightChangeEventWei"
                     >
                       <el-option
                         v-for="item in tunnelData"
@@ -163,15 +193,14 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="24" style="clear:both;">
-                <el-col :span="24">
-                  <el-form-item label="隧道方向" prop="direction">
+                <el-col :span="12">
+                  <el-form-item label="隧道方向" prop="direction"  class="el-form-item-data">
                     <el-select
+                      :disabled="tunnelDisabled"
                       clearable
-                      v-model="lightFilesModel.direction"
+                      v-model="lightFilesModelWei.direction"
                       placeholder="请选择隧道方向"
-                      @change="lightChangeEvent"
+                      @change="lightChangeEventWei"
                       style="width: 100%"
                     >
                       <el-option
@@ -189,24 +218,53 @@
                   <el-form-item label="状态" align="center" prop="schedulerTime">
                     <template slot-scope="scope">
                       <el-switch
-                        v-model="lightFilesModel.isStatus"
+                        v-model="lightFilesModelWei.isStatus"
                         active-color="#13ce66"
                         inactive-color="#ff4949"
                         active-value="0"
                         inactive-value="1"
-                        @change="changeCattate()"
+
                       >
                       </el-switch>
                     </template>
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row>
+              <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
                 <el-col :span="24">
-                  <el-form-item label="下修比例"  >
-                    <el-input  v-model="lightFilesModel.beforeLuminance"></el-input>
+                  <el-form-item label="下修比例"  v-for="(item, index) in lightFormItemsWei" :key="index"  class="el-form-item-direction">
+
+                    <el-select
+                      clearable
+                      v-model="item.lightParagraph"
+                      placeholder="请选择"
+                      style="width: 60%"
+                    >
+                      <el-option
+                        v-for="dict in lightParagraphList"
+                        :key="dict.value"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                      />
+                    </el-select>
+                    <el-input style="width: 20%;"  v-model="item.beforeLuminance"   ></el-input>
+                    <div class="buttonBox" style="width: 20% ;float: right;" >
+                      <el-button
+                        class="delete"
+                        @click="deleteHandleUpdateWei(index)"
+                      ></el-button>
+                      <el-button
+                        class="add"
+                        @click="addHandleUpdateWei(index)"
+                      ></el-button>
+                    </div>
+                    <!--                </el-col>-->
                   </el-form-item>
                 </el-col>
+<!--                <el-col :span="4">-->
+
+<!--                  -->
+<!--                </el-col>-->
               </el-row>
             </el-form>
           </el-col>
@@ -217,7 +275,7 @@
 
 <script>
 import * as echarts from "echarts";
-import {addConfig, listConfig, updateConfig} from "@/api/business/enhancedLighting/app";
+import {addConfig, listConfig, updateConfig} from "@/api/business/wisdomLight/app";
 import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 
@@ -230,6 +288,21 @@ export default {
       loginChart: null,
       //光强配置文件
       lightFilesModel:{beforeLuminance:''},
+      //潍坊光强配置文件
+      lightFilesModelWei:{beforeLuminance:''},
+      lightFormItems: [
+        {
+          lightParagraph: '',
+          beforeLuminance:'',
+        }
+      ],
+      lightFormItemsWei: [
+        {
+          lightParagraph: '',
+          beforeLuminance:'',
+        }
+      ],
+      tunnelDisabled:true,
       //光照查询
       queryParamsLight:{},
       //光照查询
@@ -265,6 +338,14 @@ export default {
         {dictLabel:"上行",dictValue:"1"},
         {dictLabel:"下行",dictValue:"2"}
       ],
+      //照明段
+      lightParagraphList: [
+        {dictLabel:"棚洞段",dictValue:"棚洞段"},
+        {dictLabel:"入口段",dictValue:"入口段"},
+        {dictLabel:"过渡段",dictValue:"过渡段"},
+        {dictLabel:"基本段",dictValue:"基本段"},
+        {dictLabel:"出口段",dictValue:"出口段"},
+      ],
       directionOptions:[],
     }
   },
@@ -274,6 +355,9 @@ export default {
   },
   methods:{
     closeLogin(){
+      this.lightFilesModelWei ={beforeLuminance:''}
+      this.lightFilesModel ={beforeLuminance:''}
+      this.$emit("selectLightStrategyList");
       this.visibleSync = !this.visibleSync
     },
     // 获取济南光照照图表数据信息
@@ -414,6 +498,7 @@ export default {
     },
     // 获取潍坊光照照图表数据信息
     initLoginChart1() {
+      console.log()
       let newPromise = new Promise((resolve) => {
         resolve();
       });
@@ -557,10 +642,32 @@ export default {
           let rows = response.rows[0];
           this.lightFilesModel.id = rows.id
           this.lightFilesModel.isStatus =  rows.isStatus.toString()
+          this.lightFormItems = []
           if(!!rows.beforeLuminance){
-            this.lightFilesModel.beforeLuminance =  rows.beforeLuminance
+            let jsonArray = JSON.parse(rows.beforeLuminance);
+            if(!!jsonArray){
+              for (let index = 0; index < jsonArray.length; index++) {
+                let lightFormItems ={
+                  lightParagraph: jsonArray[index].lightParagraph,
+                  beforeLuminance:jsonArray[index].beforeLuminance,
+                }
+                this.lightFormItems.push(lightFormItems)
+              }
+            }else{
+              this.lightFormItems = [
+                {
+                  lightParagraph: '',
+                  beforeLuminance:'',
+                }
+              ]
+            }
           }else{
-            this.lightFilesModel.beforeLuminance =''
+            this.lightFormItems = [
+              {
+                lightParagraph: '',
+                beforeLuminance:'',
+              }
+            ]
           }
         }else{
           this.lightFilesModel.id = ''
@@ -569,8 +676,51 @@ export default {
         this.$forceUpdate();
       })
     },
+    //潍坊光强照明配置查询
+    lightListConfigWei(queryParams){
+      debugger
+      listConfig(queryParams).then((response) => {
+        debugger
+        if( response.rows.length>0){
+          let rows = response.rows[0];
+          this.lightFilesModelWei.id = rows.id
+          this.lightFilesModelWei.isStatus =  rows.isStatus.toString()
+          this.lightFormItemsWei = []
+          if(!!rows.beforeLuminance){
+            let jsonArray = JSON.parse(rows.beforeLuminance);
+            if(!!jsonArray){
+              for (let index = 0; index < jsonArray.length; index++) {
+                let lightFormItems ={
+                  lightParagraph: jsonArray[index].lightParagraph,
+                  beforeLuminance:jsonArray[index].beforeLuminance,
+                }
+                this.lightFormItemsWei.push(lightFormItems)
+              }
+            }else{
+              this.lightFormItemsWei = [
+                {
+                  lightParagraph: '',
+                  beforeLuminance:'',
+                }
+              ]
+            }
+          }else{
+            this.lightFormItemsWei = [
+              {
+                lightParagraph: '',
+                beforeLuminance:'',
+              }
+            ]
+          }
+        }else{
+          this.lightFilesModelWei.id = ''
+          this.lightFilesModelWei.beforeLuminance =''
+        }
+        this.$forceUpdate();
+      })
+    },
     //获取光亮的数据
-    getEchartsData(row) {
+    getEchartsData(row,type) {
       debugger
       //清空上次数据
       this.XDataLight = []
@@ -578,14 +728,26 @@ export default {
       this.yDataLight1 = []
       this.yDataLight2 = []
       let querysParamsTab = {}
+      if(row==null && type ==null){
+        this.tunnelDisabled = false
+        this.$nextTick(() => {
+          this.initLoginChart();
+        });
+      }
       if(!!row){
         this.lightFilesModel.tunnelId = row.tunnelId
+        this.lightFilesModelWei.tunnelId = row.tunnelId
       }
       querysParamsTab.tunnelId =   this.lightFilesModel.tunnelId
       querysParamsTab.pageNum =  1
       querysParamsTab.pageSize =  999
       //类型 外部测光设备
       querysParamsTab.searchValue =  4
+      //刷新数据
+      if(type=="refresh"){
+        this.lightChangeEvent()
+        this.lightChangeEventWei()
+      }
       //根据隧道id获取相应外部测光设备
       dataDevicesLogInfoList(this.addDateRange(querysParamsTab)).then(
         (response) => {
@@ -593,13 +755,17 @@ export default {
           let listTab = response.rows;
           if(listTab.length>0){
             if(!!row ){//编辑打开
-
-              this.lightFilesModel.direction =row.direction
-
-              debugger
-              let queryParams = {tunnelName:row.tunnelId,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
+              //济南
+              this.lightFilesModel.direction ="2"
+              let queryParams = {tunnelName:row.tunnelName,pageSize:2,pageNum:1,direction:this.lightFilesModel.direction,modeType:0}
               //查询出原有配置并且显示
               this.lightListConfig(queryParams)
+
+              //潍坊
+              this.lightFilesModelWei.direction ="1"
+              let queryParamsWei = {tunnelName:row.tunnelName,pageSize:2,pageNum:1,direction:this.lightFilesModelWei.direction,modeType:0}
+              //查询出原有配置并且显示
+              this.lightListConfigWei(queryParamsWei)
             }
             this.queryParamsLight.direction = this.lightFilesModel.direction
             this.queryParamsLight1.direction = this.lightFilesModel.direction
@@ -726,8 +892,6 @@ export default {
       debugger
       let date = new Date();
       date.setHours(0, 0, 0, 0); // 设置时间为凌晨00:00
-      console.log(date.getHours() )
-      console.log(date.getMinutes() )
       while (date.getHours() < 24 ) {
         timeList.push("2023-08-01" +" "+this.formatTime(date.getHours(), date.getMinutes()));
         if(this.formatTime(date.getHours(), date.getMinutes())=="00:10"){
@@ -753,9 +917,6 @@ export default {
         } else {
           const prevTime = new Date(list1[index - num].createTime);
           const currTime = new Date(list1[index].createTime);
-          console.log(list1[index - num].createTime)
-          console.log(list1[index].createTime)
-          console.log(currTime - prevTime)
           const diffInMinutes = (currTime - prevTime) / (1000 * 60); // 计算相邻实体的时间差，单位为分钟
           num = num+1
           if(diffInMinutes >= 5){
@@ -769,11 +930,21 @@ export default {
     //光强 修改隧道名称查看不同隧道 光强照明配置
     lightChangeEvent(indextabs) {
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
-      console.log(tunnel)
       debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
 
       this.lightListConfig(queryParams)
+      this.$forceUpdate()
+    },
+
+    //光强 修改隧道名称查看不同隧道 光强照明配置
+    lightChangeEventWei(indextabs) {
+      let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModelWei.tunnelId)
+
+      debugger
+      let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModelWei.direction,modeType:0}
+
+      this.lightListConfigWei(queryParams)
       this.$forceUpdate()
     },
     /** 查询隧道列表 */
@@ -792,12 +963,15 @@ export default {
         this.directionOptions = response.data;
       });
     },
-    //光照下修比例保存
+    //济南光照下修比例保存
     submitlightForm(){
       debugger
       console.log(this.lightFilesModel)
       //模式1 车辆 0光强
       this.lightFilesModel.modeType = 0
+      //下修比例
+
+      this.lightFilesModel.beforeLuminance = JSON.stringify( this.lightFormItems)
       if (!!this.lightFilesModel.id) {
         updateConfig(this.lightFilesModel).then((response) => {
           this.$modal.msgSuccess("修改成功");
@@ -810,10 +984,33 @@ export default {
         });
       }
     },
+    //潍坊光照下修比例保存
+    submitlightFormWei(){
+      debugger
+      console.log(this.lightFilesModelWei)
+      //模式1 车辆 0光强
+      this.lightFilesModelWei.modeType = 0
+      this.lightFilesModelWei.beforeLuminance = JSON.stringify( this.lightFormItemsWei)
+      if (!!this.lightFilesModelWei.id) {
+        updateConfig(this.lightFilesModelWei).then((response) => {
+          this.$modal.msgSuccess("修改成功");
+        });
+      } else {
+        addConfig(this.lightFilesModelWei).then((response) => {
+          debugger
+          this.lightFilesModelWei.id =response.data.id
+          this.$modal.msgSuccess("新增成功");
+        });
+      }
+    },
     //刷新光照图表
     refreshlightForm(){
       console.log(this.lightFilesModel)
-      this.getEchartsData()
+      this.getEchartsData(null,"refresh")
+    },
+    //刷新光照图表
+    refreshlightFormWei(){
+      this.getEchartsData(null,"refresh")
     },
     //生成日期
     getdate(currentDate){
@@ -840,6 +1037,38 @@ export default {
 
       return [formattedDate + ' 00:00:00', formattedDate + ' 23:59:59'];
 
+    },
+    deleteHandleUpdate(index){
+      if (this.lightFormItems.length == 1) {
+        return this.$modal.msgWarning("至少保留一条执行操作");
+      }
+      this.lightFormItems.splice(index,1)
+      debugger
+    },
+    addHandleUpdate(index){
+      debugger
+      let form=
+      {
+          lightParagraph: '',
+          beforeLuminance:'',
+      }
+      this.lightFormItems.push(form)
+    },
+    deleteHandleUpdateWei(index){
+      if (this.lightFormItems.length == 1) {
+        return this.$modal.msgWarning("至少保留一条执行操作");
+      }
+      this.lightFormItemsWei.splice(index,1)
+      debugger
+    },
+    addHandleUpdateWei(index){
+      debugger
+      let form=
+        {
+          lightParagraph: '',
+          beforeLuminance:'',
+        }
+      this.lightFormItemsWei.push(form)
     },
   },
   props:{
@@ -873,5 +1102,35 @@ export default {
 </script>
 
 <style scoped>
-
+.el-form-item-data{
+  .el-form-item__content{
+    width:60%;
+  }
+}
+.el-form-item-direction{
+.el-form-item__content{
+  width:80%;
+}
+}
+.buttonBox {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 36px;
+.delete,.add{
+  width:16px;
+  height: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  border:none;
+  background-color: transparent;
+}
+.delete{
+  background-image: url(../../../../assets/icons/delete.png);
+}
+.add{
+  background-image: url(../../../../assets/icons/add.png);
+}
+}
 </style>

@@ -429,6 +429,8 @@ export default {
       },
       templateData:{},
       dialogVisibleTem:false,
+      //定时策略光照和普通区分字段
+      timingType:"",
     };
   },
   methods: {
@@ -495,8 +497,10 @@ export default {
       return  true;
     },
 
-    init() {
+    init(timingType) {
+      debugger
       if (this.sink == "add") {
+        this.timingType =timingType
         this.resetForm();
         this.$nextTick(() => {
           this.showCronBox = false;
@@ -793,6 +797,8 @@ export default {
         item.state = item.state.toString();
       });
       let params = this.strategyForm;
+      debugger
+      params.timingType = this.timingType
       addStrategyInfo(params).then((res) => {
         this.resetForm();
         let data = true;

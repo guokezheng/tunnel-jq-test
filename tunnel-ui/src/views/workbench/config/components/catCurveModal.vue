@@ -57,6 +57,7 @@
               <el-form-item label="隧道名称" prop="tunnelId">
                 <el-select
                   style="width: 100%"
+                  :disabled="tunnelDisabled"
                   v-model="catFilesModel.tunnelId"
                   placeholder="请选择隧道"
                   clearable
@@ -75,6 +76,7 @@
               <el-form-item label="方向" prop="direction">
                 <el-select
                   clearable
+                  :disabled="tunnelDisabled"
                   v-model="catFilesModel.direction"
                   placeholder="请选择隧道方向"
                   @change="catChangeEvent"
@@ -100,65 +102,36 @@
                     inactive-color="#ff4949"
                     active-value="0"
                     inactive-value="1"
-                    @change="changeCattate"
                   >
                   </el-switch>
                 </template>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="下修比例"  >
-                <el-input  v-model="catFilesModel.beforeLuminance"    @change="beforeLuminanceEvent"></el-input>
-              </el-form-item>
-            </el-col>
+<!--            <el-col :span="12">-->
+<!--              <el-form-item label="下修比例"  >-->
+<!--                <el-input  v-model="catFilesModel.beforeLuminance"    @change="beforeLuminanceEvent"></el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
           </el-row>
 <!--          <el-row :gutter="24" style="clear:both;">-->
 
 <!--          </el-row>-->
           <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
+            <el-col :span="24">
+              <el-form-item label="时间段"  v-for="(item, index) in formItems" :key="index"  class="el-form-item-data">
 
-              <el-form-item label="时间段"  v-for="(item, index) in formItems" :key="index" >
-                <!--                <el-time-picker-->
-                <!--                  style="width: 35%"-->
-                <!--                  v-model="item.startTime"-->
-                <!--                  size="small"-->
-                <!--                  :picker-options="pickerOptions"-->
-                <!--                  placeholder="选择开始时间">-->
-                <!--                </el-time-picker>-->
                 <el-time-picker
                   placeholder="选择开始时间"
                   v-model="item.startTime"
-                  style="width: 38%"
+                  style="width: 30%"
                 ></el-time-picker>
 
-                <!--                <el-time-picker-->
-                <!--                  style="width: 35%"-->
-                <!--                  v-model="item.endTime"-->
-                <!--                  size="small"-->
-                <!--                  :picker-options="pickerOptions"-->
-                <!--                  placeholder="选择结束时间">-->
-                <!--                </el-time-picker>-->
                 <el-time-picker
                   placeholder="选择结束时间"
                   v-model="item.endTime"
-                  style="width: 38%"
+                  style="width: 30%"
                 ></el-time-picker>
-                <!--                <el-button-->
-                <!--                  style="width: 10%"-->
-                <!--                  size="small"-->
-                <!--                  class="tableBlueButtton"-->
-                <!--                  @click="addHandleUpdate(index)"-->
-                <!--                >+-->
-                <!--                </el-button-->
-                <!--                ><el-button-->
-                <!--                style="width: 10%"-->
-                <!--                size="small"-->
-                <!--                class="tableBlueButtton"-->
-                <!--                @click="deleteHandleUpdate(index)"-->
-                <!--              >- -->
-                <!--              </el-button-->
-                <!--              >-->
-                <!--                <el-col :span="2" class="buttonBox">-->
+                <el-input style="width: 20%;"  v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
                 <div class="buttonBox" style="width: 20% ;float: right;" >
                   <el-button
                     class="delete"
@@ -169,9 +142,8 @@
                     @click="addHandleUpdate(index)"
                   ></el-button>
                 </div>
-                <!--                </el-col>-->
               </el-form-item>
-
+            </el-col>
           </el-row>
         </el-form>
       </el-col>
@@ -182,7 +154,7 @@
             <el-button
               size="mini"
               class="tableBlueButtton"
-              @click="submitCatForm"
+              @click="submitCatFormWei"
             >保存</el-button
             >
             <el-button
@@ -195,7 +167,7 @@
         </el-row>
         <el-form
           ref="loginQueryForm"
-          :model="catFilesModel"
+          :model="catFilesModelWei"
           :inline="true"
           class="loginQueryFormClass"
           label-width="70px"
@@ -207,10 +179,11 @@
               <el-form-item label="隧道名称" prop="tunnelId">
                 <el-select
                   style="width: 100%"
-                  v-model="catFilesModel.tunnelId"
+                  :disabled="tunnelDisabled"
+                  v-model="catFilesModelWei.tunnelId"
                   placeholder="请选择隧道"
                   clearable
-                  @change="catChangeEvent"
+                  @change="catChangeEventWei"
                 >
                   <el-option
                     v-for="item in tunnelData"
@@ -225,9 +198,10 @@
               <el-form-item label="方向" prop="direction">
                 <el-select
                   clearable
-                  v-model="catFilesModel.direction"
+                  :disabled="tunnelDisabled"
+                  v-model="catFilesModelWei.direction"
                   placeholder="请选择隧道方向"
-                  @change="catChangeEvent"
+                  @change="catChangeEventWei"
                   style="width: 100%"
                 >
                   <el-option
@@ -245,82 +219,53 @@
               <el-form-item label="状态" align="center" prop="schedulerTime">
                 <template slot-scope="scope">
                   <el-switch
-                    v-model="catFilesModel.isStatus"
+                    v-model="catFilesModelWei.isStatus"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
                     active-value="0"
                     inactive-value="1"
-                    @change="changeCattate"
                   >
                   </el-switch>
                 </template>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="下修比例"  >
-                <el-input  v-model="catFilesModel.beforeLuminance"    @change="beforeLuminanceEvent"></el-input>
-              </el-form-item>
-            </el-col>
+<!--            <el-col :span="12">-->
+<!--              <el-form-item label="下修比例"  >-->
+<!--                <el-input  v-model="catFilesModelWei.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
           </el-row>
           <!--          <el-row :gutter="24" style="clear:both;">-->
 
           <!--          </el-row>-->
           <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
+            <el-col :span="24">
+              <el-form-item label="时间段"  v-for="(item, index) in formItemsWei" :key="index"  class="el-form-item-data">
 
-            <el-form-item label="时间段"  v-for="(item, index) in formItems" :key="index" >
-              <!--                <el-time-picker-->
-              <!--                  style="width: 35%"-->
-              <!--                  v-model="item.startTime"-->
-              <!--                  size="small"-->
-              <!--                  :picker-options="pickerOptions"-->
-              <!--                  placeholder="选择开始时间">-->
-              <!--                </el-time-picker>-->
-              <el-time-picker
-                placeholder="选择开始时间"
-                v-model="item.startTime"
-                style="width: 38%"
-              ></el-time-picker>
+                <el-time-picker
+                  placeholder="选择开始时间"
+                  v-model="item.startTime"
+                  style="width: 30%"
+                ></el-time-picker>
 
-              <!--                <el-time-picker-->
-              <!--                  style="width: 35%"-->
-              <!--                  v-model="item.endTime"-->
-              <!--                  size="small"-->
-              <!--                  :picker-options="pickerOptions"-->
-              <!--                  placeholder="选择结束时间">-->
-              <!--                </el-time-picker>-->
-              <el-time-picker
-                placeholder="选择结束时间"
-                v-model="item.endTime"
-                style="width: 38%"
-              ></el-time-picker>
-              <!--                <el-button-->
-              <!--                  style="width: 10%"-->
-              <!--                  size="small"-->
-              <!--                  class="tableBlueButtton"-->
-              <!--                  @click="addHandleUpdate(index)"-->
-              <!--                >+-->
-              <!--                </el-button-->
-              <!--                ><el-button-->
-              <!--                style="width: 10%"-->
-              <!--                size="small"-->
-              <!--                class="tableBlueButtton"-->
-              <!--                @click="deleteHandleUpdate(index)"-->
-              <!--              >- -->
-              <!--              </el-button-->
-              <!--              >-->
-              <!--                <el-col :span="2" class="buttonBox">-->
-              <div class="buttonBox" style="width: 20% ;float: right;" >
-                <el-button
-                  class="delete"
-                  @click="deleteHandleUpdate(index)"
-                ></el-button>
-                <el-button
-                  class="add"
-                  @click="addHandleUpdate(index)"
-                ></el-button>
-              </div>
-              <!--                </el-col>-->
-            </el-form-item>
+                <el-time-picker
+                  placeholder="选择结束时间"
+                  v-model="item.endTime"
+                  style="width: 30%"
+                ></el-time-picker>
+                <el-input style="width: 20%;"  v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
+                <div class="buttonBox" style="width: 20% ;float: right;" >
+                  <el-button
+                    class="delete"
+                    @click="deleteHandleUpdateWei(index)"
+                  ></el-button>
+                  <el-button
+                    class="add"
+                    @click="addHandleUpdateWei(index)"
+                  ></el-button>
+                </div>
+              </el-form-item>
+            </el-col>
 
           </el-row>
         </el-form>
@@ -333,7 +278,7 @@
 
 <script>
 import * as echarts from "echarts";
-import {addConfig, listConfig, updateConfig} from "@/api/business/enhancedLighting/app";
+import {addConfig, listConfig, updateConfig} from "@/api/business/wisdomLight/app";
 import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 import {analysisDataByTime} from "@/api/system/trafficStatistics/api";
@@ -345,13 +290,25 @@ export default {
       visibleSync:false,
       //车辆数配置文件
       catFilesModel:{beforeLuminance:''},
+      //车辆数配置文件
+      catFilesModelWei:{beforeLuminance:''},
       formItems: [
         {
           label: '',
           startTime: '',
           endTime: '',
+          beforeLuminance:'',
         }
       ],
+      formItemsWei: [
+        {
+          label: '',
+          startTime: '',
+          endTime: '',
+          beforeLuminance:'',
+        }
+      ],
+      tunnelDisabled:true,
       paramsData:{},
       tunnelData:[],
       //隧道方向
@@ -360,8 +317,8 @@ export default {
         {dictLabel:"潍坊方向",dictValue:"1"}
       ],//方向列表
       catDirectionOptions: [
-        {dictLabel:"上行",dictValue:"1"},
-        {dictLabel:"下行",dictValue:"2"}
+        {dictLabel:"潍坊方向",dictValue:"1"},
+        {dictLabel:"济南方向",dictValue:"2"}
       ],
       directionOptions:[],
       //车辆 x 时间
@@ -388,12 +345,32 @@ export default {
   },
   methods:{
     closeLogin(){
+      this.catFilesModel = {}
+      this.formItems = [ {
+        label: '',
+        startTime: '',
+        endTime: '',
+        beforeLuminance:'',
+      }]
+      this.catFilesModelWei = {}
+      this.formItemsWei = [ {
+        label: '',
+        startTime: '',
+        endTime: '',
+        beforeLuminance:'',
+      }]
       this.visibleSync = !this.visibleSync
     },
     beforeLuminanceEvent(e){
       debugger
       console.log(e)
       this.catFilesModel.beforeLuminance  = e
+      this.$forceUpdate()
+    },
+    beforeLuminanceEventWei(e){
+      debugger
+      console.log(e)
+      this.catFilesModelWei.beforeLuminance  = e
       this.$forceUpdate()
     },
     //生成日期
@@ -438,6 +415,22 @@ export default {
       }
       this.formItems.push(form)
     },
+    deleteHandleUpdateWei(index){
+      if (this.formItemsWei.length == 1) {
+        return this.$modal.msgWarning("至少保留一条执行操作");
+      }
+      this.formItemsWei.splice(index,1)
+      debugger
+    },
+    addHandleUpdateWei(index){
+      debugger
+      let form={
+        label: '',
+        startTime: '',
+        endTime: ''
+      }
+      this.formItemsWei.push(form)
+    },
     //车来灯亮配置保存
     submitCatForm(){
       //formItems 校验
@@ -449,12 +442,15 @@ export default {
         } else if (element.endTime == null || element.endTime == "") {
           this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
           return;
+        }else if (element.beforeLuminance == null || element.beforeLuminance == "") {
+          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+          return;
         }
       }
-      if(this.catFilesModel.beforeLuminance== null || this.catFilesModel.beforeLuminance== ""){
-        this.$modal.msgError("下修比例不能为空");
-        return;
-      }
+      // if(this.catFilesModel.beforeLuminance== null || this.catFilesModel.beforeLuminance== ""){
+      //   this.$modal.msgError("下修比例不能为空");
+      //   return;
+      // }
       if(this.catFilesModel.tunnelId== null || this.catFilesModel.tunnelId== ""){
         this.$modal.msgError("隧道名称不能为空");
         return;
@@ -520,6 +516,91 @@ export default {
         });
       }
     },
+    //车来灯亮配置保存
+    submitCatFormWei(){
+      //formItems 校验
+      for (let index = 0; index < this.formItemsWei.length; index++) {
+        const element = this.formItemsWei[index];
+        if (element.startTime == null || element.startTime == "") {
+          this.$modal.msgError("时间区间开始时间不能为空,请填写开始时间");
+          return;
+        } else if (element.endTime == null || element.endTime == "") {
+          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+          return;
+        } else if (element.beforeLuminance == null || element.beforeLuminance == "") {
+          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+          return;
+        }
+      }
+      // if(this.catFilesModel.beforeLuminance== null || this.catFilesModel.beforeLuminance== ""){
+      //   this.$modal.msgError("下修比例不能为空");
+      //   return;
+      // }
+      if(this.catFilesModelWei.tunnelId== null || this.catFilesModelWei.tunnelId== ""){
+        this.$modal.msgError("隧道名称不能为空");
+        return;
+      }
+      if(this.catFilesModelWei.direction== null || this.catFilesModelWei.direction== ""){
+        this.$modal.msgError("隧道方向不能为空");
+        return;
+      }
+      //处理时间转json
+      let formItemsOne = JSON.parse(JSON.stringify(this.formItemsWei))
+      for (let index = 0; index < this.formItemsWei.length; index++) {
+        const param = this.formItemsWei[index];
+        param.direction = this.catFilesModelWei.direction
+        param.startTime = new Date( param.startTime);
+        param.startTime =
+          (param.startTime.getHours() < 10
+            ? "0" + param.startTime.getHours()
+            : param.startTime.getHours()) +
+          ":" +
+          (param.startTime.getMinutes() < 10
+            ? "0" + param.startTime.getMinutes()
+            : param.startTime.getMinutes()) +
+          ":" +
+          (param.startTime.getSeconds() < 10
+            ? "0" + param.startTime.getSeconds()
+            : param.startTime.getSeconds());
+        param.endTime = new Date( param.endTime);
+        param.endTime =
+          (param.endTime.getHours() < 10
+            ? "0" + param.endTime.getHours()
+            : param.endTime.getHours()) +
+          ":" +
+          (param.endTime.getMinutes() < 10
+            ? "0" + param.endTime.getMinutes()
+            : param.endTime.getMinutes()) +
+          ":" +
+          (param.endTime.getSeconds() < 10
+            ? "0" + param.endTime.getSeconds()
+            : param.endTime.getSeconds());
+      }
+      this.catFilesModelWei.timeSlot = JSON.stringify(this.formItemsWei);
+
+      this.formItemsWei =  formItemsOne
+      console.log(this.formItemsWei)
+      console.log(this.catFilesModelWei)
+      debugger
+      //模式1 车辆 0光强
+      this.catFilesModelWei.modeType = 1
+      if (!!this.catFilesModelWei.id) {
+        updateConfig(this.catFilesModelWei).then((response) => {
+          this.$modal.msgSuccess("修改成功");
+          this.open = false;
+          this.$refs.tableFile.clearSelection();
+          this.getList();
+        });
+      } else {
+        addConfig(this.catFilesModelWei).then((response) => {
+          debugger
+          this.catFilesModelWei.id =response.data.id
+          this.$modal.msgSuccess("新增成功");
+          this.open = false;
+          this.getList();
+        });
+      }
+    },
     //刷新车辆
     catHandleSave(){
       //获取车辆数据
@@ -527,7 +608,7 @@ export default {
     },
 
     //获取车辆数据
-    async getEchartsTrend(row){
+    async getEchartsTrend(row,type){
       this.XData = []
       this.yData3 = []
       this.yData2 = []
@@ -537,6 +618,12 @@ export default {
       this.yDataOne2 = []
       this.yDataOne1 = []
 
+      if(row==null && type ==null){
+        this.tunnelDisabled = false
+        this.$nextTick(() => {
+          this.initLoginChart();
+        });
+      }
       // 获取当前日期
       let currentDate = new Date();
       // 获取前天日期
@@ -551,17 +638,26 @@ export default {
 
 
       debugger
-      console.log(this.catFilesModel.tunnelId)
       if(!!row){//首次
-        // this.queryParamsLight.tunnelId = tunnelItems.tunnelId
+        // 济南方向
         this.catFilesModel.tunnelId= row.tunnelId
-        this.catFilesModel.direction= "1"
+        this.catFilesModel.direction= "2"
         let  tunnel = this.tunnelData.find(tunnelItem => row.tunnelId ==  this.catFilesModel.tunnelId)
         console.log(tunnel)
         debugger
         //车辆
-        let queryParams = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction:row.direction,modeType:1}
+        let queryParams = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction: this.catFilesModel.direction,modeType:1}
         this.catListConfig(queryParams)
+
+        // 潍坊方向
+        this.catFilesModelWei.tunnelId= row.tunnelId
+        this.catFilesModelWei.direction= "1"
+        let  tunnelWei = this.tunnelData.find(tunnelItem => row.tunnelId ==  this.catFilesModelWei.tunnelId)
+        console.log(tunnelWei)
+        debugger
+        //车辆
+        let queryParamsWei = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction: this.catFilesModelWei.direction,modeType:1}
+        this.catListConfigWei(queryParamsWei)
       }
 
       //济南
@@ -952,10 +1048,13 @@ export default {
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
       this.catListConfig(queryParams)
     },
-    //车辆状态
-    changeCattate(e){
-      console.log(e)
+    //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
+    catChangeEventWei(){
+      let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
+      console.log(tunnel)
       debugger
+      let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
+      this.catListConfigWei(queryParams)
     },
     //车辆照明配置查询
     catListConfig(queryParams){
@@ -997,6 +1096,59 @@ export default {
         }else{
           this.catFilesModel.id = ''
           this.catFilesModel.beforeLuminance =''
+          this.formItems =[
+            {
+              label: '',
+              startTime: '',
+              endTime: '',
+            }
+          ]
+        }
+        this.$forceUpdate();
+        // this.total = response.total;
+        // this.loading = false;
+      })
+    },
+    //车辆照明配置查询
+    catListConfigWei(queryParams){
+      listConfig(queryParams).then((response) => {
+        if( response.rows.length>0){
+          let rows = response.rows[0];
+          this.catFilesModelWei.id = rows.id
+          this.catFilesModelWei.isStatus =  rows.isStatus.toString()
+          if(!!rows.beforeLuminance){
+            this.catFilesModelWei.beforeLuminance =  rows.beforeLuminance
+          }else{
+            this.catFilesModelWei.beforeLuminance =''
+          }
+
+
+          let jsonArray = JSON.parse(rows.timeSlot);
+          if(!!jsonArray){
+            this.formItemsWei =JSON.parse(rows.timeSlot);
+            if(this.formItemsWei){
+              for (let index = 0; index < this.formItemsWei.length; index++) {
+                const param = this.formItemsWei[index];
+                param.startTime = new Date(
+                  ("1970-01-01 " + param.startTime).replace(/-/g, "/")
+                );
+                param.endTime = new Date(
+                  ("1970-01-01 " + param.endTime).replace(/-/g, "/")
+                );
+              }
+            }
+          }else{
+            this.formItemsWei =[
+              {
+                label: '',
+                startTime: '',
+                endTime: '',
+              }
+            ]
+          }
+        }else{
+          this.catFilesModelWei.id = ''
+          this.catFilesModelWei.beforeLuminance =''
           this.formItems =[
             {
               label: '',
@@ -1063,5 +1215,10 @@ export default {
 .add{
   background-image: url(../../../../assets/icons/add.png);
 }
+}
+.el-form-item-data{
+  .el-form-item__content{
+    width:85%;
+  }
 }
 </style>

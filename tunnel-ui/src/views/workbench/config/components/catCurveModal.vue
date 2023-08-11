@@ -633,7 +633,7 @@ export default {
       let threeDaysAgo = new Date();
       threeDaysAgo.setDate(currentDate.getDate() - 1);
       let ds = this.getCatdate(currentDate)//今天
-      let ds1 = this.getCatdate(twoDaysAgo)//前天
+      let ds1 = this.getCatdate(twoDaysAgo)//历史
       let ds2 = this.getCatdate(threeDaysAgo)//昨天
 
 
@@ -688,7 +688,7 @@ export default {
           }
         }
       });
-      //前天
+      //历史
       await analysisDataByTime(this.addDateRange(json, ds1)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
@@ -733,7 +733,7 @@ export default {
           }
         }
       });
-      //前天
+      //历史
       await analysisDataByTime(this.addDateRange(json1, ds1)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
@@ -793,7 +793,7 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["前天车辆数", "昨天车辆数", "今天车辆数"],
+            data: ["历史车辆数", "历史车辆数", "今天车辆数"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -855,7 +855,7 @@ export default {
           },
           series: [
             {
-              name: "前天车辆数",
+              name: "历史车辆数",
               type: "line",
               color: "#787FFE",
               symbol: "circle",
@@ -869,7 +869,7 @@ export default {
               data: this.yData1,
             },
             {
-              name: "昨天车辆数",
+              name: "历史车辆数",
               type: "line",
               color: "#00DCA2",
               symbol: "circle",
@@ -928,7 +928,7 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["前天车辆数", "昨天车辆数", "今天车辆数"],
+            data: ["历史车辆数", "历史车辆数", "今天车辆数"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -990,7 +990,7 @@ export default {
           },
           series: [
             {
-              name: "前天车辆数",
+              name: "历史车辆数",
               type: "line",
               color: "#787FFE",
               symbol: "circle",
@@ -1004,7 +1004,7 @@ export default {
               data: this.yDataOne1,
             },
             {
-              name: "昨天车辆数",
+              name: "历史车辆数",
               type: "line",
               color: "#00DCA2",
               symbol: "circle",

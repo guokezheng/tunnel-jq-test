@@ -384,7 +384,7 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["前天光强", "昨天光强", "今天光强"],
+            data: ["历史光强", "历史光强", "今天光强"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -446,7 +446,7 @@ export default {
           },
           series: [
             {
-              name: "前天光强",
+              name: "历史光强",
               type: "line",
               color: "#787FFE",
               symbol: "circle",
@@ -460,7 +460,7 @@ export default {
               data: this.yDataLight,
             },
             {
-              name: "昨天光强",
+              name: "历史光强",
               type: "line",
               color: "#00DCA2",
               symbol: "circle",
@@ -521,7 +521,7 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["前天光强", "昨天光强", "今天光强"],
+            data: ["历史光强", "历史光强", "今天光强"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -583,7 +583,7 @@ export default {
           },
           series: [
             {
-              name: "前天光强",
+              name: "历史光强",
               type: "line",
               color: "#787FFE",
               symbol: "circle",
@@ -597,7 +597,7 @@ export default {
               data: this.yDataLightOne,
             },
             {
-              name: "昨天光强",
+              name: "历史光强",
               type: "line",
               color: "#00DCA2",
               symbol: "circle",

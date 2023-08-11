@@ -673,7 +673,7 @@ export default {
             const randomNumber = Math.floor(Math.random() * 70);
             this.XData.push(response.data[i].date)
             // this.yData3.push(response.data[i].byVehicelNum)
-            this.yData3.push(randomNumber)
+            this.yData3.push(response.data[i].byVehicelNum)
           }
         }
       });
@@ -684,7 +684,7 @@ export default {
             // this.XData.push(response.data[i].date)
             const randomNumber = Math.floor(Math.random() * 70);
             // this.yData2.push(response.data[i].byVehicelNum)
-            this.yData2.push(randomNumber)
+            this.yData2.push(response.data[i].byVehicelNum)
           }
         }
       });
@@ -695,7 +695,7 @@ export default {
             // this.XData.push(response.data[i].date)
             // this.yData1.push(response.data[i].byVehicelNum)
             const randomNumber = Math.floor(Math.random() * 70);
-            this.yData1.push(randomNumber)
+            this.yData1.push(response.data[i].byVehicelNum)
           }
 
         }
@@ -719,7 +719,7 @@ export default {
             const randomNumber = Math.floor(Math.random() * 70);
             this.XDataOne.push(response.data[i].date)
             // this.yData3.push(response.data[i].byVehicelNum)
-            this.yDataOne3.push(randomNumber)
+            this.yDataOne3.push(response.data[i].byVehicelNum)
           }
         }
       });
@@ -729,7 +729,7 @@ export default {
           for (let i = 0; i < response.data.length; i++) {
             const randomNumber = Math.floor(Math.random() * 70);
             // this.yData2.push(response.data[i].byVehicelNum)
-            this.yDataOne2.push(randomNumber)
+            this.yDataOne2.push(response.data[i].byVehicelNum)
           }
         }
       });
@@ -740,7 +740,7 @@ export default {
             // this.XData.push(response.data[i].date)
             // this.yData1.push(response.data[i].byVehicelNum)
             const randomNumber = Math.floor(Math.random() * 70);
-            this.yDataOne1.push(randomNumber)
+            this.yDataOne1.push(response.data[i].byVehicelNum)
           }
 
         }

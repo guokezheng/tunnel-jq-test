@@ -5,7 +5,6 @@ import Cookies from 'js-cookie'
 import Element from 'element-ui'
 import './assets/styles/element-variables.scss'
 import './views/iot/css/iot.css'
-
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'
@@ -40,6 +39,8 @@ import DictData from '@/components/DictData'
 import VueSeamlessScroll from 'vue-seamless-scroll'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/css/swiper.css'
+//el-table无线滚动
+
 // 事件弹窗组件
 import eventDialog from '@/components/eventDialogTable/eventDialog.vue'
 import eventDialogTable from '@/components/eventDialogTable'
@@ -115,7 +116,6 @@ Vue.use(plugins)
 Vue.use(gisMap)
 Vue.use(VueMeta)
 DictData.install()
-
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

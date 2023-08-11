@@ -472,56 +472,6 @@
                     @mousemove="openTooltip(item, index)"
                     @mouseleave="closeTooltip(item)"
                   >
-                    <!-- 设备图标上提示文字 -->
-
-                    <div
-                      v-if="item.click"
-                      class="screenEqNameBox"
-                      :style="{
-                        top:
-                          item.tooltipType == 1 || item.tooltipType == 2
-                            ? '35px'
-                            : '-50px',
-                        left:
-                          item.tooltipType == 1 || item.tooltipType == 3
-                            ? '0px'
-                            : '-100px',
-                      }"
-                    >
-                      {{ item.eqName }}
-                    </div>
-                    <div
-                      v-if="item.textFalse"
-                      class="textFalseBox"
-                      :style="{
-                        top:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 2
-                            ? '35px'
-                            : '-50px',
-                        left:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 3
-                            ? '0px'
-                            : '-100px',
-                      }"
-                    >
-                      请选择同种设备
-                    </div>
-                    <div
-                      v-if="item.textKKFalse"
-                      class="textFalseBox"
-                      :style="{
-                        top:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 2
-                            ? '35px'
-                            : '-50px',
-                        left:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 3
-                            ? '0px'
-                            : '-100px',
-                      }"
-                    >
-                      请选择可控设备
-                    </div>
                     <div
                       class="tooltipBox"
                       v-if="showTooltipIndex == index"
@@ -2956,7 +2906,7 @@ export default {
 
   methods: {
     mouseSrollAuto(e){
-      console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      // console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if(e.target.scrollLeft > 0){
         this.resetCanvasFlag = true
       }else{
@@ -2965,8 +2915,8 @@ export default {
     },
     // 管理站级联回显选中效果
     cascaderHandleChange() {
-      console.log(1);
-      console.log(this.siteList, "siteList");
+      // console.log(1);
+      // console.log(this.siteList, "siteList");
       let handleText = "";
       for (let item of this.siteList) {
         if (this.tunnelQueryParams.deptId == item.id) {
@@ -2980,14 +2930,14 @@ export default {
         }
       }
 
-      console.log(handleText, "handleText");
+      // console.log(handleText, "handleText");
       // 事件监听实现懒加载选择任意一级
       this.$nextTick(() => {
         //获取label
         const labelDoms = document.querySelectorAll(
           ".el-cascader-node .el-cascader-node__label"
         );
-        console.log(labelDoms, "labelDoms");
+        // console.log(labelDoms, "labelDoms");
 
         //获取radio 级联带单选框时使用
         // const radioDoms = document.querySelectorAll('.el-cascader-node .el-radio')
@@ -3205,7 +3155,7 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      console.log(data, "data");
+      // console.log(data, "data");
       // 如果存在children，则代表是父级
       if (data.children) {
         // 点击父级业务
@@ -3615,7 +3565,7 @@ export default {
               ) {
               // 右边
               param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) * ((this.zoom / 100 ) * 2) ;
-              console.log(param[0].scrollLeft,"param[0].scrollLeft")
+              // console.log(param[0].scrollLeft,"param[0].scrollLeft")
               }
               if(this.zoom != 100){
                 if(item.position.top <300){
@@ -3880,7 +3830,7 @@ export default {
     },
 
     checkData(obj, arr) {
-      console.log(arr, "arr");
+      // console.log(arr, "arr");
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.id);
         this.checkData(obj.children[0], arr);
@@ -3894,8 +3844,6 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(2);
-      console.log(index, "index000000000000000000000000");
       if (index) {
         // console.log(
         //   this.$cache.local.get("deptId"),
@@ -4237,25 +4185,6 @@ export default {
     },
     //右键拖动
     dragImg(e) {
-      // if (e.button == 0) {
-      //   return;
-      // }
-      // this.dragFlag = true;
-      // let param = document.getElementsByClassName("content");
-      // this.mouseLeft = e.clientX - parseInt(param[0].scrollLeft);
-      // this.mouseTop = e.clientY - parseInt(param[0].scrollTop);
-      // document.onmousemove = (e) => {
-      //   if (this.dragFlag) {
-      //     this.resetCanvasFlag = true;
-      //     this.curX = e.clientX - this.mouseLeft;
-      //     this.curY = e.clientY - this.mouseTop;
-      //     param[0].scrollLeft = this.curX + "px";
-      //     param[0].scrollTop = this.curY + "px";
-      //   }
-      // };
-      // document.onmouseup = () => {
-      //   this.dragFlag = false;
-      // };
       let scrollContainer = document.querySelector(".vehicleLane");
       let dragContainer = document.querySelector(".content");
       let mouseDownScrollPosition = {
@@ -4273,11 +4202,12 @@ export default {
                 x: mouseDownPoint.x - e.clientX,
                 y: mouseDownPoint.y - e.clientY
             };
-            if(dragMoveDiff.x > 0 || dragMoveDiff.y > 0){
-              this.resetCanvasFlag = true;
-            }
+            
             scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
             scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+            if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollLeft > 0){
+              this.resetCanvasFlag = true;
+            }
         };
         document.onmouseup = e => {
             dragContainer.onmousemove = null;
@@ -4822,7 +4752,7 @@ export default {
       });
       // 树状搜索
       getCategoryDeviceTree(tunnelId).then((res) => {
-        console.log(res.data, "res.data");
+        // console.log(res.data, "res.data");
         this.treeData = res.data;
       });
     },
@@ -5157,6 +5087,9 @@ export default {
                 );
                 if (result === -1) {
                   itm.click = true;
+                  // setTimeout(()=>{
+
+                  // },2000)
                   this.itemEqId.push(itm.eqId);
                   this.$forceUpdate();
                 } else {
@@ -5177,12 +5110,7 @@ export default {
                 itm.eqId == item.eqId &&
                 this.itemEqType != item.eqType
               ) {
-                this.tooltipType1(item);
-                itm.textFalse = true;
-                setTimeout(() => {
-                  item.textFalse = false;
-                }, 2000);
-                this.$forceUpdate();
+                this.$modal.msgWarning("请选择同种设备");
               }
             }
           } else {
@@ -5209,14 +5137,7 @@ export default {
           [16, 22, 29, 33, 36].includes(item.eqType)
         ) {
           // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
-          console.log(item, "1111111111111111");
-          this.tooltipType1(item);
-
-          item.textKKFalse = true;
-          setTimeout(() => {
-            item.textKKFalse = false;
-          }, 2000);
-          this.$forceUpdate();
+          this.$modal.msgWarning("请选择可控设备");
         }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
@@ -5334,26 +5255,6 @@ export default {
             );
           }
         });
-      }
-    },
-    tooltipType1(item) {
-      if (
-        item.position.left <= this.currentTunnel.lane.width - 100 &&
-        item.position.top <= 450
-      ) {
-        return (item.tooltipType1 = 1);
-      } else if (
-        item.position.left > this.currentTunnel.lane.width - 100 &&
-        item.position.top <= 450
-      ) {
-        return (item.tooltipType1 = 2);
-      } else if (
-        item.position.left <= this.currentTunnel.lane.width - 100 &&
-        item.position.top > 450
-      ) {
-        return (item.tooltipType1 = 3);
-      } else {
-        return (item.tooltipType1 = 4);
       }
     },
     sendAnalogCommand(param) {
@@ -6008,7 +5909,7 @@ export default {
 .searchTable {
   margin: 0px;
   width: 100% !important;
-  height: 32px !important;
+  height: 4vh !important;
 }
 .robotHtmlBox {
   width: 770px;

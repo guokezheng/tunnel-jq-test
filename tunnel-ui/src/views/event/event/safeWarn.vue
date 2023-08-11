@@ -1787,7 +1787,7 @@ export default {
         currencyId: [
           {
             required: true,
-            message: "请选择策略",
+            message: "请选择预案",
             trigger: "change",
           },
         ],

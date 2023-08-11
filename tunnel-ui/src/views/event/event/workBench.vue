@@ -70,7 +70,7 @@
             </el-input-number>
           </div>
           <el-button
-            v-if="resetCanvasFlag && currentTunnel.lane.width > 1728"
+            v-if="resetCanvasFlag"
             class="buttons"
             type="primary"
             size="mini"
@@ -172,56 +172,6 @@
                       @mousemove="openTooltip(item, index)"
                       @mouseleave="closeTooltip(item)"
                     >
-                      <!-- 设备图标上提示文字 -->
-
-                      <div
-                        v-if="item.click"
-                        class="screenEqNameBox"
-                        :style="{
-                          top:
-                            item.tooltipType == 1 || item.tooltipType == 2
-                              ? '35px'
-                              : '-50px',
-                          left:
-                            item.tooltipType == 1 || item.tooltipType == 3
-                              ? '0px'
-                              : '-100px',
-                        }"
-                      >
-                        {{ item.eqName }}
-                      </div>
-                      <div
-                        v-if="item.textFalse"
-                        class="textFalseBox"
-                        :style="{
-                          top:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 2
-                              ? '35px'
-                              : '-50px',
-                          left:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 3
-                              ? '0px'
-                              : '-100px',
-                        }"
-                      >
-                        请选择同种设备
-                      </div>
-                      <div
-                        v-if="item.textKKFalse"
-                        class="textFalseBox"
-                        :style="{
-                          top:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 2
-                              ? '35px'
-                              : '-50px',
-                          left:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 3
-                              ? '0px'
-                              : '-100px',
-                        }"
-                      >
-                        请选择可控设备
-                      </div>
                       <div
                         class="tooltipBox"
                         v-if="showTooltipIndex == index"
@@ -979,6 +929,15 @@ export default {
     // "scrollview": function (newVal, oldVal) {
     //   console.log(newVal, "newVal");
     // },
+    treeShow(val){
+      if(!val){
+        // 关闭树形菜单后 折叠之前打开的树形菜单
+      const nodes = this.$refs.tree.store._getAllNodes();
+        nodes.forEach((item) => {
+          item.expanded = false;
+        });
+      }
+    },
     screenEqName(val) {
       this.$refs.tree.filter(val);
     },
@@ -1143,7 +1102,6 @@ export default {
     },
     // 移动滚动条
     mouseSrollAuto(e) {
-      console.log(e.target.scrollLeft, "e.target.scrollLeft");
       if (e.target.scrollLeft > 0) {
         this.resetCanvasFlag = true;
       } else {
@@ -1154,11 +1112,6 @@ export default {
       if (this.treeShow == true) {
         if (!this.$refs.treeBox.contains(e.target)) {
           this.treeShow = false;
-            // 点击输入框 折叠之前打开的树形菜单
-          const nodes = this.$refs.tree.store._getAllNodes();
-          nodes.forEach((item) => {
-            item.expanded = false;
-          });
         }
       }
     },
@@ -1347,12 +1300,7 @@ export default {
                 itm.eqId == item.eqId &&
                 this.itemEqType != item.eqType
               ) {
-                this.tooltipType1(item);
-                itm.textFalse = true;
-                setTimeout(() => {
-                  item.textFalse = false;
-                }, 2000);
-                this.$forceUpdate();
+                this.$modal.msgWarning("请选择同种设备");
               }
             }
           } else {
@@ -1379,14 +1327,7 @@ export default {
           [16, 22, 29, 33, 36].includes(item.eqType)
         ) {
           // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
-          console.log(item, "1111111111111111");
-          this.tooltipType1(item);
-
-          item.textKKFalse = true;
-          setTimeout(() => {
-            item.textKKFalse = false;
-          }, 2000);
-          this.$forceUpdate();
+          this.$modal.msgWarning("请选择可控设备");
         }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
@@ -1504,26 +1445,6 @@ export default {
             );
           }
         });
-      }
-    },
-    tooltipType1(item) {
-      if (
-        item.position.left / 1.2 <= this.currentTunnel.lane.width / 1.2 - 100 &&
-        item.position.top / 1.2 <= 350
-      ) {
-        return (item.tooltipType1 = 1);
-      } else if (
-        item.position.left / 1.2 > this.currentTunnel.lane.width / 1.2 - 100 &&
-        item.position.top / 1.2 <= 350
-      ) {
-        return (item.tooltipType1 = 2);
-      } else if (
-        item.position.left / 1.2 <= this.currentTunnel.lane.width / 1.2 - 100 &&
-        item.position.top / 1.2 > 350
-      ) {
-        return (item.tooltipType1 = 3);
-      } else {
-        return (item.tooltipType1 = 4);
       }
     },
     /*点击设备类型*/
@@ -1732,11 +1653,8 @@ export default {
     },
     //右键拖动
     dragImg(e) {
-    console.log(e,"e")
       let scrollContainer = document.querySelector(".vehicleLane");
       let dragContainer = document.querySelector(".content");
-      console.log(scrollContainer,"scrollContainer")
-      console.log(dragContainer,"dragContainer")
       let mouseDownScrollPosition = {
             scrollLeft: scrollContainer.scrollLeft,
             scrollTop: scrollContainer.scrollTop
@@ -1752,11 +1670,11 @@ export default {
                 x: mouseDownPoint.x - e.clientX,
                 y: mouseDownPoint.y - e.clientY
             };
-            if(dragMoveDiff.x > 0 || dragMoveDiff.y > 0){
-              this.resetCanvasFlag = true;
-            }
             scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
             scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+            if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollTop > 0){
+              this.resetCanvasFlag = true;
+            }
         };
         document.onmouseup = e => {
             dragContainer.onmousemove = null;
@@ -1785,10 +1703,8 @@ export default {
         let bigType = "";
         let param = document.getElementsByClassName("vehicleLane");
         for (var item of this.selectedIconList) {
-          // if (treeNodeClick) {
           if (item.eqName == this.screenEqName) {
             bigType = item.bigType;
-            // this.resetCanvasFlag = true;
             // 工作台宽度1728 所以/864 处置页工作台宽1440 /2 = 720
             if (
               this.currentTunnel.lane.width - item.position.left > 864 &&
@@ -1833,7 +1749,6 @@ export default {
             } else {
               item.tooltipType = 4;
             }
-            // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
             item.click = false;
@@ -1841,54 +1756,6 @@ export default {
           if (param[0].scrollLeft != 0) {
             this.resetCanvasFlag = true;
           }
-          // } else {
-          //   if (item.eqName.indexOf(this.screenEqName) > -1) {
-          //     bigType = item.bigType;
-          //     this.resetCanvasFlag = true;
-          //     if (
-          //       this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
-          //         720 &&
-          //       item.position.left / 1.2 > 720
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         -item.position.left / 1.2 + 720 + "px";
-          //     } else if (item.position.left / 1.2 < 720) {
-          //       param[0].scrollLeft = 0;
-          //       this.$refs.dragImgDom.style.left = "0px";
-          //     } else if (
-          //       this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
-          //       720
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         1440 - this.currentTunnel.lane.width / 1.2 + "px";
-          //     }
-          //     if (
-          //       item.position.left / 1.2 <=
-          //         this.currentTunnel.lane.width / 1.2 - 200 &&
-          //       item.position.top / 1.2 <= 350
-          //     ) {
-          //       item.tooltipType = 1;
-          //     } else if (
-          //       item.position.left / 1.2 >
-          //         this.currentTunnel.lane.width / 1.2 - 200 &&
-          //       item.position.top / 1.2 <= 350
-          //     ) {
-          //       item.tooltipType = 2;
-          //     } else if (
-          //       item.position.left / 1.2 <=
-          //         this.currentTunnel.lane.width / 1.2 - 200 &&
-          //       item.position.top / 1.2 > 350
-          //     ) {
-          //       item.tooltipType = 3;
-          //     } else {
-          //       item.tooltipType = 4;
-          //     }
-          //     // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-          //     item.click = true;
-          //   } else {
-          //     item.click = false;
-          //   }
-          // }
         }
         if (bigType.includes("0")) {
           this.displayControl(0, "全部设备");
@@ -2704,7 +2571,7 @@ export default {
   position: absolute;
   z-index: 960619;
   top: 14%;
-  width: 13.5%;
+  width: 16.5%;
   height: 40vh;
   overflow-x: hidden;
   overflow-y: auto;

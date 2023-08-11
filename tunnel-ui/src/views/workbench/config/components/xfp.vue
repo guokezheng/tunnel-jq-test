@@ -22,6 +22,15 @@
           :rtsp="videoForm.liveUrl"
           :open="cameraPlayer"
         ></videoPlayer>
+        <video
+          src="../../../../assets/Example/v1.mp4"
+          v-if="radio1 == '演示'"
+          style="height: 200px; object-fit: cover"
+          controls
+          muted
+          loop
+          fluid
+        ></video>
         <img :src="noPicUrl" v-if="radio1 == '视频' && !videoForm.liveUrl" />
       </div>
       <div class="picVideoBox" v-if="eqInfo.clickEqType == 47">
@@ -34,6 +43,7 @@
           v-if="eqInfo.clickEqType == 33"
         >
           <el-radio-button label="图像"></el-radio-button>
+          <el-radio-button label="演示"></el-radio-button>
           <el-radio-button label="视频"></el-radio-button>
         </el-radio-group>
         <div class="x2all">
@@ -83,9 +93,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="13">
-            <el-form-item label="IP:">
-              
-            </el-form-item>
+            <el-form-item label="IP:"> </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item
@@ -119,12 +127,24 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <img :src="eqInfo.clickEqType == 33?picUrl:ckUrl" v-if="radio1 == '图像'" />
+      <img
+        :src="eqInfo.clickEqType == 33 ? picUrl : ckUrl"
+        v-if="radio1 == '图像'"
+      />
       <videoPlayer
         v-if="videoForm.liveUrl"
         :rtsp="videoForm.liveUrl"
         :open="cameraPlayer"
       ></videoPlayer>
+      <video
+          src="../../../../assets/Example/v1.mp4"
+          v-if="radio1 == '演示'"
+          style="height: 400px; object-fit: cover"
+          controls
+          muted
+          loop
+          fluid
+        ></video>
     </el-dialog>
     <el-dialog
       v-dialogDrag
@@ -140,12 +160,24 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <img :src="eqInfo.clickEqType == 33?picUrl:ckUrl" v-if="radio1 == '图像'" />
+      <img
+        :src="eqInfo.clickEqType == 33 ? picUrl : ckUrl"
+        v-if="radio1 == '图像'"
+      />
       <videoPlayer
         v-if="videoForm.liveUrl"
         :rtsp="videoForm.liveUrl"
         :open="cameraPlayer"
       ></videoPlayer>
+      <video
+          src="../../../../assets/Example/v1.mp4"
+          v-if="radio1 == '演示'"
+          style="height: 100%; object-fit: cover"
+          controls
+          muted
+          loop
+          fluid
+        ></video>
     </el-dialog>
   </div>
 </template>
@@ -167,8 +199,8 @@ export default {
       stateForm: {},
       brandList: [],
       eqInfo: {
-        clickEqType:'',
-        equipmentId:''
+        clickEqType: "",
+        equipmentId: "",
       },
       eqTypeDialogList: [],
       directionList: [],
@@ -201,7 +233,7 @@ export default {
         console.log(res, "查询单选框弹窗信息");
         this.stateForm = res.data;
         this.title = this.stateForm.eqName;
-        if(this.eqInfo.clickEqType == 33){
+        if (this.eqInfo.clickEqType == 33) {
           this.getVideo();
         }
       });
@@ -251,7 +283,7 @@ export default {
 .picVideoBox {
   width: 100%;
   height: 200px;
-  background: #fff;
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,6 +351,9 @@ export default {
     img {
       max-height: 400px;
     }
+    // video{
+    //   height: 400px;
+    // }
   }
 }
 .picFullDialog {

@@ -103,56 +103,91 @@
         >
           暂无预警事件
         </div>
-
-        <div class="jumpBox" v-if="trafficList" style="overflow: hidden;" name="jumpBox">
-          <!-- <div class="table_list" :style="{top: tableTop + 'px'}"> 
-            <div
-              class="tr_div"
-              v-for="(item,index) in tableList"
+        <div class="jumpBox" v-if="trafficList">
+          <div class="table_body">
+            <el-row
+              v-for="(item, index) of trafficList"
               :key="index"
-              :class="{'exception_style_tr':item.overDays>6 && item.process < 100}"
+              style="cursor: pointer"
+              :style="{ top: tableTop + 'px' }"
+              class="table_list"
+              :data-index="JSON.stringify(item)"
+              :id="item.id"
+              
             >
-              <div
-                class="tr1 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-              >{{item.orderNo}}</div>
-              <div
-                class="tr2 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-              >{{item.projectName}}</div>
-              <div
-                class="tr3 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-                v-if="item.needVol!='-'&&item.needVol!='无法计算'"
-              >{{Number(item.needVol).toFixed(3)}} m3</div>
-              <div
-                class="tr3 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-                v-else
-              >-</div>
-              <div
-                class="tr4 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-              >{{item.completeDate}}</div>
-              <div
-                class="tr5 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-                v-if="item.process!='-'"
-              >{{Number(item.process).toFixed(2)}} %</div>
-              <div
-                class="tr5 tr"
-                :class="{'exception_style':item.overDays>6 && item.process < 100, 'notice_style':item.overDays>0 && item.overDays<7 && item.process < 100}"
-                v-else
-              >-</div>
-            </div>
-          </div> -->
+              <el-col :span="2">
+                <div
+                  style="
+                    width: 30px;
+                    height: 30px;
+                    display: flex;
+                    justify-content: right;
+                    align-items: center;
+                    transform: scale(0.7);
+                  "
+                >
+                  <img :src="item.eventType.iconUrl" style="width: 100%" />
+                </div>
+              </el-col>
+              <el-col style="display: flex" :span="4">
+                <div
+                  style="width: 100%"
+                  :style="{
+                    color:
+                      item.eventType.prevControlType == '0'
+                        ? 'red'
+                        : item.eventType.prevControlType == '1'
+                        ? '#0B92FE'
+                        : 'yellow',
+                  }"
+                >
+                  {{ item.eventType.simplifyName }}
+                </div>
+              </el-col>
+              <el-col :span="18" style="display: flex">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="
+                    tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'
+                      ? item.eventTitle
+                      : item.frameEventTitle
+                  "
+                  placement="top"
+                >
+                  <div
+                    style="
+                      width: 145px;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                      z-index: 10;
+                    "
+                    @click="jumpYingJi(item.id)"
+                  >
+                    <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{
+                      item.eventTitle
+                    }}</span>
+                    <span v-else>{{ item.frameEventTitle }}</span>
+                  </div>
+                </el-tooltip>
 
-          <el-table
-            ref="scroll_table"
-            height="476"
+                <div style="font-size: 12px; float: right; margin-right: 10px">
+                  {{ item.startTime }}
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <!-- <el-table
+            class="tableBox"
+            :style="{
+              animationDuration:
+                '15s'
+               
+            }"
+            height="165"
             :data="trafficList"
-            @mouseenter.native="mouseEnter"
-            @mouseleave.native="mouseLeave"
             @row-click="jumpYingJi"
           >
             <el-table-column width="30">
@@ -175,7 +210,7 @@
                 >
               </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip width="135">
+            <el-table-column show-overflow-tooltip width="125">
               <template slot-scope="scope">
                 <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{
                   scope.row.eventTitle
@@ -183,12 +218,12 @@
                 <span v-else>{{ scope.row.frameEventTitle }}</span>
               </template>
             </el-table-column>
-            <el-table-column>
+            <el-table-column width="80">
               <template slot-scope="scope">
                 {{ scope.row.startTime }}
               </template>
             </el-table-column>
-          </el-table>
+          </el-table> -->
         </div>
         <!-- <div v-if="trafficList" @click="jumpYingJi" class="jumpBox">
           <vue-seamless-scroll
@@ -508,79 +543,6 @@ export default {
   },
   data() {
     return {
-      activeFactoryId:'',
-      showFlag: false,
-        componentTimer: null,
-        maxCanSee: 6, //maxCanSee代表可视范围内的最大完整数据条数
-        tableLineHeight: 45,   //tableLineHeight代表列表中一行的高度
-      tableTimer: null,
-        tableTop: 0,  //列表向上移动的像素
-        tableList: [{
-            overDays:7,
-            process:60,
-            orderNo:1,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:2,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:3,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:4,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:5,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:6,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:7,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:8,
-            projectName:"xx",
-            needVol:30
-        },
-        {
-            overDays:7,
-            process:60,
-            orderNo:9,
-            projectName:"xx",
-            needVol:30
-        }
-        ], //tableList是列表的数据对象
-      count: 0,
-      disabled: false,
       footChangeRadio: "图表",
       carIcon: require("@/assets/icons/carIcon.png"),
       energyIcon: require("@/assets/icons/energyIcon.png"),
@@ -615,9 +577,16 @@ export default {
       nameArr: [],
       myChart: null,
       tabModel: "chartJN",
-      autoPlay: true,
-      animation: true,
-      timer: null,
+      // animation: true,
+      // timer: null,
+      // imageTimer: null, //定时器
+      tableTimer: null,
+      tableTop: 0, //列表向上移动的像素
+      tableList: [], //tableList是列表的数据对象
+      showFlag: false,
+      componentTimer: null,
+      maxCanSee: 6, //maxCanSee代表可视范围内的最大完整数据条数
+      tableLineHeight: 29, //tableLineHeight代表列表中一行的高度
     };
   },
   computed: {
@@ -643,238 +612,140 @@ export default {
     },
   },
   watch: {
-    activeFactoryId() {
-        clearInterval(this.componentTimer);
-        this.bsGetOrderProcessList();
-        this.componentTimerFun();
-      },
+    // activeFactoryId(val, oldVal) {
+    //   clearInterval(this.componentTimer);
+    //   this.bsGetOrderProcessList();
+    //   this.componentTimerFun();
+    // },
     tabModel: function (newValue, oldValue) {
       this.getNoDecelerationChart();
     },
     eventUntreatedNum(event) {
-      // debugger
       console.log(event, "事件总数");
       this.getWarnList();
     },
   },
   beforeDestroy() {
-      clearInterval(this.componentTimer);
-      clearInterval(this.tableTimer);
-    },
+    clearInterval(this.componentTimer);
+    clearInterval(this.tableTimer);
+    // clearInterval(this.imageTimer);
+    // this.imageTimer = null;
+  },
   created() {
     this.getDicts("sd_strategy_direction").then((data) => {
       this.directionList = data.data;
     });
   },
   methods: {
-    load() {
-      if (this.count >= 20) {
-        this.disabled = true;
-      } else {
-        this.count += 2;
-      }
-    },
     init(tunnelId) {
       console.log(tunnelId, "tunnelId");
       this.tunnelId = tunnelId;
       this.getWarnList();
-      this.activeFactoryId="aa"
-      // this.scrollFull()
-      setInterval(this.scroll,2000)
+
       this.vehicleEcharts();
       // this.specialVehicleEcharts()
       this.getEnergyConsumption();
       this.getDeviceChart();
       this.getNoDecelerationChart();
     },
-    bsGetOrderProcessList() {
-        clearInterval(this.tableTimer);
-        this.tableTop = 0;
-        if (this.activeFactoryId != "") {
-          //this.showFlag = false;
-          this.showFlag = true;
-          this.actionFun();
-        //   this.$ajax({
-        //     method: "get",
-        //     url: ``  //接口地址，不公开
-        //   })
-        //     .then(res => {
-        //       this.tableList = res.data.data;
-        //       this.showFlag = true;
-        //       this.actionFun();
-        //     })
-        //     .catch(function(err) {
-        //       console.log("bsGetOrderProcessList error!");
-        //     });
-        }
-      },
-      actionFun() {
-        console.log(111111)
-        //超过6行才滚动
-        if (this.tableList.length > 6) {
-          this.tableTimerFun();
-        }
-        //没有超过6行就不滚动了 
-        else {
-          this.fillTableList();
-        }
-        this.showFlag = true;
-      },
-      fillTableList() {
-        var addLength = this.maxCanSee - this.tableList.length;
-        for (var i = 0; i < addLength; i++) {
-          this.tableList.push({
-            orderNo: "-",
-            process: "-"
-          });
-        }
-      },
-      tableTimerFun() {
-        var count = 0;  //每滚动一次，count加1
-        if (this.tableList.length > this.maxCanSee) {  //tableList是列表的数据对象，maxCanSee代表可视范围内的最大完整数据条数
-          this.tableTimer = setInterval(() => {
-            if (count < this.tableList.length - this.maxCanSee) { //如果还没滚动到最后一条数据，则列表向上移动以上的高度
-              this.tableTop -= this.tableLineHeight;   //tableLineHeight代表列表中一行的高度
-              count++;   //每滚动一次，count加1
-            } else {   //如果滚动到最后一条，则恢复初始状态
-              count = 0;
-              this.tableTop = 0;
-            }
-          }, 2000);
-        }
-      },
-      componentTimerFun() {
-        this.componentTimer = setInterval(() => {
-          this.bsGetOrderProcessList();
-        }, 20000);
-      },
-    // 点击某一行
-    handleRowClick(row, i, a) {
-      console.log(row, "row");
+    // 预警事件列表
+    getWarnList() {
+      const param = {
+        eventState: "3",
+      };
+      getWarnEvent(param).then((response) => {
+        // console.log(response.data, "预警事件");
+        this.trafficList = response.data;
+        // setInterval(this.srollAuto, 2000);
+        clearInterval(this.componentTimer);
+        this.bsGetOrderProcessList();
+        this.componentTimerFun();
+      });
     },
-    // updateScrollTop() {
-    //   const scrollList = document.getElementsByName('jumpBox')[0].children
-    //   console.log(scrollList,"scrollList")
-    //   for (let i = 0; i < scrollList.length; i++) {
-    //     const x = scrollList[i]
-    //     this.scrollThen(x).then()
-    //   }
-    // },
-    // async scrollThen(x) {
-    //   console.log(x,"x")
-    //   do {
-    //     await new Promise(resolve => {
-    //       setTimeout(() => {
-    //         resolve()
-    //       }, 100)
-    //     })
-    //     if (parseFloat(x.clientHeight / x.scrollHeight) < 0.8) {
-    //       if (x.scrollHeight - x.scrollTop === x.clientHeight) {
-    //         x.scrollTop = 0
-    //       } else {
-    //         x.scrollTop++
-    //       }
-    //     }
-    //   } while (true)
-    // },
-    // // 鼠标进入
-    // mouseEnter() {
-    //   this.animation = false;
-    // },
-    // // 鼠标离开
-    // mouseLeave() {
-    //   this.animation = true;
-    // },
-    // scrollFull() {
-    //   const ref = this.$refs.scroll_table;
-    //   const divData = ref.bodyWrapper;
-    //   divData.onmouseover = function () {
-    //     clearInterval(t);
-    //   }; //鼠标移入，停止滚动
-    //   divData.onmouseout = function () {
-    //     start();
-    //   }; //鼠标移出，继续滚动
-    //   let t;
-    //   function start() {
-    //     // 数据少于表格高度停止滚动
-    //     if (divData.clientHeight >= divData.scrollHeight) {
-    //       return;
-    //     }
-    //     t = setInterval(() => {
-    //       // 元素自增距离顶部1像素
-    //       divData.scrollTop += 1;
-    //       // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
-    //       if (
-    //         divData.clientHeight + divData.scrollTop ==
-    //         divData.scrollHeight
-    //       ) {
-    //         // 重置table距离顶部距离
-    //         divData.scrollTop = 0;
-    //       }
-    //     }, 100);
-    //   }
-    //   start();
-
-    //   // if (divData) {
-    //   //   console.log(ref)
-    //   //     if (this.timer) {
-    //   //       clearInterval(this.timer);
-    //   //     }
-    //   //     // 拿到元素后，对元素进行定时增加距离顶部距离，实现滚动效果(此配置为每20毫秒移动1像素)
-    //   //     this.timer = setInterval(() => {
-    //   //       if (this.autoPlay) {
-    //   //         // 元素自增距离顶部1像素
-    //   //         if (divData.scrollTop >= 33) {
-    //   //           const item = this.trafficList.shift();
-    //   //           this.trafficList.push(item);
-    //   //           divData.scrollTop -= 33;
-    //   //         }
-    //   //         divData.scrollTop ++;
-    //   //         console.log(divData.scrollTop)
-    //   //       }
-    //   //     }, 20);
-    //   //   }
-    // },
-    scroll() {
-      if (this.animation) {
-        let el = document.querySelector(".el-table__body-wrapper");
-        el.addClassName = "anim";
-        setTimeout(() => {
-          // console.log(this.items[0])
-          this.trafficList.push(this.trafficList[0]); // 将数组的第一个元素添加到数组的
-          this.trafficList.shift(); //删除数组的第一个元素
-        }, 2000);
+    // 预警事件点击跳转应急调度
+    jumpYingJi(id) {
+      console.log(id);
+      // const item = e.target.closest(".listRow");
+      // if (item) {
+      //   // 是否是滚动组件的某一行/列
+      //   const { index } = item.dataset;
+      //   let id = JSON.parse(index).id;
+      setTimeout(() => {
+        bus.$emit("getPicId", id);
+      }, 200);
+      bus.$emit("openPicDialog");
+      // }
+    },
+    bsGetOrderProcessList() {
+      clearInterval(this.tableTimer);
+      this.tableTop = 0;
+      if (this.trafficList.length > 0) {
+        this.actionFun();
       }
     },
-    // startMove() {
-    //   // 拿到表格挂载后的真实DOM
-    //   const table = this.$refs.scroll_table;
-    //   console.log(table,"table")
-    //   if (table) {
-    //     // 拿到表格中承载数据的div元素
-    //     const divData = table.bodyWrapper;
-    //     if (divData) {
-    //       if (this.timer) {
-    //         clearInterval(this.timer);
-    //       }
-    //       // 拿到元素后，对元素进行定时增加距离顶部距离，实现滚动效果(此配置为每20毫秒移动1像素)
-    //       this.timer = setInterval(() => {
-    //         console.log(this.autoPlay,"this.autoPlay")
-    //         if (this.autoPlay) {
-    //           // 元素自增距离顶部1像素
-    //           if (divData.scrollTop >= 33) {
-    //             console.log("divData.scrollTop >= 33")
-    //             const item = this.trafficList.shift();
-    //             this.trafficList.push(item);
-    //             divData.scrollTop -= 33;
-    //           }else{
-    //             console.log("divData.scrollTop += 1")
-    //             divData.scrollTop += 1;
-    //           }
-    //           this.$forceUpdate()
-    //         }
-    //       }, 20);
-    //     }
+    actionFun() {
+      if (this.trafficList.length > 6) {
+        this.tableTimerFun();
+      } else {
+        this.fillTableList();
+      }
+      // this.showFlag = true;
+    },
+    fillTableList() {
+      var addLength = this.maxCanSee - this.trafficList.length;
+      for (var i = 0; i < addLength; i++) {
+        this.trafficList.push({
+          eventType: {
+            iconUrl: "-",
+            prevControlType: "-",
+            simplifyName: "-",
+          },
+          eventTitle: "-",
+          frameEventTitle: "-",
+          startTime: "-",
+        });
+      }
+    },
+    tableTimerFun() {
+      var count = 0; //每滚动一次，count加1
+      if (this.trafficList.length > this.maxCanSee) {
+        //tableList是列表的数据对象，maxCanSee代表可视范围内的最大完整数据条数
+        this.tableTimer = setInterval(() => {
+          console.log(count,"count")
+          console.log(count,"count")
+
+          if (count < (this.trafficList.length / 2) * this.tableLineHeight) {
+            //如果还没滚动到最后一条数据，则列表向上移动以上的高度
+            this.tableTop -= 1; //tableLineHeight代表列表中一行的高度
+            count++; //每滚动一次，count加1
+          } else {
+            //如果滚动到最后一条，则恢复初始状态
+            count = 0;
+            this.tableTop = 0;
+          }
+        }, 100);
+      }
+    },
+    componentTimerFun() {
+      this.componentTimer = setInterval(() => {
+        this.bsGetOrderProcessList();
+      }, 3600000);
+    },
+    // mouseEnter(){
+    //   this.animation = false
+    // },
+    // mouseLeave(){
+    //   this.animation = true
+    // },
+    // scroll() {
+    //   if (this.animation) {
+    //     let el = document.getElementbyClassName(".el-table__body-wrapper");
+    //     el.addClassName = "anim";
+    //     setTimeout(() => {
+    //       // console.log(this.items[0])
+    //       this.trafficList.push(this.trafficList[0]); // 将数组的第一个元素添加到数组的
+    //       this.trafficList.shift(); //删除数组的第一个元素
+    //     }, 2000);
     //   }
     // },
     // 车辆监测数据
@@ -1011,32 +882,7 @@ export default {
     // getMax(arr) {
     //   return Math.max.apply(Math, arr);
     // },
-    // 预警事件列表
-    getWarnList() {
-      const param = {
-        eventState: "3",
-      };
-      getWarnEvent(param).then((response) => {
-        // console.log(response.data, "预警事件");
-        this.trafficList = response.data;
-        // this.updateScrollTop()
 
-      });
-    },
-    // 预警事件点击跳转应急调度
-    jumpYingJi(row) {
-      // console.log(e);
-      // const item = e.target.closest(".listRow");
-      // if (item) {
-      //   // 是否是滚动组件的某一行/列
-      //   const { index } = item.dataset;
-      //   let id = JSON.parse(index).id;
-      setTimeout(() => {
-        bus.$emit("getPicId", row.id);
-      }, 200);
-      bus.$emit("openPicDialog");
-      // }
-    },
     // 切换图表、视频
     videoRadioChange() {
       if (this.footChangeRadio == "视频" && this.tunnelId) {
@@ -2476,9 +2322,30 @@ export default {
 #deviceChart {
   height: calc(75% - 4px);
 }
+.tableBox {
+  // animation-name: jumpanimation;
+  animation: jumpanimation linear infinite;
+}
+.tableBox:hover {
+  animation-play-state: paused; /* 暂停动画 */
+}
 .jumpBox {
   height: calc(100% - 2.4vh - 10px);
-  margin-top: 10px;
+  overflow: hidden;
+  position: relative;
+  .table_body {
+    width: 100%;
+    position: absolute;
+    transition: all 0.5s;
+    .table_list{
+      .el-col{
+        display: flex;
+        align-items: center;
+        height: 29px;
+      }
+    }
+  }
+
   ::v-deep .el-table .cell {
     padding-left: 4px !important;
     padding-right: 4px !important;
@@ -2491,6 +2358,9 @@ export default {
   }
   ::v-deep .el-table {
     background: transparent !important;
+  }
+  ::v-deep .el-table__body-wrapper .el-table__cell {
+    border-left: none !important;
   }
 }
 .tabButton {
@@ -2510,122 +2380,34 @@ export default {
       rgba($color: #00aced, $alpha: 0.8),
       rgba($color: #0079db, $alpha: 0.8)
     );
-    border: solid 0.1px #0067B2;
+    border: solid 0.1px #0067b2;
   }
   ::v-deep .el-radio-button__inner {
     background: #010913;
-    border: solid 0.1px #0067B2;
+    border: solid 0.1px #0067b2;
     color: #fff;
   }
 }
 
-.anim {
-  animation: mymove 3s linear;
-}
+// .anim {
+//   animation: mymove 4s linear;
+// }
 
-@keyframes mymove {
+// @keyframes mymove {
+//   0% {
+//     transform: translateY(0px);
+//   }
+//   100% {
+//     transform: translateY(-20px);
+//   }
+// }
+
+@keyframes jumpanimation {
   0% {
-    transform: translateY(0px);
-  }
-  50%{
-    transform: translateY(-13px);
+    transform: translateY(0%);
   }
   100% {
-    transform: translateY(-20px);
+    transform: translateY(-100%);
   }
 }
-.orderProcess {
-    width: 600px;
-    height: 313px;
-  }
-  .loading_div {
-    color: #eee;
-    padding-top: 100px;
-  }
-  .table_head {
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
-    background: rgba(90, 127, 200, 0.5);
-    display: flex;
-    color: #eee;
-    text-align: center;
-    font-size: 15px;
-  }
-  .tr1 {
-    width: 25%;
-  }
-  .tr2 {
-    width: 25%;
-  }
-  .tr3 {
-    width: 18%;
-  }
-  .tr4 {
-    width: 18%;
-  }
-  .tr5 {
-    flex: 1;
-  }
-  .tr {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    box-sizing: border-box;
-    padding: 0 5px;
-    text-align: center;
-    font-size: 14px;
-  }
-  .table_body {
-    width: 100%;
-    height: 270px;
-    overflow: hidden;
-    position: relative;
-  }
-  .table_list {
-    width: 100%;
-    position: absolute;
-    transition: all 0.5s;
-  }
-  .tr_div {
-    width: 100%;
-    display: flex;
-    color: #eee;
-    text-align: center;
-    line-height: 45px;
-    font-size: 13px;
-  }
-  // .exception_style_tr {
-  //   animation: exception_style_tr 0.8s linear;
-  // }
-  // @keyframes exception_style_tr {
-  //   0% {
-  //     background: rgba(3, 145, 167, 0.1);
-  //   }
-  //   50% {
-  //     background: rgba(250, 4, 4, 0.15);
-  //   }
-  //   100% {
-  //     background: rgba(3, 145, 167, 0.1);
-  //   }
-  // }
-  // .exception_style {
-  //   font-weight: bold;
-  //   animation: exception_style 0.8s linear;
-  // }
-  // @keyframes exception_style {
-  //   0% {
-  //     color: #eee;
-  //   }
-  //   50% {
-  //     color: #fa0404;
-  //   }
-  //   100% {
-  //     color: #eee;
-  //   }
-  // }
-  .notice_style {
-    font-weight: bold;
-    color: #d1ce02;
-  }
 </style>

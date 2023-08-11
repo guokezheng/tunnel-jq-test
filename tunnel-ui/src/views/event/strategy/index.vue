@@ -71,10 +71,10 @@ export default {
 ::v-deep .el-tabs {
   height: 100%;
 
-  .el-tabs__item {
-    height: 4vh;
-    font-size: 0.7vw;
-  }
+  // .el-tabs__item {
+  //   height: 4vh;
+  //   font-size: 0.7vw;
+  // }
 
   .el-tabs__content {
     height: calc(100% - 5vh);

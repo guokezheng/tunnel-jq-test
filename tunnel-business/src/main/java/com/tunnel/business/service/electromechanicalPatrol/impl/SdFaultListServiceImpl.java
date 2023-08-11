@@ -6,6 +6,7 @@ import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.event.SdEvent;
@@ -14,6 +15,7 @@ import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
 
@@ -30,6 +32,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,6 +55,9 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     @Autowired
     private SdPatrolListMapper sdPatrolListService;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
 
 //    @Autowired
 //    @Qualifier("kafkaTwoTemplate")
@@ -449,9 +455,14 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         SdFaultList sdFaultListData = new SdFaultList();
         sdFaultListData.setId(sdFaultList.getId());
         List<SdEvent> sdEventList = sdFaultListMapper.selectSdFaultList(sdFaultListData);
-        //新增故障后推送前端
-        JSONObject object = new JSONObject();
-        object.put("sdEventList", sdEventList);
-        WebSocketService.broadcast("sdEventList",object.toString());
+        sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
+        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
+        if(collect.size() > 0) {
+            //新增故障后推送前端
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", sdEventList);
+            WebSocketService.broadcast("sdEventList", object.toString());
+        }
     }
 }

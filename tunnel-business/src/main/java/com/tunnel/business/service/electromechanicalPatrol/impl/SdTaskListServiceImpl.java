@@ -1219,6 +1219,36 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                         sdPatrolList.setImgFileId(patrolJSON.getString("imgFileId"));
 
                         sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
+
+                        String  faultId  = null;
+                        String falltRemoveStatue = null;
+                        //先判断是故障点还是设备
+                        SdPatrolList patrolInfo = sdPatrolListMapper.getPatroltype(sdPatrolList.getId());
+                        sdPatrolList.setXcStatus("1");//巡查状态为已巡查
+                        sdPatrolList.setUpdateTime(new Date());//更新时间
+                        sdPatrolList.setUpdateBy(SecurityUtils.getUsername());
+
+                        if(patrolInfo.getPatrolType().equals("1")){//故障点
+                            faultId = patrolInfo.getEqFaultId();
+                        }
+                        /*巡检点故障处理情况与故障消除状态情况对应*/
+                        if(faultId!=null){
+                            if(sdPatrolList.getFaultClstatus()!=null&&!"".equals(sdPatrolList)){
+                                if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLNULL.getCode())){//无故障
+                                    falltRemoveStatue = FaultStatus.FAULTNULL.getCode();
+                                }else  if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLYIXIAOCHU.getCode())){//已消除
+                                    falltRemoveStatue  = FaultStatus.FAULTYIXIAOCHU.getCode();
+                                }else{
+                                    falltRemoveStatue = FaultStatus.FAULTWEIXIAOCHU.getCode();
+                                }
+                            }
+                            if(falltRemoveStatue.equals(FaultStatus.FAULTYIXIAOCHU.getCode())||falltRemoveStatue.equals(FaultStatus.FAULTNULL.getCode())){//已消除或者无故障
+                                sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+                            }else{
+                                sdFaultListMapper.updateFaultUnRemoveState(faultId,falltRemoveStatue);
+                            }
+                        }
+
                     }
 
                     SdTaskOpt sdTaskOpt = new SdTaskOpt();

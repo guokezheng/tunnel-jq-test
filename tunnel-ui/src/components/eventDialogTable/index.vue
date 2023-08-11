@@ -323,6 +323,7 @@ export default {
       return moment(time).format("HH:mm:ss");
     },
     load() {
+      console.log(1111)
       this.loading = true;
       setTimeout(() => {
         this.pageNum += 1;

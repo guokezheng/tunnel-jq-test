@@ -276,10 +276,10 @@ export default {
 </script>
   <style lang="scss" scoped>
 .app-container {
-  height: calc(100vh - 130px);
-  padding: 5px 20px;
-  background: none;
-  margin: 0px;
+  // height: calc(100vh - 130px);
+  // padding: 5px 20px;
+  // background: none;
+  // margin: 0px;
   ::v-deep .el-card__body {
     // padding: 0 0 15px 0 !important;
     padding: 6px !important;

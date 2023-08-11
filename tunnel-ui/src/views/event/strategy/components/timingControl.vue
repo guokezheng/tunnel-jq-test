@@ -512,7 +512,7 @@ export default {
       this.getDirection();
     },
     async getStrategyData(row) {
-      debugger
+      // debugger
       console.log(row, "当前策略数据");
       await  getCategoryTree().then((data) => {
         let dataNum = 0;
@@ -567,7 +567,7 @@ export default {
             let autoControl = this.strategyForm.autoControl[i];
             var attr = response.rows[i];
             console.log(attr.eqStateList)
-            debugger
+            // debugger
             this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
             this.strategyForm.autoControl[i].state = attr.state;
             this.strategyForm.autoControl[i].stateNum = attr.stateNum;
@@ -621,7 +621,7 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
-      debugger
+      // debugger
       this.$set(this.strategyForm.autoControl[index], "content", null);
       this.$set(this.strategyForm.autoControl[index], "stateNum", null);
       this.$set(this.strategyForm.autoControl[index], "state", "");
@@ -685,9 +685,9 @@ export default {
       if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
-      debugger
+      // debugger
       listEqTypeStateIsControl(params).then((response) => {
-        debugger
+        // debugger
         console.log(response.rows)
         this.strategyForm.autoControl[index].eqStateList = response.rows;
       });

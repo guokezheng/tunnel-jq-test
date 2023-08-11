@@ -70,7 +70,7 @@
             </el-input-number>
           </div>
           <el-button
-            v-if="resetCanvasFlag && currentTunnel.lane.width > 1728"
+            v-if="resetCanvasFlag"
             class="buttons"
             type="primary"
             size="mini"
@@ -127,15 +127,17 @@
             <div>{{ item.label }}</div>
           </div>
         </div>
-        <div class="vehicleLane">
+        <div 
+          class="vehicleLane"
+          @mouseover="mouseoversImage"
+          @mouseleave="mouseleaveImage">
           <div
             class="content"
             ref="divRoller"
             @wheel.prevent="handleTableWheel"
             @mousewheel="mouseSrollAuto"
             @contextmenu.prevent
-            @mouseover="mouseoversImage"
-            @mouseleave="mouseleaveImage"
+            @mousedown="dragImg"
           >
             <div class="workbench-content" ref="dragImgDom">
               <!--画布区域-->
@@ -170,56 +172,6 @@
                       @mousemove="openTooltip(item, index)"
                       @mouseleave="closeTooltip(item)"
                     >
-                      <!-- 设备图标上提示文字 -->
-
-                      <div
-                        v-if="item.click"
-                        class="screenEqNameBox"
-                        :style="{
-                          top:
-                            item.tooltipType == 1 || item.tooltipType == 2
-                              ? '35px'
-                              : '-50px',
-                          left:
-                            item.tooltipType == 1 || item.tooltipType == 3
-                              ? '0px'
-                              : '-100px',
-                        }"
-                      >
-                        {{ item.eqName }}
-                      </div>
-                      <div
-                        v-if="item.textFalse"
-                        class="textFalseBox"
-                        :style="{
-                          top:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 2
-                              ? '35px'
-                              : '-50px',
-                          left:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 3
-                              ? '0px'
-                              : '-100px',
-                        }"
-                      >
-                        请选择同种设备
-                      </div>
-                      <div
-                        v-if="item.textKKFalse"
-                        class="textFalseBox"
-                        :style="{
-                          top:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 2
-                              ? '35px'
-                              : '-50px',
-                          left:
-                            item.tooltipType1 == 1 || item.tooltipType1 == 3
-                              ? '0px'
-                              : '-100px',
-                        }"
-                      >
-                        请选择可控设备
-                      </div>
                       <div
                         class="tooltipBox"
                         v-if="showTooltipIndex == index"
@@ -597,6 +549,202 @@
     <com-board class="comClass" ref="boardRef"></com-board>
     <com-radio class="comClass" ref="radioRef"></com-radio>
     <com-kzq class="comClass" ref="kzqRef"></com-kzq>
+    <!-- 批量操作弹窗 -->
+
+    <el-dialog
+      class="workbench-dialog vehicle-dialog"
+      :title="title"
+      :visible.sync="batchManageDialog"
+      width="450px"
+      append-to-body
+      v-dialogDrag
+      :close-on-click-modal="false"
+      :model="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <el-table
+        ref="batchManageTable"
+        :data="batchManageList"
+        tooltip-effect="dark"
+        style="width: 100%; margin-bottom: 10px !important"
+        max-height="220"
+        size="mini"
+      >
+        <el-table-column
+          prop="eqName"
+          label="设备名称"
+          width="200"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="pile"
+          label="桩号"
+          width="120"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column label="方向" align="center">
+          <template slot-scope="scope">
+            <span>{{ getDirection(scope.row.eqDirection) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-form
+        :model="batchManageForm"
+        label-width="90px"
+        label-position="left"
+        size="mini"
+        style="padding: 15px; padding-top: 0px"
+      >
+        <el-form-item label="配置状态:">
+          <div class="wrap">
+            <el-radio-group
+              v-for="item in eqTypeStateList2"
+              :key="item.state"
+              v-model="batchManageForm.state"
+              style="display: flex; flex-direction: column"
+              @change="$forceUpdate()"
+            >
+              <el-radio
+                v-if="batchManageForm.eqType == item.type && item.control == 1"
+                class="el-radio flex-row"
+                :label="item.state"
+                style="align-items: center"
+                :class="[
+                  String(batchManageForm.state) == String(item.state)
+                    ? 'el-radio-selcted'
+                    : '',
+                ]"
+              >
+                <el-row
+                  class="flex-row"
+                  v-if="
+                    batchManageForm.eqDirection == '1' &&
+                    (batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
+                  "
+                >
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[0]"
+                  />
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[1]"
+                    v-if="item.url.length > 1"
+                  />
+                  <div style="margin: 0 0 0 10px; display: inline-block">
+                    {{ item.name }}
+                  </div>
+                </el-row>
+                <el-row
+                  class="flex-row"
+                  v-if="
+                    batchManageForm.eqDirection == '2' &&
+                    (batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
+                  "
+                >
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[1]"
+                  />
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[0]"
+                    v-if="item.url.length > 1"
+                  />
+                  <div style="margin: 0 0 0 10px; display: inline-block">
+                    {{ item.name }}
+                  </div>
+                </el-row>
+
+                <el-row
+                  class="flex-row"
+                  v-if="
+                    batchManageForm.eqType != 1 && batchManageForm.eqType != 2
+                  "
+                >
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[0]"
+                    :style="{ width: itemEqType == 31 ? '110px' : 'auto' }"
+                  />
+
+                  <div style="margin: 0 0 0 10px; display: inline-block">
+                    {{ item.name }}
+                  </div>
+                </el-row>
+              </el-radio>
+            </el-radio-group>
+          </div>
+        </el-form-item>
+        <el-row
+          style="margin-top: 10px"
+          v-show="[7, 9, 30, 31].includes(batchManageForm.eqType)"
+        >
+          <el-col :span="15">
+            <el-form-item label="亮度调整:">
+              <el-slider
+                v-model="batchManageForm.brightness"
+                :max="100"
+                :min="min"
+                class="sliderClass"
+                :disabled="!batchManageForm.brightness"
+                @change="$forceUpdate()"
+              ></el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+              >{{ batchManageForm.brightness }} %</span
+            >
+          </el-col>
+        </el-row>
+        <el-row
+          style="margin-top: 10px"
+          v-show="
+            [30, 31].includes(batchManageForm.eqType) &&
+            batchManageForm.state == 5
+          "
+        >
+          <el-col :span="15">
+            <el-form-item label="闪烁频率:">
+              <el-slider
+                v-model="batchManageForm.frequency"
+                :max="100"
+                :min="min"
+                class="sliderClass"
+                :disabled="!batchManageForm.frequency"
+                @change="$forceUpdate()"
+              ></el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+              >{{ batchManageForm.frequency }} m/s</span
+            >
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="batchManageOK()" class="submitButton"
+          >确 定</el-button
+        >
+        <el-button class="closeButton" @click="closeBatchManageDialog()"
+          >取 消</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -746,7 +894,7 @@ export default {
       eqTypeStateList: [],
       addBatchManage: false, //点击多选设备
       batchManageDialog: false, //批量操作弹窗
-      itemEqId: "",
+      itemEqId: [],
       itemEqType: "",
       eqTypeStateList2: [],
       explainVisible: false,
@@ -781,6 +929,18 @@ export default {
     // "scrollview": function (newVal, oldVal) {
     //   console.log(newVal, "newVal");
     // },
+    treeShow(val){
+      if(!val){
+        // 关闭树形菜单后 折叠之前打开的树形菜单
+      const nodes = this.$refs.tree.store._getAllNodes();
+        nodes.forEach((item) => {
+          item.expanded = false;
+        });
+      }
+    },
+    screenEqName(val) {
+      this.$refs.tree.filter(val);
+    },
     "batchManageForm.state": function (newVal, oldVal) {
       // console.log(newVal, "newVal");
       if ([7, 9].includes(this.itemEqType)) {
@@ -806,6 +966,77 @@ export default {
       }
     },
   },
+  directives: {
+    //注册指令
+    drag: function (el, binding) {
+      let oDiv = el; //当前元素
+      $(oDiv).bind(
+        "mousewheel",
+
+        function (e) {
+          // console.log(e);
+          // 获取鼠标所在位置
+
+          let { clientX, clientY } = e;
+          // 获取元素距离屏幕边界左边和上边距离
+
+          let offsetX = $(oDiv).offset().left;
+
+          let offsetY = $(oDiv).offset().top;
+
+          // 获取鼠标距离当前元素边界左边和上边距离
+
+          let mouseToBorderX = clientX - offsetX;
+
+          let mouseToBorderY = clientY - offsetY;
+
+          // 获取元素width,height,left,top;注意元素为relative或absolute定位
+
+          let width = $(oDiv).width();
+
+          let height = $(oDiv).height();
+
+          let left = parseFloat($(oDiv).css("left"));
+
+          let top = parseFloat($(oDiv).css("top"));
+
+          // 设置一下缩放幅度 ,值越大缩放的越快
+
+          let ratio = e.originalEvent.deltaY < 0 ? 0.1 : -0.1;
+
+          // 设置缩放后的宽高
+
+          width = width * (1 + ratio);
+
+          height = height * (1 + ratio);
+
+          // 这里是关键一步
+
+          // 可以想象,当元素宽度增加0.1倍,如果此时元素left值不变化，那么元素是会向右变大的，那么鼠标相
+
+          // 对元素左上角的距离与最开始的距离相比就变了，变化量为mouseToBorderX*ratio，那么让元素left
+
+          //  减去变化量即可保证鼠标相对元素不动
+
+          left = left - mouseToBorderX * ratio;
+
+          top = top - mouseToBorderY * ratio;
+
+          if (width > 100) {
+            $(oDiv).css({
+              width: width + "px",
+
+              height: height + "px",
+
+              left: left + "px",
+
+              top: top + "px",
+            });
+          }
+        }
+      );
+    },
+  },
   created() {},
   mounted() {
     
@@ -824,7 +1055,7 @@ export default {
   },
   beforeRouteLeave(to, form, next) {
     // 离开路由移除滚动事件
-    window.removeEventListener('scroll',this.mouseSrollAuto);
+    window.removeEventListener('scroll',this.mouseSrollAuto, true);
     next();
   },
   methods: {
@@ -871,7 +1102,6 @@ export default {
     },
     // 移动滚动条
     mouseSrollAuto(e) {
-      console.log(e.target.scrollLeft, "e.target.scrollLeft");
       if (e.target.scrollLeft > 0) {
         this.resetCanvasFlag = true;
       } else {
@@ -880,7 +1110,9 @@ export default {
     },
     otherClose(e) {
       if (this.treeShow == true) {
-        if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+        if (!this.$refs.treeBox.contains(e.target)) {
+          this.treeShow = false;
+        }
       }
     },
     getDictList() {
@@ -1068,12 +1300,7 @@ export default {
                 itm.eqId == item.eqId &&
                 this.itemEqType != item.eqType
               ) {
-                this.tooltipType1(item);
-                itm.textFalse = true;
-                setTimeout(() => {
-                  item.textFalse = false;
-                }, 2000);
-                this.$forceUpdate();
+                this.$modal.msgWarning("请选择同种设备");
               }
             }
           } else {
@@ -1100,14 +1327,7 @@ export default {
           [16, 22, 29, 33, 36].includes(item.eqType)
         ) {
           // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
-          console.log(item, "1111111111111111");
-          this.tooltipType1(item);
-
-          item.textKKFalse = true;
-          setTimeout(() => {
-            item.textKKFalse = false;
-          }, 2000);
-          this.$forceUpdate();
+          this.$modal.msgWarning("请选择可控设备");
         }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
@@ -1227,26 +1447,6 @@ export default {
         });
       }
     },
-    tooltipType1(item) {
-      if (
-        item.position.left / 1.2 <= this.currentTunnel.lane.width / 1.2 - 100 &&
-        item.position.top / 1.2 <= 350
-      ) {
-        return (item.tooltipType1 = 1);
-      } else if (
-        item.position.left / 1.2 > this.currentTunnel.lane.width / 1.2 - 100 &&
-        item.position.top / 1.2 <= 350
-      ) {
-        return (item.tooltipType1 = 2);
-      } else if (
-        item.position.left / 1.2 <= this.currentTunnel.lane.width / 1.2 - 100 &&
-        item.position.top / 1.2 > 350
-      ) {
-        return (item.tooltipType1 = 3);
-      } else {
-        return (item.tooltipType1 = 4);
-      }
-    },
     /*点击设备类型*/
     displayControl(value, lable) {
       // console.log(value, lable,"value, lable")
@@ -1332,6 +1532,7 @@ export default {
       }
       this.$forceUpdate();
     },
+    
     // 模拟定时
     getRealTimeData() {
       getDeviceData({
@@ -1445,16 +1646,48 @@ export default {
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
-      let param = document.getElementsByClassName("content");
+      let param = document.getElementsByClassName("vehicleLane");
       param[0].scrollLeft = 0;
+      this.$refs.dragImgDom.style.left = "0px";
+      this.$refs.dragImgDom.style.top = "0px";
+    },
+    //右键拖动
+    dragImg(e) {
+      let scrollContainer = document.querySelector(".vehicleLane");
+      let dragContainer = document.querySelector(".content");
+      let mouseDownScrollPosition = {
+            scrollLeft: scrollContainer.scrollLeft,
+            scrollTop: scrollContainer.scrollTop
+        };
+        //鼠标按下的位置坐标
+        let mouseDownPoint = {
+            x: e.clientX,
+            y: e.clientY
+        };
+        dragContainer.onmousemove = e => {
+            //鼠标滑动的实时距离
+            let dragMoveDiff = {
+                x: mouseDownPoint.x - e.clientX,
+                y: mouseDownPoint.y - e.clientY
+            };
+            scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
+            scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+            if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollTop > 0){
+              this.resetCanvasFlag = true;
+            }
+        };
+        document.onmouseup = e => {
+            dragContainer.onmousemove = null;
+            document.onmouseup = null;
+        };
     },
     // 模糊查询
     treeClick() {
-      // 点击输入框 折叠之前打开的树形菜单
-      const nodes = this.$refs.tree.store._getAllNodes();
-      nodes.forEach((item) => {
-        item.expanded = false;
-      });
+      // // 点击输入框 折叠之前打开的树形菜单
+      // const nodes = this.$refs.tree.store._getAllNodes();
+      // nodes.forEach((item) => {
+      //   item.expanded = false;
+      // });
       if (this.resetCanvasFlag && this.treeShow) {
         setTimeout(() => {
           this.treeShow = false;
@@ -1468,29 +1701,33 @@ export default {
       let that = this;
       if (this.screenEqName) {
         let bigType = "";
-        let param = document.getElementsByClassName("content");
+        let param = document.getElementsByClassName("vehicleLane");
         for (var item of this.selectedIconList) {
-          // if (treeNodeClick) {
           if (item.eqName == this.screenEqName) {
             bigType = item.bigType;
-            // this.resetCanvasFlag = true;
+            // 工作台宽度1728 所以/864 处置页工作台宽1440 /2 = 720
             if (
-              this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
-                720 &&
-              item.position.left / 1.2 > 720
+              this.currentTunnel.lane.width - item.position.left > 864 &&
+              item.position.left > 864
             ) {
               // 中间
-              param[0].scrollLeft = item.position.left - 864;
-            } else if (item.position.left / 1.2 < 720) {
+              param[0].scrollLeft = (item.position.left - 864) / 1.2 / 100 * this.zoom;
+            } else if (item.position.left < 864) {
               // 左边
               param[0].scrollLeft = 0;
             } else if (
-              this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
-              720
+              this.currentTunnel.lane.width - item.position.left < 864
             ) {
               // 右边
-              param[0].scrollLeft = this.currentTunnel.lane.width - 1728;
+              param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) / 1.2 * ((this.zoom / 100 ) * 2)  ;
             }
+            if(this.zoom != 100){
+                if(item.position.top <300){
+                  param[0].scrollTop = 0
+                }else{
+                  param[0].scrollTop = 580
+                }
+              }
             if (
               item.position.left / 1.2 <=
                 this.currentTunnel.lane.width / 1.2 - 200 &&
@@ -1512,7 +1749,6 @@ export default {
             } else {
               item.tooltipType = 4;
             }
-            // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
             item.click = false;
@@ -1520,54 +1756,6 @@ export default {
           if (param[0].scrollLeft != 0) {
             this.resetCanvasFlag = true;
           }
-          // } else {
-          //   if (item.eqName.indexOf(this.screenEqName) > -1) {
-          //     bigType = item.bigType;
-          //     this.resetCanvasFlag = true;
-          //     if (
-          //       this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 >
-          //         720 &&
-          //       item.position.left / 1.2 > 720
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         -item.position.left / 1.2 + 720 + "px";
-          //     } else if (item.position.left / 1.2 < 720) {
-          //       param[0].scrollLeft = 0;
-          //       this.$refs.dragImgDom.style.left = "0px";
-          //     } else if (
-          //       this.currentTunnel.lane.width / 1.2 - item.position.left / 1.2 <
-          //       720
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         1440 - this.currentTunnel.lane.width / 1.2 + "px";
-          //     }
-          //     if (
-          //       item.position.left / 1.2 <=
-          //         this.currentTunnel.lane.width / 1.2 - 200 &&
-          //       item.position.top / 1.2 <= 350
-          //     ) {
-          //       item.tooltipType = 1;
-          //     } else if (
-          //       item.position.left / 1.2 >
-          //         this.currentTunnel.lane.width / 1.2 - 200 &&
-          //       item.position.top / 1.2 <= 350
-          //     ) {
-          //       item.tooltipType = 2;
-          //     } else if (
-          //       item.position.left / 1.2 <=
-          //         this.currentTunnel.lane.width / 1.2 - 200 &&
-          //       item.position.top / 1.2 > 350
-          //     ) {
-          //       item.tooltipType = 3;
-          //     } else {
-          //       item.tooltipType = 4;
-          //     }
-          //     // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-          //     item.click = true;
-          //   } else {
-          //     item.click = false;
-          //   }
-          // }
         }
         if (bigType.includes("0")) {
           this.displayControl(0, "全部设备");
@@ -1793,7 +1981,7 @@ export default {
       if (this.mouseoversImplement == false) {
         return;
       }
-      var parent = document.getElementsByClassName("content");
+      var parent = document.getElementsByClassName("vehicleLane");
       clearInterval(this.imageTimer);
       this.imageTimer = setInterval(() => {
         // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
@@ -2256,6 +2444,8 @@ export default {
   align-items: center;
   width: 1440px;
   display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
   //   position: absolute;
   //   top: 0;
   //   left: 7.35%;
@@ -2269,7 +2459,7 @@ export default {
     align-items: center;
     // overflow-y: hidden;
     zoom: 100%;
-    overflow: overlay;
+    // overflow-x: auto;
     display: inline-block;
     margin: 0 auto;
     position: relative;
@@ -2381,7 +2571,7 @@ export default {
   position: absolute;
   z-index: 960619;
   top: 14%;
-  width: 13.5%;
+  width: 16.5%;
   height: 40vh;
   overflow-x: hidden;
   overflow-y: auto;
@@ -2438,5 +2628,16 @@ export default {
   z-index: 96659;
   cursor: pointer;
   width: 13px;
+}
+.flex-row {
+  display: flex;
+  // flex-direction: row;
+  height: 3vh;
+  align-items: center;
+  padding: 0 1vw;
+  font-size: 0.6vw;
+  > span {
+    display: flex;
+  }
 }
 </style>

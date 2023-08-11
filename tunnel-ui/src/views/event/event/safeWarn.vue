@@ -422,7 +422,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="持续时长" prop="endTime" >
+              <el-form-item label="持续时长" prop="endTime">
                 <!-- <el-date-picker
                   @change="changeEndTime"
                   clearable
@@ -497,7 +497,7 @@
               </el-row>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="事件终点" >
+              <el-form-item label="事件终点">
                 <el-row class="inputNumStyle">
                   <el-col :span="11">
                     <el-input
@@ -751,7 +751,15 @@
                   eventFormDetail.prevControlType == 1
                 "
               >
-                <el-form-item prop="currencyId">
+                <el-form-item
+                  prop="currencyId"
+                  :rules="
+                    eventFormDetail.eventState == 0 &&
+                    eventFormDetail.prevControlType == 1
+                      ? rules.currencyId
+                      : []
+                  "
+                >
                   <el-select
                     v-model="eventFormDetail.currencyId"
                     placeholder="请选择策略"
@@ -1316,7 +1324,7 @@
             v-for="(item, index) in DeviceDetail"
             :key="index"
             :label="item.tableName"
-            :name="index"
+            :name="item.tableName"
           ></el-tab-pane>
         </el-tabs>
       </div>
@@ -1326,9 +1334,11 @@
         v-show="deviceIndexShow == index"
       >
         <el-table :data="item.devicesList" style="width: 100%" height="600">
-          <el-table-column prop="eqName" label="设备名称"> </el-table-column>
-          <el-table-column prop="pile" label="桩号"> </el-table-column>
-          <el-table-column prop="stateName" label="修改后状态">
+          <el-table-column prop="eqName" label="设备名称" align="center">
+          </el-table-column>
+          <el-table-column prop="pile" label="桩号" align="center">
+          </el-table-column>
+          <el-table-column prop="stateName" label="修改后状态" align="center">
           </el-table-column>
         </el-table>
       </div>
@@ -1774,6 +1784,13 @@ export default {
             trigger: "change",
           },
         ],
+        currencyId: [
+          {
+            required: true,
+            message: "请选择预案",
+            trigger: "change",
+          },
+        ],
       },
       isLoading: false,
       loadingText: "加载中...",
@@ -2124,6 +2141,12 @@ export default {
     eventStateChange() {
       if (this.eventFormDetail.eventState != 0) {
         this.eventFormDetail.currencyId = "";
+      }else{
+        if(this.ReservePlanList.length>0){
+          this.eventFormDetail.currencyId = this.ReservePlanList[0].id
+        }else{
+          this.eventFormDetail.currencyId = ''
+        }
       }
       this.eventFormDetail.reviewRemark = [];
     },
@@ -2215,7 +2238,13 @@ export default {
       this.$refs["eventFormDetail"].validate((valid) => {
         if (valid) {
           this.$cache.local.set("currencyId", this.eventFormDetail.currencyId);
-
+          const loading = this.$loading({
+            lock: true,
+            text: "Loading",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
+            target: ".hitchDialog",
+          });
           if (
             this.eventFormDetail.stakeNum1 &&
             this.eventFormDetail.stakeNum2
@@ -2245,13 +2274,13 @@ export default {
             this.eventFormDetail.reviewRemark =
               this.eventFormDetail.reviewRemark.toString();
           }
-          if (
-            (this.eventFormDetail.eventState == "0" &&
-              this.eventFormDetail.currencyId == "") ||
-            this.eventFormDetail.currencyId == null
-          ) {
-            return this.$modal.msgWarning("请选择事件处置预案");
-          }
+          // if (
+          //   (this.eventFormDetail.eventState == "0" &&
+          //     this.eventFormDetail.currencyId == "") ||
+          //   this.eventFormDetail.currencyId == null
+          // ) {
+          //   return this.$modal.msgWarning("请选择事件处置预案");
+          // }
           const currencyId = this.eventFormDetail.currencyId;
           if (this.eventFormDetail.laneNo) {
             this.eventFormDetail.laneNo =
@@ -2263,7 +2292,7 @@ export default {
             this.closeProcessDialog = false;
             this.processType = false;
             this.details = false;
-            if(response.code=="200"){
+            if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
             }
 
@@ -2281,6 +2310,7 @@ export default {
                 this.$modal.msgSuccess("下发指令成功");
               });
             }
+            loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件

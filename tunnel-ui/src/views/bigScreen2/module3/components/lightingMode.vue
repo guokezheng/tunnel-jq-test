@@ -16,7 +16,7 @@
         <scroll class="scrollStyle" :data="dataList" :class-option="defaultOption" >
           <el-row :class="index%2===0 ? 'tableLine1': 'tableLine2'" style="height: 3.5vh;font-size: 0.7em;overflow: hidden;text-align: center;" v-for="(item,index) in dataList" :key="item.id">
             <el-col class="tableCell" :span="8">
-              <span>{{ item.deptName }}</span>
+                <span>{{ item.deptName }}</span>
             </el-col>
             <el-col class="tableCell" :span="8">
               <span>{{ item.happenTime }}</span>

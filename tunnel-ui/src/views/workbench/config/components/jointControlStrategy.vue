@@ -2,7 +2,7 @@
   <el-dialog
     class="timedControl"
     custom-class="no-scroll"
-    title="联控策略"
+    title="智慧调光"
     :close-on-click-modal="false"
     :visible.sync="visibleSync"
     width="80%"

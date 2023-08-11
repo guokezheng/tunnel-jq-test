@@ -145,7 +145,7 @@
               ></el-switch>
             </div> -->
           <el-button
-            v-if="resetCanvasFlag && currentTunnel.lane.width>1728"
+            v-if="resetCanvasFlag"
             class="flex-row"
             type="primary"
             size="mini"
@@ -163,15 +163,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="strategyPage1"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/kzcl.png" />-->
-<!--            <span>控制策略1</span>-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            class="buttons"-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            @click="strategyPage1"-->
+          <!--          >-->
+          <!--            <img src="../../../assets/icons/kzcl.png" />-->
+          <!--            <span>控制策略1</span>-->
+          <!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -181,15 +181,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>智慧调光</span>
           </el-button>
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="iconLighting"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/zmpz.png" />-->
-<!--            <span>照明配置</span>-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            class="buttons"-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            @click="iconLighting"-->
+          <!--          >-->
+          <!--            <img src="../../../assets/icons/zmpz.png" />-->
+          <!--            <span>照明配置</span>-->
+          <!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -287,15 +287,18 @@
           </el-col>
         </el-row>
       </el-drawer>
-      <div class="vehicleLane">
+      <div
+        class="vehicleLane"
+        @mouseover="mouseoversImage"
+        @mouseleave="mouseleaveImage"
+      >
         <div
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @mousewheel="mouseSrollAuto"
           @contextmenu.prevent
-          @mouseover="mouseoversImage"
-          @mouseleave="mouseleaveImage"
+          @mousedown="dragImg"
         >
           <!-- 右键拖拽 勿删 -->
           <!-- <div
@@ -469,56 +472,6 @@
                     @mousemove="openTooltip(item, index)"
                     @mouseleave="closeTooltip(item)"
                   >
-                    <!-- 设备图标上提示文字 -->
-
-                    <div
-                      v-if="item.click"
-                      class="screenEqNameBox"
-                      :style="{
-                        top:
-                          item.tooltipType == 1 || item.tooltipType == 2
-                            ? '35px'
-                            : '-50px',
-                        left:
-                          item.tooltipType == 1 || item.tooltipType == 3
-                            ? '0px'
-                            : '-100px',
-                      }"
-                    >
-                      {{ item.eqName }}
-                    </div>
-                    <div
-                      v-if="item.textFalse"
-                      class="textFalseBox"
-                      :style="{
-                        top:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 2
-                            ? '35px'
-                            : '-50px',
-                        left:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 3
-                            ? '0px'
-                            : '-100px',
-                      }"
-                    >
-                      请选择同种设备
-                    </div>
-                    <div
-                      v-if="item.textKKFalse"
-                      class="textFalseBox"
-                      :style="{
-                        top:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 2
-                            ? '35px'
-                            : '-50px',
-                        left:
-                          item.tooltipType1 == 1 || item.tooltipType1 == 3
-                            ? '0px'
-                            : '-100px',
-                      }"
-                    >
-                      请选择可控设备
-                    </div>
                     <div
                       class="tooltipBox"
                       v-if="showTooltipIndex == index"
@@ -1366,7 +1319,7 @@
           width="130"
           :show-overflow-tooltip="true"
         />
-        <el-table-column label="桩号" align="center" prop="pile" width="120"/>
+        <el-table-column label="桩号" align="center" prop="pile" width="120" />
         <el-table-column
           label="操作状态"
           align="center"
@@ -2922,6 +2875,7 @@ export default {
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
     scrollview.addEventListener('scroll', this.mouseSrollAuto, true)
+    
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
@@ -2952,7 +2906,7 @@ export default {
 
   methods: {
     mouseSrollAuto(e){
-      console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      // console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if(e.target.scrollLeft > 0){
         this.resetCanvasFlag = true
       }else{
@@ -2961,8 +2915,8 @@ export default {
     },
     // 管理站级联回显选中效果
     cascaderHandleChange() {
-      console.log(1);
-      console.log(this.siteList, "siteList");
+      // console.log(1);
+      // console.log(this.siteList, "siteList");
       let handleText = "";
       for (let item of this.siteList) {
         if (this.tunnelQueryParams.deptId == item.id) {
@@ -2976,14 +2930,14 @@ export default {
         }
       }
 
-      console.log(handleText, "handleText");
+      // console.log(handleText, "handleText");
       // 事件监听实现懒加载选择任意一级
       this.$nextTick(() => {
         //获取label
         const labelDoms = document.querySelectorAll(
           ".el-cascader-node .el-cascader-node__label"
         );
-        console.log(labelDoms, "labelDoms");
+        // console.log(labelDoms, "labelDoms");
 
         //获取radio 级联带单选框时使用
         // const radioDoms = document.querySelectorAll('.el-cascader-node .el-radio')
@@ -3100,16 +3054,9 @@ export default {
         index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
       );
     },
-    beforeDestroy() {
-      document.removeEventListener("click", this.bodyCloseMenus);
-      document.removeEventListener("click", this.bodyCloseMenus1);
-      document.removeEventListener("click", this.bodyCloseMenus2);
-      document.removeEventListener("click", this.bodyCloseMenus3);
-      // 获取指定元素
-      const scrollview = this.$refs['divRoller']
-      // 移除监听
-      scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
-    },
+    // beforeDestroy() {
+      
+    // },
     bodyCloseMenus(e) {
       let self = this;
       if (self.syxt_boxShow == true) {
@@ -3172,7 +3119,15 @@ export default {
     },
     otherClose(e) {
       if (this.treeShow == true) {
-        if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+        if (!this.$refs.treeBox.contains(e.target)){
+          this.treeShow = false;
+            // 点击输入框 折叠之前打开的树形菜单
+          const nodes = this.$refs.tree.store._getAllNodes();
+          nodes.forEach((item) => {
+            item.expanded = false;
+          });
+        } 
+        
       }
     },
     treeClear() {
@@ -3185,11 +3140,11 @@ export default {
     },
     // 模糊查询
     treeClick() {
-      // 点击输入框 折叠之前打开的树形菜单
-      const nodes = this.$refs.tree.store._getAllNodes();
-      nodes.forEach((item) => {
-        item.expanded = false;
-      });
+      // // 点击输入框 折叠之前打开的树形菜单
+      // const nodes = this.$refs.tree.store._getAllNodes();
+      // nodes.forEach((item) => {
+      //   item.expanded = false;
+      // });
       if (this.resetCanvasFlag && this.treeShow) {
         setTimeout(() => {
           this.treeShow = false;
@@ -3200,7 +3155,7 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      console.log(data, "data");
+      // console.log(data, "data");
       // 如果存在children，则代表是父级
       if (data.children) {
         // 点击父级业务
@@ -3365,7 +3320,12 @@ export default {
           return 72;
         } else if (type == "content") {
           return "山东高速欢迎您";
-        }
+        } else if (type == "array") {
+            let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
+            return array;
+        }else if (type == "content") {
+            return "山东高速欢迎您";
+        } 
       }
     },
     formatNum(num, length) {
@@ -3585,11 +3545,8 @@ export default {
       let that = this;
       if (this.screenEqName) {
         let bigType = "";
-        let param = document.getElementsByClassName("content");
+        let param = document.getElementsByClassName("vehicleLane");
         for (var item of this.selectedIconList) {
-          // if (treeNodeClick) {
-            // 根据treeNodeClick 判断是输入框输入还是菜单选择
-            // 输入框输入的 输入内容要和设备名称相等 防止出现输入测控执行器1 测控执行器11 12 13...也被圈选
             if (item.eqName == this.screenEqName) {
               bigType = item.bigType;
 
@@ -3598,7 +3555,8 @@ export default {
                 item.position.left > 864
               ) {
               // 中间
-              param[0].scrollLeft = item.position.left - 864;
+                param[0].scrollLeft = (item.position.left - 864) / 100 * this.zoom;
+              
               } else if (item.position.left < 864) {
                 param[0].scrollLeft = 0;
               } else if (
@@ -3606,7 +3564,15 @@ export default {
                 864
               ) {
               // 右边
-              param[0].scrollLeft = this.currentTunnel.lane.width - 1728;
+              param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) * ((this.zoom / 100 ) * 2) ;
+              // console.log(param[0].scrollLeft,"param[0].scrollLeft")
+              }
+              if(this.zoom != 100){
+                if(item.position.top <300){
+                  param[0].scrollTop = 0
+                }else{
+                  param[0].scrollTop = 580
+                }
               }
               if (
                 item.position.left <= this.currentTunnel.lane.width - 100 &&
@@ -3631,50 +3597,6 @@ export default {
             } else {
               item.click = false;
             }
-          // } else {
-          //   if (item.eqName.indexOf(this.screenEqName) > -1) {
-          //     bigType = item.bigType;
-          //     // this.resetCanvasFlag = true;
-          //     if (
-          //       this.currentTunnel.lane.width - item.position.left > 864 &&
-          //       item.position.left > 864
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         -item.position.left + 864 + "px";
-          //     } else if (item.position.left < 864) {
-          //       param[0].scrollLeft = 0;
-          //       this.$refs.dragImgDom.style.left = "0px";
-          //     } else if (
-          //       this.currentTunnel.lane.width - item.position.left <
-          //       864
-          //     ) {
-          //       this.$refs.dragImgDom.style.left =
-          //         1728 - this.currentTunnel.lane.width + "px";
-          //     }
-          //     if (
-          //       item.position.left <= this.currentTunnel.lane.width - 100 &&
-          //       item.position.top <= 450
-          //     ) {
-          //       item.tooltipType = 1;
-          //     } else if (
-          //       item.position.left > this.currentTunnel.lane.width - 100 &&
-          //       item.position.top <= 450
-          //     ) {
-          //       item.tooltipType = 2;
-          //     } else if (
-          //       item.position.left <= this.currentTunnel.lane.width - 100 &&
-          //       item.position.top > 450
-          //     ) {
-          //       item.tooltipType = 3;
-          //     } else {
-          //       item.tooltipType = 4;
-          //     }
-          //     // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-          //     item.click = true;
-          //   } else {
-          //     item.click = false;
-          //   }
-          // }
           if (param[0].scrollLeft != 0) {
                 this.resetCanvasFlag = true;
               }
@@ -3739,7 +3661,7 @@ export default {
       if (this.mouseoversImplement == false) {
         return;
       }
-      var parent = document.getElementsByClassName("content");
+      var parent = document.getElementsByClassName("vehicleLane");
       clearInterval(this.imageTimer);
       this.imageTimer = setInterval(() => {
         // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
@@ -3768,7 +3690,7 @@ export default {
     },
 
     mouseoversImage() {
-      clearInterval(this.imageTimer);
+      window.clearInterval(this.imageTimer);
       // this.srollSwitch = false
       this.imageTimer = null;
     },
@@ -3908,7 +3830,7 @@ export default {
     },
 
     checkData(obj, arr) {
-      console.log(arr, "arr");
+      // console.log(arr, "arr");
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.id);
         this.checkData(obj.children[0], arr);
@@ -3922,8 +3844,6 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(2);
-      console.log(index, "index000000000000000000000000");
       if (index) {
         // console.log(
         //   this.$cache.local.get("deptId"),
@@ -4258,31 +4178,41 @@ export default {
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
-      let param = document.getElementsByClassName("content");
+      let param = document.getElementsByClassName("vehicleLane");
       param[0].scrollLeft = 0;
-      // this.$refs.dragImgDom.style.left = "0px";
-      // this.$refs.dragImgDom.style.top = "0px";
+      this.$refs.dragImgDom.style.left = "0px";
+      this.$refs.dragImgDom.style.top = "0px";
     },
     //右键拖动
     dragImg(e) {
-      if (e.button == 0) {
-        return;
-      }
-      this.dragFlag = true;
-      this.mouseLeft = e.clientX - parseInt(this.$refs.dragImgDom.offsetLeft);
-      this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
-      document.onmousemove = (e) => {
-        if (this.dragFlag) {
-          this.resetCanvasFlag = true;
-          this.curX = e.clientX - this.mouseLeft;
-          this.curY = e.clientY - this.mouseTop;
-          this.$refs.dragImgDom.style.left = this.curX + "px";
-          this.$refs.dragImgDom.style.top = this.curY + "px";
-        }
-      };
-      document.onmouseup = () => {
-        this.dragFlag = false;
-      };
+      let scrollContainer = document.querySelector(".vehicleLane");
+      let dragContainer = document.querySelector(".content");
+      let mouseDownScrollPosition = {
+            scrollLeft: scrollContainer.scrollLeft,
+            scrollTop: scrollContainer.scrollTop
+        };
+        //鼠标按下的位置坐标
+        let mouseDownPoint = {
+            x: e.clientX,
+            y: e.clientY
+        };
+        dragContainer.onmousemove = e => {
+            //鼠标滑动的实时距离
+            let dragMoveDiff = {
+                x: mouseDownPoint.x - e.clientX,
+                y: mouseDownPoint.y - e.clientY
+            };
+            
+            scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
+            scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+            if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollLeft > 0){
+              this.resetCanvasFlag = true;
+            }
+        };
+        document.onmouseup = e => {
+            dragContainer.onmousemove = null;
+            document.onmouseup = null;
+        };
     },
     lightSwitchFunc() {
       this.getConfigKey("lightSwitch").then((response) => {
@@ -4731,10 +4661,6 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                if(res.eqList[i].eqType == 16){
-                  console.log(res.eqList[i],"情报板")
-
-                }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -4826,7 +4752,7 @@ export default {
       });
       // 树状搜索
       getCategoryDeviceTree(tunnelId).then((res) => {
-        console.log(res.data, "res.data");
+        // console.log(res.data, "res.data");
         this.treeData = res.data;
       });
     },
@@ -5161,6 +5087,9 @@ export default {
                 );
                 if (result === -1) {
                   itm.click = true;
+                  // setTimeout(()=>{
+
+                  // },2000)
                   this.itemEqId.push(itm.eqId);
                   this.$forceUpdate();
                 } else {
@@ -5181,12 +5110,7 @@ export default {
                 itm.eqId == item.eqId &&
                 this.itemEqType != item.eqType
               ) {
-                this.tooltipType1(item);
-                itm.textFalse = true;
-                setTimeout(() => {
-                  item.textFalse = false;
-                }, 2000);
-                this.$forceUpdate();
+                this.$modal.msgWarning("请选择同种设备");
               }
             }
           } else {
@@ -5213,14 +5137,7 @@ export default {
           [16, 22, 29, 33, 36].includes(item.eqType)
         ) {
           // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
-          console.log(item, "1111111111111111");
-          this.tooltipType1(item);
-
-          item.textKKFalse = true;
-          setTimeout(() => {
-            item.textKKFalse = false;
-          }, 2000);
-          this.$forceUpdate();
+          this.$modal.msgWarning("请选择可控设备");
         }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
@@ -5338,26 +5255,6 @@ export default {
             );
           }
         });
-      }
-    },
-    tooltipType1(item) {
-      if (
-        item.position.left <= this.currentTunnel.lane.width - 100 &&
-        item.position.top <= 450
-      ) {
-        return (item.tooltipType1 = 1);
-      } else if (
-        item.position.left > this.currentTunnel.lane.width - 100 &&
-        item.position.top <= 450
-      ) {
-        return (item.tooltipType1 = 2);
-      } else if (
-        item.position.left <= this.currentTunnel.lane.width - 100 &&
-        item.position.top > 450
-      ) {
-        return (item.tooltipType1 = 3);
-      } else {
-        return (item.tooltipType1 = 4);
       }
     },
     sendAnalogCommand(param) {
@@ -5912,6 +5809,15 @@ export default {
     clearInterval(this.imageTimer);
     this.imageTimer = null;
     window.removeEventListener("click", this.otherClose);
+
+    document.removeEventListener("click", this.bodyCloseMenus);
+    document.removeEventListener("click", this.bodyCloseMenus1);
+    document.removeEventListener("click", this.bodyCloseMenus2);
+    document.removeEventListener("click", this.bodyCloseMenus3);
+    // 获取指定元素
+    const scrollview = this.$refs['divRoller']
+    // 移除监听
+    scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
   },
 };
 </script>
@@ -6003,7 +5909,7 @@ export default {
 .searchTable {
   margin: 0px;
   width: 100% !important;
-  height: 32px !important;
+  height: 4vh !important;
 }
 .robotHtmlBox {
   width: 770px;
@@ -6206,6 +6112,8 @@ export default {
   position: absolute;
   top: 6%;
   left: 7.35%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .contentTopNav {
   width: 85%;
@@ -6505,9 +6413,7 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
-  // overflow-y: hidden;
   zoom: 100%;
-  overflow: overlay;
   display: inline-block;
   margin: 0 auto;
   position: relative;

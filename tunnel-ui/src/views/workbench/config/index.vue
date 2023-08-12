@@ -737,7 +737,9 @@
                         class="labelClass labelClass7"
                         v-if="item.eqType == 7"
                       >
-                        {{ item.num }}
+                        <span v-if="selectBigType.index == 0 || selectBigType.index == 6">
+                          {{ item.num }}
+                        </span>
                         <span v-if="selectBigType.index == 4">
                           {{item.electricity}}
                         </span>
@@ -747,7 +749,9 @@
                         class="labelClass labelClass9"
                         v-if="item.eqType == 9"
                       >
-                        {{ item.num }}
+                        <span v-if="selectBigType.index == 0 || selectBigType.index == 6">
+                          {{ item.num }}
+                        </span>
                         <span v-if="selectBigType.index == 4">
                           {{item.electricity}}
                         </span>

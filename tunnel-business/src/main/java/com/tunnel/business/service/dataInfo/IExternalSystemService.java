@@ -27,7 +27,13 @@ public interface IExternalSystemService
     public List<ExternalSystem> selectExternalSystemList(ExternalSystem externalSystem);
 
 
-
+    /**
+     * 查询外部系统列表
+     *  接口用于对接第三方系统使用
+     * @param externalSystem 外部系统
+     * @return 外部系统集合
+     */
+    List<ExternalSystem> queryExternalSystemList(ExternalSystem externalSystem);
     /**
      * 新增外部系统
      *

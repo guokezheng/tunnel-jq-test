@@ -27,7 +27,7 @@ public class InduceTask {
      */
     @Scheduled(fixedRate = 300000)
     public void syncInduce(){
-        List<SdDevices> devicesList = tcpClientGeneralService.getDevicesList(DeviceProtocolCodeEnum.XIANKE_INDUCTION_LAMP_PROTOCOL_code.getCode(), DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode());
+        List<SdDevices> devicesList = tcpClientGeneralService.getDevicesList(DeviceProtocolCodeEnum.XIANKE_INDUCTION_LAMP_PROTOCOL_CODE.getCode(), DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode());
         try{
             for(SdDevices item : devicesList){
                 GuidanceLampHandle.getInstance().syncYdd(item);

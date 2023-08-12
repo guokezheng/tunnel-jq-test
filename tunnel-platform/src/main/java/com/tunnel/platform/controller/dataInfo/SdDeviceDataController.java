@@ -198,6 +198,11 @@ public class SdDeviceDataController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 工作台能耗图表
+     * @param tunnelId
+     * @return
+     */
     @GetMapping(value = "/energyConsumptionDetection/{tunnelId}")
     public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
     {

@@ -48,10 +48,11 @@ public class SdTunnelEnergyController extends BaseController {
             return AjaxResult.success(allDataList);
         }
 
-        String url = externalSystems.get(0).getSystemUrl() + "login";
+        ExternalSystem system = externalSystems.get(0);
+        String url = system.getSystemUrl() + "login";
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("username", "admin");
-        map.put("password", "HSD123!@#");
+        map.put("username", system.getUsername());
+        map.put("password", system.getPassword());
         String result = "";
         try {
             result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
@@ -67,7 +68,7 @@ public class SdTunnelEnergyController extends BaseController {
         }
         String token =  json.get("token").toString();
         //获取隧道用电排行，能耗占比
-        url = externalSystems.get(0).getSystemUrl() + "cloud/api/electricityRankingItemized";
+        url = system.getSystemUrl() + "cloud/api/electricityRankingItemized";
 
         if (token == null || token.equals("")) {
             return AjaxResult.success(allDataList);
@@ -114,10 +115,11 @@ public class SdTunnelEnergyController extends BaseController {
             return AjaxResult.success(allDataList);
         }
 
-        String url = externalSystems.get(0).getSystemUrl() + "login";
+        ExternalSystem system = externalSystems.get(0);
+        String url = system.getSystemUrl() + "login";
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("username", "admin");
-        map.put("password", "HSD123!@#");
+        map.put("username", system.getUsername());
+        map.put("password", system.getPassword());
         String result = "";
         try {
             result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
@@ -133,7 +135,7 @@ public class SdTunnelEnergyController extends BaseController {
         }
         String token =  json.get("token").toString();
         //获取隧道用电排行，能耗占比
-        url = externalSystems.get(0).getSystemUrl() + "cloud/api/getEnergyData";
+        url = system.getSystemUrl() + "cloud/api/getEnergyData";
 
         if (token == null || token.equals("")) {
             return AjaxResult.success(allDataList);

@@ -197,16 +197,19 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService {
         association.setTunnelDirection(eqDirection);
         association.setExternalSystemId(externalSystemId);
 
-        SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(eqTunnelId);
-        String directionName = sysDictDataService.selectDictLabel(DictTypeEnum.sd_direction.getCode(), eqDirection);
-        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
-        String msg = "【" + sdTunnels.getTunnelName() + "】 未查询到 方向为【" + directionName + "】系统名称为 【" + externalSystem.getSystemName() + "】的关联配置数据";
+//        SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(eqTunnelId);
+//        String directionName = sysDictDataService.selectDictLabel(DictTypeEnum.sd_direction.getCode(), eqDirection);
+//        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
+//        String msg = "【" + sdTunnels.getTunnelName() + "】 未查询到 方向为【" + directionName + "】系统名称为 【" + externalSystem.getSystemName() + "】的关联配置数据";
 
         List<TunnelAssociation> associationList = tunnelAssociationMapper.selectTunnelAssociationList(association);
-        Assert.notEmpty(associationList, msg);
+//        Assert.notEmpty(associationList, msg);
 
-        TunnelAssociation tunnelAssociation = associationList.get(0);
-        return tunnelAssociation.getExternalSystemTunnelId();
+        if(associationList != null && associationList.size() > 0){
+            TunnelAssociation tunnelAssociation = associationList.get(0);
+            return tunnelAssociation.getExternalSystemTunnelId();
+        }
+     return null;
     }
 
 

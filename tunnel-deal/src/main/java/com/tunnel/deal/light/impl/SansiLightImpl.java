@@ -257,50 +257,50 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         return responseBody.contains("pipelineId") ? 1 : 0;
     }
 
-    /**
-     * 批量控制等亮度方法
-     * @param deviceIds  eqId 设备ID
-     * @param bright 亮度值
-     * @param controlType 操作方式
-     * @param operIp IP地址
-     */
-    @Override
-    public void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
-        for (String deviceId:deviceIds ) {
-            ThreadPool.executor.execute(()->{
-                SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-                int resultStatus = setBrightness(deviceId,bright);
-                // 如果控制成功
-                if (resultStatus == 1) {
-                    // 更新设备在线状态
-                    device.setEqStatus("1");
-                    device.setEqStatusTime(new Date());
-                    sdDevicesService.updateSdDevices(device);
-                    //更新设备实时数据
-                   sdDeviceDataService.updateDeviceData(device, String.valueOf(bright), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
-                }
-                //添加操作日志
-                SdOperationLog sdOperationLog = new SdOperationLog();
-                sdOperationLog.setEqTypeId(device.getEqType());
-                sdOperationLog.setTunnelId(device.getEqTunnelId());
-                sdOperationLog.setEqId(device.getEqId());
-                sdOperationLog.setOperationState(String.valueOf(bright));
-                sdOperationLog.setControlType(controlType);
-                sdOperationLog.setCreateTime(new Date());
-                sdOperationLog.setOperIp(operIp);
-                sdOperationLog.setState(String.valueOf(resultStatus));
-                // 确定设备之前亮度值
-                SdDeviceData sdDeviceData = new SdDeviceData();
-                sdDeviceData.setDeviceId(deviceId);
-                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
-                List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-                if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
-                    sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
-                }
-                sdOperationLogService.insertSdOperationLog(sdOperationLog);
-            });
-        }
-    }
+//    /**
+//     * 批量控制等亮度方法
+//     * @param deviceIds  eqId 设备ID
+//     * @param bright 亮度值
+//     * @param controlType 操作方式
+//     * @param operIp IP地址
+//     */
+//    @Override
+//    public void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
+//        for (String deviceId:deviceIds ) {
+//            ThreadPool.executor.execute(()->{
+//                SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+//                int resultStatus = setBrightness(deviceId,bright);
+//                // 如果控制成功
+//                if (resultStatus == 1) {
+//                    // 更新设备在线状态
+//                    device.setEqStatus("1");
+//                    device.setEqStatusTime(new Date());
+//                    sdDevicesService.updateSdDevices(device);
+//                    //更新设备实时数据
+//                   sdDeviceDataService.updateDeviceData(device, String.valueOf(bright), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+//                }
+//                //添加操作日志
+//                SdOperationLog sdOperationLog = new SdOperationLog();
+//                sdOperationLog.setEqTypeId(device.getEqType());
+//                sdOperationLog.setTunnelId(device.getEqTunnelId());
+//                sdOperationLog.setEqId(device.getEqId());
+//                sdOperationLog.setOperationState(String.valueOf(bright));
+//                sdOperationLog.setControlType(controlType);
+//                sdOperationLog.setCreateTime(new Date());
+//                sdOperationLog.setOperIp(operIp);
+//                sdOperationLog.setState(String.valueOf(resultStatus));
+//                // 确定设备之前亮度值
+//                SdDeviceData sdDeviceData = new SdDeviceData();
+//                sdDeviceData.setDeviceId(deviceId);
+//                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+//                List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+//                if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+//                    sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+//                }
+//                sdOperationLogService.insertSdOperationLog(sdOperationLog);
+//            });
+//        }
+//    }
 
     /**
      * 控制方法

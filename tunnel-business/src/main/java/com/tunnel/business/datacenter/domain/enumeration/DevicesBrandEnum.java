@@ -67,7 +67,16 @@ public enum DevicesBrandEnum {
     XI_HE_CAI_QIAO("0061", "西核彩桥"),
     SAN_JING("0062", "三晶"),
     HONG_MENG("0063", "鸿蒙"),
-    ZHUO_SHI_ZHI_TONG("086d2f094ea64d759e5eda92f71392db", "卓视智通");
+    SHANG_HAI_TUN_SHAN("10010","上海吞山"),
+    SHEN_ZHEN_LI_DIAN("10011","深圳力电"),
+    KE_DA_LI_AN("10012","科大立安"),
+    ZHUO_SHI_ZHI_TONG("10013", "卓视智通"),
+    XI_MEN_ZI("10014","西门子"),
+    SHENG_QIAO("10015","圣桥"),
+    HUAN_TENG("10016","欢腾"),
+    SHANG_HAI_XUN_FEI_TWO("10017","上海讯飞"),
+    OU_YA_DIAN_QI("10018","欧亚电器"),
+    DIAN_MING("10019","电明");
 
 
     private String code;

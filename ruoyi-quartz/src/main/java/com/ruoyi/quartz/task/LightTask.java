@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 三晶照明定时任务
+ */
 @Component("lightTask")
 public class LightTask {
 
@@ -48,7 +51,10 @@ public class LightTask {
      */
     public void syncDeviceData() {
         ExternalSystem system = getExternalSystem();
-        String tunnelId = system.getTunnelId();
+        if(system == null){
+            return;
+        }
+        String tunnelIdSystem = system.getTunnelId();
         Long systemId = system.getId();
 
         String username = system.getUsername();
@@ -56,24 +62,34 @@ public class LightTask {
         String systemUrl = system.getSystemUrl();
         //获取cookie
         String jessionId = sanJingLight.getCacheToken(username,password,systemUrl);
-//        String jessionId = sanJingLight.login(username, password, systemUrl);
         if(StringUtils.isEmpty(jessionId)){
             log.error("照明定时任务报错：jessionId为空,jessionId=",jessionId);
             return;
         }
-        // 上行对应的外部系统隧道洞ID
-        String rightTunnelId = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.UP_DIRECTION.getCode(), systemId);
-        // 下行对应的外部系统隧道洞ID
-        String leftTunnelId = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.DOWN_DIRECTION.getCode(), systemId);
+//        多个隧道执行照明定时任务
+        String[] tunnelIdArray = tunnelIdSystem.split(",");
+        for(String tunnelId : tunnelIdArray){
+            // 上行对应的外部系统隧道洞ID
+            String rightTunnelId = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.UP_DIRECTION.getCode(), systemId);
+            // 下行对应的外部系统隧道洞ID
+            String leftTunnelId = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.DOWN_DIRECTION.getCode(), systemId);
 
-        //同步左洞亮度，济南方向
-        getLatestDeviceData(tunnelId, systemUrl, leftTunnelId, jessionId, TunnelDirectionEnum.DOWN_DIRECTION.getCode());
-        //同步右洞亮度,潍坊方向
-        getLatestDeviceData(tunnelId, systemUrl, rightTunnelId, jessionId, TunnelDirectionEnum.UP_DIRECTION.getCode());
+            if(rightTunnelId == null || "".equals(rightTunnelId)){
+                continue;
+            }
+            if(leftTunnelId == null || "".equals(leftTunnelId)){
+                continue;
+            }
 
+            //同步右洞亮度,潍坊方向
+            getLatestDeviceData(tunnelId, systemUrl, rightTunnelId, jessionId, TunnelDirectionEnum.UP_DIRECTION.getCode());
 
-        //获取开关状态
-        getTunnelSwitchStatus(tunnelId, systemUrl, leftTunnelId,rightTunnelId, jessionId);
+            //同步左洞亮度，济南方向
+            getLatestDeviceData(tunnelId, systemUrl, leftTunnelId, jessionId, TunnelDirectionEnum.DOWN_DIRECTION.getCode());
+
+            //获取开关状态
+            getTunnelSwitchStatus(tunnelId, systemUrl, leftTunnelId,rightTunnelId, jessionId);
+        }
     }
 
     /**
@@ -208,27 +224,33 @@ public class LightTask {
         }
     }
 
-
+    /**
+     * 获取外部系统
+     * @return
+     */
     public ExternalSystem getExternalSystem() {
         ExternalSystem system = new ExternalSystem();
+        //三晶照明
         system.setBrandId(DevicesBrandEnum.SAN_JING.getCode());
-        List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
+        List<ExternalSystem> list = externalSystemService.queryExternalSystemList(system);
         if (list.size() > 1) {
             String brandName = DevicesBrandEnum.SAN_JING.getName();
             throw new RuntimeException("存在多个" + brandName + "品牌的外部系统！");
         }
-
-        ExternalSystem externalSystem = list.get(0);
-        String tunnelId = externalSystem.getTunnelId();
-        String systemName = externalSystem.getSystemName();
-        String username = externalSystem.getUsername();
-        String password = externalSystem.getPassword();
-        String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(tunnelId, systemName + "未配置所属隧道");
-        Assert.hasText(username, systemName + "未配置登录用户名");
-        Assert.hasText(password, systemName + "未配置登录密码");
-        Assert.hasText(systemUrl, systemName + "未配置系统地址");
-        return externalSystem;
+        if(list != null && list.size() > 0){
+            ExternalSystem externalSystem = list.get(0);
+            String tunnelId = externalSystem.getTunnelId();
+            String systemName = externalSystem.getSystemName();
+            String username = externalSystem.getUsername();
+            String password = externalSystem.getPassword();
+            String systemUrl = externalSystem.getSystemUrl();
+            Assert.hasText(tunnelId, systemName + "未配置所属隧道");
+            Assert.hasText(username, systemName + "未配置登录用户名");
+            Assert.hasText(password, systemName + "未配置登录密码");
+            Assert.hasText(systemUrl, systemName + "未配置系统地址");
+            return externalSystem;
+        }
+        return null;
     }
 
 

@@ -119,7 +119,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
      * @return
      */
     @Override
-    public List<Map<String, String>> getDeviceDataByTunnelId(String tunnelId) {
+    public List<Map<String, Object>> getDeviceDataByTunnelId(String tunnelId) {
         return sdDeviceDataMapper.getDeviceDataByTunnelId(tunnelId);
     }
 

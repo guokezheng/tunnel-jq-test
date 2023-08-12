@@ -69,7 +69,7 @@ public interface SdDeviceDataMapper
      * @param tunnelId 隧道id
      * @return
      */
-    List<Map<String,String>> getDeviceDataByTunnelId(String tunnelId);
+    List<Map<String,Object>> getDeviceDataByTunnelId(String tunnelId);
 
     public SdDeviceData selectLastRecord(SdDeviceData sdDeviceData);
 

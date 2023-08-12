@@ -1574,7 +1574,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Override
     public AjaxResult getStrategyData(SdStrategy strategy) {
-        List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(strategy);
+        List<SdStrategy> sdStrategies = sdStrategyMapper.getEventStrategyList(strategy);
         return AjaxResult.success(sdStrategies);
     }
 

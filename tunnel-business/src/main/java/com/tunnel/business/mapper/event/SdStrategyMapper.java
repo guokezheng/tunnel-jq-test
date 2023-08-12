@@ -149,4 +149,11 @@ public interface SdStrategyMapper
      * @return 控制策略集合
      */
     public List<SdStrategy> getSdStrategyAll(SdStrategy sdStrategy);
+
+    /**
+     * 事件查询主动安全策略
+     * @param sdStrategy
+     * @return
+     */
+    public List<SdStrategy> getEventStrategyList(SdStrategy sdStrategy);
 }

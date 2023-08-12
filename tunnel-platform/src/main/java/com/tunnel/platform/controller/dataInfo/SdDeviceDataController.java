@@ -6,19 +6,25 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.SysLogininfor;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.energyManagement.EnergySjfx;
+import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 设备实时数据（存储模拟量）Controller
@@ -32,6 +38,9 @@ public class SdDeviceDataController extends BaseController
 {
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
+
+    @Autowired
+    private SdEnergyDataMapper energyDataMapper;
 
     /**
      * 查询设备实时数据（存储模拟量）列表
@@ -111,36 +120,67 @@ public class SdDeviceDataController extends BaseController
     public Result getDeviceDataByTunnelId(String tunnelId) {
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqTunnelId(tunnelId);
-        List<Map<String,String>> deviceList = sdDeviceDataService.getDeviceDataByTunnelId(tunnelId);
+        List<Map<String,Object>> deviceList = sdDeviceDataService.getDeviceDataByTunnelId(tunnelId);
+        //风机数量
+        int fengJiNum = deviceList.stream().filter(item -> DevicesTypeEnum.FENG_JI.getCode().toString().equals(item.get("eqType").toString())).collect(Collectors.toList()).size();
+        int zhaoMingNum = deviceList.stream().filter(item -> DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(item.get("eqType").toString()) || DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(item.get("eqType").toString())).collect(Collectors.toList()).size();
+        EnergySjfx energySjfx = new EnergySjfx();
+        energySjfx.setTunnelId(tunnelId);
+        energySjfx.setCreateTime(DateUtils.getNowDate());
+        //风机
+        energySjfx.setItemizedCode("251d1eaadc9342629754ff85e519edb7");
+        EnergySjfx feng = energyDataMapper.getFengOrZhao(energySjfx);
+        //照明
+        energySjfx.setItemizedCode("762f745413df400d84945b9d47c1bb37");
+        EnergySjfx zhao = energyDataMapper.getFengOrZhao(energySjfx);
+        //风机均电量
+        BigDecimal fengCount = feng != null ? BigDecimal.valueOf(feng.getEnergyValue()).divide(new BigDecimal(fengJiNum),2) : new BigDecimal(0.0);
+        //照明均电量
+        BigDecimal zhaoCount = zhao != null ? BigDecimal.valueOf(zhao.getEnergyValue()).divide(new BigDecimal(zhaoMingNum),2) : new BigDecimal(0.0);
         Map<String,Map<String,String>> map = new HashMap<>();
-
-        for(Map<String,String> deviceMap : deviceList){
-            String eqId = deviceMap.get("eqId");
+        for(Map<String,Object> deviceMap : deviceList){
+            String eqId = deviceMap.get("eqId").toString();
             if(map.get(eqId) == null){
                 Map<String,String> itemMap = new HashMap<>();
                 itemMap.put("eqId",eqId);
-                itemMap.put("eqName",deviceMap.get("eqName"));
-                itemMap.put("eqDirection",deviceMap.get("eqDirection"));
-                itemMap.put("eqStatus",deviceMap.get("eqStatus"));
-                itemMap.put("eqType",deviceMap.get("eqType"));
-                itemMap.put("eqTunnelId",deviceMap.get("eqTunnelId"));
-                itemMap.put("brightness",deviceMap.get("brightness"));
-                String itemCode = deviceMap.get("itemCode");
-                String data = deviceMap.get("dataUnit");
+                itemMap.put("eqName",nullOrEn(deviceMap.get("eqName")));
+                itemMap.put("eqDirection",nullOrEn(deviceMap.get("eqDirection")));
+                itemMap.put("eqStatus",nullOrEn(deviceMap.get("eqStatus")));
+                itemMap.put("eqType",nullOrEn(deviceMap.get("eqType")));
+                itemMap.put("eqTunnelId",nullOrEn(deviceMap.get("eqTunnelId")));
+                itemMap.put("brightness",nullOrEn(deviceMap.get("brightness")));
+                String eqType = itemMap.get("eqType");
+                if(DevicesTypeEnum.FENG_JI.getCode().toString().equals(eqType)){
+                    itemMap.put("electricity",fengCount + "kW·h");
+                }
+                if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqType) || DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqType)){
+                    itemMap.put("electricity",zhaoCount + "kW·h");
+                }
+                String itemCode = nullOrEn(deviceMap.get("itemCode"));
+                String data = nullOrEn(deviceMap.get("dataUnit"));
                 if(itemCode != null){
                     itemMap.put(itemCode,data);
                 }
                 map.put(eqId,itemMap);
             }else{
                 Map<String,String> itemMap = map.get(eqId);
-                String itemCode = deviceMap.get("itemCode");
-                String data = deviceMap.get("dataUnit");
+                String itemCode = nullOrEn(deviceMap.get("itemCode"));
+                String data = nullOrEn(deviceMap.get("dataUnit"));
                 if(itemCode != null && data != null){
                     itemMap.put(itemCode,data);
                 }
             }
         }
         return Result.success(map);
+    }
+
+    /**
+     * 判断是否为空
+     * @param item
+     * @return
+     */
+    public String nullOrEn(Object item){
+        return (item == null || "".equals(item)) ? "" : item.toString();
     }
 
     @GetMapping("/getTodayCOVIData/{deviceId}")

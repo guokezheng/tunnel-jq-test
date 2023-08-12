@@ -738,6 +738,9 @@
                         v-if="item.eqType == 7"
                       >
                         {{ item.num }}
+                        <span v-if="selectBigType.index == 4">
+                          {{item.electricity}}
+                        </span>
                       </label>
                       <label
                         style="color: #f2a520"
@@ -745,6 +748,16 @@
                         v-if="item.eqType == 9"
                       >
                         {{ item.num }}
+                        <span v-if="selectBigType.index == 4">
+                          {{item.electricity}}
+                        </span>
+                      </label>
+                      <label
+                        style="color: #f2a520"
+                        class="labelClass labelClass9"
+                        v-if="item.eqType == 10 && selectBigType.index == 4"
+                      >
+                        {{ item.electricity }}
                       </label>
                     </div>
                     <!-- 桩号 -->
@@ -4937,6 +4950,9 @@ export default {
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {
                           // console.log(deviceData, "deviceData");
                           this.selectedIconList[j].num = deviceData.brightness;
+                          this.selectedIconList[j].electricity = deviceData.electricity;
+                        }else if(deviceData.eqType == 10){
+                          this.selectedIconList[j].electricity = deviceData.electricity;
                         }
                         //取设备运行状态图标
                         let url = this.eqTypeStateList[k].url;

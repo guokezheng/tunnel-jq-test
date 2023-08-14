@@ -293,7 +293,12 @@ public class SdAppDevicesController extends BaseController {
                 sdOperationLogService.insertSdOperationLog(sdOperationLog);
             }
         }
-        return AjaxResult.success(count);
+        if(count != 0){
+            return AjaxResult.success(count);
+        }
+
+        return AjaxResult.error("未查询到设备");
+
     }
 
     /**

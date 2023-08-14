@@ -1016,7 +1016,10 @@ export default {
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
-          this.$set(params.manualControl[i], "value", params.manualControl[i].equipments.split(","));
+          if(!!params.manualControl[i].equipments){
+            this.$set(params.manualControl[i], "value", params.manualControl[i].equipments.split(","));
+          }
+
           // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
@@ -1039,6 +1042,7 @@ export default {
           }
         }
       });
+      debugger
       await updateStrategyInfo(params).then((res) => {
         if (res.code == 200) {
           this.$modal.msgSuccess("执行成功");

@@ -235,7 +235,7 @@ public class StrategyTask {
             }
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
             //检查智慧照明 灯光控制是否开启
-            this.wisdomLight(map,sdStrategy,sdDevices);
+            map = this.wisdomLight(map, sdStrategy, sdDevices);
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
 
             //查询设备协议表
@@ -253,39 +253,42 @@ public class StrategyTask {
      */
     public void wisdomCatLight(){
         SdWisdomLight sdWisdomLight = new SdWisdomLight();
-        //光强
+        //车辆照明配置
         sdWisdomLight.setModeType(1);
         List<SdWisdomLight> sdWisdomCatLightList = sdWisdomLightMapper.selectSdWisdomLightList(sdWisdomLight);
-        sdWisdomCatLightList.forEach(sdWisdomCatLight ->{
-            //IsStatus()==1说明智慧照明状态是开启的
-            if(sdWisdomCatLight.getIsStatus()==0){
-                SdStrategy sdStrategy = new SdStrategy();
-                sdStrategy.setStrategyType("1");
-                sdStrategy.setStrategyGroup("1");
-                sdStrategy.setTunnelId(sdWisdomCatLight.getTunnelId());
-                sdStrategy.setTimingType("0");
-                List<SdStrategy> sdStrategies = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyList(sdStrategy);
-                //过滤 方向 以及改定时策略是否启用
-                List<SdStrategy> sdStrategyCollect = sdStrategies.stream()
-                        .filter(strategy -> (strategy.getDirection().equals(sdWisdomCatLight.getDirection()) || strategy.getDirection().equals("3"))&&
-                                "0".equals(strategy.getStrategyState()) )
-                        .collect(Collectors.toList());
-                //时间
-                //事件表达式转换为时间
-                for(SdStrategy strategy:sdStrategyCollect){
-                    //执行时间转换
-                    if(org.apache.commons.lang3.StringUtils.isNotBlank(strategy.getSchedulerTime())){
-                        strategy.setExecDate(CronUtil.CronConvertDate(strategy.getSchedulerTime()));
+        if(sdWisdomCatLightList.size()>0){
+            sdWisdomCatLightList.forEach(sdWisdomCatLight ->{
+                //IsStatus()==1说明智慧照明状态是开启的
+                if(sdWisdomCatLight.getIsStatus()==0){
+                    SdStrategy sdStrategy = new SdStrategy();
+                    sdStrategy.setStrategyType("1");
+                    sdStrategy.setStrategyGroup("1");
+                    sdStrategy.setTunnelId(sdWisdomCatLight.getTunnelId());
+                    sdStrategy.setTimingType("0");
+                    List<SdStrategy> sdStrategies = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyList(sdStrategy);
+                    //过滤 方向 以及改定时策略是否启用
+                    List<SdStrategy> sdStrategyCollect = sdStrategies.stream()
+                            .filter(strategy -> (strategy.getDirection().equals(sdWisdomCatLight.getDirection()) || strategy.getDirection().equals("3"))&&
+                                    "0".equals(strategy.getStrategyState()) )
+                            .collect(Collectors.toList());
+                    //时间
+                    //事件表达式转换为时间
+                    for(SdStrategy strategy:sdStrategyCollect){
+                        //执行时间转换
+                        if(org.apache.commons.lang3.StringUtils.isNotBlank(strategy.getSchedulerTime())){
+                            strategy.setExecDate(CronUtil.CronConvertDate(strategy.getSchedulerTime()));
+                        }
+                        //定时策略-执行日期
+                        if(org.apache.commons.lang3.StringUtils.isNotBlank(strategy.getSchedulerTime())) {
+                            strategy.setExecTime(CronUtil.CronConvertDateTime(strategy.getSchedulerTime()));
+                        }
                     }
-                    //定时策略-执行日期
-                    if(org.apache.commons.lang3.StringUtils.isNotBlank(strategy.getSchedulerTime())) {
-                        strategy.setExecTime(CronUtil.CronConvertDateTime(strategy.getSchedulerTime()));
-                    }
+                    //循环车辆照明策略时间段集合
+                    this.catTimeSlot(sdWisdomCatLight,sdStrategyCollect);
                 }
-                //循环车辆照明策略时间段集合
-                this.catTimeSlot(sdWisdomCatLight,sdStrategyCollect);
-            }
-        });
+            });
+        }
+
     }
 
     /**
@@ -440,8 +443,6 @@ public class StrategyTask {
                     map.put("brightness",brightness);
                 }
             });
-//
-
         }
         return map;
     }

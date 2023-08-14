@@ -1943,6 +1943,8 @@ export default {
       };
       getStrategyData(param).then((res) => {
         console.log(res.data, "策略列表");
+        debugger
+        this.strategyList = []
         this.strategyList = res.data;
         this.eventFormDetail.currencyId = res.data[0].id;
       });

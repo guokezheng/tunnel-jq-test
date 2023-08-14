@@ -208,10 +208,10 @@
           </el-col>
         </el-row>
       </el-row>
-      <div v-show="strategyForm.triggers.warningType == 1">
+      <div >
         <el-row :gutter="20"style="clear:both; height: 300px;
         overflow: auto;">
-          <el-col :span="24">
+          <el-col :span="24" v-show="strategyForm.triggers.warningType == 1">
             <el-form-item
               v-for="(dain, index) in strategyForm.autoControl"
               :key="index"
@@ -1130,7 +1130,18 @@ export default {
         listItem({
           deviceTypeId: this.strategyForm.triggers.deviceTypeId,
         }).then((res) => {
-          // debugger
+          debugger
+          if(!!res.rows){
+            let rowsNum = null
+            for (let i = 0; i < res.rows.length; i++) {
+              if(res.rows[i].itemName=="风向"){
+                rowsNum = i
+              }
+            }
+            if(rowsNum>=0&&rowsNum!=null){
+              res.rows.splice(rowsNum, 1)
+            }
+          }
           this.dataItem = res.rows;
           console.log(this.dataItem, "数据项");
         });

@@ -621,7 +621,8 @@ export default {
       if(row==null && type ==null){
         this.tunnelDisabled = false
         this.$nextTick(() => {
-          this.initLoginChart();
+          this.initCatChart();
+          this.initCatChart1();
         });
       }
       // 获取当前日期

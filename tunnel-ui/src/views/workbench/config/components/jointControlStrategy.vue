@@ -51,10 +51,22 @@
                 <el-col :span="4" class="elcolName">隧道</el-col>
                 <el-col :span="20" class="elcolNameOne"  v-html="!!item.tunnels ?item.tunnels.tunnelName  +  item.fx:''  +  item.fx"></el-col>
               </el-row>
-              <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">创建</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html="item.createBy"></el-col>
-              </el-row>
+                <el-row :gutter="24">
+                  <el-col :span="4" class="elcolName">状态</el-col>
+                  <el-col :span="20" class="elcolNameOne" > <el-switch
+                    v-model="item.strategyState"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-value="0"
+                    inactive-value="1"
+                    @change="changeStrategyState(item)"
+                  >
+                  </el-switch></el-col>
+                </el-row>
+<!--              <el-row :gutter="24">-->
+<!--                <el-col :span="4" class="elcolName">创建</el-col>-->
+<!--                <el-col :span="20" class="elcolNameOne"  v-html="item.createBy"></el-col>-->
+<!--              </el-row>-->
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">时序</el-col>
                 <el-col :span="20" class="elcolNameOne" v-html="item.execTime+'开'"></el-col>
@@ -211,7 +223,7 @@ import {addConfig, listConfig, updateConfig} from "@/api/business/wisdomLight/ap
 import {listTunnels} from "@/api/equipment/tunnel/api";
 import {getUserDeptId} from "@/api/system/user";
 import {analysisDataByTime} from "@/api/system/trafficStatistics/api";
-import {delStrategy, listStrategy} from "@/api/event/strategy";
+import {delStrategy, listStrategy, updateState} from "@/api/event/strategy";
 import {
   delConfig,
 } from "@/api/business/enhancedLighting/app.js";
@@ -688,6 +700,21 @@ export default {
       this.dialogVisible = false;
       // this.$refs.cron.checkClear();
       done();
+    },
+    changeStrategyState(row) {
+      let data = {strategyId: row.id, change: row.strategyState};
+      updateState(data).then((result) => {
+
+        if(result.code == 200){
+          if(row.strategyState == 0){
+            this.$modal.msgSuccess("开启成功");
+          }else{
+            this.$modal.msgSuccess("关闭成功");
+          }
+        }else{
+          this.$modal.msgSuccess(result.msg);
+        }
+      });
     },
   },
   props:{

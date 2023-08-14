@@ -727,6 +727,16 @@ export default {
       this.yDataLight = []
       this.yDataLight1 = []
       this.yDataLight2 = []
+
+        //光 x  光强
+      this.XDataLightOne = []
+      //光 y  时间
+      this.yDataLightOne = []
+      //光 y  时间
+      this.yDataLightOne1 = []
+      //光 y  时间
+      this.yDataLightOne2 = []
+
       let querysParamsTab = {}
       if(row==null && type ==null){
         this.tunnelDisabled = false
@@ -745,8 +755,8 @@ export default {
       querysParamsTab.searchValue =  4
       //刷新数据
       if(type=="refresh"){
-        this.lightChangeEvent()
-        this.lightChangeEventWei()
+        // this.lightChangeEvent()
+        // this.lightChangeEventWei()
       }
       //根据隧道id获取相应外部测光设备
       dataDevicesLogInfoList(this.addDateRange(querysParamsTab)).then(

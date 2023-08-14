@@ -149,6 +149,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <select id="selectSdDevicePointByDevIdAndItemId" parameterType="String" resultMap="SdDevicePointResult">
+        <include refid="selectSdDevicePointVo"/>
+        where eq_id = #{eqId} and item_id = #{itemId}
+
+        limit 1
+    </select>
+
+
     <insert id="insertSdDevicePoint" parameterType="SdDevicePoint" useGeneratedKeys="true" keyProperty="id">
         insert into sd_device_point
         <trim prefix="(" suffix=")" suffixOverrides=",">

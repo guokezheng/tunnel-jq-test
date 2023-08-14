@@ -23,12 +23,12 @@
           :open="cameraPlayer"
         ></videoPlayer>
         <video
-          src="../../../../assets/Example/v1.mp4"
+          src="https://media.w3.org/2010/05/sintel/trailer.mp4"
           v-if="radio1 == '演示'"
-          style="height: 200px; object-fit: cover"
           controls
           muted
           loop
+          autoplay
           fluid
         ></video>
         <img :src="noPicUrl" v-if="radio1 == '视频' && !videoForm.liveUrl" />
@@ -137,12 +137,13 @@
         :open="cameraPlayer"
       ></videoPlayer>
       <video
-          src="../../../../assets/Example/v1.mp4"
+          src="https://media.w3.org/2010/05/sintel/trailer.mp4"
           v-if="radio1 == '演示'"
           style="height: 400px; object-fit: cover"
           controls
           muted
           loop
+          autoplay
           fluid
         ></video>
     </el-dialog>
@@ -169,13 +170,16 @@
         :rtsp="videoForm.liveUrl"
         :open="cameraPlayer"
       ></videoPlayer>
+      <!-- src="../../../../assets/Example/v1.mp4" -->
+
       <video
-          src="../../../../assets/Example/v1.mp4"
+          src="https://media.w3.org/2010/05/sintel/trailer.mp4"
           v-if="radio1 == '演示'"
           style="height: 100%; object-fit: cover"
           controls
           muted
           loop
+          autoplay
           fluid
         ></video>
     </el-dialog>
@@ -282,13 +286,17 @@ export default {
 <style scoped lang="scss">
 .picVideoBox {
   width: 100%;
-  height: 200px;
+  max-height: 230px;
   background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   img {
-    height: 200px;
+    max-height: 230px;
+  }
+  video{
+    max-height: 230px;
+    object-fit: cover
   }
 }
 .picButton {

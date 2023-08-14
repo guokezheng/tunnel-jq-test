@@ -117,4 +117,6 @@ public interface SdDevicePointMapper
      * @return
      */
     List<SdDevicePoint> selectSdDevicePointByDevId(String eqId);
+
+    SdDevicePoint selectSdDevicePointByDevIdAndItemId(@Param("eqId")String eqId, @Param("itemId") String itemId);
 }

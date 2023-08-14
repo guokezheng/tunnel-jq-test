@@ -507,7 +507,7 @@ public class PhoneSpkService {
         if(status > 0){
             return AjaxResult.success(status);
         }
-        return AjaxResult.error();
+        return AjaxResult.error("控制失败");
     }
 
 

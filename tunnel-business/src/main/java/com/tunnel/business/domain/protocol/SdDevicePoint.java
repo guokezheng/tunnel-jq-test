@@ -19,7 +19,7 @@ public class SdDevicePoint extends BaseEntity
     private Long id;
 
     /** 设备id */
-   // @Excel(name = "设备id",width = 30)
+    @Excel(name = "设备id",width = 30, type = Excel.Type.IMPORT)
     private String eqId;
 
     /** 设备类型 */
@@ -73,7 +73,7 @@ public class SdDevicePoint extends BaseEntity
 
 
     /** 是否预留 */
-    @Excel(name = "是否预留")
+    @Excel(name = "是否可控（1只读2控制）")
     private Long isReserved;
 
 

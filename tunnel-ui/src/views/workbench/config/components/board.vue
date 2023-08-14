@@ -442,12 +442,17 @@ export default {
               this.$modal.msgSuccess("发布成功");
               console.log(response, "返回结果");
             })
-            .catch(() => {});
+            // .catch(() => {
+            //   this.$message({
+            //     type: "info",
+            //     message: "发布失败，请联系管理员",
+            //   });
+            // });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "发布失败，请联系管理员",
+            message: "取消发布",
           });
         });
     },

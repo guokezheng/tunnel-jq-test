@@ -260,18 +260,38 @@
     border: 1px solid #05AFE3;
   }
 
-    ::-webkit-scrollbar-track {
-      background-color: #022A54;
-    }
-
-    ::-webkit-scrollbar {
+  ::-webkit-scrollbar-track-piece {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0);
+    width: 1000px;
+    border-width:50px;
+  }
+  ::-webkit-scrollbar {
       width: 12px;
-      background-color: #022A54;
-    }
-
-    ::-webkit-scrollbar-thumb {
+      height: 12px !important;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
-    }
+      background-clip: padding-box;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      min-height: 28px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+
+      background-color: #0090D8;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+  }
+  // 横竖滚动条夹角样式
+  ::-webkit-scrollbar-corner{
+    background: rgba(0, 0, 0, 0.1);
+  }
     .jobDialog{
       .el-radio-button__inner{
         background: #034A77;
@@ -2608,7 +2628,7 @@
       border-radius: 5px;
   }
   .vehicleLane::-webkit-scrollbar-thumb {
-      background-color: rgba($color: #00487F, $alpha: 0.6);
+      background-color: rgba($color: #00487F, $alpha: 0.6) !important;
       background-clip: padding-box;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
@@ -2624,6 +2644,39 @@
   }
   // 横竖滚动条夹角样式
   .vehicleLane::-webkit-scrollbar-corner{
+    background: #022A54;
+  }
+  // 零碳隧道表格滚动条
+  .tableScrollbar::-webkit-scrollbar-track-piece {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0);
+    width: 1000px;
+    border-width:50px;
+  }
+  .tableScrollbar::-webkit-scrollbar {
+      width: 12px;
+      height: 10px !important;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+  }
+  .tableScrollbar::-webkit-scrollbar-thumb {
+      background-color: rgba($color: #00487F, $alpha: 0.6);
+      background-clip: padding-box;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      min-height: 28px;
+  }
+  .tableScrollbar::-webkit-scrollbar-thumb:hover {
+
+      background-color: #0090D8;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+  }
+  // 横竖滚动条夹角样式
+  .tableScrollbar::-webkit-scrollbar-corner{
     background: #022A54;
   }
   // 隔行变色

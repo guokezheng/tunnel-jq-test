@@ -596,7 +596,7 @@ export default {
       },
     },
     ...mapState({
-      eventUntreatedNum: (state) => state.websocket.eventUntreatedNum,
+      sdEventList: (state) => state.websocket.sdEventList,
     }),
     defaultOption() {
       return {
@@ -620,10 +620,14 @@ export default {
     tabModel: function (newValue, oldValue) {
       this.getNoDecelerationChart();
     },
-    eventUntreatedNum(event) {
-      console.log(event, "事件总数");
-      this.getWarnList();
+    sdEventList: {
+      immediate: true,
+      handler: function (event) {
+        console.log(event, "事件弹窗websockt推送");
+        this.getWarnList()
+      },
     },
+    deep: true,
   },
   beforeDestroy() {
     clearInterval(this.componentTimer);
@@ -640,8 +644,10 @@ export default {
     init(tunnelId) {
       console.log(tunnelId, "tunnelId");
       this.tunnelId = tunnelId;
+      // setTimeout(() => {
       this.getWarnList();
-
+        
+      // }, 2000);
       this.vehicleEcharts();
       // this.specialVehicleEcharts()
       this.getEnergyConsumption();
@@ -650,6 +656,7 @@ export default {
     },
     // 预警事件列表
     getWarnList() {
+      console.log("预警事件列表")
       const param = {
         eventState: "3",
       };
@@ -711,8 +718,6 @@ export default {
       if (this.trafficList.length > this.maxCanSee) {
         //tableList是列表的数据对象，maxCanSee代表可视范围内的最大完整数据条数
         this.tableTimer = setInterval(() => {
-          console.log(count,"count")
-          console.log(count,"count")
 
           if (count < (this.trafficList.length / 2) * this.tableLineHeight) {
             //如果还没滚动到最后一条数据，则列表向上移动以上的高度

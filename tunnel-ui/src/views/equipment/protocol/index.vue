@@ -147,7 +147,7 @@
             <el-option label="请选择字典生成" value="" />
           </el-select>
         </el-form-item>-->
-        <el-form-item label="数据项" prop="itemId">
+        <el-form-item label="数据项" prop="itemId"    v-if="edit == true">
           <el-select ref="itemRef" v-model="form.itemId" placeholder="请选择数据项" style="width:100%">
             <el-option
               v-for="(item) in itemList"
@@ -277,8 +277,8 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-<!--          <el-checkbox v-model="upload.updateSupport" />-->
-<!--          更新已经存在的设备点位数据-->
+          <el-checkbox v-model="upload.updateSupport" />
+          更新已经存在的设备点位数据
           <el-link
             type="info"
             style="font-size: 12px; color: #39adff"

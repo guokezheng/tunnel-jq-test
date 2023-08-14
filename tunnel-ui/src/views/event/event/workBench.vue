@@ -864,6 +864,7 @@ export default {
   },
   data() {
     return {
+      leftButtonS: "leftButtonS",
       robotIframeShow: false,
       title: "",
       visible: false,

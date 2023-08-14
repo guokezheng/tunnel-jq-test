@@ -768,7 +768,7 @@
                 >
                   <el-select
                     v-model="eventFormDetail.currencyId"
-                    placeholder="请选择策略"
+                    placeholder="请选择预案"
                   >
                     <el-option
                       v-for="item in strategyList"
@@ -1949,7 +1949,7 @@ export default {
       };
       getStrategyData(param).then((res) => {
         console.log(res.data, "策略列表");
-        debugger
+        //debugger
         this.strategyList = []
         this.strategyList = res.data;
         this.eventFormDetail.currencyId = res.data[0].id;

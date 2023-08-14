@@ -532,7 +532,9 @@ public class StrategyTask {
         String serverIp = InetAddress.getLocalHost().getHostAddress();
         out: for(Map s:triggerData){
             String equipment = s.get("device_id").toString();
+            //原来 是获取sd_trigger表中设备类型
             String itemId = s.get("element_id").toString();
+//            String itemId1 = s.get("eq_type").toString();
             strategyIdList.add(Long.valueOf(s.get("id").toString()));
             String[] equipmentIds = equipment.split(",");
             for(String eq:equipmentIds){
@@ -566,10 +568,10 @@ public class StrategyTask {
                 if(isControl){
                     //仅预警
                     if(s.get("warning_type").equals("0")){
-                        this.triggerComparison(s);
+                        this.triggerComparison(s,EventStateEnum.unprocessed.getCode());
                     }else{
                         //生成事件
-                        this.triggerComparison(s);
+                        this.triggerComparison(s,EventStateEnum.processed.getCode());
                         for (Long  id : strategyIdList){
                             List<SdStrategyRl> sdStrategyRls = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(id);
                             for (SdStrategyRl sdStrategyRl : sdStrategyRls) {
@@ -586,7 +588,7 @@ public class StrategyTask {
         }
     }
     //触发控制仅预警
-    public void  triggerComparison(Map  s){
+    public void  triggerComparison(Map  s ,String eventState){
         //插入事件
         SdEvent sdEvent = new SdEvent();
         //所有事件类型Map
@@ -607,7 +609,7 @@ public class StrategyTask {
         }
         sdEvent.setStartTime(DateUtils.getTime());
         sdEvent.setEventGrade(EventGradeEnum.YI_BAN.getCode());
-        sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
+        sdEvent.setEventState(eventState);
         sdEvent.setCreateTime(DateUtils.getNowDate());
         String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
         sdEvent.setEventTitle(eventTitle);
@@ -654,11 +656,11 @@ public class StrategyTask {
         }
     }
     /**
-     * 自动触发控制策略执行
+     * 手动控制执行
      * @param strategyRlId
      * @throws UnknownHostException
      */
-    public  void triggerJobParams(String strategyRlId) throws UnknownHostException {
+    public  Integer triggerJobParams(String strategyRlId) throws UnknownHostException {
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
 
         SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
@@ -718,8 +720,9 @@ public class StrategyTask {
                 map.put("brightness","50");
                 map.put("frequency","60");
             }
-            SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
+            return SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
+        return 0;
     }
 
     /**
@@ -784,7 +787,21 @@ public class StrategyTask {
                 map.put("brightness","50");
                 map.put("frequency","60");
             }
-            SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
+            Integer integer = SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
+            //保存处置记录
+//            setEventFlowData(eventId,joinReserveHandle.getProcessName() + "：" + deviceExecutionState + "【成功】");
         }
+    }
+    /**
+     * 保存处置记录
+     * @param eventId
+     * @param content
+     * @return
+     */
+    public void setEventFlowData(Long eventId, String content){
+        Map flowParam = new HashMap();
+        flowParam.put("eventId",eventId);
+        flowParam.put("content",content);
+        SpringUtils.getBean(ISdEventFlowService.class).savePlanProcessFlow(flowParam);
     }
 }

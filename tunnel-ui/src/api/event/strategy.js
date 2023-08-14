@@ -83,6 +83,14 @@ export function updateStrategyInfo(data) {
     data: data
   })
 }
+//手动控制执行
+export function manualControlInfo(data) {
+  return request({
+    url: '/strategy/manualControl',
+    method: 'post',
+    data: data
+  })
+}
 
 // 获取guid
 export function getGuid() {

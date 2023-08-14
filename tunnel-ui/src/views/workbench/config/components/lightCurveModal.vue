@@ -755,8 +755,8 @@ export default {
       querysParamsTab.searchValue =  4
       //刷新数据
       if(type=="refresh"){
-        // this.lightChangeEvent()
-        // this.lightChangeEventWei()
+        this.lightChangeEvent()
+        this.lightChangeEventWei()
       }
       //根据隧道id获取相应外部测光设备
       dataDevicesLogInfoList(this.addDateRange(querysParamsTab)).then(

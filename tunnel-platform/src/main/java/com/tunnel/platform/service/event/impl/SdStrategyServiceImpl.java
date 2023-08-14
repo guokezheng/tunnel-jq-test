@@ -225,7 +225,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 }
                 //  0 偶数开启  奇数关闭
                 if(i%2 == 0){
-            /*    if(openRl.contains(job.getInvokeTarget().split("'")[1])){*/
+                    /*    if(openRl.contains(job.getInvokeTarget().split("'")[1])){*/
                     job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerOpen()));
                 }else{
                     job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerClose()));
@@ -846,7 +846,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         //策略类型
         sty.setId(model.getId());
         sty.setStrategyType(model.getStrategyType());
-      //  sty.setStrategyState("1");
+        //  sty.setStrategyState("1");
         sty.setStrategyState(model.getStrategyState());
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
@@ -895,11 +895,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             sdStrategyRl.setEqTypeId(equipmentTypeId);
             sdStrategyRl.setStrategyId(sty.getId());
             addRows += sdStrategyRlMapper.insertSdStrategyRl(sdStrategyRl);
-            try{
-                strategyTask.triggerJobParams(sdStrategyRl.getId().toString());
-            }catch (Exception e){
-
-            }
+//            try{
+////                strategyTask.triggerJobParams(sdStrategyRl.getId().toString());
+//            }catch (Exception e){
+//
+//            }
             map.put("id",sdStrategyRl.getId());
         }
         if(addRows < 1){
@@ -1600,6 +1600,33 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
 
         return sortedEntities;
+    }
+
+    @Override
+    public int manualControl(SdStrategyModel model) {
+        List<Map> manualControl = model.getManualControl();
+        int addRows = 0;
+        for (Map<String,Object> map : manualControl) {
+            try{
+                addRows = strategyTask.triggerJobParams(map.get("id").toString());
+            }catch (Exception e){
+
+            }
+        }
+        if(addRows < 1){
+            throw new RuntimeException("执行失败！");
+        }
+
+        // 情报板增加历史记录
+        manualControl.stream().forEach(item -> {
+            if(DevicesTypeEnum.VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())
+                    || DevicesTypeEnum.MEN_JIA_VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())){
+                //储存情报板信息
+                setJoinVms(item.get("state").toString(),Long.parseLong(item.get("id").toString()));
+            }
+        });
+
+        return addRows;
     }
 
     public static void main(String[] args) {

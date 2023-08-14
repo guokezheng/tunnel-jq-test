@@ -348,9 +348,9 @@
                     }"
                   ></div>
                   <!-- 测控执行器 -->
-                    <div class="actuatorCK" 
+                    <div class="actuatorCK"
                       v-show="selectBigType.index == 0 && selectedIconList.length>0"
-                      @click="openStateSwitch(actuatorCKItem)" 
+                      @click="openStateSwitch(actuatorCKItem)"
                       @mousemove="openTooltip2()"
                       @mouseleave="closeTooltip2()">
                       <img src="../../../assets/logo/equipment_log/测控执行器-离线.png"/>
@@ -381,7 +381,7 @@
                         src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
                       />
-                      
+
                     </div>
                   </template>
                   <!--      爆炸效果图       :style="{ top:10 +'px',left:value[key].left+ +'px',right:value[key].right+ +'px',width: 48+'px',height:48+'px' }"   -->
@@ -1918,7 +1918,7 @@ import {
   hasListByBigType,
   loadPicture,
 } from "@/api/equipment/type/api.js";
-import { getCategoryTree } from "@/api/event/strategy";
+import {getCategoryTree, manualControlInfo} from "@/api/event/strategy";
 import { getTemplateInfo } from "@/api/board/template.js";
 import {
   listTunnels,
@@ -2918,7 +2918,7 @@ export default {
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
     scrollview.addEventListener('scroll', this.mouseSrollAuto, true)
-    
+
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
@@ -3106,7 +3106,7 @@ export default {
       );
     },
     // beforeDestroy() {
-      
+
     // },
     bodyCloseMenus(e) {
       let self = this;
@@ -3177,8 +3177,8 @@ export default {
           nodes.forEach((item) => {
             item.expanded = false;
           });
-        } 
-        
+        }
+
       }
     },
     treeClear() {
@@ -3258,7 +3258,7 @@ export default {
           }
         }
       });
-      await updateStrategyInfo(params).then((res) => {
+      await manualControlInfo(params).then((res) => {
         if (res.code == 200) {
           this.$modal.msgSuccess("执行成功");
         }
@@ -3376,7 +3376,7 @@ export default {
             return array;
         }else if (type == "content") {
             return "山东高速欢迎您";
-        } 
+        }
       }
     },
     formatNum(num, length) {
@@ -3608,7 +3608,7 @@ export default {
               ) {
               // 中间
                 param[0].scrollLeft = (item.position.left - 864) / 100 * this.zoom;
-              
+
               } else if (item.position.left < 864) {
                 param[0].scrollLeft = 0;
               } else if (
@@ -4279,7 +4279,7 @@ export default {
                 x: mouseDownPoint.x - e.clientX,
                 y: mouseDownPoint.y - e.clientY
             };
-            
+
             scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
             scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
             if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollLeft > 0){

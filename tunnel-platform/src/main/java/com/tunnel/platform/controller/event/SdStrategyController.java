@@ -250,4 +250,16 @@ public class SdStrategyController extends BaseController
         List<SdStrategy> list = sdStrategyService.getSdStrategyAll(sdStrategy);
         return getDataTable(list);
     }
+
+
+    /**
+     *手动定制任务执行
+     */
+    @Log(title = "手动控制", businessType = BusinessType.OTHER)
+    @PostMapping(value = "/manualControl")
+    @ApiOperation("手动控制")
+    public Result manualControl(@RequestBody SdStrategyModel sdStrategymodel)
+    {
+        return Result.toResult(sdStrategyService.manualControl(sdStrategymodel));
+    }
 }

@@ -168,4 +168,12 @@ public interface ISdStrategyService {
      */
     List<SdStrategy> getSdStrategyAll(SdStrategy sdStrategy);
 
+    /**
+     * 手动策略执行
+     *
+     * @param model 控制策略
+     * @return 结果
+     */
+    int manualControl(SdStrategyModel model);
+
 }

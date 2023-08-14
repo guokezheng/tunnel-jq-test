@@ -589,6 +589,7 @@ import {
   updateStrategyInfo,
   getGuid,
   handleStrategy, export1,
+  manualControlInfo,
 } from "@/api/event/strategy";
 import {listEventType} from "@/api/event/eventType";
 import {listRl, addRl} from "@/api/event/strategyRl";
@@ -1043,8 +1044,8 @@ export default {
         }
       });
       debugger
-      await updateStrategyInfo(params).then((res) => {
-        if (res.code == 200) {
+      await manualControlInfo(params).then((res) => {
+        if (res.code == 200 ) {
           this.$modal.msgSuccess("执行成功");
         }
       });

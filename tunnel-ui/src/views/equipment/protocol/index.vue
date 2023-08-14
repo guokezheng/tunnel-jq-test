@@ -277,8 +277,8 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-<!--          <el-checkbox v-model="upload.updateSupport" />-->
-<!--          更新已经存在的设备点位数据-->
+          <el-checkbox v-model="upload.updateSupport" />
+          更新已经存在的设备点位数据
           <el-link
             type="info"
             style="font-size: 12px; color: #39adff"

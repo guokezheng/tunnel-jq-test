@@ -169,8 +169,10 @@ public class SdDevicePointServiceImpl implements ISdDevicePointService
         for (SdDevicePoint devicePoint : devicePointList) {
             try {
                 SdDevices d = sdDevicesMapper.selectSdDevicesById(devicePoint.getEqId());
-                List<SdDevicePoint> dpList =  sdDevicePointMapper.selectSdDevicePointByDevId(devicePoint.getEqId());
-                if (dpList.size() == 0) {
+               // List<SdDevicePoint> dpList =  sdDevicePointMapper.selectSdDevicePointByDevId(devicePoint.getEqId());
+
+                SdDevicePoint sdDevicePoint = sdDevicePointMapper.selectSdDevicePointByDevIdAndItemId(devicePoint.getEqId(),devicePoint.getItemId()+"");
+                if (StringUtils.isNull(sdDevicePoint)) {
                     Map map = sdDevicesService.checkDevices(d,isUpdateSupport);
                     if ((Boolean) map.get("flag")) {
                         this.insertSdDevicePoint(devicePoint);
@@ -180,16 +182,17 @@ public class SdDevicePointServiceImpl implements ISdDevicePointService
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + map.get("failureMsg").toString());
                     }
-         /*       } else if (isUpdateSupport) {
-                    Map map = new SdDevicesServiceImpl().checkDevices(d,isUpdateSupport);
+                } else if (isUpdateSupport) {
+                    Map map = sdDevicesService.checkDevices(d,isUpdateSupport);
                     if ((Boolean) map.get("flag")) {
+                        devicePoint.setId(sdDevicePoint.getId());
                         this.updateSdDevicePoint(devicePoint);
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、设备ID " + devicePoint.getEqId() + " 更新成功");
                     } else {
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + map.get("failureMsg").toString());
-                    }*/
+                    }
                 } else {
                     failureNum++;
                     failureMsg.append("<br/>" + failureNum + "、设备ID " + devicePoint.getEqId() + " 点位已存在");

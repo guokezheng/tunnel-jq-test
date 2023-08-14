@@ -1521,7 +1521,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                         AA.eq_tunnel_id = BB.eq_tunnel_id
                     and AA.eq_direction = BB.eq_direction
             -- and AA.eq_type = BB.eq_type
-        where AA.eq_type = 	#{eqType} and AA.lane = #{lane}
+        where AA.eq_type = 	#{eqType}
+        <if test="lane != null and lane != '' and lane !='12'">
+            and AA.lane = #{lane}
+        </if>
         order by AA.pile_num asc
 
     </select>

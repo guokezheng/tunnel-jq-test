@@ -252,13 +252,14 @@ public class SdAppDevicesController extends BaseController {
     @GetMapping("/app/batchControlDevice")
     public AjaxResult batchControlDevice(String eqType,String mac,String lane,String state) {
 
-        if (eqType == null || eqType.equals("1") || eqType.equals("12") || eqType.equals("1")) {
+        if (eqType == null || !(eqType.equals("1") || eqType.equals("12") || eqType.equals("10"))) {
             return AjaxResult.error("快捷操作只支持车道指示器，风机，卷帘门");
         }
         if (mac == null) {
             return AjaxResult.error("MAC信息不能为空");
         }
-        if (lane == null) {
+        //卷连门不设置车道
+        if (lane == null && !eqType.equals("12")) {
             return AjaxResult.error("车道信息不能为空");
         }
         if (state == null) {

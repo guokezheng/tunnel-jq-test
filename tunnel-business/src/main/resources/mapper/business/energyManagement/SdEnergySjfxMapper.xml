@@ -355,11 +355,17 @@
         create_time like concat(#{currentTime}, '%') and statistics_type = 1
     </select>
 
-
-
-
-
-
-
-
+    <select id="getFengOrZhao" parameterType="energySjfx" resultType="energySjfx">
+        SELECT
+            ei.itemized_code AS itemizedCode,
+            ei.energy_value AS energyValue
+        FROM
+            energy_item ei
+        WHERE
+            1 = 1
+          AND ei.itemized_code = '251d1eaadc9342629754ff85e519edb7'
+          AND DATE_FORMAT( ei.create_time, '%Y-%m-%d' ) = DATE_FORMAT( '2023-07-12', '%Y-%m-%d' )
+          AND ei.statistics_type = '1'
+          AND ei.tunnel_id = #{tunnelId}
+    </select>
 </mapper>

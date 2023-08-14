@@ -69,7 +69,7 @@ public interface ISdDeviceDataService {
      * @param tunnelId 隧道id
      * @return
      */
-    List<Map<String, String>> getDeviceDataByTunnelId(String tunnelId);
+    List<Map<String, Object>> getDeviceDataByTunnelId(String tunnelId);
 
     Map<String, Object> getTodayCOVIData(String deviceId);
 
@@ -81,6 +81,11 @@ public interface ISdDeviceDataService {
 
     List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData);
 
+    /**
+     * 工作台能耗图表
+     * @param tunnelId
+     * @return
+     */
     Map<String, Object> energyConsumptionDetection(String tunnelId);
 
     /**

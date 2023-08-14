@@ -8,6 +8,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
@@ -118,7 +119,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
      * @return
      */
     @Override
-    public List<Map<String, String>> getDeviceDataByTunnelId(String tunnelId) {
+    public List<Map<String, Object>> getDeviceDataByTunnelId(String tunnelId) {
         return sdDeviceDataMapper.getDeviceDataByTunnelId(tunnelId);
     }
 
@@ -364,13 +365,18 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
 
+    /**
+     * 工作台能耗图表
+     * @param tunnelId
+     * @return
+     */
     @Override
     public Map<String, Object> energyConsumptionDetection(String tunnelId) {
         Map<String, Object> allDataList = new HashMap<>();
         ExternalSystem externalSystem = new ExternalSystem();
         externalSystem.setTunnelId(tunnelId);
-        externalSystem.setSystemName("能源管控平台");
-        List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
+        externalSystem.setBrandId(DevicesBrandEnum.SHAN_DONG_ZHENG_CHEN.getCode());
+        List<ExternalSystem> externalSystems = externalSystemService.queryExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
             return setAllData();
         }
@@ -385,8 +391,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         String eqId = devices.getExternalDeviceId();
         String url = system.getSystemUrl() + "login";
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("username", "admin");
-        map.put("password", "HSD123!@#");
+        map.put("username", system.getUsername());
+        map.put("password", system.getPassword());
         String result = "";
         try {
             result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));

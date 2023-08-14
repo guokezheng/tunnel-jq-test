@@ -105,4 +105,11 @@ public interface SdEnergyDataMapper
     List<EnergyDayparting> getEnergycurrentDayDaypartingData(@Param("currentTime")String currentTime);
 
     List<EnergyDayparting> getEnergycurrentMonthDaypartingData(@Param("currentTime")String currentTime);
+
+    /**
+     * 获取风机或者照明用电量
+     * @param energySjfx
+     * @return
+     */
+    EnergySjfx getFengOrZhao(EnergySjfx energySjfx);
 }

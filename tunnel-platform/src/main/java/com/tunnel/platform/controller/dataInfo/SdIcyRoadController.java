@@ -147,7 +147,7 @@ public class SdIcyRoadController extends BaseController
      * 获取道路结冰存储
      * 3分钟秒调用一次
      */
-    @Scheduled(fixedRate = 180000)
+//    @Scheduled(fixedRate = 180000)
     public void inserttoIcyRecord() {
     	SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(110l);

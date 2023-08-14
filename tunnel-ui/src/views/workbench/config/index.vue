@@ -347,6 +347,23 @@
                       'pointer-events': 'none',
                     }"
                   ></div>
+                  <!-- 测控执行器 -->
+                    <div class="actuatorCK" 
+                      v-show="selectBigType.index == 0 && selectedIconList.length>0"
+                      @click="openStateSwitch(actuatorCKItem)" 
+                      @mousemove="openTooltip2()"
+                      @mouseleave="closeTooltip2()">
+                      <img src="../../../assets/logo/equipment_log/测控执行器-离线.png"/>
+                    </div>
+                    <div
+                      class="actuatorCKTooltipBox"
+                      v-if="actuatorTooltip"
+                    >
+                      <span>名称：{{ actuatorCKItem.eqName }}</span
+                      ><br />
+                      <span>方向：{{ actuatorCKItem.eqDirection }}</span>
+                    </div>
+
                   <template>
                     <div
                       style="
@@ -364,6 +381,7 @@
                         src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
                       />
+                      
                     </div>
                   </template>
                   <!--      爆炸效果图       :style="{ top:10 +'px',left:value[key].left+ +'px',right:value[key].right+ +'px',width: 48+'px',height:48+'px' }"   -->
@@ -453,6 +471,7 @@
                       </el-tooltip>
                     </div>
                   </div>
+
                   <!-- 设备图标-->
                   <div
                     class="icon-box mouseHover"
@@ -718,14 +737,31 @@
                         class="labelClass labelClass7"
                         v-if="item.eqType == 7"
                       >
-                        {{ item.num }}
+                        <span v-if="selectBigType.index == 0 || selectBigType.index == 6">
+                          {{ item.num }}
+                        </span>
+                        <span v-if="selectBigType.index == 4">
+                          {{item.electricity}}
+                        </span>
                       </label>
                       <label
                         style="color: #f2a520"
                         class="labelClass labelClass9"
                         v-if="item.eqType == 9"
                       >
-                        {{ item.num }}
+                        <span v-if="selectBigType.index == 0 || selectBigType.index == 6">
+                          {{ item.num }}
+                        </span>
+                        <span v-if="selectBigType.index == 4">
+                          {{item.electricity}}
+                        </span>
+                      </label>
+                      <label
+                        style="color: #f2a520"
+                        class="labelClass labelClass9"
+                        v-if="item.eqType == 10 && selectBigType.index == 4"
+                      >
+                        {{ item.electricity }}
                       </label>
                     </div>
                     <!-- 桩号 -->
@@ -2050,6 +2086,13 @@ export default {
 
   data() {
     return {
+      actuatorTooltip:false,
+      actuatorCKItem:{
+        eqType:47,
+        eqId:"JQ-JiNan-WenZuBei-MJY-HMC-083",
+        eqName:"测控执行器-83",
+        eqDirection:'济南方向'
+      },
       parentScreenLeft:0,
       equipmentTypeProps: {
         value: "id",
@@ -2905,6 +2948,14 @@ export default {
   },
 
   methods: {
+    // // 演示用测控执行器
+    // openActuatorCKDialog(){
+    //   let param = {
+    //     eqId:"JQ-JiNan-WenZuBei-MJY-HMC-083",
+    //     eqType:47,
+    //   }
+    //   this.openStateSwitch(this.actuatorCKItem)
+    // },
     mouseSrollAuto(e){
       // console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if(e.target.scrollLeft > 0){
@@ -3548,6 +3599,7 @@ export default {
         let param = document.getElementsByClassName("vehicleLane");
         for (var item of this.selectedIconList) {
             if (item.eqName == this.screenEqName) {
+              console.log(item.eqName,"item.eqName")
               bigType = item.bigType;
 
               if (
@@ -3618,8 +3670,27 @@ export default {
       this.$forceUpdate();
     },
     filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      if (!value){
+          // 点击输入框 折叠之前打开的树形菜单
+        const nodes = this.$refs.tree.store._getAllNodes();
+        nodes.forEach((item) => {
+          item.expanded = false;
+        });
+        return true;
+      }
+      if(data.children && data.children.length>0){
+        for(let item of data.children){
+          if(item.label.indexOf(value) !== -1){
+            return true;
+          }
+        }
+      }else{
+        return data.label.indexOf(value) !== -1;
+      }
+      // if(data.label.indexOf(value) !== -1){
+      //   console.log(value, data)
+      // }
+      // return data.label.indexOf(value) !== -1;
     },
 
     // 预警事件点击跳转应急调度
@@ -3793,6 +3864,12 @@ export default {
     },
     closeTooltip(item) {
       this.showTooltipIndex = 9999;
+    },
+    openTooltip2(item, index) {
+      this.actuatorTooltip = true
+    },
+    closeTooltip2(item) {
+      this.actuatorTooltip = false
     },
     getDeptList() {
       var userDeptId = this.userDeptId;
@@ -4180,8 +4257,8 @@ export default {
       }, 50);
       let param = document.getElementsByClassName("vehicleLane");
       param[0].scrollLeft = 0;
-      this.$refs.dragImgDom.style.left = "0px";
-      this.$refs.dragImgDom.style.top = "0px";
+      // this.$refs.dragImgDom.style.left = "0px";
+      // this.$refs.dragImgDom.style.top = "0px";
     },
     //右键拖动
     dragImg(e) {
@@ -4661,6 +4738,9 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
+                // if(res.eqList[i].eqType == 47 && res.eqList[i].eqId == 'JQ-JiNan-WenZuBei-MJY-HMC-083'){
+                //   console.log(i,"0000000000000000000")
+                // }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -4874,6 +4954,9 @@ export default {
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {
                           // console.log(deviceData, "deviceData");
                           this.selectedIconList[j].num = deviceData.brightness;
+                          this.selectedIconList[j].electricity = deviceData.electricity;
+                        }else if(deviceData.eqType == 10){
+                          this.selectedIconList[j].electricity = deviceData.electricity;
                         }
                         //取设备运行状态图标
                         let url = this.eqTypeStateList[k].url;
@@ -4981,7 +5064,7 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
-      // console.log(value, lable,"value, lable")
+      console.log(value, lable,"value, lable")
       // carShow
       for (var item of this.selectedIconList) {
         if (
@@ -5002,6 +5085,7 @@ export default {
         bigType: lable,
         index: value,
       };
+      console.log(this.selectBigType,"this.selectBigType")
       let data = this.eqBigTypeList;
 
       var val = value.toString();
@@ -7303,7 +7387,26 @@ input {
   background: slategrey;
   color: #fff;
 }
-
+.actuatorCKTooltipBox{
+  position: absolute;
+  top:135px;
+  left:50px;
+  padding: 10px 20px;
+  white-space: nowrap;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #cdedfa !important;
+  border: solid 1px #1d58a9;
+  color: #1d58a9 !important;
+  padding: 0 !important;
+  z-index: 96659;
+  text-align: left;
+  // transform:translateX(10px);
+  span {
+    padding: 10px !important;
+    line-height: 24px !important;
+  }
+}
 .tooltipBox {
   position: absolute;
   padding: 10px 20px;
@@ -7535,6 +7638,16 @@ input {
   }
   100% {
     background-color: red;
+  }
+}
+.actuatorCK{
+  position: absolute;
+  top:100px;
+  left:50px;
+  cursor: pointer;
+  img{
+    width:20px;
+    height:20px;
   }
 }
 </style>

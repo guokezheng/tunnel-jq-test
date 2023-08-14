@@ -545,7 +545,7 @@
                 (
                     SELECT DISTINCT
                         rddt.vehicle_license,
-                        DATE_FORMAT( rddt.detect_time, '%Y-%m-%d %h' ) AS detect_time
+                        DATE_FORMAT( rddt.detect_time, '%Y-%m-%d %H' ) AS detect_time
                     FROM
                         sd_radar_detect_data_temporary rddt
                     WHERE

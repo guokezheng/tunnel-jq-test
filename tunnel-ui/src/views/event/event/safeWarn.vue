@@ -720,7 +720,13 @@
                   eventFormDetail.prevControlType == 0
                 "
               >
-                <el-form-item prop="currencyId">
+                <el-form-item prop="currencyId"
+                  :rules="
+                    eventFormDetail.eventState == 0 &&
+                    eventFormDetail.prevControlType == 0
+                      ? rules.currencyId
+                      : []
+                  ">
                   <el-select
                     v-model="eventFormDetail.currencyId"
                     placeholder="请选择预案"

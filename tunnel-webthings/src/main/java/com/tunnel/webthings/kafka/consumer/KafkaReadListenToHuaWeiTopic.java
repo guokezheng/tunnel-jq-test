@@ -1759,10 +1759,10 @@ public class KafkaReadListenToHuaWeiTopic {
         SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
         detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
 
-        //车辆快照临时数据赋值
+        /*//车辆快照临时数据赋值
         SdRadarDetectDataTemporary sdRadarDetectDataTemporary = setRadarTemporaryData(jsonObject);
         SdRadarDetectDataTemporaryMapper temporaryMapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
-        temporaryMapper.insertSdRadarDetectData(sdRadarDetectDataTemporary);
+        temporaryMapper.insertSdRadarDetectData(sdRadarDetectDataTemporary);*/
         if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
             //将数据推送至物联
             //sendKafka(sdRadarDetectData);

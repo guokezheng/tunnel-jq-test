@@ -74,6 +74,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by A.id desc
     </select>
 
+    <select id="getEventStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
+        A.scheduler_time, A.job_relation_id, A.direction,A.create_by, A.strategy_group,
+        A.create_time, A.update_by, A.update_time, A.is_automatic, A.event_type
+        from sd_strategy A
+        <where>
+            <if test="tunnelId != null and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>
+            <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
+            <if test="eventType != null  and eventType != ''"> and A.event_type = #{eventType}</if>
+        </where>
+        order by A.id desc
+    </select>
+
     <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
         		A.scheduler_time, A.job_relation_id, A.create_by, A.direction,A.event_type,A.strategy_group,

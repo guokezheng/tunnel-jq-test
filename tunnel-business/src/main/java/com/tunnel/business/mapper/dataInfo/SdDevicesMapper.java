@@ -490,4 +490,10 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	SdDevices getEtDeviceData(SdDevices devices);
+
+    List<Map> getMoreMcaListByMac(@Param("mac") String mac);
+
+	List<Map> getMoreDevListByMacAndEqType(@Param("mac") String mac,@Param("eqType")String eqType);
+
+    List<String> getDevicesListByMacAndEqTypeAndLane(@Param("mac")String mac,@Param("eqType") String eqType,@Param("lane") String lane);
 }

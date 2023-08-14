@@ -4,11 +4,16 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SdEquipmentCategoryDto;
 import com.ruoyi.common.core.domain.TreeCategorySelect;
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
+import com.ruoyi.system.service.ISysDictTypeService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
@@ -17,8 +22,11 @@ import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
+import com.tunnel.platform.service.SdDeviceControlService;
+import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +65,22 @@ public class SdAppDevicesController extends BaseController {
 
     @Autowired
     private ISdEquipmentCategoryService sdEquipmentCategoryService;
+
+
+    @Autowired
+    private ISysDictTypeService dictTypeService;
+
+    @Autowired
+    private CommonControlService commonControlService;
+
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
+    @Autowired
+    private SdDeviceControlService sdDeviceControlService;
+
+    @Autowired
+    private PhoneSpkService phoneSpkService;
 
 
     /**
@@ -167,7 +191,7 @@ public class SdAppDevicesController extends BaseController {
     }
 
     /**
-     * app端  查询控制执行器关联设备列表
+     * app端  设备控制接口  （仅支持广播设备）
      *
      * @param eqId       设备编号
      * @param state      设备状态
@@ -216,6 +240,73 @@ public class SdAppDevicesController extends BaseController {
         return ajaxResult;
     }
 
+    /**
+     * app端  批量设备控制接口  （仅支持车道指示器，风机，卷帘门）
+     *
+     * @param eqType     设备类型
+     * @param state      设备状态
+     * @param mac        MAC地址
+     * @param lane       车道
+     * @return
+     */
+    @GetMapping("/app/batchControlDevice")
+    public AjaxResult batchControlDevice(String eqType,String mac,String lane,String state) {
+
+        if (eqType == null || eqType.equals("1") || eqType.equals("12") || eqType.equals("1")) {
+            return AjaxResult.error("快捷操作只支持车道指示器，风机，卷帘门");
+        }
+        if (mac == null) {
+            return AjaxResult.error("MAC信息不能为空");
+        }
+        if (lane == null) {
+            return AjaxResult.error("车道信息不能为空");
+        }
+        if (state == null) {
+            return AjaxResult.error("状态信息能为空");
+        }
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+
+        List<String> eqIdList = devicesService.getDevicesListByMacAndEqTypeAndLane(mac,eqType,lane);
+
+        int count = 0;
+        for(String devId : eqIdList){
+
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
+            map.put("devId", devId);
+            map.put("state", state);
+            map.put("controlType", "0");
+          //  map.put("frequency", frequency);
+          //  map.put("brightness", stateNum);
+
+            if (!isopen) {
+                count = sdDeviceControlService.controlDevices(map);
+            } else {
+                count = commonControlService.analogControl(map,sdDevices);
+
+                SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,count);
+                sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            }
+        }
+        return AjaxResult.success(count);
+    }
+
+    /**
+     * 批量控制广播设备
+     * @param map
+     * @return
+     */
+
+
+    @PostMapping(value = "/app/playVoice")
+    public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
+        return phoneSpkService.playVoice(map);
+    }
+
 
     /**
      * app端  查询控制执行器关联设备列表
@@ -228,6 +319,42 @@ public class SdAppDevicesController extends BaseController {
 
         return Result.success(devicesService.getMcaList());
     }
+
+    /**
+     * 根据MAC所在隧道查询当前洞内所有测控执行器
+     * @return
+     */
+    @GetMapping("/app/getMoreMcaListByMac")
+    public Result getMoreMcaListByMac(String mac) {
+
+        return Result.success(devicesService.getMoreMcaListByMac(mac));
+    }
+
+    /**
+     * 根据MAC所在隧道和设备类型查询当前洞内所有设备
+     * @return
+     */
+    @GetMapping("/app/getMoreDevListByMacAndEqType")
+    public Result getMoreDevListByMacAndEqType(String mac,String eqType) {
+
+        return Result.success(devicesService.getMoreDevListByMacAndEqType(mac,eqType));
+    }
+
+    /**
+     * 获取广播文件列表
+     * @return
+     */
+    @GetMapping("/app/getVideoItem")
+    public AjaxResult getVideoItem(String dictType) {
+
+        List<SysDictData> data = dictTypeService.selectDictDataByType(dictType);
+        if (StringUtils.isNull(data))
+        {
+            data = new ArrayList<>();
+        }
+        return AjaxResult.success(data);
+    }
+
 
     /**
      * 查询当前登录者所属

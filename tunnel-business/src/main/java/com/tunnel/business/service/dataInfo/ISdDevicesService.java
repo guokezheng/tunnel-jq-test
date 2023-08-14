@@ -344,4 +344,17 @@ public interface ISdDevicesService {
      * @return
      */
     AjaxResult getCamera(SdDevices sdDevices);
+
+    List<Map> getMoreMcaListByMac(String mac);
+
+    List<Map> getMoreDevListByMacAndEqType(String mac,String eqType);
+
+    /**
+     * 查询mac设备所在洞内的设备
+     * @param mac
+     * @param eqType
+     * @param lane
+     * @return
+     */
+    List<String> getDevicesListByMacAndEqTypeAndLane(String mac, String eqType, String lane);
 }

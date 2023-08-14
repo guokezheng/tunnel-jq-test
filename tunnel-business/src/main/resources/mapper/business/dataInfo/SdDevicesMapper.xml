@@ -1379,7 +1379,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                         A.item_id = D.item_id
                     and A.eq_id = D.item_id
         WHERE
-            A.eq_id = #{devId} and A.is_reserved = 1
+            A.eq_id = #{devId} -- and  A.is_reserved = 1
     </select>
 
     <select id="getXfpDevicesInfo" parameterType="java.lang.String" resultMap="SdDevicesResult">
@@ -1441,5 +1441,88 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1=1
         AND d.eq_type = #{eqType}
         AND d.pile = #{pile}
+    </select>
+    <select id="getMoreMcaListByMac" resultType="java.util.Map">
+        select
+            AA.eq_id,
+            AA.eq_name,
+            AA.mac,
+            AA.eq_direction,
+            AA.pile
+        from
+            sd_devices AA
+                inner join
+            (
+                select
+                    eq_tunnel_id,
+                    eq_direction,
+                    eq_type
+                from
+                    sd_devices
+                where
+                    mac = #{mac}) BB
+
+            on
+                        AA.eq_tunnel_id = BB.eq_tunnel_id
+                    and AA.eq_direction = BB.eq_direction
+                    and AA.eq_type = BB.eq_type
+
+        order by AA.pile_num asc
+    </select>
+    <select id="getMoreDevListByMacAndEqType" resultType="java.util.Map">
+        select
+            AA.eq_id,
+            AA.eq_name,
+            AA.mac,
+            AA.eq_direction,
+            AA.pile,
+            AA.external_device_id,
+            AA.eq_tunnel_id,
+            '0' as checked
+        from
+            sd_devices AA
+                inner join
+            (
+                select
+                    eq_tunnel_id,
+                    eq_direction,
+                    eq_type
+                from
+                    sd_devices
+                where
+                    mac = #{mac}) BB
+
+            on
+                        AA.eq_tunnel_id = BB.eq_tunnel_id
+                    and AA.eq_direction = BB.eq_direction
+            -- and AA.eq_type = BB.eq_type
+        where AA.eq_type = 	#{eqType}
+        order by AA.pile_num asc
+
+    </select>
+    <select id="getDevicesListByMacAndEqTypeAndLane" resultType="java.lang.String">
+
+        select
+            AA.eq_id
+        from
+            sd_devices AA
+                inner join
+            (
+                select
+                    eq_tunnel_id,
+                    eq_direction,
+                    eq_type
+                from
+                    sd_devices
+                where
+                    mac = #{mac}) BB
+
+            on
+                        AA.eq_tunnel_id = BB.eq_tunnel_id
+                    and AA.eq_direction = BB.eq_direction
+            -- and AA.eq_type = BB.eq_type
+        where AA.eq_type = 	#{eqType} and AA.lane = #{lane}
+        order by AA.pile_num asc
+
     </select>
 </mapper>

@@ -1156,4 +1156,19 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         }
         return AjaxResult.success("","");
     }
+
+    @Override
+    public List<Map> getMoreMcaListByMac(String mac) {
+        return sdDevicesMapper.getMoreMcaListByMac(mac);
+    }
+
+    @Override
+    public List<Map> getMoreDevListByMacAndEqType(String mac,String eqType) {
+        return sdDevicesMapper.getMoreDevListByMacAndEqType(mac,eqType);
+    }
+
+    @Override
+    public List<String> getDevicesListByMacAndEqTypeAndLane(String mac, String eqType, String lane) {
+        return sdDevicesMapper.getDevicesListByMacAndEqTypeAndLane(mac,eqType,lane);
+    }
 }

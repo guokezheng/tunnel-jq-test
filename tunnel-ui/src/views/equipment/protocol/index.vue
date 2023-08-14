@@ -147,7 +147,7 @@
             <el-option label="请选择字典生成" value="" />
           </el-select>
         </el-form-item>-->
-        <el-form-item label="数据项" prop="itemId">
+        <el-form-item label="数据项" prop="itemId"    v-if="edit == true">
           <el-select ref="itemRef" v-model="form.itemId" placeholder="请选择数据项" style="width:100%">
             <el-option
               v-for="(item) in itemList"

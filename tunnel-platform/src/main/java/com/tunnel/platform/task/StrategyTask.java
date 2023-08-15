@@ -618,6 +618,7 @@ public class StrategyTask {
         sdEvent.setEventTitle(eventTitle);
         sdEvent.setEventTime(DateUtils.getNowDate());
         sdEvent.setCreateBy("System");
+        sdEvent.setIsAuto("1");
         if(sdStrategy!=null){
             sdEvent.setCurrencyId(sdStrategy.getId().toString());
         }
@@ -660,7 +661,7 @@ public class StrategyTask {
             sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
+//            WebSocketService.broadcast("sdEventList",object.toString());
             if(!(sdEventsList.size()>0)){//添加
                 // 添加事件流程记录
                 SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);

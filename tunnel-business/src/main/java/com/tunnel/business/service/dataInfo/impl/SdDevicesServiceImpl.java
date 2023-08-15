@@ -1112,14 +1112,20 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      * @return
      */
     @Override
-    public List<Map> getMcaList() {
+    public List<Map> getMcaDevList() {
 
         String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
+        List<String> tunnelArray = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
 
-        List<Map> list = sdDevicesMapper.getMcaList();
+        List<Map> list = sdDevicesMapper.getMcaDevList(tunnelArray);
 
         for(Map map : list){
 
@@ -1128,6 +1134,25 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 map.put("function",sdDevicesMapper.getMacItem(devId));
             }
         }
+        return list;
+    }
+
+    @Override
+    public List<Map> getMcaList() {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        List<String> tunnelArray = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+
+
+        List<Map> list = sdDevicesMapper.getMcaList(tunnelArray);
+
         return list;
     }
 

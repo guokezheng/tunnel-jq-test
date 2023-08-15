@@ -306,8 +306,6 @@ public class SdAppDevicesController extends BaseController {
      * @param map
      * @return
      */
-
-
     @PostMapping(value = "/app/playVoice")
     public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
         return phoneSpkService.playVoice(map);
@@ -319,9 +317,18 @@ public class SdAppDevicesController extends BaseController {
      *
      * @return
      */
+    @GetMapping("/app/getMcaDevList")
+    public Result getMcaDevList() {
+
+        return Result.success(devicesService.getMcaDevList());
+    }
+
+    /**
+     * app端  查询测控执行器列表
+     * @return
+     */
     @GetMapping("/app/getMcaList")
     public Result getMcaList() {
-
 
         return Result.success(devicesService.getMcaList());
     }

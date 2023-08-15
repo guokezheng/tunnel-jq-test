@@ -6,25 +6,20 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.datacenter.util.CronUtil;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.digitalmodel.WJEnum;
-import com.tunnel.business.domain.event.SdEvent;
-import com.tunnel.business.domain.event.SdStrategy;
-import com.tunnel.business.domain.event.SdStrategyRl;
-import com.tunnel.business.domain.event.SdTrigger;
+import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.wisdomLight.SdWisdomLight;
 import com.tunnel.business.mapper.bigScreenApi.SdTunnelZtMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
-import com.tunnel.business.mapper.event.SdEventMapper;
-import com.tunnel.business.mapper.event.SdStrategyMapper;
-import com.tunnel.business.mapper.event.SdStrategyRlMapper;
-import com.tunnel.business.mapper.event.SdTriggerMapper;
+import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
+import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
+import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.wisdomLight.SdWisdomLightMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -89,6 +84,16 @@ public class StrategyTask {
 
     @Autowired
     private ISdStrategyService sdStrategyService;
+
+    @Autowired
+    private SdEquipmentStateMapper sdEquipmentStateMapper;
+
+    @Autowired
+    private SdEquipmentTypeMapper sdEquipmentTypeMapper;
+
+    @Autowired
+    private SdEventFlowMapper sdEventFlowMapper;
+
     /**
      * 懒汉模式实例化。
      */
@@ -568,15 +573,13 @@ public class StrategyTask {
                 if(isControl){
                     //仅预警
                     if(s.get("warning_type").equals("0")){
-                        this.triggerComparison(s,EventStateEnum.unprocessed.getCode());
+                        this.triggerComparison(s,EventStateEnum.unprocessed.getCode(),null);
                     }else{
-                        //生成事件
-                        this.triggerComparison(s,EventStateEnum.processed.getCode());
                         for (Long  id : strategyIdList){
                             List<SdStrategyRl> sdStrategyRls = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(id);
                             for (SdStrategyRl sdStrategyRl : sdStrategyRls) {
                                 // 自动触发控制策略执行 控制设备triggerId 策略关联设备信息id
-                                this.autoJobParams(sdStrategyRl.getId());
+                                this.autoJobParams(s,sdStrategyRl.getId());
                             }
                         }
 
@@ -588,7 +591,7 @@ public class StrategyTask {
         }
     }
     //触发控制仅预警
-    public void  triggerComparison(Map  s ,String eventState){
+    public SdEvent  triggerComparison(Map  s ,String eventState, SdStrategy sdStrategy){
         //插入事件
         SdEvent sdEvent = new SdEvent();
         //所有事件类型Map
@@ -614,6 +617,12 @@ public class StrategyTask {
         String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
         sdEvent.setEventTitle(eventTitle);
         sdEvent.setEventTime(DateUtils.getNowDate());
+        sdEvent.setCreateBy("System");
+        sdEvent.setIsAuto("1");
+        if(sdStrategy!=null){
+            sdEvent.setCurrencyId(sdStrategy.getId().toString());
+        }
+
         //方向
 //                        if(!StringUtils.isEmpty(f.getDirection())){
 //                            sdEvent.setDirection(f.getDirection() + "");
@@ -632,10 +641,15 @@ public class StrategyTask {
         sdEventOne.setEventState(sdEvent.getEventState());
         List<SdEvent> sdEventsList = SpringUtils.getBean(SdEventMapper.class).selectSdEventSingleList(sdEvent);
         int updateRows = 0;
-        if(sdEventsList.size()>0){
+        if(sdEventsList.size()>0&&!EventStateEnum.processed.getCode().equals(sdEvent.getEventState())){
             sdEventsList.get(0).setStartTime(DateUtils.getTime());
             sdEventsList.get(0).setEventTime(DateUtils.getNowDate());
+            if(sdStrategy!=null){
+                sdEventsList.get(0).setCurrencyId(sdStrategy.getId().toString());
+            }
+
             updateRows = SpringUtils.getBean(SdEventMapper.class).updateSdEvent(sdEventsList.get(0));
+            sdEvent =   sdEventsList.get(0);
 
         }else{
             updateRows = SpringUtils.getBean(SdEventMapper.class).insertSdEvent(sdEvent);
@@ -647,13 +661,14 @@ public class StrategyTask {
             sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
+//            WebSocketService.broadcast("sdEventList",object.toString());
             if(!(sdEventsList.size()>0)){//添加
                 // 添加事件流程记录
                 SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
             }
 
         }
+        return sdEvent;
     }
     /**
      * 手动控制执行
@@ -730,10 +745,13 @@ public class StrategyTask {
      * @param strategyRlId
      * @throws UnknownHostException
      */
-    public  void autoJobParams(Long strategyRlId) throws UnknownHostException {
+    public  void autoJobParams(Map  s ,Long strategyRlId) throws UnknownHostException {
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(strategyRlId);
 
         SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+        //生成事件
+        SdEvent sdEvent = this.triggerComparison(s, EventStateEnum.processed.getCode(),sdStrategy);
 
         // 默认执行策略关联设备
         String[] split = sdStrategyRl.getEquipments().split(",");
@@ -787,11 +805,90 @@ public class StrategyTask {
                 map.put("brightness","50");
                 map.put("frequency","60");
             }
+
             Integer integer = SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
-            //保存处置记录
-//            setEventFlowData(eventId,joinReserveHandle.getProcessName() + "：" + deviceExecutionState + "【成功】");
+            SdEquipmentState state = new SdEquipmentState();
+            state.setStateTypeId(Long.parseLong(sdStrategyRl.getEqTypeId()));
+            state.setDeviceState(sdStrategyRl.getState());
+            state.setIsControl(1);
+            List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
+            if(stateObject.size()<1){
+                continue;
+            }
+            //生成处置记录
+            this.disposeRecord(integer,sdEvent,stateObject,sdStrategyRl);
         }
     }
+
+    /**
+     * 生成处置记录
+     * @param integer
+     * @param sdEvent
+     * @param stateObject
+     * @param sdStrategyRl
+     */
+    public void disposeRecord(Integer integer, SdEvent sdEvent,List<SdEquipmentState> stateObject ,SdStrategyRl sdStrategyRl){
+        String resultName = integer==0?"失败":"成功";
+        //更新事件
+        //设置更新事件
+        sdEvent.setUpdateTime(DateUtils.getNowDate());
+        sdEvent.setUpdateBy("System");
+        sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+        SpringUtils.getBean(SdEventMapper.class).updateSdEvent(sdEvent);
+
+        SdEquipmentState state = new SdEquipmentState();
+        state.setStateTypeId(Long.parseLong(sdStrategyRl.getEqTypeId()));
+        state.setDeviceState(sdStrategyRl.getState());
+        state.setIsControl(1);
+
+        //设备状态名称
+        String stateName = stateObject.get(0).getStateName();
+        //查询分是控制关闭指令
+        List<SdEquipmentState> endObject = new ArrayList<>();
+        SdEquipmentType typeObject = sdEquipmentTypeMapper.selectSdEquipmentTypeById(Long.parseLong(sdStrategyRl.getEqTypeId()));
+        String typeName = typeObject.getTypeName();//设备类型名称
+        //分时控制策略信息
+        String fsControlData = "";
+        if(sdStrategyRl.getEndState() != null && !"".equals(sdStrategyRl.getEndState())){
+            state.setDeviceState(sdStrategyRl.getEndState());
+            endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
+
+            fsControlData = typeName + "控制执行：" + "起始指令：" + stateName ;
+
+            // 附加数值的命令
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) && sdStrategyRl.getState().equals("1") &&sdStrategyRl.getStateNum() != null && !"0".equals(sdStrategyRl.getStateNum())){
+                fsControlData += "，亮度："+sdStrategyRl.getStateNum() + "%";
+            }
+
+            fsControlData +="；";
+            fsControlData +="结束指令：" + endObject.get(0).getStateName();
+
+            // 附加数值的命令
+            if((sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                    sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString()))&&
+                    sdStrategyRl.getEndState().equals("1") &&
+                    sdStrategyRl.getEndStateNum() != null &&
+                    !"0".equals(sdStrategyRl.getEndStateNum())){
+
+                fsControlData += "，亮度："+sdStrategyRl.getEndStateNum() + "%";
+
+            }
+            setEventFlowData(sdEvent.getId(),fsControlData + "【"+resultName+"】");
+        }else{
+
+            String controlData = typeName + "控制执行：" + stateName + "；";
+            // 附加数值的命令
+            if((sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                    sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString()))&&
+                    sdStrategyRl.getStateNum() != null &&
+                    !"0".equals(sdStrategyRl.getStateNum())){
+
+                controlData = typeName + "控制执行：" + stateName + "，亮度："+sdStrategyRl.getStateNum()+"%；";
+            }
+            setEventFlowData(sdEvent.getId(),controlData + "【"+resultName+"】");
+        }
+    }
+
     /**
      * 保存处置记录
      * @param eventId
@@ -802,6 +899,11 @@ public class StrategyTask {
         Map flowParam = new HashMap();
         flowParam.put("eventId",eventId);
         flowParam.put("content",content);
-        SpringUtils.getBean(ISdEventFlowService.class).savePlanProcessFlow(flowParam);
+        SdEventFlow flow = new SdEventFlow();
+        flow.setFlowDescription(flowParam.get("content").toString());
+        flow.setEventId(flowParam.get("eventId").toString());
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler("System");
+        sdEventFlowMapper.insertSdEventFlow(flow);
     }
 }

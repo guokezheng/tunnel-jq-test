@@ -449,7 +449,7 @@ export default {
       //需要移除的文件ids
       removeIds: [],
       // fIds:[]//需要移除的关联图标iconFileId
-      typeList: [], //所属分类
+      // typeList: [], //所属分类
       isControlOptions: [], //是否可控字典值
     };
   },

@@ -2,8 +2,6 @@
 <template>
   <div
     class="app-container"
-    v-loading.fullscreen.lock="loading"
-    element-loading-background="rgba(255, 255, 255, 0.3)"
   >
     <!-- 顶部 -->
     <el-row class="top_tabs">
@@ -129,7 +127,7 @@
               :data="tableData"
               style="width: 100%"
               ref="multipleTable"
-              height="100%"
+              max-height="100%"
               class="allTable"
             >
               <el-table-column
@@ -169,9 +167,10 @@
               :data="tableData"
               style="width: 100%"
               ref="multipleTable"
-              height="100%"
+              max-height="100%"
               :summary-method="getSummaries"
               show-summary
+              class="allTable"
             >
               <el-table-column
                 fixed="left"
@@ -889,24 +888,18 @@ export default {
 .table {
   width: 100%;
   height: 45%;
-  // overflow: auto;
-  // ::v-deep .el-table .el-table__fixed-header-wrapper th {
-  //   background: #e7f5ff;
-  // }
-  // ::v-deep .el-table .el-table__header-wrapper th {
-  //   background: #e7f5ff;
-  // }
-  // /* 修改滚动条宽度 */
-  // ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
-  //   // width: 7px;
-  //   // height: 7px;
-  //   background: #f4f4f4;
-  // }
-  // /* 修改滚动条颜色 */
-  // ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
-  //   background-color: rgba(91, 143, 216, 0.5);
-  //   border-radius: 6px;
-  // }
+  ::v-deep .el-table__body-wrapper{
+    max-height: 27vh;
+  }
+  ::v-deep .el-table__fixed,.el-table__fixed-right{
+    max-height: 35vh;
+  }
+  ::v-deep .el-table__fixed-body-wrapper{
+    max-height: 25.8vh;
+  }
+  ::v-deep th.el-table__cell{
+    background: #004F8B;
+  }
 }
 // .el-table {
 // overflow-y: auto !important;
@@ -993,11 +986,21 @@ export default {
   top: 55px;
   right: 0;
   overflow: visible;
-  .left_tree {
+  height: 79vh;
+  // .left_tree {
+  //   position: relative;
+  //   left: 0;
+  //   top: 0px;
+  //   width: 17%;
+  // }
+  .el-tab-pane{
+    height: 100%;
     position: relative;
     left: 0;
     top: 0px;
     width: 17%;
+    border-right: solid 2px #054D83;
+    padding-right: 6px;
   }
 }
 </style>

@@ -28,6 +28,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class KafkaReadListenToWanJiTopic {
         log.info("监听到万集事件数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //解析事件数据
-            JSONObject objects = JSONObject.parseObject(record.value().toString());
+            JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件数据
             saveEvent(objects);
         }
@@ -92,9 +93,29 @@ public class KafkaReadListenToWanJiTopic {
         log.info("监听到万集事件图片视频数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //解析事件数据
-            JSONObject objects = JSONObject.parseObject(record.value().toString());
+            JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件图片视频数据
             saveEventImage(objects);
+        }
+        //手动提交
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取设备状态
+     * @param record
+     * @param item
+     * @param consumer
+     * @throws Exception
+     */
+    @KafkaListener(topics = "wj_device", containerFactory = "kafkaOneContainerFactory")
+    public void topicDeviceStatus(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
+        log.info("监听到万集设备状态数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析设备数据
+            JSONObject objects = JSONObject.parseObject(record.value());
+            //储存设备状态数据
+            saveDeviceStatus(objects);
         }
         //手动提交
         consumer.commitSync();
@@ -188,6 +209,41 @@ public class KafkaReadListenToWanJiTopic {
             }
             //将图片视频存入
             imageMapper.brachInsertFaultIconFile(imageList);
+        }
+    }
+
+    /**
+     * 储存设备状态
+     * @param jsonObject
+     */
+    public void saveDeviceStatus(JSONObject jsonObject){
+        //隧道id
+        String tunnelId = jsonObject.getString("tunnelId");
+        //雷达数据
+        JSONArray lidarInfoList = jsonObject.getJSONArray("lidarInfo");
+        //相机数据
+        JSONArray cameraInfoList = jsonObject.getJSONArray("cameraInfoList");
+        for(int i = 0; i < lidarInfoList.size(); i++){
+            JSONObject lidarInfoData = JSONObject.parseObject(lidarInfoList.get(i).toString());
+            Map<String, Object> map = new HashMap<>();
+            map.put("deviceType",lidarInfoData.getLongValue("deviceType"));
+            map.put("ip",lidarInfoData.getString("ip"));
+            map.put("line",lidarInfoData.getLongValue("line"));
+            map.put("errorContent",lidarInfoData.getString("errorContent"));
+            map.put("status",lidarInfoData.getLongValue("status"));
+            //固定格式WanJiDevice:lidar:隧道id:ip
+            redisCache.setCacheObject("wanJiDevice:lidar:"+tunnelId+":"+map.get("ip").toString(),map);
+        }
+        for(int i = 0; i < cameraInfoList.size(); i++){
+            JSONObject cameraInfoData = JSONObject.parseObject(cameraInfoList.get(i).toString());
+            Map<String, Object> map = new HashMap<>();
+            map.put("deviceType",cameraInfoData.getLongValue("deviceType"));
+            map.put("ip",cameraInfoData.getString("ip"));
+            map.put("rate",cameraInfoData.getLongValue("rate"));
+            map.put("errorContent",cameraInfoData.getString("errorContent"));
+            map.put("status",cameraInfoData.getLongValue("status"));
+            //固定格式WanJiDevice:camera:隧道id:ip
+            redisCache.setCacheObject("wanJiDevice:camera:"+tunnelId+":"+map.get("ip").toString(),map);
         }
     }
 

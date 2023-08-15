@@ -114,7 +114,7 @@
               :data="list"
               style="width: 100%"
               ref="multipleTable"
-              height="100%"
+              max-height="100%"
               class="allTable"
             >
               <el-table-column
@@ -938,11 +938,21 @@ export default {
   top: 55px;
   right: 0;
   overflow: visible;
-  .left_tree {
+  height: 79vh;
+  .el-tab-pane{
+    height: 100%;
     position: relative;
     left: 0;
     top: 0px;
     width: 17%;
+    border-right: solid 2px #054D83;
+    padding-right: 6px;
+  }
+  .left_tree {
+    position: relative;
+    left: 0;
+    top: 0px;
+    width: 100%;
   }
 }
 </style>

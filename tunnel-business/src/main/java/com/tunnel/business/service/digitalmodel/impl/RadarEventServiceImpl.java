@@ -3,6 +3,7 @@ package com.tunnel.business.service.digitalmodel.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +101,12 @@ public class RadarEventServiceImpl implements RadarEventService {
     private String authorizeName;
     /*@Value("${devStatusTopic}")
     private static String devStatusTopic;*/
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private SdDeviceDataMapper deviceDataMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -632,32 +640,12 @@ public class RadarEventServiceImpl implements RadarEventService {
             if (f.getEqType().longValue() == 34L) {
                 continue;
             }
-            SdRadarDevice sdRadarDevice = new SdRadarDevice();
-            sdRadarDevice.setDeviceId(f.getEqId());
-            sdRadarDevice.setIp(f.getIp());
-            sdRadarDevice.setDeviceType(f.getEqType() + "");
-            if (f.getEqName().contains("K")) {
-                sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("K")));
-            } else if (f.getEqName().contains("k")) {
-                sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("k")));
-            } else {
-                sdRadarDevice.setDeviceName(f.getEqName());
-            }
-            if (StringUtils.isNotEmpty(f.getEqStatus())) {
-                sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
-            }
-            if (StringUtils.isNotEmpty(f.getLng())) {
-                sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
-            }
-            if (StringUtils.isNotEmpty(f.getLat())) {
-                sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
-            }
-            sdRadarDevice.setDirection(f.getEqDirection());
-            sdRadarDevice.setStakeNum(f.getPile());
-            sdRadarDevice.setTransform(f.getRemark());
+            SdRadarDevice sdRadarDevice = setRadarDevice(f);
             com.alibaba.fastjson.JSONObject deviceData = new com.alibaba.fastjson.JSONObject();
             if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
-                    || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType())) {
+                || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType())
+                || "6".equals(sdRadarDevice.getDeviceType()) || "7".equals(sdRadarDevice.getDeviceType()) || "8".equals(sdRadarDevice.getDeviceType()) || "9".equals(sdRadarDevice.getDeviceType())
+                || "30".equals(sdRadarDevice.getDeviceType()) || "31".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
@@ -665,24 +653,6 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
                     } else {
                         deviceData.put("runStatus", 0);
-                    }
-                }
-            }else if ("32".equals(sdRadarDevice.getDeviceType())) {
-                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
-                for (int i = 0;i < maps.size();i++) {
-                    Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null && Integer.valueOf(map.get("data").toString()) == 0) {
-                        deviceData.put("runStatus", 0);
-                        deviceData.put("alarmSource", 0);
-                    } else if (map.get("data") != null && Integer.valueOf(map.get("data").toString()) == 1) {
-                        deviceData.put("runStatus", 1);
-                        if (map.get("itemId") != null
-                                && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(shouBaoAlarmCode).longValue()) {
-                            deviceData.put("alarmSource", 2);
-                        } else if (map.get("itemId") != null
-                                && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(flameDetectorAlarmCode).longValue()) {
-                            deviceData.put("alarmSource", 1);
-                        }
                     }
                 }
             } else if ("5".equals(sdRadarDevice.getDeviceType()) || "15".equals(sdRadarDevice.getDeviceType()) || "28".equals(sdRadarDevice.getDeviceType()) || "18".equals(sdRadarDevice.getDeviceType())) {
@@ -696,17 +666,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("unit", map.get("unit").toString());
                     }
                 }
-            } else if ("6".equals(sdRadarDevice.getDeviceType()) || "7".equals(sdRadarDevice.getDeviceType()) || "8".equals(sdRadarDevice.getDeviceType()) || "9".equals(sdRadarDevice.getDeviceType())) {
-                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
-                for (int i = 0;i < maps.size();i++) {
-                    Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null) {
-                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
-                    } else {
-                        deviceData.put("runStatus", 0);
-                    }
-                }
-            } else if ("31".equals(sdRadarDevice.getDeviceType())) {
+            }
+            /*else if ("31".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
@@ -756,7 +717,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("fireMark", Integer.parseInt(map.get("data").toString()));
                     }
                 }
-            } else if ("17".equals(sdRadarDevice.getDeviceType())) {
+            } */
+            else if ("17".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
@@ -782,15 +744,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("VI", Double.parseDouble(map.get("data").toString()));
                     }
                 }
-            } else if ("16".equals(sdRadarDevice.getDeviceType())) {
-                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
-                for (int i = 0;i < maps.size();i++) {
-                    Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null) {
-                        deviceData.put("message", map.get("data").toString());
-                    }
-                }
-            } else if ("23".equals(sdRadarDevice.getDeviceType()) || "26".equals(sdRadarDevice.getDeviceType())) {
+            }else if ("23".equals(sdRadarDevice.getDeviceType()) || "26".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
@@ -798,10 +752,55 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("runDate", map.get("data").toString());
                     }
                 }
+            } else if ("16".equals(sdRadarDevice.getDeviceType()) || "36".equals(sdRadarDevice.getDeviceType())) {
+                //隧道内情报板
+                List<Map<String, Object>> vmsData = deviceDataMapper.getVmsData(f.getEqId());
+                for (int i = 0;i < vmsData.size();i++) {
+                    Map<String, Object> map = vmsData.get(i);
+                    //设备id
+                    String deviceId = map.get("deviceId").toString();
+                    SdDevices sdDevices = devicesMapper.selectSdDevicesById(deviceId);
+                    JSONObject devMap = new JSONObject();
+                    //情报板编号
+                    devMap.put("boardNo",sdDevices.getAssociatedDeviceId());
+                    //隧道id
+                    devMap.put("tunnelId",sdDevices.getEqTunnelId());
+                    //设备id
+                    devMap.put("deviceCode",sdDevices.getEqId());
+                    //情报板数据
+                    String data = map.get("data").toString();
+                    JSONArray objects = JSONObject.parseArray(data);
+                    devMap.put("list",objects);
+                    sdRadarDevice.setDeviceData(devMap);
+                    list.add(sdRadarDevice);
+                }
             }
+            if(!"16".equals(sdRadarDevice.getDeviceType()) && !"36".equals(sdRadarDevice.getDeviceType())){
+                sdRadarDevice.setDeviceData(deviceData);
+                list.add(sdRadarDevice);
+            }
+        }
+        //获取万集雷达相机数据
+        Collection<String> wanJiDevice = redisCache.keys("wanJiDevice");
+        List<Map<String, Object>> deviceDataList = (List<Map<String, Object>>)redisTemplate.opsForValue().multiGet(wanJiDevice);
+        for(Map<String, Object> map : deviceDataList){
+            JSONObject deviceData = new JSONObject();
+            String deviceType = map.get("deviceType").toString();
+            SdDevices sdDevices = new SdDevices();
+            sdDevices.setEqType(Long.valueOf(deviceType));
+            sdDevices.setIp(map.get("ip").toString());
+            List<SdDevices> devicesList = devicesMapper.selectSdDevicesList(sdDevices);
+            SdRadarDevice sdRadarDevice = setRadarDevice(devicesList.get(0));
+            if("26".equals(deviceType)){
+                deviceData.put("line",Integer.valueOf(map.get("line").toString()));
+            }else {
+                deviceData.put("rate",Integer.valueOf(map.get("rate").toString()));
+            }
+            deviceData.put("errorContent",map.get("errorContent").toString());
             sdRadarDevice.setDeviceData(deviceData);
             list.add(sdRadarDevice);
         }
+
         //在线
         int normal = 0;
         //离线
@@ -825,6 +824,36 @@ public class RadarEventServiceImpl implements RadarEventService {
         object.put("offlineNum", offlineNum);
         object.put("deviceList", list);
         return JSONUtil.parse(object);
+    }
+
+    /**
+     * 实时数据信息
+     * @param f
+     * @return
+     */
+    public SdRadarDevice setRadarDevice(SdDevices f){
+        SdRadarDevice sdRadarDevice = new SdRadarDevice();
+        sdRadarDevice.setDeviceId(f.getEqId());
+        sdRadarDevice.setIp(f.getIp());
+        sdRadarDevice.setDeviceType(f.getEqType() + "");
+        if (f.getEqName().contains("k")) {
+            sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("k") - 1));
+        } else {
+            sdRadarDevice.setDeviceName(f.getEqName());
+        }
+        if (StringUtils.isNotEmpty(f.getEqStatus())) {
+            sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
+        }
+        if (StringUtils.isNotEmpty(f.getLng())) {
+            sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
+        }
+        if (StringUtils.isNotEmpty(f.getLat())) {
+            sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
+        }
+        sdRadarDevice.setDirection(f.getEqDirection());
+        sdRadarDevice.setStakeNum(f.getPile());
+        sdRadarDevice.setTransform(f.getRemark());
+        return sdRadarDevice;
     }
 
 

@@ -313,6 +313,19 @@ public class SdEvent extends BaseEntity {
      */
     private String downLoadTime;
 
+    /**
+     * 是否自动
+     */
+    private String isAuto;
+
+    public String getIsAuto() {
+        return isAuto;
+    }
+
+    public void setIsAuto(String isAuto) {
+        this.isAuto = isAuto;
+    }
+
     public String getDept() {
         return dept;
     }

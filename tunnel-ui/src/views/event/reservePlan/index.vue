@@ -2339,7 +2339,7 @@ export default {
     },
     /** 查询事件类型下拉列表 */
     getPlanType() {
-      let data = { prevControlType: 0 };
+      let data = {};
       listEventType(data).then((response) => {
         this.planTypeData = response.rows;
       });

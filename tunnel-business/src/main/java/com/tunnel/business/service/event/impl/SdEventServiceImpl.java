@@ -316,7 +316,7 @@ public class SdEventServiceImpl implements ISdEventService {
     public int upEvent(SdEvent sdEvent){
         if (EventStateEnum.processed.getCode().equals(sdEvent.getEventState())) {
             instreEventFlowData(sdEvent.getId(),"事件已完结");
-        }else if(EventStateEnum.processing.getCode().equals(sdEvent.getEventState()) && PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(sdEvent.getPrevControlType())){
+        }else if(EventStateEnum.processing.getCode().equals(sdEvent.getEventState())){
             //更新预案设备
             setStrategyRlEquipment(sdEvent);
             //如有处置中的普通事件则将处理中的安全预警状态改为已处理
@@ -555,7 +555,27 @@ public class SdEventServiceImpl implements ISdEventService {
         Map<String, Object> map = new HashMap<>();
         //应急预案or联控策略设备总和
         List<Map<String, Object>> list = new ArrayList<>();
-        if(PrevControlTypeEnum.ACTIVE_SAFETY.getCode().equals(sdEvent.getPrevControlType())){
+        List<SdReserveProcess> sdReserveProcesses = sdReserveProcessMapper.getProcessList(Long.valueOf(sdEvent.getCurrencyId()));
+        for(SdReserveProcess item : sdReserveProcesses){
+            List<Map<String, Object>> maps = new ArrayList<>();
+            map = new HashMap<>();
+            for(SdReserveProcess temp : item.getProcessesList()){
+                List<SdStrategyRl> sdStrategyRls = new ArrayList<>();
+                SdStrategyRl sdStrategyRl = sdStrategyRlMapper.selectSdStrategyRlById(temp.getStrategyId());
+                if(sdStrategyRl.getEquipments() != null && !"".equals(sdStrategyRl.getEquipments())){
+                    sdStrategyRl.setEquipments(sdStrategyRl.getEquipments());
+                }else {
+                    sdStrategyRl.setEquipments(getRlDevice(sdEvent, sdStrategyRl));
+                }
+                sdStrategyRls.add(sdStrategyRl);
+                maps.addAll(setDeviceAllList(sdStrategyRls));
+            }
+            map.put("devicesList", maps);
+            map.put("tableName", item.getProcessStageName());
+            map.put("prevControlType",sdEvent.getPrevControlType());
+            list.add(map);
+        }
+        /*if(PrevControlTypeEnum.ACTIVE_SAFETY.getCode().equals(sdEvent.getPrevControlType())){
             String strategyName = sdStrategyMapper.selectSdStrategyById(Long.valueOf(sdEvent.getCurrencyId())).getStrategyName();
             //查询联控流程
             List<SdStrategyRl> sdStrategyRls = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(Long.valueOf(sdEvent.getCurrencyId()));
@@ -584,7 +604,7 @@ public class SdEventServiceImpl implements ISdEventService {
                 map.put("prevControlType",sdEvent.getPrevControlType());
                 list.add(map);
             }
-        }
+        }*/
         return AjaxResult.success(list);
     }
 
@@ -998,7 +1018,6 @@ public class SdEventServiceImpl implements ISdEventService {
     public AjaxResult getEventDetail(SdEvent sdEvent) {
         Map<String, Object> map = new HashMap<>();
         SdEvent sdEventData = sdEventMapper.selectSdEventById(sdEvent.getId());
-        String prevControlType = sdEventTypeMapper.selectSdEventTypeById(sdEventData.getEventTypeId()).getPrevControlType();
         //查询事件详情-事件发现
         SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
         //查询事件详情-事件发现-图片
@@ -1037,7 +1056,7 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         if("0".equals(sdEventData.getEventState()) || "1".equals(sdEventData.getEventState())){
             //查询事件详情-预案处置
-            if(prevControlType.equals(PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode())){
+            if("0".equals(sdEventData.getIsAuto())){
                 //最新的预案
                 Map<String, Object> planMap = setPlanDataMap(sdEventData);
                 //查询历史预案
@@ -1050,6 +1069,7 @@ public class SdEventServiceImpl implements ISdEventService {
                 List<Map<String, Object>> maps = setDeviceAllList(sdStrategyRls);
                 map.put("tacticsList",maps);
             }
+            map.put("isAuto",sdEventData.getIsAuto());
             //查询事件详情-处置记录
             SdEventFlow sdEventFlow = new SdEventFlow();
             sdEventFlow.setEventId(sdEvent.getId().toString());

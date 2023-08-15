@@ -504,7 +504,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by B.id
     </select>
 
-
+    <select id="getVmsData" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            sdd.device_id AS deviceId,
+            sdd.item_id AS itemId,
+            sdd.`data`
+        FROM
+            sd_device_data sdd
+        WHERE
+            1 = 1
+          AND item_id IN ( 103, 104 )
+          AND device_id = #{deviceId}
+    </select>
 
 
 

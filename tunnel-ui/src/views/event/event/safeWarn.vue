@@ -772,9 +772,9 @@
                     placeholder="请选择预案"
                   >
                     <el-option
-                      v-for="item in strategyList"
+                    v-for="item in ReservePlanList"
                       :key="item.id"
-                      :label="item.strategyName"
+                      :label="item.planName"
                       :value="item.id"
                     ></el-option>
                   </el-select>
@@ -1075,7 +1075,7 @@
           v-if="eventStateCurrent == '1' || eventStateCurrent == '0'"
         >
           <el-card>
-            <el-col :span="12" v-if="prevControlType == 0">
+            <el-col :span="12" v-if="isAuto == 0">
               <div class="IncHand">
                 <div class="incHandBox">
                   <el-tabs v-model="historyIndex" @tab-click="handleClick">
@@ -1195,7 +1195,7 @@
                 </div>
               </div>
             </el-col>
-            <el-col :span="12" v-if="prevControlType == 1">
+            <el-col :span="12" v-if="isAuto == 1">
               <el-timeline
                 :reverse="reverse"
                 style="
@@ -1490,6 +1490,7 @@ export default {
       eventDiscovery: {}, //发现数据
       vedioData: {}, //视频录像数据
       tacticsList: {}, //表单数据
+      isAuto:"0", //是否自动执行
       dialogTableVisible: false,
       radioList: [
         { label: "确认(已确认)", value: "4" },
@@ -2127,6 +2128,7 @@ export default {
         this.eventStateCurrent = res.data.eventState;
         this.endReport = res.data.endReport;
         this.tacticsList = res.data.tacticsList;
+        this.isAuto = res.data.isAuto;
       });
       (this.historyIndex = "first0"), (this.dialogTableVisible = true);
     },
@@ -2309,31 +2311,35 @@ export default {
             this.getList();
             //主动安全
             //策略不为空
-            if (
-              this.eventFormDetail.prevControlType == 1 &&
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-              let id = currencyId;
-              handleStrategy(id).then((res) => {
-                console.log(res);
-                this.$modal.msgSuccess("下发指令成功");
-              });
-            }
-            loading.close();
+            // if (
+            //   this.eventFormDetail.prevControlType == 1 &&
+            //   currencyId &&
+            //   this.eventFormDetail.eventState == 0
+            // ) {
+            //   let id = currencyId;
+            //   handleStrategy(id).then((res) => {
+            //     console.log(res);
+            //     this.$modal.msgSuccess("下发指令成功");
+            //   });
+            // }
+            // loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            if (
-              this.eventFormDetail.prevControlType == 0 &&
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-              this.$router.push({
+            // if (
+            //   this.eventFormDetail.prevControlType == 0 &&
+            //   currencyId &&
+            //   this.eventFormDetail.eventState == 0
+            // ) {
+            //   this.$router.push({
+            //     path: "/emergency/administration/dispatch",
+            //     query: { id: this.eventFormDetail.id },
+            //   });
+            // }
+            this.$router.push({
                 path: "/emergency/administration/dispatch",
                 query: { id: this.eventFormDetail.id },
               });
-            }
             this.$cache.local.remove("currencyId");
           });
         }
@@ -2437,11 +2443,12 @@ export default {
       this.details = true;
       this.eventFormDetail = { ...item };
       this.eventFormDetail.eventState = 4;
-      if (item.prevControlType == 1) {
-        this.getStrategyData(item);
-      } else {
-        this.getReservePlanData();
-      }
+      // if (item.prevControlType == 1) {
+      //   this.getStrategyData(item);
+      // } else {
+      //   this.getReservePlanData();
+      // }
+      this.getReservePlanData();
 
       this.$nextTick(() => {
         if(this.$refs.swiperTop){

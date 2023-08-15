@@ -181,7 +181,7 @@ export default {
   max-height: 180px;
   position: absolute;
   top: 0px;
-  left: 68%;
+  right: 25px;
   background-color: #00152b;
   z-index: 2000;
   border-bottom: solid 2px white;

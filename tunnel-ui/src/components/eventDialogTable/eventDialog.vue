@@ -522,7 +522,7 @@
                 <el-form-item prop="currencyId">
                   <el-select
                     v-model="eventFormDetail.currencyId"
-                    placeholder="请选择策略"
+                    placeholder="请选择预案"
                   >
                     <el-option
                       v-for="item in strategyList"
@@ -736,7 +736,7 @@ export default {
       },
       processDialog: "false",
       deviceIndexShow: 0,
-      activeName: "0",
+      activeName: "",
       dialogVisibleDevice: false,
       DeviceDetail: [],
       alongImgUrl: "",
@@ -989,12 +989,14 @@ export default {
       }
 
       this.$nextTick(() => {
-        const swiperTop = this.$refs.swiperTop.$el.swiper;
-        const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
-        swiperTop.controller.control = swiperThumbs;
-        swiperThumbs.controller.control = swiperTop;
-        swiperThumbs.activeIndex = 0;
-        swiperTop.activeIndex = 0;
+        if(this.$refs.swiperTop){
+          const swiperTop = this.$refs.swiperTop.$el.swiper;
+          const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
+          swiperTop.controller.control = swiperThumbs;
+          swiperThumbs.controller.control = swiperTop;
+          swiperThumbs.activeIndex = 0;
+          swiperTop.activeIndex = 0;
+        }
       });
       this.getEventList();
       if (item.stakeNum) {
@@ -1199,7 +1201,7 @@ export default {
     openDoor(item) {
       // 点击查看按钮重置tab
       this.deviceIndexShow = 0;
-      this.activeName = "0";
+      // this.activeName = "0";
 
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
@@ -1216,6 +1218,7 @@ export default {
       examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
+        this.activeName = res.data[0].tableName
         this.dialogVisibleDevice = true;
       });
     },

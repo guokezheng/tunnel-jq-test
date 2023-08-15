@@ -7,7 +7,7 @@
   >
     <el-row :gutter="20">
       <!-- 左侧下拉 -->
-      <el-col :span="4">
+      <el-col :span="4" class="leftCard">
         <el-card class="my-card-height left_tree" shadow="never">
           <site-tree
             @nodeCheck="handleCheckChange"
@@ -352,6 +352,9 @@ export default {
   .el-col{
     height: 100%;
   }
+}
+.leftCard{
+  border-right: solid 2px #054D83;
 }
 </style>
   

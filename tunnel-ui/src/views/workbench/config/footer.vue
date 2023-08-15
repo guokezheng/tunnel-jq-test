@@ -693,26 +693,27 @@ export default {
     actionFun() {
       if (this.trafficList.length > 6) {
         this.tableTimerFun();
-      } else {
-        this.fillTableList();
-      }
+      } 
+      // else {
+      //   this.fillTableList();
+      // }
       // this.showFlag = true;
     },
-    fillTableList() {
-      var addLength = this.maxCanSee - this.trafficList.length;
-      for (var i = 0; i < addLength; i++) {
-        this.trafficList.push({
-          eventType: {
-            iconUrl: "-",
-            prevControlType: "-",
-            simplifyName: "-",
-          },
-          eventTitle: "-",
-          frameEventTitle: "-",
-          startTime: "-",
-        });
-      }
-    },
+    // fillTableList() {
+    //   var addLength = this.maxCanSee - this.trafficList.length;
+    //   for (var i = 0; i < addLength; i++) {
+    //     this.trafficList.push({
+    //       eventType: {
+    //         iconUrl: "-",
+    //         prevControlType: "-",
+    //         simplifyName: "-",
+    //       },
+    //       eventTitle: "-",
+    //       frameEventTitle: "-",
+    //       startTime: "-",
+    //     });
+    //   }
+    // },
     tableTimerFun() {
       var count = 0; //每滚动一次，count加1
       if (this.trafficList.length > this.maxCanSee) {
@@ -1997,7 +1998,7 @@ export default {
         };
         if (this.nameArr.length > 0) {
           this.deviceChart.setOption(this.option);
-
+          console.log(1111111)
           this.deviceChart.on("mouseover", () => {
             this.stop();
           });
@@ -2007,12 +2008,15 @@ export default {
           this.autoMove();
         }
         this.deviceChart.setOption(this.option);
-        // window.addEventListener("resize", function () {
-        //   this.deviceChart.resize();
-        // });
+        window.addEventListener("resize", function () {
+          this.deviceChart.resize();
+        });
       });
     },
     autoMove() {
+      console.log(this.nameArr.length,"this.nameArr.length")
+      console.log(this.option.dataZoom[0].endValue,"this.option.dataZoom[0].endValue")
+      console.log(this.option.dataZoom[0].startValue,"this.option.dataZoom[0].startValue")
       this.myChart = setInterval(() => {
         if (this.option.dataZoom[0].endValue == this.nameArr.length) {
           this.option.dataZoom[0].endValue = 8;

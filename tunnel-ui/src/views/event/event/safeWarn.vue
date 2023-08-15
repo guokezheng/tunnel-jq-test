@@ -140,6 +140,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="tableTopHr"></div>
     <div class="contentListBox container" v-loading="isLoading">
       <div
         class="contentBox"
@@ -1446,7 +1447,7 @@ export default {
         },
       },
       deviceIndexShow: 0,
-      activeName: "0",
+      activeName: "",
       dialogVisibleDevice: false,
       DeviceDetail: [], //复核弹窗详情
       tableData: [],
@@ -1937,7 +1938,7 @@ export default {
     // },
     closeDetail() {
       this.deviceIndexShow = 0;
-      this.activeName = "0";
+      // this.activeName = "0";
       this.dialogVisibleDevice = false;
     },
     getStrategyData(item) {
@@ -1976,7 +1977,7 @@ export default {
     openDoor(item) {
       // 点击查看按钮重置tab
       this.deviceIndexShow = 0;
-      this.activeName = "0";
+      // this.activeName = "0";
 
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
@@ -1993,6 +1994,7 @@ export default {
       examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
+        this.activeName = res.data[0].tableName
         this.dialogVisibleDevice = true;
       });
     },
@@ -2442,12 +2444,14 @@ export default {
       }
 
       this.$nextTick(() => {
-        const swiperTop = this.$refs.swiperTop.$el.swiper;
-        const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
-        swiperTop.controller.control = swiperThumbs;
-        swiperThumbs.controller.control = swiperTop;
-        swiperThumbs.activeIndex = 0;
-        swiperTop.activeIndex = 0;
+        if(this.$refs.swiperTop){
+          const swiperTop = this.$refs.swiperTop.$el.swiper;
+          const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
+          swiperTop.controller.control = swiperThumbs;
+          swiperThumbs.controller.control = swiperTop;
+          swiperThumbs.activeIndex = 0;
+          swiperTop.activeIndex = 0;
+        }
       });
       this.getEventList();
       // debugger
@@ -3802,9 +3806,9 @@ hr {
   line-height: 30px;
 }
 .searchSafeWarn {
-  top: 6% !important;
-  right: 0.8% !important;
-  width: 453px !important;
+  // top: 6% !important;
+  // right: 0.8% !important;
+  // width: 453px !important;
   .el-checkbox + .el-checkbox {
     margin-left: 0 !important;
   }

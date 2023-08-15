@@ -31,8 +31,9 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
                 .build();
 
         int status = 0;
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             String result = response.body().string();
             if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
                 JSONObject jsonObject = JSONObject.parseObject(result);
@@ -43,6 +44,10 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
             }
         } catch (IOException e) {
             return status;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return status;
     }
@@ -58,8 +63,9 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
                 .build();
 
         int status = 0;
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             String result = response.body().string();
 
             if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
@@ -71,6 +77,10 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
             }
         } catch (IOException e) {
             return status;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return status;
     }
@@ -87,8 +97,9 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
                 .build();
 
         int status = 0;
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             String result = response.body().string();
             if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
                 JSONObject jsonObject = JSONObject.parseObject(result);
@@ -99,6 +110,10 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
             }
         } catch (IOException e) {
             return status;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
 
         return status;

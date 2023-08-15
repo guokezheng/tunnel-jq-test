@@ -86,6 +86,10 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         } catch (IOException e) {
             e.printStackTrace();
             return "99";
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         JSONObject jo = JSONObject.parseObject(  response.body().toString());
         return  jo.getJSONObject("data").getString("id");
@@ -212,12 +216,17 @@ public class SansiLightImpl implements Light , GeneralControlBean {
                 .build();
 
         String responseBody = "";
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
             return 0;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return responseBody.contains("pipelineId") ? 1 : 0;
     }
@@ -247,12 +256,17 @@ public class SansiLightImpl implements Light , GeneralControlBean {
                 .build();
 
         String responseBody = "";
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
             return 0;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return responseBody.contains("pipelineId") ? 1 : 0;
     }

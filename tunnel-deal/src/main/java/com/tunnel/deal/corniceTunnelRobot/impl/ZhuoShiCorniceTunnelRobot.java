@@ -340,14 +340,19 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
                 .url(url)
                 .method(post, requestBody)
                 .build();
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             String result = response.body().string();
             if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
                 return JSONObject.parseObject(result);
             }
         } catch (IOException e) {
             throw new RuntimeException("飞檐隧道机器人平台服务异常");
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return null;
     }

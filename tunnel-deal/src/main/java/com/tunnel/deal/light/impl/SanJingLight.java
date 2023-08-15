@@ -112,6 +112,10 @@ public class SanJingLight implements Light, GeneralControlBean {
             e.printStackTrace();
             logger.error("请求三晶照明token报错：",e.getMessage());
             return "";
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
 
         return "";
@@ -166,14 +170,19 @@ public class SanJingLight implements Light, GeneralControlBean {
                 .build();
 
         String responseBody = "";
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
             logger.info("responseBody：{}",responseBody);
         } catch (IOException e) {
             logger.error("加强照明调光功能异常，请联系管理员。");
             return 0;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return responseBody.contains("发送成功") ? 1 : 0;
     }
@@ -357,9 +366,9 @@ public class SanJingLight implements Light, GeneralControlBean {
         String responseBody = "";
         //调用调节亮度返回参数
         String responseLuminanceBody = "";
-
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
             logger.error("照明开关控制updateSwitch打印信息:responseBody="+responseBody);
@@ -368,6 +377,10 @@ public class SanJingLight implements Light, GeneralControlBean {
             logger.error("照明开关控制updateSwitch打印报错日志:"+e.getMessage());
             System.err.println("照明开关控制updateSwitch打印报错日志:"+e.getMessage());
             return 0;
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         return responseBody.contains("发送成功") ? 1 : 0;
     }

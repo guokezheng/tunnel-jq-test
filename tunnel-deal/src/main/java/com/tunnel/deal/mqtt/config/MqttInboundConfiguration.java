@@ -80,18 +80,21 @@ public class MqttInboundConfiguration {
     public MessageHandler handler() {
         return message -> {
 //				System.out.println("message:"+message);
-            System.out.println("----------------------");
-            System.out.println("message:"+message.getPayload());
-            System.out.println("PacketId:"+message.getHeaders().getId());
-            System.out.println("Qos:"+message.getHeaders().get(MqttHeaders.QOS));
+//            System.out.println("----------------------");
+//            System.out.println("message:"+message.getPayload());
+//            System.out.println("PacketId:"+message.getHeaders().getId());
+//            System.out.println("Qos:"+message.getHeaders().get(MqttHeaders.QOS));
 
             String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
             String payload = String.valueOf(message.getPayload());
-            System.out.println("topic:"+topic);
+//            System.out.println("topic:"+topic);
             if(topic != null){
                 int start = topic.indexOf("{");
                 int end = topic.indexOf("}");
                 String externalId = topic.substring(start+1,end);
+                if("null".equals(externalId)){
+                    return;
+                }
                 SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
                 if(sdDevices != null){
 //                    String eqId = sdDevices.getEqId();

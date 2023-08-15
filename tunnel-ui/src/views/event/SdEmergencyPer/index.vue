@@ -39,7 +39,7 @@
               <el-button size="small" @click="handleExport">导出</el-button>
               <el-button size="small" @click="resetQuery">刷新</el-button>
             </el-col>
-            <el-col :span="7" :offset="11">
+            <el-col :span="6" :offset="12">
               <div ref="main" class="grid-content bg-purple">
                 <el-input
                   placeholder="请输入姓名、所属管理站，回车搜索"
@@ -58,9 +58,8 @@
           </el-row>
 
           <div
-            class="treeSearchBox searchBox"
+            class="searchBox"
             v-show="ry_boxShow"
-            style="top: 50px !important"
           >
             <el-form
               ref="queryForm"

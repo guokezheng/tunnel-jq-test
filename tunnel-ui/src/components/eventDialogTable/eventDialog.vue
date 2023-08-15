@@ -522,12 +522,12 @@
                 <el-form-item prop="currencyId">
                   <el-select
                     v-model="eventFormDetail.currencyId"
-                    placeholder="请选择策略"
+                    placeholder="请选择预案"
                   >
                     <el-option
-                      v-for="item in strategyList"
+                      v-for="item in ReservePlanList"
                       :key="item.id"
-                      :label="item.strategyName"
+                      :label="item.planName"
                       :value="item.id"
                     ></el-option>
                   </el-select>
@@ -736,7 +736,7 @@ export default {
       },
       processDialog: "false",
       deviceIndexShow: 0,
-      activeName: "0",
+      activeName: "",
       dialogVisibleDevice: false,
       DeviceDetail: [],
       alongImgUrl: "",
@@ -982,19 +982,22 @@ export default {
       console.log(this.eventFormDetail, "11111111111");
       console.log(this.eventFormDetail.continuedTime, "0000000000");
       this.eventFormDetail.eventState = 4;
-      if (item.prevControlType == 1) {
-        this.getStrategyData(item);
-      } else {
-        this.getReservePlanData();
-      }
+      // if (item.prevControlType == 1) {
+      //   this.getStrategyData(item);
+      // } else {
+      //   this.getReservePlanData();
+      // }
+      this.getReservePlanData();
 
       this.$nextTick(() => {
-        const swiperTop = this.$refs.swiperTop.$el.swiper;
-        const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
-        swiperTop.controller.control = swiperThumbs;
-        swiperThumbs.controller.control = swiperTop;
-        swiperThumbs.activeIndex = 0;
-        swiperTop.activeIndex = 0;
+        if(this.$refs.swiperTop){
+          const swiperTop = this.$refs.swiperTop.$el.swiper;
+          const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
+          swiperTop.controller.control = swiperThumbs;
+          swiperThumbs.controller.control = swiperTop;
+          swiperThumbs.activeIndex = 0;
+          swiperTop.activeIndex = 0;
+        }
       });
       this.getEventList();
       if (item.stakeNum) {
@@ -1164,32 +1167,37 @@ export default {
             this.$modal.msgSuccess("修改成功");
             //主动安全
             //策略不为空
-            if (
-              this.eventFormDetail.prevControlType == 1 &&
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-              let id = currencyId;
-              handleStrategy(id).then((res) => {
-                console.log(res);
-                this.$modal.msgSuccess("下发指令成功");
-              });
-            }
-            loading.close();
+            // if (
+            //   this.eventFormDetail.prevControlType == 1 &&
+            //   currencyId &&
+            //   this.eventFormDetail.eventState == 0
+            // ) {
+            //   let id = currencyId;
+            //   handleStrategy(id).then((res) => {
+            //     console.log(res);
+            //     this.$modal.msgSuccess("下发指令成功");
+            //   });
+            // }
+            // loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            if (
-              this.eventFormDetail.prevControlType == 0 &&
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-              console.log("我跳转了啊~~");
+            // if (
+            //   this.eventFormDetail.prevControlType == 0 &&
+            //   currencyId &&
+            //   this.eventFormDetail.eventState == 0
+            // ) {
+            //   console.log("我跳转了啊~~");
+            //   this.$router.push({
+            //     path: "/emergency/administration/dispatch",
+            //     query: { id: this.eventFormDetail.id },
+            //   });
+            // }
+            console.log("我跳转了啊~~");
               this.$router.push({
                 path: "/emergency/administration/dispatch",
                 query: { id: this.eventFormDetail.id },
               });
-            }
             this.$cache.local.remove("currencyId");
           });
         }
@@ -1199,7 +1207,7 @@ export default {
     openDoor(item) {
       // 点击查看按钮重置tab
       this.deviceIndexShow = 0;
-      this.activeName = "0";
+      // this.activeName = "0";
 
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
@@ -1216,6 +1224,7 @@ export default {
       examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
+        this.activeName = res.data[0].tableName
         this.dialogVisibleDevice = true;
       });
     },

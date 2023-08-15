@@ -3,7 +3,7 @@
   <div class="app-container" >
     <el-row :gutter="20">
       <!-- 左侧下拉 -->
-      <el-col :span="4">
+      <el-col :span="4" class="leftCard">
         <el-card class="my-card-height left_tree" shadow="never">
           <site-tree
             @nodeCheck="handleCheckChange"
@@ -71,7 +71,7 @@
               :data="tableData"
               style="width: 100%"
               ref="multipleTable"
-              height="100%"
+              max-height="100%"
               class="allTable"
             >
               <el-table-column
@@ -558,6 +558,9 @@ export default {
 }
 .el-table {
   overflow-y: auto !important;
+  ::v-deep .el-table__fixed-body-wrapper{
+    top: 39px !important;
+  }
 }
 .rightBox {
   display: flex;
@@ -607,6 +610,9 @@ export default {
 ::v-deep .el-card {
   border: none !important;
   border-radius: 2px;
+}
+.leftCard{
+  border-right: solid 2px #054D83;
 }
 </style>
   

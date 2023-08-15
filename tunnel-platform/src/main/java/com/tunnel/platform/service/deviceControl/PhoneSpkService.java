@@ -183,6 +183,10 @@ public class PhoneSpkService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
         if (StringUtils.isNotBlank(result)) {
             JSONObject jo = JSONObject.parseObject(result);
@@ -347,8 +351,9 @@ public class PhoneSpkService {
                 .build();
 
         JSONArray jsonArray = new JSONArray();
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             String result = response.body().string();
 
             if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
@@ -360,6 +365,10 @@ public class PhoneSpkService {
             }
         } catch (IOException e) {
             return AjaxResult.success(jsonArray);
+        }finally{
+            if(response != null){
+                response.close();
+            }
         }
 
         return AjaxResult.success(jsonArray);

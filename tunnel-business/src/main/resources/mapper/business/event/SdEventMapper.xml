@@ -51,6 +51,7 @@
         <result property="currencyId" column="currency_id"/>
         <result property="fuzzySearch" column="fuzzySearch"/>
         <result property="prevControlType" column="prev_control_type"/>
+        <result property="isAuto" column="is_auto"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
     </resultMap>
@@ -74,7 +75,7 @@
     </sql>
 
     <sql id="selectSdEvent">
-        select e.id, e.tunnel_id, e.event_type_id, e.event_title, e.event_source, e.event_time, e.event_state, e.event_grade, e.event_location, e.event_death, e.event_injured, e.slight_injured, e.event_description, e.reserve_plan_id, e.flow_id, e.warning_id, e.station_id, e.lane_no, e.longitude, e.latitude, e.stake_num, stake_end_num,e.start_time, e.end_time, e.video_url, e.create_by, e.create_time, e.update_by, e.update_time, e.direction, e.small_car_num, e.truck_num, e.passenger_car_num, e.tanker_num, e.car_owner_phone, e.wrecker_phone, e.police_phone, e.remark, e.review_remark, e.currency_id
+        select e.id, e.tunnel_id, e.event_type_id, e.event_title, e.event_source, e.event_time, e.event_state, e.event_grade, e.event_location, e.event_death, e.event_injured, e.slight_injured, e.event_description, e.reserve_plan_id, e.flow_id, e.warning_id, e.station_id, e.lane_no, e.longitude, e.latitude, e.stake_num, stake_end_num,e.start_time, e.end_time, e.video_url, e.create_by, e.create_time, e.update_by, e.update_time, e.direction, e.small_car_num, e.truck_num, e.passenger_car_num, e.tanker_num, e.car_owner_phone, e.wrecker_phone, e.police_phone, e.remark, e.review_remark, e.currency_id, e.is_auto
     </sql>
 
     <select id ="eventPopAll" resultType="hashmap" parameterType="sdEvent">

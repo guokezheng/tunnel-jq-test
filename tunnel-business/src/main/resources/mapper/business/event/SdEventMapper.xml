@@ -388,6 +388,7 @@
             <if test="eventSource != null">event_source,</if>
             <if test="reviewRemark != null">review_remark,</if>
             <if test="currencyId != null">currency_id,</if>
+            <if test="isAuto != null">is_auto,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -429,6 +430,7 @@
             <if test="eventSource != null">#{eventSource},</if>
             <if test="reviewRemark != null">#{reviewRemark},</if>
             <if test="currencyId != null">#{currencyId},</if>
+            <if test="isAuto != null">#{isAuto},</if>
         </trim>
     </insert>
 

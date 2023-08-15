@@ -435,7 +435,7 @@
                 >
                 </el-date-picker> -->
                 <el-input
-                  v-model="eventFormDetail.continuedTime"
+                  v-model="eventFormDetail.continuedTime.split('-').join('')"
                   readonly
                   style="width: calc(100% - 10px)"
                 ></el-input>

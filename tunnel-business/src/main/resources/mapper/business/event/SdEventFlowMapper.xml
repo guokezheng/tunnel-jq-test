@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdEventFlowList" parameterType="SdEventFlow" resultMap="SdEventFlowResult">
-        select A.id, A.event_id, A.flow_time, A.flow_description, A.flow_handler, B.nick_name
+        select A.id, A.event_id, A.flow_time, A.flow_description, A.flow_handler, IFNULL(B.nick_name,A.flow_handler) as nick_name
         from sd_event_flow A
         left join sys_user B on A.flow_handler = B.user_name
         <where>

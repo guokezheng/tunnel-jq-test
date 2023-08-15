@@ -314,6 +314,15 @@ public interface ISdDevicesService {
      int updateDeviceStatus(String deviceId,String status,boolean cascade);
 
 
+     /**
+     * 批量设置设备状态
+     * @param list 设备ID集合
+     * @param status 设备状态
+     */
+    int updateDeviceStatusBatch(List<String> list,String status);
+
+
+
     /**
      * 根据外部设备ID查询设备信息
      * @param externalId 外部设备ID

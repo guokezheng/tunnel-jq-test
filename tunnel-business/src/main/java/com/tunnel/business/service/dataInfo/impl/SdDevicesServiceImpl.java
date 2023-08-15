@@ -1086,6 +1086,19 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     /**
+     * 批量设置设备以及子设备状态
+     *
+     * @param list    设备ID集合
+     * @param status  设备状态
+     */
+    @Override
+    public int updateDeviceStatusBatch(List<String> list, String status) {
+       return sdDevicesMapper.updateDeviceStatusBatch(list,status);
+    }
+
+
+
+    /**
      * 根据外部设备ID查询设备信息
      *
      * @param externalId 外部设备ID

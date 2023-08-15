@@ -14,6 +14,9 @@ import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
 import com.tunnel.deal.mqtt.service.HongMengMqttService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.MessageHandlingException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +40,8 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
 
     private CommonControlService commonControlService = SpringUtils.getBean(CommonControlService.class);
 
+    private static final Logger log = LoggerFactory.getLogger(WarnLightStripMqttServiceImpl.class);
+
     /**
      * 设备控制方法
      *
@@ -51,14 +56,22 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
         //控制设备之前获取设备状态
         String beforeState = commonControlService.selectBeforeState(devId, (long) DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode());
         //控制设备
-        AjaxResult ajaxResult = sendMqtt(map,sdDevices);
-        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
-        if( code == HttpStatus.SUCCESS){
-            controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+        AjaxResult ajaxResult = null;
+        try {
+            ajaxResult = sendMqtt(map,sdDevices);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("mqtt服务报错：",e.getMessage());
         }
+        if(ajaxResult != null){
+            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+            if( code == HttpStatus.SUCCESS){
+                controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+            }
 
-        //操作日志
-        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
+            //操作日志
+            commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
+        }
 
         return AjaxResult.success(controlState);
     }
@@ -70,7 +83,7 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
      * @param sdDevices
      * @return
      */
-    private AjaxResult sendMqtt(Map<String, Object> map, SdDevices sdDevices){
+    private AjaxResult sendMqtt(Map<String, Object> map, SdDevices sdDevices) throws MessageHandlingException {
         //        TODO 警示灯带业务逻辑
 
         //{

@@ -3,12 +3,17 @@ package com.tunnel.deal.mqtt.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * describe: 鸿蒙控制器MQTT对接公共方法实现类
@@ -25,6 +30,9 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
 
     @Autowired
     private ISdDevicesService sdDevicesService;
+
+    @Autowired
+    private TcpClientGeneralService tcpClientGeneralService;
 
     private static final Logger log = LoggerFactory.getLogger(HongMengMqttCommonServiceImpl.class);
 
@@ -126,6 +134,18 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         if(!"00".equals(error)){
             log.error("鸿蒙MQTT指令上报，设备ID="+deviceId+",设备故障码="+error);
         }
+    }
+
+    /**
+     * 修改设备状态
+     * @param status 设备状态
+     */
+    @Override
+    public void updateDeviceStatus(String status) {
+        String protocolCode = DeviceProtocolCodeEnum.HONGMENG_MQTT_PROTOCOL_CODE.getCode();
+        List<SdDevices> list = tcpClientGeneralService.getDevicesList(protocolCode, null);
+        List<String> idList = list.stream().map(SdDevices::getEqId).collect(Collectors.toList());
+        sdDevicesService.updateDeviceStatusBatch(idList,status);
     }
 
 }

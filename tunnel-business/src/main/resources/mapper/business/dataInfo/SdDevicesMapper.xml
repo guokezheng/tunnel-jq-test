@@ -1508,9 +1508,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AA.pile,
             AA.external_device_id,
             AA.eq_tunnel_id,
-            '0' as checked
+            '0' as checked,
+            AA.sn as host,
+            AA.external_device_id as `group`,
+            DD.system_url as ipAndPort
         from
             sd_devices AA
+            left join external_system DD on AA.external_system_id  = DD.id
                 inner join
             (
                 select

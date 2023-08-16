@@ -459,8 +459,10 @@ device:
 
 
 mqtt:
-  #emqx地址+ MQTT协议端⼝ 1883
-  url: tcp://10.168.56.206:1883
+  #emqx地址+ MQTT协议端⼝ 1883 映射外网地址
+  url: tcp://60.208.80.101:1883
+  #内网地址
+#  url: tcp://10.168.56.206:1883
   clientInId: matt_test_in
   clientOutId: matt_test_out
 #  clientId: matt_test

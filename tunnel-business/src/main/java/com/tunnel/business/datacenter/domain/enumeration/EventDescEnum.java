@@ -8,11 +8,12 @@ package com.tunnel.business.datacenter.domain.enumeration;
  */
 public enum EventDescEnum {
 
-    event_source_video("0","视频检测上报事件，"),
-    event_source_radar_video("1","雷视融合上报事件，"),
-    event_source_fire("2","火灾报警系统上报事件，"),
-    event_source_phone("3","紧急电话广播系统上报事件，"),
-    event_source_power("4","电力检测系统上报事件，"),
+    event_source_video("1","视频检测上报事件，"),
+    event_source_radar_video("2","雷视融合上报事件，"),
+    event_source_fire("3","火灾报警系统上报事件，"),
+    event_source_phone("4","紧急电话广播系统上报事件，"),
+    event_source_power("5","电力检测系统上报事件，"),
+    event_source_system("6","系统监测上报事件，"),
     /*event_source_fire_monitor("5","消防炮系统上报事件，"),*/
     event_end("end","事件结束"),
     event_ignore("ignore","事件忽略"),

@@ -213,7 +213,7 @@
               复核
             </div>
             <div
-              v-if="item.eventState == '0' && item.prevControlType == '0'"
+              v-if="item.eventState == '0'"
               class="chuzhi"
               @click="management(item.id)"
             >

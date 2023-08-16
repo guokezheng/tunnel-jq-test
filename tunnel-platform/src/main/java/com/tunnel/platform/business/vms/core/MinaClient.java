@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MinaClient {
 
@@ -22,7 +23,7 @@ public class MinaClient {
     private final int port;
 
     // 缓存Iot设备执行命令侯返回的数据。
-    public static Map<String, String> dataCache = new HashMap<String, String>();
+    public static ConcurrentHashMap<String, String> dataCache = new ConcurrentHashMap<String, String>();
 
     public MinaClient(String ip, int port) {
         this.ip = ip;
@@ -262,20 +263,20 @@ class DefaultMinaCallBack implements IMinaCallback {
                     if (MinaClient.dataCache.containsKey(hexProtocol.substring(0,26) )) {
                         //String prefix = MinaClient.dataCache.get(session.getCreationTime() + "");
                         MinaClient.dataCache.put(hexProtocol.substring(0,26), hexProtocol);
-                        System.out.println("++++++++++++++++++++++");
+//                        System.out.println("++++++++++++++++++++++");
                     } else {
                         MinaClient.dataCache.put(hexProtocol.substring(0,26), hexProtocol);
-                        System.out.println("--------------------");
+//                        System.out.println("--------------------");
                     }
                     logger.debug(System.currentTimeMillis() + "[messageReceived(session,message)] 成功获取Iot设备返回数据，并存入缓存。 数据：[" + hexProtocol + "]");
                 }else {
                     if (MinaClient.dataCache.containsKey(session.getCreationTime() + "")) {
                         String prefix = MinaClient.dataCache.get(session.getCreationTime() + "");
                         MinaClient.dataCache.put(session.getCreationTime() + "", prefix + " " + hexProtocol);
-                        System.out.println("++++++++++++++++++++++");
+//                        System.out.println("++++++++++++++++++++++");
                     } else {
                         MinaClient.dataCache.put(session.getCreationTime() + "", hexProtocol);
-                        System.out.println("--------------------");
+//                        System.out.println("--------------------");
                     }
                 }
                 try {

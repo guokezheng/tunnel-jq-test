@@ -617,8 +617,11 @@ public class StrategyTask {
         String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
         sdEvent.setEventTitle(eventTitle);
         sdEvent.setEventTime(DateUtils.getNowDate());
-        sdEvent.setCreateBy("System");
-        sdEvent.setIsAuto("1");
+        sdEvent.setCreateBy("系统自动执行");
+        if(EventStateEnum.processed.getCode().equals(eventState)){
+            sdEvent.setIsAuto("1");
+        }
+
         if(sdStrategy!=null){
             sdEvent.setCurrencyId(sdStrategy.getId().toString());
         }
@@ -661,7 +664,10 @@ public class StrategyTask {
             sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-//            WebSocketService.broadcast("sdEventList",object.toString());
+            if(EventStateEnum.unprocessed.getCode().equals(eventState)){
+                WebSocketService.broadcast("sdEventList",object.toString());
+            }
+
             if(!(sdEventsList.size()>0)){//添加
                 // 添加事件流程记录
                 SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
@@ -832,7 +838,7 @@ public class StrategyTask {
         //更新事件
         //设置更新事件
         sdEvent.setUpdateTime(DateUtils.getNowDate());
-        sdEvent.setUpdateBy("System");
+        sdEvent.setUpdateBy("系统自动执行");
         sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
         SpringUtils.getBean(SdEventMapper.class).updateSdEvent(sdEvent);
 
@@ -903,7 +909,7 @@ public class StrategyTask {
         flow.setFlowDescription(flowParam.get("content").toString());
         flow.setEventId(flowParam.get("eventId").toString());
         flow.setFlowTime(DateUtils.getNowDate());
-        flow.setFlowHandler("System");
+        flow.setFlowHandler("系统自动执行");
         sdEventFlowMapper.insertSdEventFlow(flow);
     }
 }

@@ -459,7 +459,11 @@ public class WorderToNewWordUtils {
                            break;
                         }
                         if(j+1 == list.size()){
-                            index[1] = j;
+                            if(list.get(j-1)[0].equals(key)){
+                                index[1] = j-1;
+                            }else {
+                                index[1] = j;
+                            }
                         }else {
                             index[1] = j-1;
                         }

@@ -213,7 +213,7 @@
               复核
             </div>
             <div
-              v-if="item.eventState == '0' && item.prevControlType == '0'"
+              v-if="item.eventState == '0'"
               class="chuzhi"
               @click="management(item.id)"
             >
@@ -1338,9 +1338,9 @@
       <div
         v-for="(item, index) in DeviceDetail"
         :key="index"
-        v-show="deviceIndexShow == index"
+        
       >
-        <el-table :data="item.devicesList" style="width: 100%" height="600">
+        <el-table :data="item.devicesList" style="width: 100%" height="600" v-if="deviceIndexShow == index"> 
           <el-table-column prop="eqName" label="设备名称" align="center">
           </el-table-column>
           <el-table-column prop="pile" label="桩号" align="center">

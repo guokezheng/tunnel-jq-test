@@ -2104,6 +2104,9 @@ export default {
 ::v-deep .plan .el-table__body-wrapper {
   width: 100% !important;
 }
+::v-deep .plan .el-tabs__item {
+  padding: 0px 20px !important;
+}
 
 ::v-deep .yjBox .is-always-shadow .el-card {
   background-color: #012b4e;

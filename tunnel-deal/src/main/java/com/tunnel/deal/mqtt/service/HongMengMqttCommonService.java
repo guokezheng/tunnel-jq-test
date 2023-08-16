@@ -39,4 +39,10 @@ public interface HongMengMqttCommonService {
      */
      void handleExecStateReceiveData(SdDevices sdDevices, String payload);
 
+    /**
+     * 修改设备状态
+     * @param status 设备状态
+     */
+    void updateDeviceStatus(String status);
+
 }

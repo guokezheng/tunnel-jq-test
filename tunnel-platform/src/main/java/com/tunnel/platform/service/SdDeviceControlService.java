@@ -115,23 +115,35 @@ public class SdDeviceControlService {
         SdDevices sdDevices = null;
         try {
             //控制车指
-            if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-                throw new RuntimeException("未指定设备");
-            } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的状态信息");
-            } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
-                throw new RuntimeException("未指定控制方式");
+            if (map.get("devId") == null || "".equals(map.get("devId").toString())) {
+//                throw new RuntimeException("未指定设备");
+                log.error("控制设备报错：未指定设备");
+                return controlState;
+            }
+
+            String devId = map.get("devId").toString();
+
+            if (map.get("state") == null || "".equals(map.get("state").toString())) {
+//                throw new RuntimeException("未指定设备需要变更的状态信息");
+                log.error("控制设备报错：未指定设备需要变更的状态信息，设备ID="+devId);
+                return controlState;
+            }
+            if (map.get("controlType") == null || "".equals(map.get("controlType").toString())) {
+//                throw new RuntimeException("未指定控制方式");
+                log.error("控制设备报错：未指定控制方式，设备ID="+devId);
+                return controlState;
             }
             if ("GSY".equals(deploymentType)) {
                 return sdOptDeviceService.optSingleDevice(map);
             }
-            String devId = map.get("devId").toString();
+
             sdDevices = sdDevicesService.selectSdDevicesById(devId);
 
             //设备控制
             GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
             if(generalControlBean == null){
-                throw new RuntimeException("设备协议配置为空");
+                log.error("设备协议配置为空，设备ID="+devId);
+                return controlState;
             }else{
                 controlState = generalControlBean.controlDevices(map);
             }

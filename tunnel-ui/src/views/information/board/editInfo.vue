@@ -88,7 +88,8 @@
               <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
             </el-col>
           </el-row>
-          <el-row :gutter="24">
+          <el-row :gutter="24" style="display: flex;
+    flex-wrap: wrap;">
             <el-col :span="24">
               <el-form-item label="详细内容" prop="CONTENT">
                 <el-input

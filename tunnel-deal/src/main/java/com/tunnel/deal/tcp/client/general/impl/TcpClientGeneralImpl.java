@@ -142,6 +142,12 @@ public class TcpClientGeneralImpl implements TcpClientGeneralService {
         }
     }
 
+    /**
+     * 根据协议、设备类型查询设备
+     * @param protocolCode
+     * @param eqType
+     * @return
+     */
     @Override
     public List<SdDevices> getDevicesList(String protocolCode, Long eqType) {
         SdDevicesProtocol sdDevicesProtocol = new SdDevicesProtocol();

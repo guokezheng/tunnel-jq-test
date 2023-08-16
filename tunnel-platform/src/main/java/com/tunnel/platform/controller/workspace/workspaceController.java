@@ -114,14 +114,14 @@ public class workspaceController extends BaseController {
     private CommonControlService commonControlService;
 
 
-    //3d测试
-    @PostMapping("/test")
-    public String test() {
-        JSONObject object = new JSONObject();
-        object.put("dataList", 11111);
-        WebSocketService.broadcast("dataList", object);
-        return "get 3d info";
-    }
+//    //3d测试
+//    @PostMapping("/test")
+//    public String test() {
+//        JSONObject object = new JSONObject();
+//        object.put("dataList", 11111);
+//        WebSocketService.broadcast("dataList", object);
+//        return "get 3d info";
+//    }
 
 
 

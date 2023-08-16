@@ -1703,9 +1703,11 @@ export default {
       if (this.screenEqName) {
         let bigType = "";
         let param = document.getElementsByClassName("vehicleLane");
-        for (var item of this.selectedIconList) {
+        for (var i=0;i< this.selectedIconList.length;i++) {
+          let item = this.selectedIconList[i]
           if (item.eqName == this.screenEqName) {
             bigType = item.bigType;
+            this.showTooltipIndex = i
             // 工作台宽度1728 所以/864 处置页工作台宽1440 /2 = 720
             if (
               this.currentTunnel.lane.width - item.position.left > 864 &&

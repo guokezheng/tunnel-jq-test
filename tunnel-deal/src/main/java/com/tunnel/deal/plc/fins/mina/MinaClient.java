@@ -15,12 +15,13 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MinaClient {
 
 
     // 缓存Iot设备执行命令侯返回的数据。
-    public static Map<String, String> dataCache = new HashMap<String, String>();
+//    public static ConcurrentHashMap<String, String> dataCache = new ConcurrentHashMap<String, String>();
     public final String id;
     private final String ip;
     private final int port;

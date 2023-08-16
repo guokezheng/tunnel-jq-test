@@ -9,6 +9,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdJoinPlanStrategy;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
+import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdJoinPlanStrategyMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
@@ -17,6 +18,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.IIotBoardTemplateContentService;
 import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
+import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
@@ -64,6 +66,9 @@ public class VMSControl implements GeneralControlBean {
 
     @Autowired
     private CommonControlService commonControlService;
+
+    @Autowired
+    private ISdIotDeviceService sdIotDeviceService;
 
     private static final Logger log = LoggerFactory.getLogger(VMSControl.class);
 
@@ -265,10 +270,13 @@ public class VMSControl implements GeneralControlBean {
         }
 
         if (!isopen) {
+            Long dId = sdDevices.getAssociatedDeviceId();
+            SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(dId);
+            String protocolType = sdIotDevice.getProtocolName();
             //连接设备进行控制，需要组装报文
-            String commands = DataUtils.contentToGb2312_CG(sdDevices.getAssociatedDeviceId().toString(), parameters, "GUANGDIAN_V33");
+            String commands = DataUtils.contentToGb2312_CG(dId.toString(), parameters, protocolType);
             try{
-                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(sdDevices.getAssociatedDeviceId().toString(), "GUANGDIAN_V33", commands);
+                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(dId.toString(), protocolType, commands);
                 if (result) {
                     controlState = 1;
                 } else {

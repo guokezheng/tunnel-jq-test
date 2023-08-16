@@ -180,6 +180,13 @@ public interface SdDevicesMapper {
 
 	void updateSdDevicesBatch(@Param("eqId") String eqId, @Param("eqStatus") String eqStatus);
 
+	/**
+	 * 批量设置设备状态
+	 * @param list 设备ID集合
+	 * @param status 设备状态
+	 */
+	int updateDeviceStatusBatch(@Param("list") List<String> list,@Param("status") String status);
+
 	public int updateSdDevicesByFEqId(SdDevices sdDevices);
 
 	public int updateSdDevicesByExternalSystemId(SdDevices sdDevices);

@@ -40,7 +40,7 @@ export default {
     handleClick(e){
       console.log(e.name)
       this.strategyActive = e.name
-     debugger
+     
     }
   },
 
@@ -49,7 +49,8 @@ export default {
   }
 };
 </script>
-<style>
+
+<style scoped lang="scss">
 .el-drawer__header {
   background: #dcdfe6;
   padding: 0 10px;
@@ -60,8 +61,6 @@ export default {
 .el-table .cell {
   white-space: pre-line;
 }
-</style>
-<style scoped lang="scss">
 ::v-deep .el-dialog .el-dialog__header {
   background-image: url(../../../assets/cloudControl/dialogHeader.png);
   background-repeat: no-repeat;

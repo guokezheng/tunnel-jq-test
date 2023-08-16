@@ -57,7 +57,7 @@
           ref="dataForm"
           size="mini"
         >
-          <el-row :gutter="24" style="height: 45px">
+          <el-row :gutter="24" style="height: 45px;">
             <el-col :span="8">
               <el-form-item
                 prop="category"
@@ -101,7 +101,8 @@
           </el-row>
         
           <!-- 选择图片弹出框结束 -->
-          <el-row :gutter="24">
+          <el-row :gutter="24" style="display: flex;
+    flex-wrap: wrap;">
             <el-col :span="24">
               <el-form-item label="详细内容" prop="CONTENT">
                 <el-input

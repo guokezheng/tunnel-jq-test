@@ -86,13 +86,13 @@ export default {
       carIcon: require("@/assets/icons/carIcon.png"),
       eventTableDialog: false,
       activeName: "0",
-      formOneThing: {
-        id: 1,
-        icon: require("@/assets/icons/carIcon.png"),
-        title: "停车",
-        content: "杭山东隧道K147+100处存在停车事件，请确认...",
-        time: "10:45:33",
-      },
+      // formOneThing: {
+      //   id: 1,
+      //   icon: require("@/assets/icons/carIcon.png"),
+      //   title: "停车",
+      //   content: "杭山东隧道K147+100处存在停车事件，请确认...",
+      //   time: "10:45:33",
+      // },
       list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
@@ -115,17 +115,17 @@ export default {
   },
   created() {},
   mounted() {
-    bus.$on("forceUpdateTable", (id) => {
-      let index = this.list.findIndex((item) => {
-        if (item.id == id) {
-          return true;
-        }
-      });
-      this.list.splice(index, 1);
-      if (this.list.length == 0) {
-        bus.$emit("closeDialog");
-      }
-    });
+    // bus.$on("forceUpdateTable", (id) => {
+    //   let index = this.list.findIndex((item) => {
+    //     if (item.id == id) {
+    //       return true;
+    //     }
+    //   });
+    //   this.list.splice(index, 1);
+    //   if (this.list.length == 0) {
+    //     bus.$emit("closeDialog");
+    //   }
+    // });
   },
   methods: {
     handleSee(ids) {
@@ -133,27 +133,27 @@ export default {
     },
 
     // 忽略事件
-    handleIgnore(id) {
-      if (id) {
-        const param = {
-          id: id,
-          eventState: "2",
-        };
-        updateEvent(param).then((response) => {
-          this.$modal.msgSuccess("已成功忽略");
-        });
-        let index = this.list.findIndex((item) => {
-          if (item.id == id) {
-            return true;
-          }
-        });
-        this.list.splice(index, 1);
-        this.$forceUpdate();
-        bus.$emit("getEvtList");
-      } else {
-        this.$modal.msgError("没有接收到事件id");
-      }
-    },
+    // handleIgnore(id) {
+    //   if (id) {
+    //     const param = {
+    //       id: id,
+    //       eventState: "2",
+    //     };
+    //     updateEvent(param).then((response) => {
+    //       this.$modal.msgSuccess("已成功忽略");
+    //     });
+    //     let index = this.list.findIndex((item) => {
+    //       if (item.id == id) {
+    //         return true;
+    //       }
+    //     });
+    //     this.list.splice(index, 1);
+    //     this.$forceUpdate();
+    //     bus.$emit("getEvtList");
+    //   } else {
+    //     this.$modal.msgError("没有接收到事件id");
+    //   }
+    // },
     closeDialogTable() {
       bus.$emit("closeDialog");
       this.eventTableDialog = false;
@@ -181,7 +181,7 @@ export default {
   max-height: 180px;
   position: absolute;
   top: 0px;
-  left: 68%;
+  right: 25px;
   background-color: #00152b;
   z-index: 2000;
   border-bottom: solid 2px white;

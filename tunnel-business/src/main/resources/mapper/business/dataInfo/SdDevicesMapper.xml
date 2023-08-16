@@ -685,7 +685,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark,ip
         from sd_devices
         where eq_tunnel_id =#{tunnelId}
-        and eq_type in (1,10,5,18,7,17,19,31,16,23,26)
+        and eq_type in (1,2,3,4,5,6,7,8,9,10,12,13,15,16,17,18,19,23,26,28,30,31,36)
     </select>
 
     <select id="selectDeviceByHost" resultType="String">
@@ -1352,7 +1352,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="getMcaList" resultType="map">
+    <select id="getMcaDevList" resultType="map">
         SELECT
             B.eq_tunnel_id as tuunel_id,
             C.tunnel_name as tuunel_name,
@@ -1368,7 +1368,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 LEFT JOIN sd_tunnels C ON B.eq_tunnel_id = C.tunnel_id
         WHERE
             A.eq_type = 47
+            <if test="tunnelArray != null and tunnelArray.size > 0">
+                and A.eq_tunnel_id in
+                <foreach item="id" collection="tunnelArray" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
     </select>
+
+
+    <select id="getMcaList" resultType="map">
+        SELECT
+            A.eq_tunnel_id as tuunel_id,
+            C.tunnel_name as tuunel_name,
+            A.eq_id as device_id,
+            -- B.eq_type as eq_type,
+            A.eq_name as device_name,
+            A.mac as mac,
+            A.protocol_id as protocolId
+        FROM
+            sd_devices A
+                LEFT JOIN sd_tunnels C ON A.eq_tunnel_id = C.tunnel_id
+        WHERE
+            A.eq_type = 47
+        <if test="tunnelArray != null and tunnelArray.size > 0">
+            and A.eq_tunnel_id in
+            <foreach item="id" collection="tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
 
     <select id="getMacItem" resultType="map">
         select

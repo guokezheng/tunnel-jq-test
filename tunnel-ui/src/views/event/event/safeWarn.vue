@@ -140,6 +140,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="tableTopHr"></div>
     <div class="contentListBox container" v-loading="isLoading">
       <div
         class="contentBox"
@@ -435,7 +436,7 @@
                 >
                 </el-date-picker> -->
                 <el-input
-                  v-model="eventFormDetail.continuedTime"
+                  v-model="!!eventFormDetail.continuedTime?eventFormDetail.continuedTime.split('-').join('') :eventFormDetail.continuedTime"
                   readonly
                   style="width: calc(100% - 10px)"
                 ></el-input>
@@ -771,9 +772,9 @@
                     placeholder="请选择预案"
                   >
                     <el-option
-                      v-for="item in strategyList"
+                    v-for="item in ReservePlanList"
                       :key="item.id"
-                      :label="item.strategyName"
+                      :label="item.planName"
                       :value="item.id"
                     ></el-option>
                   </el-select>
@@ -1074,7 +1075,7 @@
           v-if="eventStateCurrent == '1' || eventStateCurrent == '0'"
         >
           <el-card>
-            <el-col :span="12" v-if="prevControlType == 0">
+            <el-col :span="12" v-if="isAuto == 0">
               <div class="IncHand">
                 <div class="incHandBox">
                   <el-tabs v-model="historyIndex" @tab-click="handleClick">
@@ -1194,7 +1195,7 @@
                 </div>
               </div>
             </el-col>
-            <el-col :span="12" v-if="prevControlType == 1">
+            <el-col :span="12" v-if="isAuto == 1">
               <el-timeline
                 :reverse="reverse"
                 style="
@@ -1446,7 +1447,7 @@ export default {
         },
       },
       deviceIndexShow: 0,
-      activeName: "0",
+      activeName: "",
       dialogVisibleDevice: false,
       DeviceDetail: [], //复核弹窗详情
       tableData: [],
@@ -1489,6 +1490,7 @@ export default {
       eventDiscovery: {}, //发现数据
       vedioData: {}, //视频录像数据
       tacticsList: {}, //表单数据
+      isAuto:"0", //是否自动执行
       dialogTableVisible: false,
       radioList: [
         { label: "确认(已确认)", value: "4" },
@@ -1937,7 +1939,7 @@ export default {
     // },
     closeDetail() {
       this.deviceIndexShow = 0;
-      this.activeName = "0";
+      // this.activeName = "0";
       this.dialogVisibleDevice = false;
     },
     getStrategyData(item) {
@@ -1976,7 +1978,7 @@ export default {
     openDoor(item) {
       // 点击查看按钮重置tab
       this.deviceIndexShow = 0;
-      this.activeName = "0";
+      // this.activeName = "0";
 
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
@@ -1993,6 +1995,7 @@ export default {
       examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
+        this.activeName = res.data[0].tableName
         this.dialogVisibleDevice = true;
       });
     },
@@ -2125,6 +2128,7 @@ export default {
         this.eventStateCurrent = res.data.eventState;
         this.endReport = res.data.endReport;
         this.tacticsList = res.data.tacticsList;
+        this.isAuto = res.data.isAuto;
       });
       (this.historyIndex = "first0"), (this.dialogTableVisible = true);
     },
@@ -2307,31 +2311,35 @@ export default {
             this.getList();
             //主动安全
             //策略不为空
-            if (
-              this.eventFormDetail.prevControlType == 1 &&
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-              let id = currencyId;
-              handleStrategy(id).then((res) => {
-                console.log(res);
-                this.$modal.msgSuccess("下发指令成功");
-              });
-            }
-            loading.close();
+            // if (
+            //   this.eventFormDetail.prevControlType == 1 &&
+            //   currencyId &&
+            //   this.eventFormDetail.eventState == 0
+            // ) {
+            //   let id = currencyId;
+            //   handleStrategy(id).then((res) => {
+            //     console.log(res);
+            //     this.$modal.msgSuccess("下发指令成功");
+            //   });
+            // }
+            // loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            if (
-              this.eventFormDetail.prevControlType == 0 &&
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-              this.$router.push({
+            // if (
+            //   this.eventFormDetail.prevControlType == 0 &&
+            //   currencyId &&
+            //   this.eventFormDetail.eventState == 0
+            // ) {
+            //   this.$router.push({
+            //     path: "/emergency/administration/dispatch",
+            //     query: { id: this.eventFormDetail.id },
+            //   });
+            // }
+            this.$router.push({
                 path: "/emergency/administration/dispatch",
                 query: { id: this.eventFormDetail.id },
               });
-            }
             this.$cache.local.remove("currencyId");
           });
         }
@@ -2435,19 +2443,22 @@ export default {
       this.details = true;
       this.eventFormDetail = { ...item };
       this.eventFormDetail.eventState = 4;
-      if (item.prevControlType == 1) {
-        this.getStrategyData(item);
-      } else {
-        this.getReservePlanData();
-      }
+      // if (item.prevControlType == 1) {
+      //   this.getStrategyData(item);
+      // } else {
+      //   this.getReservePlanData();
+      // }
+      this.getReservePlanData();
 
       this.$nextTick(() => {
-        const swiperTop = this.$refs.swiperTop.$el.swiper;
-        const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
-        swiperTop.controller.control = swiperThumbs;
-        swiperThumbs.controller.control = swiperTop;
-        swiperThumbs.activeIndex = 0;
-        swiperTop.activeIndex = 0;
+        if(this.$refs.swiperTop){
+          const swiperTop = this.$refs.swiperTop.$el.swiper;
+          const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
+          swiperTop.controller.control = swiperThumbs;
+          swiperThumbs.controller.control = swiperTop;
+          swiperThumbs.activeIndex = 0;
+          swiperTop.activeIndex = 0;
+        }
       });
       this.getEventList();
       // debugger
@@ -3802,9 +3813,9 @@ hr {
   line-height: 30px;
 }
 .searchSafeWarn {
-  top: 6% !important;
-  right: 0.8% !important;
-  width: 453px !important;
+  // top: 6% !important;
+  // right: 0.8% !important;
+  // width: 453px !important;
   .el-checkbox + .el-checkbox {
     margin-left: 0 !important;
   }

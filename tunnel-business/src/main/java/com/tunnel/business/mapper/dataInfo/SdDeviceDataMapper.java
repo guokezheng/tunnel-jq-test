@@ -122,4 +122,11 @@ public interface SdDeviceDataMapper
     int insertFireMonitorData(SdDeviceData sdDeviceData);
 
     List<Map> getItemDataByEqId(String eqId);
+
+    /**
+     * 获取情报板信息
+     * @param deviceId
+     * @return
+     */
+    List<Map<String, Object>> getVmsData(@Param("deviceId") String deviceId);
 }

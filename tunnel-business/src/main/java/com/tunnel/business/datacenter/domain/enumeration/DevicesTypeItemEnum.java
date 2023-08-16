@@ -92,6 +92,10 @@ public enum DevicesTypeItemEnum {
 
     JING_SHI_DENG_DAI_STATUS(100, "警示灯带亮度"),    //警示灯带亮度状态
 
+    SUI_DAO_NEI_CONTENT(103, "隧道内情报板内容"),    //隧道内情报板内容
+
+    MEN_JIA_CONTENT(104, "门架式情报板内容"),    //门架式情报板内容
+
 
     // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性
     // 1000 巡检机器人  对应devicesType 29

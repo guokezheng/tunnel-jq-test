@@ -345,6 +345,16 @@ public interface ISdDevicesService {
      */
     List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
 
+    /**
+     * 获取全部测控执行器下的设备
+     * @return
+     */
+    List<Map> getMcaDevList();
+
+    /**
+     * 获取全部测控执行器
+     * @return
+     */
     List<Map> getMcaList();
 
     /**
@@ -354,8 +364,19 @@ public interface ISdDevicesService {
      */
     AjaxResult getCamera(SdDevices sdDevices);
 
+    /**
+     * 查询同隧道同方向测控执行器
+     * @param mac
+     * @return
+     */
     List<Map> getMoreMcaListByMac(String mac);
 
+    /**
+     * 查询同隧道同方向指定类型测控执行器
+     * @param mac
+     * @param eqType
+     * @return
+     */
     List<Map> getMoreDevListByMacAndEqType(String mac,String eqType);
 
     /**
@@ -366,4 +387,6 @@ public interface ISdDevicesService {
      * @return
      */
     List<String> getDevicesListByMacAndEqTypeAndLane(String mac, String eqType, String lane);
+
+
 }

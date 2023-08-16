@@ -1997,6 +1997,7 @@ export default {
           ],
         };
         if (this.nameArr.length > 0) {
+          window.clearInterval(this.myChart);
           this.deviceChart.setOption(this.option);
           console.log(1111111)
           this.deviceChart.on("mouseover", () => {
@@ -2032,7 +2033,7 @@ export default {
       }, 4000);
     },
     stop() {
-      clearInterval(this.myChart);
+      window.clearInterval(this.myChart);
     },
     goMove() {
       this.autoMove();

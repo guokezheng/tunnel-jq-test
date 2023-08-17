@@ -234,6 +234,7 @@ export default {
             this.brandOne = true;
             this.brandTwo = false;
           }
+          this.stateForm2.loopStatus = "";
           this.stateForm = res.data;
           this.device = res.data.externalDeviceId;
           this.title = this.stateForm.eqName;

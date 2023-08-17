@@ -214,7 +214,6 @@ export default {
 }
 .listContent {
   height: 4vh;
-  overflow: auto;
   background: #44576f;
   margin: 10px;
   > div {

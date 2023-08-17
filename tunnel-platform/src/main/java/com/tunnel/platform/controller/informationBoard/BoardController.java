@@ -386,7 +386,7 @@ public class BoardController extends BaseController {
                     parameters = parameters.replaceAll("\n", "<n>");
                     parameters = parameters.replaceAll("\r", "<r>");
                     iotBoardReleaseLog.setReleaseNewContent(parameters);
-                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "网络异常,发送失败");
                 }
                 iotBoardReleaseLog.setReleaseStatus("1");
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);

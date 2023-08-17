@@ -974,6 +974,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 job.setMisfirePolicy("1");
                 // 是否并发执行（0允许 1禁止）
                 job.setConcurrent("0");
+                //定时任务分组
+                job.setJobGroup("LKCL");
                 if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
                     job.setStatus("0");
                 }else{
@@ -1190,6 +1192,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         job.setMisfirePolicy("1");
         // 是否并发执行（0允许 1禁止）
         job.setConcurrent("0");
+        //定时任务分组
+        job.setJobGroup("LKCL");
         if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
             job.setStatus("0");
         }else{

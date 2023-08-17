@@ -2913,10 +2913,10 @@ export default {
   },
   mounted() {
     // 获取指定元素
-    const scrollview = this.$refs['divRoller']
+    // const scrollview = this.$refs['divRoller']
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-    scrollview.addEventListener('scroll', this.mouseSrollAuto, true)
+    window.addEventListener("scroll", this.mouseSrollAuto, true);
     
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
@@ -2956,7 +2956,7 @@ export default {
     //   this.openStateSwitch(this.actuatorCKItem)
     // },
     mouseSrollAuto(e){
-      // console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if(e.target.scrollLeft > 0){
         this.resetCanvasFlag = true
       }else{
@@ -5898,10 +5898,15 @@ export default {
     document.removeEventListener("click", this.bodyCloseMenus1);
     document.removeEventListener("click", this.bodyCloseMenus2);
     document.removeEventListener("click", this.bodyCloseMenus3);
-    // 获取指定元素
-    const scrollview = this.$refs['divRoller']
-    // 移除监听
-    scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
+    // // 获取指定元素
+    // const scrollview = this.$refs['divRoller']
+    // // 移除监听
+    // scrollview.removeEventListener('scroll', this.mouseSrollAuto, true)
+  },
+  beforeRouteLeave(to, form, next) {
+    // 离开路由移除滚动事件
+    window.removeEventListener('scroll',this.mouseSrollAuto, true);
+    next();
   },
 };
 </script>

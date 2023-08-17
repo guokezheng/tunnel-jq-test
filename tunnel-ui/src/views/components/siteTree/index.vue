@@ -15,14 +15,14 @@
     <el-scrollbar>
       <el-row class="leftTree">
         <!-- 级联 全选 -->
-        <div class="check" v-if="show_checkbox">
+        <!-- <div class="check" v-if="show_checkbox">
           <el-checkbox v-model="check_strictly">级联选择</el-checkbox>
           <el-checkbox
             v-model="default_check_all"
             @change="handleCheckedTreeNodeAll($event, 'menu')"
             >全选</el-checkbox
           >
-        </div>
+        </div> -->
         <div
           style="
             overflow-x: hidden;
@@ -38,7 +38,6 @@
             :expand-on-click-node="false"
             :check-on-click-node="true"
             :show-checkbox="show_checkbox"
-            :check-strictly="!check_strictly"
             :filter-node-method="filterNode"
             ref="tree"
             @node-click="handleNodeClick"
@@ -116,9 +115,9 @@ export default {
         children: "children",
       },
 
-      default_check_first: true, //默认选中第一项
+      default_check_first: false, //默认选中第一项
       check_strictly: false, //级联选择
-      default_check_all: false, //全选
+      default_check_all: true, //全选
     };
   },
   watch: {
@@ -137,7 +136,6 @@ export default {
     // },
     // 树权限（全选/全不选）
     handleCheckedTreeNodeAll(value, type) {
-      console.log(value,"value")
       let arr = [];
       if (value) {
         this.getAllKeys(this.siteTreeOptions, arr, "menuId");
@@ -181,7 +179,6 @@ export default {
     },
     //节点选中事件--复选框
     handleCheckChange(data, checked) {
-      console.log(data, checked);
       let n = this.getAllKeys(this.siteTreeOptions);
       // 反选
       if (checked.checkedKeys.length === n.length) {
@@ -193,7 +190,6 @@ export default {
     },
     //默认选中--复选框
     showCheckBox() {
-      console.log(this.default_check_first,"this.default_check_first")
       if (this.show_checkbox) {
         //默认全选
         if (this.default_check_all) {

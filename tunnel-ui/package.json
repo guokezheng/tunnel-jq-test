@@ -55,7 +55,7 @@
     "element-resize-detector": "^1.2.4",
     "element-ui": "^2.15.13",
     "fabric": "^4.1.0",
-    "file-saver": "2.0.5",
+    "file-saver": "^2.0.5",
     "fuse.js": "6.4.3",
     "gis-map-admin": "^0.9.2",
     "gis-map-tunnel": "^0.1.3",
@@ -97,7 +97,9 @@
     "vue-splitpane": "1.0.4",
     "vue-video-player": "^5.0.2",
     "vuedraggable": "2.24.3",
-    "vuex": "3.6.0"
+    "vuex": "3.6.0",
+    "xlsx": "^0.18.5",
+    "xlsx-style": "^0.8.13"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.6",

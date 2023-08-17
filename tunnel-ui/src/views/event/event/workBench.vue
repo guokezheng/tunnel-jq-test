@@ -1103,6 +1103,7 @@ export default {
     },
     // 移动滚动条
     mouseSrollAuto(e) {
+      console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if (e.target.scrollLeft > 0) {
         this.resetCanvasFlag = true;
       } else {

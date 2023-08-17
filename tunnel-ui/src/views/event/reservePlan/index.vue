@@ -100,6 +100,22 @@
             ></el-option>
           </el-select>
         </el-form-item> -->
+        <el-form-item label="防控类型" prop="prevControlType">
+          <el-select
+            v-model="queryParams.prevControlType"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+            @change="handleChangeControl(1)"
+          >
+            <el-option
+              v-for="item in controlTypeOptions"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="事件类型" prop="planTypeId">
           <el-select
             v-model="queryParams.planTypeId"
@@ -489,6 +505,23 @@
               :label="item.dictLabel"
               :value="item.dictValue"
             ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="防控类型" prop="prevControlType">
+          <el-select
+            v-model="reservePlanDrawForm.prevControlType"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+            style="width: 100%"
+            @change="handleChangeControl(2)"
+          >
+            <el-option
+              v-for="item in controlTypeOptions"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="事件类型" prop="planTypeId">
@@ -963,6 +996,7 @@ export default {
   },
   data() {
     return {
+      controlTypeOptions: [], //防控类型
       dataLoading: false,
       resetCascader: 0,
       equipmentTypeProps: {
@@ -1094,6 +1128,11 @@ export default {
           message: "请选择方向",
           trigger: "change",
         },
+        prevControlType:{
+          required: true,
+          message: "请选择防控类型",
+          trigger: "change",
+        },
         // controlDirection: {
         //   required: true,
         //   message: "请选择管控方向",
@@ -1205,7 +1244,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getPlanType(); //事件类型下拉
+    // this.getPlanType(); //事件类型下拉
     // this.getStrategyInfo();//策略下拉
     // this.getTunnelData(this.tunnelId);
     this.lightSwitchFunc();
@@ -1233,12 +1272,34 @@ export default {
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
     });
+    //防控类型
+    this.getDicts("prev_control_type").then((response) => {
+      if (response.data.length > 0) {
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i].dictLabel == "设备故障") {
+            response.data.splice(i, 1);
+          }
+        }
+      }
+      this.controlTypeOptions = response.data;
+    });
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleChangeControl(num){
+      this.$forceUpdate();
+      //查询事件类型
+      let prevControlType = {
+        isUsable: "1",
+        prevControlType: num==1?this.queryParams.prevControlType:this.reservePlanDrawForm.prevControlType,
+      };
+      listEventType(prevControlType).then((response) => {
+        this.planTypeData = [...response.rows];
+      });
+    },
     treeChange(data, checked, node) {
       console.log(data, checked, node);
       this.$refs.tree.setCheckedKeys([data]);
@@ -2337,13 +2398,13 @@ export default {
         this.strategyData = response.rows;
       });
     },
-    /** 查询事件类型下拉列表 */
-    getPlanType() {
-      let data = {};
-      listEventType(data).then((response) => {
-        this.planTypeData = response.rows;
-      });
-    },
+    // /** 查询事件类型下拉列表 */
+    // getPlanType() {
+    //   let data = {};
+    //   listEventType(data).then((response) => {
+    //     this.planTypeData = response.rows;
+    //   });
+    // },
     //关闭drawer
     handleClose(done) {
       done();

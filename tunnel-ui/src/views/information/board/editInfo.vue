@@ -89,7 +89,7 @@
             </el-col>
           </el-row>
           <el-row :gutter="24" style="display: flex;
-    flex-wrap: wrap;">
+    flex-wrap: wrap;width:100%">
             <el-col :span="24">
               <el-form-item label="详细内容" prop="CONTENT">
                 <el-input

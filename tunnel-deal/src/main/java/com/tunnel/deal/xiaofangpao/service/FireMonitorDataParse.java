@@ -60,17 +60,19 @@ public class FireMonitorDataParse {
      * @param ctx
      * @param msg 数据
      */
-    public void dataParse(ChannelHandlerContext ctx, String msg){
+    public int dataParse(ChannelHandlerContext ctx, String msg){
         //接收到的16进制数
         if(msg == null||msg.equals("")){
-            return;
+            return 400;
         }
         //截取类型标志（01系统状态 02设备状态 3c权限校验）55-57位
         String str = msg.substring(54, 56);
         if(str.toUpperCase().equals(DataTypeCodeEnum.QUANXIANJIAOYAN.getCode())){//权限校验
             if(msg.substring(52, 54).equals("06")){//权限校验失败
                 log.error("权限校验失败");
+                return 401;
             }
+            return 201;
         }else if(str.toUpperCase().equals(DataTypeCodeEnum.SHEBEIZHUANGTAI_UP.getCode())||str.toUpperCase().equals(DataTypeCodeEnum.SHEBEIZHUANGTAI_DOWN.getCode())){//设备状态
 //            40 40 启动字符
 //            01 00 数据流水号
@@ -200,7 +202,7 @@ public class FireMonitorDataParse {
 
         }
 
-
+        return 200;
 
     }
 

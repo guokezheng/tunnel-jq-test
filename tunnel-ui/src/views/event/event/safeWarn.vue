@@ -2322,24 +2322,19 @@ export default {
             //     this.$modal.msgSuccess("下发指令成功");
             //   });
             // }
-            // loading.close();
+            loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            // if (
-            //   this.eventFormDetail.prevControlType == 0 &&
-            //   currencyId &&
-            //   this.eventFormDetail.eventState == 0
-            // ) {
-            //   this.$router.push({
-            //     path: "/emergency/administration/dispatch",
-            //     query: { id: this.eventFormDetail.id },
-            //   });
-            // }
-            this.$router.push({
+            if (
+              currencyId &&
+              this.eventFormDetail.eventState == 0
+            ) {
+              this.$router.push({
                 path: "/emergency/administration/dispatch",
                 query: { id: this.eventFormDetail.id },
               });
+            }
             this.$cache.local.remove("currencyId");
           });
         }

@@ -29,6 +29,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="value != null "> and value = #{value}</if>
         </where>
     </select>
+    <select id="selectEnergyAnalysisTimeFrame" parameterType="EnergyAnalysisElectricityBill" resultMap="EnergyAnalysisElectricityBillResult">
+        <include refid="selectEnergyAnalysisElectricityBillVo"/>
+        <where>
+            <if test="statisticsType != null "> and statistics_type = #{statisticsType}</if>
+        </where>
+        ORDER BY statistics_date  ASC ,  split_time_type ASC
+    </select>
     
     <select id="selectEnergyAnalysisElectricityBillById" parameterType="Long" resultMap="EnergyAnalysisElectricityBillResult">
         <include refid="selectEnergyAnalysisElectricityBillVo"/>

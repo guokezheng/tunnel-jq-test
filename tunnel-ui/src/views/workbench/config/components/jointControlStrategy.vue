@@ -105,11 +105,23 @@
               <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">隧道</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName "></el-col>
+                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName   +'-'+   item.directionName"></el-col>
               </el-row>
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">方向</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html=" item.directionName"></el-col>
+                <el-col :span="4" class="elcolName">状态</el-col>
+                <el-col :span="20" class="elcolNameOne" > <el-switch
+                  v-model="item.isStatus"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value=parseInt(0)
+                  :inactive-value=parseInt(1)
+                  @change="changeSdWisdomIsStatus(item)"
+                >
+                </el-switch></el-col>
+              </el-row>
+              <el-row :gutter="24">
+                <el-col :span="4" class="elcolName">指令</el-col>
+                <el-col :span="20" class="elcolNameOne"  v-html="'含控制指令'+item.instructNum +' 条'"> </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">创建</el-col>
@@ -140,11 +152,19 @@
               <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">隧道</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName  +  item.directionName"></el-col>
+                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName  +'-'+  item.directionName"></el-col>
               </el-row>
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">下修</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html="item.beforeLuminance"></el-col>
+                <el-col :span="4" class="elcolName">状态</el-col>
+                <el-col :span="20" class="elcolNameOne" > <el-switch
+                  v-model="item.isStatus"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value=parseInt(0)
+                  :inactive-value=parseInt(1)
+                  @change="changeSdWisdomIsStatus(item)"
+                >
+                </el-switch></el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">指令</el-col>
@@ -219,14 +239,12 @@
 <script>
 import * as echarts from "echarts";
 import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
-import {addConfig, listConfig, updateConfig} from "@/api/business/wisdomLight/app";
+import {addConfig, listConfig, updateConfig,delConfig,updateSdWisdomIsStatus} from "@/api/business/wisdomLight/app";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 import {getUserDeptId} from "@/api/system/user";
 import {analysisDataByTime} from "@/api/system/trafficStatistics/api";
 import {delStrategy, listStrategy, updateState} from "@/api/event/strategy";
-import {
-  delConfig,
-} from "@/api/business/enhancedLighting/app.js";
+
 import timingControl from "@/views/event/strategy/components/timingControl"; //定时控制
 import lightCurveModal from "./lightCurveModal";
 import catCurveModal from "./catCurveModal.vue";
@@ -380,17 +398,25 @@ export default {
         debugger
         if( response.rows.length>0){
           this.lightStrategyList = []
+
           for (let i = 0; i < response.rows.length; i++) {
             if(response.rows[i].direction==1){
-              response.rows[i].directionName = "上行"
+              response.rows[i].directionName = "潍坊方向"
             }else if(response.rows[i].direction==2){
-              response.rows[i].directionName = "下行"
+              response.rows[i].directionName = "济南方向"
             }else{
               response.rows[i].directionName = ""
+            }
+            if(!!response.rows[i].beforeLuminance){
+              let jsonArray = JSON.parse(response.rows[i].beforeLuminance);
+              response.rows[i].instructNum =jsonArray.length
+            }else{
+              response.rows[i].instructNum =0
             }
 
             this.lightStrategyList.push( response.rows[i])
           }
+
         }
         this.$forceUpdate();
       })
@@ -628,10 +654,12 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
+        debugger
         delConfig(ids).then((res) => {
           if (res.code == 200) {
             //查询照明策略
             this.selectLightStrategyList()
+            this.selectCatStrategyList()
             this.$forceUpdate()
             this.$modal.msgSuccess(res.msg);
           } else {
@@ -716,6 +744,22 @@ export default {
         }
       });
     },
+    changeSdWisdomIsStatus(row){
+      debugger
+      let data = {id: row.id, isStatus: row.isStatus};
+      updateSdWisdomIsStatus(data).then((result) => {
+
+        if(result.code == 200){
+          if(row.isStatus == 0){
+            this.$modal.msgSuccess("开启成功");
+          }else{
+            this.$modal.msgSuccess("关闭成功");
+          }
+        }else{
+          this.$modal.msgSuccess(result.msg);
+        }
+      });
+    }
   },
   props:{
     show:Boolean,
@@ -785,7 +829,7 @@ export default {
   margin-top: 20px;
 }
 .content-centre-one{
-  height: 20%;
+  height: 23%;
   width: 30%;
   position: relative;
   float: left;

@@ -1,7 +1,9 @@
 package com.tunnel.business.domain.wisdomLight;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -73,9 +75,12 @@ public class SdWisdomLight extends BaseEntity
     private String direction;
 
 
-    private String createBy;
-
-    private Date createTime;
+//    private String createBy;
+//
+//    /** 创建时间 */
+//    @ApiModelProperty("创建时间")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    private Date createTime;
 
     public String getTunnelName() {
         return tunnelName;
@@ -203,24 +208,24 @@ public class SdWisdomLight extends BaseEntity
     }
 
 
-    @Override
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    @Override
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+//    @Override
+//    public String getCreateBy() {
+//        return createBy;
+//    }
+//
+//    @Override
+//    public void setCreateBy(String createBy) {
+//        this.createBy = createBy;
+//    }
+//
+//    @Override
+//    public Date getCreateTime() {
+//        return createTime;
+//    }
+//
+//    public void setCreateTime(Date createTime) {
+//        this.createTime = createTime;
+//    }
 
     @Override
     public String toString() {

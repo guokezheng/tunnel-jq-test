@@ -37,4 +37,20 @@ public interface SdWisdomLightMapper
      */
     public int updateSdWisdomLight(SdWisdomLight sdWisdomLight);
 
+    /**
+     * 修改【智慧调光】
+     *
+     * @param ids 【智慧调光】
+     * @return 结果
+     */
+    public int deleteSdWisdomLight(Long[] ids);
+
+
+    /**
+     * 更改数据状态【智慧调光】
+     *
+     * @param sdWisdomLight 【智慧调光】
+     * @return 结果
+     */
+    public int updateSdWisdomIsStatus(SdWisdomLight sdWisdomLight);
 }

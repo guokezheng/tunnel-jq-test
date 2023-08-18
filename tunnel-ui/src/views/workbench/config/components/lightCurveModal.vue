@@ -357,6 +357,18 @@ export default {
     closeLogin(){
       this.lightFilesModelWei ={beforeLuminance:''}
       this.lightFilesModel ={beforeLuminance:''}
+      this.lightFormItems= [
+        {
+          lightParagraph: '',
+          beforeLuminance:'',
+        }
+      ]
+        this.lightFormItemsWei= [
+        {
+          lightParagraph: '',
+          beforeLuminance:'',
+        }
+      ]
       this.$emit("selectLightStrategyList");
       this.visibleSync = !this.visibleSync
     },
@@ -939,23 +951,39 @@ export default {
     },
     //光强 修改隧道名称查看不同隧道 光强照明配置
     lightChangeEvent(indextabs) {
-      let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
-      debugger
-      let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
+      if(!!this.lightFilesModel.tunnelId&&!!this.lightFilesModel.direction) {
+        let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModel.tunnelId)
+        debugger
+        let queryParams = {
+          tunnelName: tunnel.tunnelName,
+          pageSize: 1,
+          pageNum: 2,
+          direction: this.lightFilesModel.direction,
+          modeType: 0
+        }
 
-      this.lightListConfig(queryParams)
-      this.$forceUpdate()
+        this.lightListConfig(queryParams)
+        this.$forceUpdate()
+      }
     },
 
     //光强 修改隧道名称查看不同隧道 光强照明配置
     lightChangeEventWei(indextabs) {
-      let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModelWei.tunnelId)
+      if(!!this.lightFilesModelWei.tunnelId&&!!this.lightFilesModelWei.direction) {
+        let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModelWei.tunnelId)
 
-      debugger
-      let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModelWei.direction,modeType:0}
+        debugger
+        let queryParams = {
+          tunnelName: tunnel.tunnelName,
+          pageSize: 1,
+          pageNum: 2,
+          direction: this.lightFilesModelWei.direction,
+          modeType: 0
+        }
 
-      this.lightListConfigWei(queryParams)
-      this.$forceUpdate()
+        this.lightListConfigWei(queryParams)
+        this.$forceUpdate()
+      }
     },
     /** 查询隧道列表 */
     async getTunnels() {

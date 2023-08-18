@@ -1047,7 +1047,8 @@ public class SdEventServiceImpl implements ISdEventService {
                     String laneLabel = sysDictDataMapper.selectDictLabel("sd_lane_two", list.get(i));
                     lane.add(laneLabel);
                 }
-                manualReview.setLaneNo(manualReview.getDirection().concat("/").concat(StringUtils.join(lane,"、")));
+                manualReview.setLaneNo(StringUtils.join(lane,"、"));
+//                manualReview.setLaneNo(manualReview.getDirection().concat("/").concat(StringUtils.join(lane,"、")));
                 //查询事件详情-人工复核-当事目标
                 String confidence = radarEventMapper.selectConfidence(sdEvent.getId());
                 manualReview.setConfidenceList(confidence == null ? "" : confidence);

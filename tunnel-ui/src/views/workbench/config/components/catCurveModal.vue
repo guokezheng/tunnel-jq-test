@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
     :visible.sync="visibleSync"
     width="80%"
-    :destroy-on-close="false"
+    destroy-on-close
     append-to-body
     :lock-scroll="true"
     :before-close="closeLogin"
@@ -289,9 +289,9 @@ export default {
     return {
       visibleSync:false,
       //车辆数配置文件
-      catFilesModel:{beforeLuminance:''},
+      catFilesModel:{beforeLuminance:'',isStatus:''},
       //车辆数配置文件
-      catFilesModelWei:{beforeLuminance:''},
+      catFilesModelWei:{beforeLuminance:'',isStatus:''},
       formItems: [
         {
           label: '',
@@ -359,6 +359,7 @@ export default {
         endTime: '',
         beforeLuminance:'',
       }]
+      this.$emit("selectCatStrategyList")
       this.visibleSync = !this.visibleSync
     },
     beforeLuminanceEvent(e){
@@ -443,7 +444,7 @@ export default {
           this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
           return;
         }else if (element.beforeLuminance == null || element.beforeLuminance == "") {
-          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+          this.$modal.msgError("下修比例不能为空");
           return;
         }
       }
@@ -502,17 +503,12 @@ export default {
       if (!!this.catFilesModel.id) {
         updateConfig(this.catFilesModel).then((response) => {
           this.$modal.msgSuccess("修改成功");
-          this.open = false;
-          this.$refs.tableFile.clearSelection();
-          this.getList();
         });
       } else {
         addConfig(this.catFilesModel).then((response) => {
           debugger
           this.catFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
-          this.open = false;
-          this.getList();
         });
       }
     },
@@ -528,7 +524,7 @@ export default {
           this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
           return;
         } else if (element.beforeLuminance == null || element.beforeLuminance == "") {
-          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+          this.$modal.msgError("下修比例不能为空");
           return;
         }
       }
@@ -587,17 +583,12 @@ export default {
       if (!!this.catFilesModelWei.id) {
         updateConfig(this.catFilesModelWei).then((response) => {
           this.$modal.msgSuccess("修改成功");
-          this.open = false;
-          this.$refs.tableFile.clearSelection();
-          this.getList();
         });
       } else {
         addConfig(this.catFilesModelWei).then((response) => {
           debugger
           this.catFilesModelWei.id =response.data.id
           this.$modal.msgSuccess("新增成功");
-          this.open = false;
-          this.getList();
         });
       }
     },
@@ -1043,19 +1034,30 @@ export default {
     },
     //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
     catChangeEvent(){
-      let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
-      console.log(tunnel)
-      debugger
-      let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
-      this.catListConfig(queryParams)
+      if(!!this.catFilesModel.tunnelId&&!!this.catFilesModel.direction){
+        let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
+        console.log(tunnel)
+        debugger
+        let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
+        this.catListConfig(queryParams)
+      }
+
     },
     //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
     catChangeEventWei(){
-      let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
-      console.log(tunnel)
-      debugger
-      let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
-      this.catListConfigWei(queryParams)
+      if(!!this.catFilesModelWei.tunnelId&&!!this.catFilesModelWei.direction) {
+        let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.catFilesModelWei.tunnelId)
+        console.log(tunnel)
+        debugger
+        let queryParams = {
+          tunnelName: tunnel.tunnelName,
+          pageSize: 1,
+          pageNum: 2,
+          direction: this.catFilesModelWei.direction,
+          modeType: 1
+        }
+        this.catListConfigWei(queryParams)
+      }
     },
     //车辆照明配置查询
     catListConfig(queryParams){
@@ -1150,7 +1152,7 @@ export default {
         }else{
           this.catFilesModelWei.id = ''
           this.catFilesModelWei.beforeLuminance =''
-          this.formItems =[
+          this.formItemsWei =[
             {
               label: '',
               startTime: '',

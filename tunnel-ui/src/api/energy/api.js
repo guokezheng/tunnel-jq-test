@@ -57,3 +57,12 @@ export function getElectricityBillByDept(params) {
     params: params
   })
 }
+
+// 查询时段用电柱状图
+export function selectEnergyAnalysisElectricityBillList(params) {
+  return request({
+    url: '/energyAnalysisElectricityBillController/selectEnergyAnalysisElectricityBillList',
+    method: 'get',
+    params: params
+  })
+}

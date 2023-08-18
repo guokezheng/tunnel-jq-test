@@ -2,6 +2,7 @@ package com.tunnel.business.service.wisdomLight.impl;
 
 
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.domain.wisdomLight.SdWisdomLight;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import static com.ruoyi.common.utils.SecurityUtils.getUsername;
 
 /**
  *
@@ -55,6 +58,8 @@ public class SdWisdomLightServiceImpl implements ISdWisdomLightService
     @Override
     public SdWisdomLight insertSdWisdomLight(SdWisdomLight sdWisdomLight)
     {
+        sdWisdomLight.setCreateBy(getUsername());
+        sdWisdomLight.setCreateTime(DateUtils.getNowDate());
         sdWisdomLightMapper.insertSdWisdomLight(sdWisdomLight);
         return sdWisdomLight;
     }
@@ -69,6 +74,28 @@ public class SdWisdomLightServiceImpl implements ISdWisdomLightService
     public int updateSdWisdomLight(SdWisdomLight sdWisdomLight)
     {
         return sdWisdomLightMapper.updateSdWisdomLight(sdWisdomLight);
+    }
+
+    /**
+     * 删除【加强照明配置】
+     *
+     * @param ids 【加强照明配置】
+     * @return 结果
+     */
+    @Override
+    public int deleteSdWisdomLight(Long[] ids)
+    {
+        return sdWisdomLightMapper.deleteSdWisdomLight(ids);
+    }
+    /**
+     * 更改数据状态【加强照明配置】
+     *
+     * @param sdWisdomLight 【加强照明配置】
+     * @return 结果
+     */
+    @Override
+    public int updateSdWisdomIsStatus(SdWisdomLight sdWisdomLight) {
+        return sdWisdomLightMapper.updateSdWisdomIsStatus(sdWisdomLight);
     }
 
 }

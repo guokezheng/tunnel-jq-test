@@ -60,3 +60,12 @@ export function exportConfig(query) {
     params: query
   })
 }
+
+// 修改【加强照明配置】
+export function updateSdWisdomIsStatus(data) {
+  return request({
+    url: '/wisdomLight/updateSdWisdomIsStatus',
+    method: 'post',
+    data: data
+  })
+}

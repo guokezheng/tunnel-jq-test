@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class EnergySjfxElectricityController extends BaseController {
         if (StringUtils.isEmpty(tabType)) {
             return error("缺少参数tabType");
         }
+        startPage();
         if (codeList.size() == 0) {
             return error("未选择仓储");
         }

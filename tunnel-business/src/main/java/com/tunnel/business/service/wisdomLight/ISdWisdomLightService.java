@@ -37,4 +37,21 @@ public interface ISdWisdomLightService
      */
     public int updateSdWisdomLight(SdWisdomLight sdWisdomLight);
 
+
+    /**
+     * 删除【智慧调光】
+     *
+     * @param ids 【智慧调光】
+     * @return 结果
+     */
+    public int deleteSdWisdomLight(Long[] ids);
+
+    /**
+     * 更改数据状态【智慧调光】
+     *
+     * @param ids 【智慧调光】
+     * @return 结果
+     */
+    public int updateSdWisdomIsStatus(SdWisdomLight sdWisdomLight);
+
 }

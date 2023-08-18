@@ -3,171 +3,206 @@
     <el-col :span="16" >
       <el-row :gutter="24" style="clear:both;">
         <el-col :span="24">
-          <div  class="energyAnalyse" ref="energyAnalyse" style="width: 99%; height: 400px;border: 8px solid #E0ECFC;"></div>
+          <div  class="energyAnalyse" ref="energyAnalyse" style="width: 99%; height: 400px;border: 8px solid #004375;"></div>
         </el-col>
       </el-row>
       <el-row :gutter="24" style="clear:both;">
         <el-col :span="24">
-          <div  class="energyAnalyseTwo" ref="energyAnalyseTwo" style="width: 99%; height: 400px; float: left;border: 8px solid #E0ECFC;"></div>
+          <div  class="energyAnalyseTwo" ref="energyAnalyseTwo" style="width: 99%; height: 400px; float: left;border: 8px solid #004375;"></div>
         </el-col>
       </el-row>
     </el-col>
     <el-col :span="8">
-      <el-row :gutter="24" style="height: 55vh;border: 8px solid #E0ECFC;">
-        <el-col :span="12">
-          <div >
-            <h1 style="color:#4675BA  ;font-weight: bold;font-size: 25px;margin-left: 10px">实时监控</h1>
-            <div style="height: 100px;width: 100%;border:5px solid #73C0DE ">
-              <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
-                <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
-              </div>
 
-              <div style="width:60% ;float:left; margin-top: 10%">
-                <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-              </div>
-              <div style="width:60% ;float:left;">
-                <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-              </div>
-            </div>
-
-          </div>
-
-        </el-col>
-        <el-col :span="12">
-            <div style="height: 100px;width: 100%;border:5px solid #73C0DE ;margin-top:7.3vh">
-              <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
-                <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
-              </div>
-
-              <div style="width:60% ;float:left; margin-top: 10%">
-                <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
-                <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-              </div>
-              <div style="width:60% ;float:left;">
-                <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
-                <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-              </div>
-            </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24" style="clear:both;">
+      <el-row :gutter="24" style="height: 31.4vh;clear:both;border: 8px solid #004375;">
         <el-col :span="24">
-<!--          ew-->
+          <el-col :span="24">
+            <el-row>
+              <el-col :span="12">
+                <div >
+                  <h1 style="color:#4675BA  ;font-weight: bold;font-size: 20px;margin-left: 10px">累计数据</h1>
+                  <div style="height: 100px;width: 97%; background-color:#1B5480; ">
+                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                    </div>
+
+                    <div style="width:60% ;float:left; margin-top: 10%">
+                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                    </div>
+                    <div style="width:60% ;float:left;">
+                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 100px;width: 97%;margin-top:6vh; background-color:#1B5480;">
+                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                  </div>
+
+                  <div style="width:60% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                  <div style="width:60% ;float:left;">
+                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row style="margin-top: 3px">
+              <el-col :span="12">
+                <div >
+
+                  <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                    </div>
+
+                    <div style="width:60% ;float:left; margin-top: 10%">
+                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                    </div>
+                    <div style="width:60% ;float:left;">
+                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                  </div>
+
+                  <div style="width:60% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                  <div style="width:60% ;float:left;">
+                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+          </el-col>
         </el-col>
       </el-row>
-<!--      <el-row :gutter="24" style="clear:both; margin-top: 13px">-->
-<!--        <el-col :span="24">-->
-<!--          <div style="height: 130px;width: 100%;border:5px solid #73C0DE ">-->
-<!--            <div style="height: 130px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--              <img src="../../../assets/cloudControl/energy-yue.png" width="50px" height="50px" alt="Image">-->
-<!--            </div>-->
+      <el-row :gutter="24" style="height: 54vh;border: 8px solid #004375;">
+        <el-col :span="24">
+          <el-row>
+            <el-col :span="12">
+              <div >
+                <h1 style="color:#4675BA  ;font-weight: bold;font-size: 20px;margin-left: 10px">实时监控</h1>
+                <div style="height: 100px;width: 97%; background-color:#1B5480; ">
+                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                  </div>
 
-<!--            <div style="width:70% ;float:left; margin-top:  8%">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;">本月耗能 </span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">MWH</span>-->
-<!--            </div>-->
-<!--            <div style="width:70% ;float:left; margin-top:5px">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;">本月耗能 </span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">MWH</span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
-<!--      <el-row :gutter="24" style="clear:both;margin-top: 13px ">-->
-<!--        <el-col :span="24">-->
-<!--          <div style="height: 130px;width: 100%;border:5px solid #73C0DE ">-->
-<!--            <div style="height: 130px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--              <img src="../../../assets/cloudControl/yue-dian.png" width="50px" height="50px" alt="Image">-->
-<!--            </div>-->
+                  <div style="width:60% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                  <div style="width:60% ;float:left;">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                </div>
 
-<!--            <div style="width:70% ;float:left; margin-top:  8%">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;">本月电费 </span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">元</span>-->
-<!--            </div>-->
-<!--            <div style="width:70% ;float:left; margin-top:5px">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;">对比同期 </span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">元</span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
-<!--      <el-row :gutter="24" style="clear:both;margin-top: 13px">-->
-<!--        <el-col :span="24">-->
-<!--          <div style="height: 130px;width: 100%;border:5px solid #73C0DE ">-->
-<!--            <div style="height: 130px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--              <img src="../../../assets/cloudControl/yue-guang.png" width="50px" height="50px" alt="Image">-->
-<!--            </div>-->
+              </div>
 
-<!--            <div style="width:70% ;float:left; margin-top:  8%">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;"> 本月光伏产能</span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">MWH</span>-->
-<!--            </div>-->
-<!--            <div style="width:70% ;float:left; margin-top:5px">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;">对比同期 </span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">MWH</span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
-<!--      <el-row :gutter="24" style="clear:both;margin-top: 13px">-->
-<!--        <el-col :span="24">-->
-<!--          <div style="height: 130px;width: 100%;border:5px solid #73C0DE ">-->
-<!--            <div style="height: 130px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--              <img src="../../../assets/cloudControl/tan-fang.png" width="50px" height="50px" alt="Image">-->
-<!--            </div>-->
+            </el-col>
+            <el-col :span="12">
+              <div style="height: 100px;width: 97%;margin-top:6vh; background-color:#1B5480;">
+                <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                  <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                </div>
 
-<!--            <div style="width:70% ;float:left; margin-top:  8%">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;"> 本月碳排放</span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">tCO2e</span>-->
-<!--            </div>-->
-<!--            <div style="width:70% ;float:left; margin-top:5px">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;"> 对比同期</span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">tCO2e</span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
-<!--      <el-row :gutter="24" style="clear:both;margin-top: 13px">-->
-<!--        <el-col :span="24">-->
-<!--          <div style="height: 130px;width: 100%;border:5px solid #73C0DE ">-->
-<!--            <div style="height: 130px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--              <img src="../../../assets/cloudControl/yue-tan-fang.png" width="50px" height="50px" alt="Image">-->
-<!--            </div>-->
+                <div style="width:60% ;float:left; margin-top: 10%">
+                  <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
+                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                  <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                </div>
+                <div style="width:60% ;float:left;">
+                  <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                  <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row style="margin-top: 3px">
+            <el-col :span="12">
+              <div >
 
-<!--            <div style="width:70% ;float:left; margin-top:  8%">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;"> 本月碳减排</span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">tCO2e</span>-->
-<!--            </div>-->
-<!--            <div style="width:70% ;float:left; margin-top:5px">-->
-<!--              <span style="color: #FFFFFF;font-size: 20px;">对比同期 </span>-->
-<!--              <span style="margin-left: 1px;color: #9ACDF0;font-size: 20px;"> 213214</span>-->
-<!--              <span style="margin-left: 3px;color: #9ACDF0;font-size: 10px;">tCO2e</span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
+                <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                  </div>
+
+                  <div style="width:60% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                  <div style="width:60% ;float:left;">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </el-col>
+            <el-col :span="12">
+              <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                  <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                </div>
+
+                <div style="width:60% ;float:left; margin-top: 10%">
+                  <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
+                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                  <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                </div>
+                <div style="width:60% ;float:left;">
+                  <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                  <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
     </el-col>
   </el-row>
 </template>
 
 <script>
 import * as echarts from "echarts";
-import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
+import {selectEnergyAnalysisElectricityBillList} from "@/api/energy/api";
 
 export default {
   name: "energyAnalyse",
@@ -364,7 +399,7 @@ export default {
       });
     },
     //获取光亮的数据
-    getEchartsDataTwo() {
+    async getEchartsDataTwo() {
       debugger
       //清空上次数据
       // this.XDataEnergy = []
@@ -380,45 +415,42 @@ export default {
       this.yDataEnergyOne1 = []
       //y  时间
       this.yDataEnergyOne2 = []
-      //刷新数据
-      // if(type=="refresh"){
-      //   this.lightChangeEvent()
-      //   this.lightChangeEventWei()
-      // }
 
-      this.XDataEnergyOne = ["8-1","8-2","8-3","8-4","8-5","8-6","8-7","8-8","8-9","8-10","8-11","8-12","8-13","8-14","8-15"]
-      // this.yDataEnergyOne =[21,32,3,43,2,43,75,23,723,72,723,71,23,23,2,23,34,23,23,62,24,32,32,54,136,34]
-      // this.yDataEnergyOne1 =[21,32,3,43,2,43,75,23,723,72,723,71,23,23,2,23,34,23,23,62,24,32,32,54,136,34]
-      // this.yDataEnergyOne2 =[21,34,56,32,2,76,78,87,723,72,33,71,32,23,2,23,34,23,23,62,24,32,32,54,136,34]
-
-      // 定义柱状图的数据
-      // this.yDataEnergyOne = [
-      //   [120, 200, 150, 80, 70],  // 第一个时间点的数据
-      //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
-      //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
-      //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
-      //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
-      // ];
-
-      setTimeout(() => {
+      let yDataEnergyOne = [];
+      let  queryParams ={}
+      queryParams.pageNum =1
+      queryParams.pageSize =15
+      queryParams.statisticsType = 1
+      const  res = await selectEnergyAnalysisElectricityBillList(queryParams);
+      if(res.code == 200 ){
+        //设置X轴
+        let yDataEnergyOneSon =[]
+        for (let i = 0; i < res.rows.length; i++) {
+          if (!this.XDataEnergyOne.includes(res.rows[i].statisticsDate)) {
+            this.XDataEnergyOne.push(res.rows[i].statisticsDate)
+            if(yDataEnergyOneSon.length>0){
+              yDataEnergyOne.push(yDataEnergyOneSon)
+              yDataEnergyOneSon =[]
+            }
+          }
+          yDataEnergyOneSon.push(res.rows[i].value)
+          if( res.rows.length==i+1){
+            yDataEnergyOne.push(yDataEnergyOneSon)
+            yDataEnergyOneSon =[]
+          }
+        }
+      }
+      console.log(yDataEnergyOne)
+      yDataEnergyOne.sort((a, b) => b[0] - a[0]);
+      console.log(yDataEnergyOne)
         this.$nextTick(() => {
-          this.initLoginChartTwo();
+          this.initLoginChartTwo(yDataEnergyOne);
         });
-      }, 500);
+
 
     },
     // 获取济南光照照图表数据信息
-    initLoginChartTwo() {
+    initLoginChartTwo(yDataEnergyOne) {
       let newPromise = new Promise((resolve) => {
         resolve();
       });
@@ -430,23 +462,23 @@ export default {
         var categories = ['尖', '峰', '平', '谷', '深'];
 
         // 定义柱状图的数据
-        let yDataEnergyOne = [
-          [120, 200, 150, 80, 70],  // 第一个时间点的数据
-          [100, 180, 140, 90, 60],  // 第二个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [80, 160, 130, 100, 50],  // 第三个时间点的数据
-          [100, 180, 140, 90, 60],  // 第二个时间点的数据
-          [100, 180, 140, 90, 60],  // 第二个时间点的数据
-          [100, 180, 140, 90, 60],  // 第二个时间点的数据
-        ];
+        // let yDataEnergyOne = [
+        //   [120, 200, 150, 80, 70],  // 第一个时间点的数据
+        //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [80, 160, 130, 100, 50],  // 第三个时间点的数据
+        //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
+        //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
+        //   [100, 180, 140, 90, 60],  // 第二个时间点的数据
+        // ];
 
         // 创建一个颜色数组，分别表示电力类别的准确颜色
         var colors = ['#498ACA', '#70A8DF', '#46B6C9', '#F5B959', '#7ACC8A'];
@@ -500,7 +532,7 @@ export default {
           },
           yAxis: {
             type: "value",
-            name: "当日用电",
+            name: "时段用电",
             nameTextStyle: {
               color: "#FFB500",
               fontSize: 10,

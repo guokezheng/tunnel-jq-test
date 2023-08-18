@@ -1,5 +1,6 @@
 package com.tunnel.business.domain.energyManagement;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.math.BigDecimal;
@@ -30,6 +31,7 @@ public class EnergyAnalysisElectricityBill extends BaseEntity {
     /**
      * 时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date statisticsDate;
 
     /**

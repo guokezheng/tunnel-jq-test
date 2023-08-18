@@ -69,7 +69,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="maxTrafficFlow != null">max_traffic_flow,</if>
             <if test="isStatus != null">is_status,</if>
             <if test="isTrafficVolume != null">is_traffic_volume,</if>
-            <if test="direction != null "> direction</if>
+            <if test="direction != null "> direction,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null "> create_time</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -83,7 +85,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="maxTrafficFlow != null">#{maxTrafficFlow},</if>
             <if test="isStatus != null">#{isStatus},</if>
             <if test="isTrafficVolume != null">#{isTrafficVolume},</if>
-            <if test="direction != null "> #{direction}</if>
+            <if test="direction != null "> #{direction},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null "> #{createTime}</if>
         </trim>
     </insert>
 
@@ -102,6 +106,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isStatus != null">is_status = #{isStatus},</if>
             <if test="isTrafficVolume != null">is_traffic_volume = #{isTrafficVolume},</if>
             <if test="direction != null ">  direction = #{direction}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdWisdomLight" parameterType="Long">
+        delete from sd_wisdom_light where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateSdWisdomIsStatus" parameterType="SdWisdomLight">
+        update sd_wisdom_light
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isStatus != null">is_status = #{isStatus}</if>
         </trim>
         where id = #{id}
     </update>

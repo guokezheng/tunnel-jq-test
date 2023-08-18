@@ -20,7 +20,7 @@
       <el-row :style="{ height: height }">
         <!-- 级联 全选 -->
         <div class="check" v-if="show_checkbox">
-          <el-checkbox v-model="check_strictly">级联选择</el-checkbox>
+          <!-- <el-checkbox v-model="check_strictly">级联选择</el-checkbox> -->
           <el-checkbox
             v-model="default_check_all"
             @change="handleCheckedTreeNodeAll($event, 'menu')"
@@ -34,7 +34,6 @@
           :expand-on-click-node="false"
           :check-on-click-node="true"
           :show-checkbox="show_checkbox"
-          :check-strictly="!check_strictly"
           :filter-node-method="filterNode"
           ref="tree"
           default-expand-all
@@ -99,7 +98,7 @@ export default {
       },
 
       default_check_first: true, //默认选中第一项
-      check_strictly: false, //级联选择
+      check_strictly: true, //级联选择
       default_check_all: false, //全选
     };
   },

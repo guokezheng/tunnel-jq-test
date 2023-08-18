@@ -172,6 +172,7 @@
           >
         </el-form-item> -->
         <el-table
+          :key="tableKey"
           v-loading="loading"
           :data="strategyList"
           @selection-change="handleSelectionChange"
@@ -633,6 +634,13 @@ export default {
   },
   data() {
     return {
+      tableKey:0,
+      allLoading: {
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      },
       boxShow: false,
       boxShow1: false,
 
@@ -1009,10 +1017,15 @@ export default {
     //手动执行
     async richangUpdate(row) {
       let params = row;
+      const loading = this.$loading({
+          lock: true,
+          text: "Loading",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)",
+        });
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
         params.manualControl = response.rows;
-        debugger
         params.manualControl.equipmentTypeId = params.manualControl.eqTypeId;
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
@@ -1043,11 +1056,13 @@ export default {
           }
         }
       });
-      debugger
       await manualControlInfo(params).then((res) => {
+        loading.close();
         if (res.code == 200 ) {
           this.$modal.msgSuccess("执行成功");
         }
+      }).catch(()=>{
+        loading.close();
       });
     },
     // 策略改变触发方法
@@ -1357,6 +1372,8 @@ export default {
       // this.queryParams.pageNum = 1;
       this.$refs.tableFile1.clearSelection();
       //this.$refs.tableFile2.clearSelection();
+      this.strategyList = []
+
       this.getList();
     },
     /** 重置按钮操作 */
@@ -1549,13 +1566,17 @@ export default {
 
     tableType:{
       handler(val){
+        this.strategyList = []
         this.tableType = val
         if(val=="shoudong"){
           this.queryParams.strategyType = "0";
+          this.tableKey = 0
         }else if(val=="dingshi"){
           this.queryParams.strategyType = "1";
+          this.tableKey = 1
         }else if(val=="zidong"){
           this.queryParams.strategyType = "2";
+          this.tableKey = 2
         }
         //搜索
         this.handleQuery()

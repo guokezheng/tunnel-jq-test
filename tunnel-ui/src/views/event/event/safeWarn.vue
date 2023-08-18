@@ -1357,6 +1357,8 @@
 </template>
 <script>
 import $ from "jquery";
+import { mapState } from "vuex";
+import bus from "@/utils/bus";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { Loading } from "element-ui";
 import {
@@ -1435,6 +1437,7 @@ export default {
   },
   data() {
     return {
+      evtWebsoktList:[],
       strategyList: [], //策略列表
       controlTypeOptions: [], //防控类型
       pickerOptionsStart: {
@@ -1808,6 +1811,9 @@ export default {
         return this.$store.state.settings.topNav;
       },
     },
+    ...mapState({
+      sdEventList: (state) => state.websocket.sdEventList,
+    }),
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
@@ -1818,6 +1824,10 @@ export default {
       this.getList();
       this.getTunnelLane();
     },
+    sdEventList(event) {
+      console.log(event,"websockt推送一件事")
+      this.evtWebsoktList = event
+    }
   },
   mounted() {},
   async created() {
@@ -2304,7 +2314,10 @@ export default {
             if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
             }
-
+              if(this.evtWebsoktList[0].ids == this.eventFormDetail.id){
+                console.log("点复核提交 关弹窗")
+                bus.$emit("closeDialog");
+              }
             this.getList();
             //主动安全
             //策略不为空

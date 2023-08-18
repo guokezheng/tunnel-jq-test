@@ -423,6 +423,7 @@ export default {
     });
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
+      console.log("关闭一件事弹窗")
       this.eventDialogTable = false;
       this.evtDialogOneThing = false;
     });

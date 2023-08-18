@@ -978,8 +978,6 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="20">
                 <el-col :span="24">
                   <el-form-item label="影响描述">
                     <el-input
@@ -988,8 +986,6 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="20">
                 <el-col :span="8">
                   <el-form-item label="预估类型">
                     <el-input
@@ -1014,8 +1010,6 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="20">
                 <el-col :span="8">
                   <el-form-item label="事发位置">
                     <el-input
@@ -1025,7 +1019,12 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="影响车道">
+                  <el-form-item label="影响方向">
+                    <el-input v-model="manualReview.direction" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                 <el-form-item label="影响车道">
                     <el-input v-model="manualReview.laneNo" readonly></el-input>
                   </el-form-item>
                 </el-col>
@@ -1037,8 +1036,7 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="20">
+              
                 <el-col :span="8">
                   <el-form-item label="复核人">
                     <el-input
@@ -1055,8 +1053,7 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="20">
+              
                 <el-col :span="24">
                   <el-form-item label="复核描述">
                     <el-input
@@ -1212,10 +1209,10 @@
                   height="250"
                   style="width: 100%"
                 >
-                  <el-table-column prop="eqName" label="设备名称">
+                  <el-table-column prop="eqName" label="设备名称" align="center">
                   </el-table-column>
-                  <el-table-column prop="pile" label="桩号"> </el-table-column>
-                  <el-table-column prop="stateName" label="状态">
+                  <el-table-column prop="pile" label="桩号" align="center"> </el-table-column>
+                  <el-table-column prop="stateName" label="状态" align="center">
                   </el-table-column>
                 </el-table>
               </el-timeline>
@@ -2322,24 +2319,19 @@ export default {
             //     this.$modal.msgSuccess("下发指令成功");
             //   });
             // }
-            // loading.close();
+            loading.close();
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            // if (
-            //   this.eventFormDetail.prevControlType == 0 &&
-            //   currencyId &&
-            //   this.eventFormDetail.eventState == 0
-            // ) {
-            //   this.$router.push({
-            //     path: "/emergency/administration/dispatch",
-            //     query: { id: this.eventFormDetail.id },
-            //   });
-            // }
+            if (
+              currencyId &&
+              this.eventFormDetail.eventState == 0
+            ) {
             this.$router.push({
                 path: "/emergency/administration/dispatch",
                 query: { id: this.eventFormDetail.id },
               });
+            }
             this.$cache.local.remove("currencyId");
           });
         }
@@ -3413,7 +3405,7 @@ export default {
     }
   }
   .el-form-item {
-    margin-bottom: 14px !important;
+    margin-bottom: 10px !important;
   }
   .evtCarStyle {
     width: calc(100% - 10px);

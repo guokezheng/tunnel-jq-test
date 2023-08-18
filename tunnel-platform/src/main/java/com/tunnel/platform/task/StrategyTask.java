@@ -668,7 +668,7 @@ public class StrategyTask {
                 WebSocketService.broadcast("sdEventList",object.toString());
             }
 
-            if(!(sdEventsList.size()>0)){//添加
+            if(!(sdEventsList.size()>0) && sdStrategy!=null){//添加
                 // 添加事件流程记录
                 SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
             }

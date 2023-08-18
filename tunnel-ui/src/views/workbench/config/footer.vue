@@ -2391,6 +2391,7 @@ export default {
       rgba($color: #0079db, $alpha: 0.8)
     );
     border: solid 0.1px #0067b2;
+    box-shadow:none;
   }
   ::v-deep .el-radio-button__inner {
     background: #010913;

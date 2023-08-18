@@ -785,7 +785,7 @@ export default {
       dictCode: "0",
       eventTypeList: [],//主动安全列表
       // automaticEqType:[] //自动触发设备类型数组
-      tableType:'shoudong',
+      // tableType:'shoudong',
     };
   },
   created() {

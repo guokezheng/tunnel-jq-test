@@ -26,7 +26,6 @@
           :expand-on-click-node="false"
           :check-on-click-node="true"
           :show-checkbox="show_checkbox"
-          :check-strictly="false"
           :filter-node-method="filterNode"
           ref="tree"
           @node-click="handleNodeClick"
@@ -103,7 +102,8 @@ export default {
         children: "children",
       },
 
-      default_check_first: true, //默认选中第一项
+      default_check_first: false, //默认选中第一项
+      default_check_all:true
     };
   },
   watch: {

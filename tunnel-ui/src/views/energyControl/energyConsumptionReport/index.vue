@@ -1,8 +1,6 @@
 <!-- 用能报表 -->
 <template>
-  <div
-    class="app-container"
-  >
+  <div class="app-container">
     <!-- 顶部 -->
     <el-row class="top_tabs">
       <el-tabs
@@ -56,9 +54,12 @@
         </el-tab-pane>
       </el-tabs>
     </el-row>
-    <el-row :gutter="20" style="width: 83%; float: right;height: calc(100% - 7vh);">
+    <el-row
+      :gutter="20"
+      style="width: 83%; float: right; height: calc(100% - 7vh)"
+    >
       <!-- 右侧内容 -->
-      <el-col :span="24" style="height: 100%;">
+      <el-col :span="24" style="height: 100%">
         <div class="my-card-height rightBox">
           <div style="width: 100%; height: 53%" class="top">
             <!-- tab选择器 -->
@@ -117,7 +118,10 @@
             </div>
             <!-- 图表 -->
             <div class="echart">
-              <div id="chart" style="width: 100%; height: 100%;overflow: hidden;"></div>
+              <div
+                id="chart"
+                style="width: 100%; height: 100%; overflow: hidden"
+              ></div>
             </div>
           </div>
           <!-- 表格 -->
@@ -212,13 +216,22 @@ import { mapState } from "vuex";
 import departmentSelect2 from "@/views/components/department";
 import ItemizedTree from "@/views/components/itemizedTree";
 import SiteTree from "@/views/components/siteTree";
-import departmentSelect3 from '@/views/components/department/index3.vue'
-import ClassificationTree from '@/views/components/classificationTree'
-import { getElectricityReportList } from '@/api/energy/api'
+import departmentSelect3 from "@/views/components/department/index3.vue";
+import ClassificationTree from "@/views/components/classificationTree";
+import { getElectricityReportList } from "@/api/energy/api";
 
+import FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+import xlsxStyle from 'xlsx-style';
 export default {
   name: "Online",
-  components: { ItemizedTree, SiteTree, departmentSelect2, departmentSelect3, ClassificationTree },
+  components: {
+    ItemizedTree,
+    SiteTree,
+    departmentSelect2,
+    departmentSelect3,
+    ClassificationTree,
+  },
   data() {
     return {
       setDateRange: {
@@ -357,10 +370,10 @@ export default {
 
     /******分类******/
     //默认选中回路回调
-      defaultCheckLoop4(keys) {
-        this.loopIds4 = keys
-        if (this.activeName === 'four') this.getData()
-      },
+    defaultCheckLoop4(keys) {
+      this.loopIds4 = keys;
+      if (this.activeName === "four") this.getData();
+    },
     //节点选中状态发生变化时的回调
     handleCheckChange4(data, checked) {
       this.loopIds4 = checked.checkedKeys; //选中回路的id
@@ -446,18 +459,18 @@ export default {
         this.queryParams.type = this.tabType;
         this.queryParams.tabType = 1;
         this.queryParams.deptCode = "null";
-        console.log(this.queryParams,"this.queryParams")
+        console.log(this.queryParams, "this.queryParams");
         // 接口请求
-          const res = await getElectricityReportList(this.queryParams)
-          if (res.code === 200) {
-            console.log(res,"second")
-            this.list1 = res.data
-            this.$nextTick(() => {
-              //清除选中行
-              this.$refs.multipleTable.doLayout()
-            })
-            // this.loading = false
-          }
+        const res = await getElectricityReportList(this.queryParams);
+        if (res.code === 200) {
+          console.log(res, "second");
+          this.list1 = res.data;
+          this.$nextTick(() => {
+            //清除选中行
+            this.$refs.multipleTable.doLayout();
+          });
+          // this.loading = false
+        }
         this.openChart();
       }
       // else if (this.activeName === 'first') {
@@ -536,60 +549,61 @@ export default {
         this.queryParams.deptCode = this.siteIdItemized;
 
         // 接口请求
-          const res = await getElectricityReportList(this.queryParams)
-          if (res.code === 200) {
-            console.log(res)
-            this.list1 = res.data
-            this.$nextTick(() => {
-              //清除选中行
-              this.$refs.multipleTable.doLayout()
-            })
-            this.loading = false
-          }
+        const res = await getElectricityReportList(this.queryParams);
+        if (res.code === 200) {
+          console.log(res);
+          this.list1 = res.data;
+          this.$nextTick(() => {
+            //清除选中行
+            this.$refs.multipleTable.doLayout();
+          });
+          this.loading = false;
+        }
         this.openChart();
-      }
-      else if (this.activeName === 'four') {
+      } else if (this.activeName === "four") {
         // console.log(this.loopIds4)
-        this.clearData()
+        this.clearData();
         if (!this.siteIdClass) {
           this.$message({
             showClose: true,
-            message: '请选择归属部门',
-            type: 'warning',
-            duration: 1500
-          })
-          return
+            message: "请选择归属部门",
+            type: "warning",
+            duration: 1500,
+          });
+          return;
         }
         //校验参数
         if (this.loopIds4.length === 0) {
           this.$message({
             showClose: true,
-            message: '至少选择一条回路',
-            type: 'warning',
-            duration: 1500
-          })
-          return
+            message: "至少选择一条回路",
+            type: "warning",
+            duration: 1500,
+          });
+          return;
         }
-        this.loading = true
+        this.loading = true;
         // 参数
-        this.queryParams.codeList = this.loopIds4.filter(e => e != null).join(',')
-        this.queryParams.baseTime = this.parseTime(this.base_date)
-        this.queryParams.type = this.tabType
-        this.queryParams.tabType = 4
-        this.queryParams.deptCode = this.siteIdClass
+        this.queryParams.codeList = this.loopIds4
+          .filter((e) => e != null)
+          .join(",");
+        this.queryParams.baseTime = this.parseTime(this.base_date);
+        this.queryParams.type = this.tabType;
+        this.queryParams.tabType = 4;
+        this.queryParams.deptCode = this.siteIdClass;
 
         // 接口请求
-        const res = await getElectricityReportList(this.queryParams)
+        const res = await getElectricityReportList(this.queryParams);
         if (res.code === 200) {
-          console.log(res)
-          this.list1 = res.data
+          console.log(res);
+          this.list1 = res.data;
           this.$nextTick(() => {
             //清除选中行
-            this.$refs.multipleTable.doLayout()
-          })
-          this.loading = false
+            this.$refs.multipleTable.doLayout();
+          });
+          this.loading = false;
         }
-        this.openChart()
+        this.openChart();
       }
     },
     // 清空数据
@@ -666,7 +680,7 @@ export default {
             showAllSymbol: true,
             symbolSize: 8,
             data: n.value,
-            color:"#0090D8"
+            color: "#0090D8",
           });
           this.xData = n.rt;
         }
@@ -755,39 +769,96 @@ export default {
     //导出excel
     export_excel() {
       this.$nextTick(() => {
-        let tableDom = document.getElementById("tableId");
+        const dom = this.$refs.multipleTable.$el;
+        this.exportDomToXlsx(dom,'...分析表')
+        
+        // let tableDom = document.getElementById("tableId");
+        // console.log(tableDom,"tableDom")
 
-        let fix = document.querySelector(".el-table__fixed");
-        console.log("fix", fix);
-        let tableDom0 = tableDom.firstElementChild.removeChild(fix);
-        tableDom.firstElementChild.appendChild(fix);
+        // let fix = document.querySelector(".el-table__fixed");
+        // console.log("fix", fix);
+        // let tableDom0 = tableDom.firstElementChild.removeChild(fix);
+        // tableDom.firstElementChild.appendChild(fix);
+        // // tableDom0.innerHTML.replace('border="0"', 'border="1"');
+        // tableDom0.innerHTML.replace('div', 'span');
 
-        console.log("tableDom0", tableDom0);
-        console.log("tableDom", tableDom0.innerHTML);
-        var excelBlob = new Blob([tableDom0.innerHTML], {
-          type: "application/vnd.ms-excel",
-        });
-        console.log("excelBlob", excelBlob);
-        var oa = document.createElement("a");
-        oa.href = URL.createObjectURL(excelBlob);
+        //   // console.log(tableDom0)
+        //   // console.log(typeof tableDom0.innerHTML)
 
-        let dateStr;
-        let y = this.base_date.getFullYear();
-        let m = this.base_date.getMonth() + 1;
-        let d = this.base_date.getDate();
+        // // tableDom0.style.borderCollapse = 'collapse';
+        // // tableDom0.style.border = '1px solid black';
 
-        dateStr = y + "年";
+        // // console.log("tableDom0", tableDom0);
+        // console.log("tableDom", tableDom0.innerHTML);
+        // var excelBlob = new Blob([tableDom0.innerHTML], {
+        //   type: "application/vnd.ms-excel",
+        // });
+        // // console.log("excelBlob", excelBlob);
+        // var oa = document.createElement("a");
+        // oa.href = URL.createObjectURL(excelBlob);
 
-        if (this.tabType === "month") {
-          dateStr += m + "月的用能报表.xls";
-        } else if (this.tabType === "day") {
-          dateStr += m + "月" + d + "日的用能报表.xls";
-        } else {
-          dateStr += "的用能报表.xls";
-        }
+        // let dateStr;
+        // let y = this.base_date.getFullYear();
+        // let m = this.base_date.getMonth() + 1;
+        // let d = this.base_date.getDate();
 
-        oa.download = dateStr;
-        oa.click();
+        // dateStr = y + "年";
+
+        // if (this.tabType === "month") {
+        //   dateStr += m + "月的用能报表.xls";
+        // } else if (this.tabType === "day") {
+        //   dateStr += m + "月" + d + "日的用能报表.xls";
+        // } else {
+        //   dateStr += "的用能报表.xls";
+        // }
+
+        // oa.download = dateStr;
+        // oa.click();
+
+
+
+
+        // const encodedUri = encodeURI(tableDom0);
+        // const link = document.createElement("a");
+        // link.setAttribute("href", encodedUri);
+        // link.setAttribute("download", dateStr);
+        // document.body.appendChild(link);
+        // link.click();
+
+  //       let html = document
+  //         .getElementById("tableId")
+  //         .outerHTML.replace(/<(\w+) (.+?)>/g, (m, p1) => `<${p1}>`)
+  //         .replace("<table>", "<table border>");
+  //       // vnd.ms-excel.numberformat:@; 格式化文本
+  //       // xmlns 和 head 中 用于显示网格线
+  //       html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+  // <head>
+  //   <xml>
+  //     <x:ExcelWorkbook>
+  //       <x:ExcelWorksheets>
+  //         <x:ExcelWorksheet>
+  //           <x:WorksheetOptions>
+  //             <x:Print><x:ValidPrinterInfo /></x:Print>
+  //           </x:WorksheetOptions>
+  //         </x:ExcelWorksheet>
+  //       </x:ExcelWorksheets>
+  //     </x:ExcelWorkbook>
+  //   </xml>
+  // </head>
+  // <style>
+  //   table{vnd.ms-excel.numberformat:@;}
+  // </style>
+  //   ${html}
+  // </html>`;
+
+  //       const excelBlob = new Blob([html], {
+  //         type: "application/vnd.ms-excel",
+  //       });
+  //       const a = document.createElement("a");
+  //       a.href = URL.createObjectURL(excelBlob);
+  //       a.download = "excel.xls";
+  //       a.click();
+  //       URL.revokeObjectURL(a.href); // 释放资源
       });
     },
     // 列合计
@@ -888,17 +959,18 @@ export default {
 .table {
   width: 100%;
   height: 45%;
-  ::v-deep .el-table__body-wrapper{
+  ::v-deep .el-table__body-wrapper {
     max-height: 27vh;
   }
-  ::v-deep .el-table__fixed,.el-table__fixed-right{
+  ::v-deep .el-table__fixed,
+  .el-table__fixed-right {
     max-height: 35vh;
   }
-  ::v-deep .el-table__fixed-body-wrapper{
+  ::v-deep .el-table__fixed-body-wrapper {
     max-height: 25.8vh;
   }
-  ::v-deep th.el-table__cell{
-    background: #004F8B;
+  ::v-deep th.el-table__cell {
+    background: #004f8b;
   }
 }
 // .el-table {
@@ -993,13 +1065,13 @@ export default {
   //   top: 0px;
   //   width: 17%;
   // }
-  .el-tab-pane{
+  .el-tab-pane {
     height: 100%;
     position: relative;
     left: 0;
     top: 0px;
     width: 17%;
-    border-right: solid 2px #054D83;
+    border-right: solid 2px #054d83;
     padding-right: 6px;
   }
 }

@@ -18,7 +18,7 @@ import './permission' // permission control
 import { Socket } from './utils/socket'
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
-import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree, numberMul, exportDomToXlsx } from "@/utils/ruoyi";
+import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree, numberMul } from "@/utils/ruoyi";
 // 分页组件
 import Pagination from "@/components/Pagination";
 // 自定义表格工具组件
@@ -86,7 +86,6 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.handleTree = handleTree
 Vue.prototype.socket = Socket
 Vue.prototype.numberMul = numberMul
-Vue.prototype.exportDomToXlsx = exportDomToXlsx
 
 
 // gis 

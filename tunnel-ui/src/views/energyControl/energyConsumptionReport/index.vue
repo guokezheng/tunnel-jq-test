@@ -219,10 +219,6 @@ import SiteTree from "@/views/components/siteTree";
 import departmentSelect3 from "@/views/components/department/index3.vue";
 import ClassificationTree from "@/views/components/classificationTree";
 import { getElectricityReportList } from "@/api/energy/api";
-
-// import FileSaver from 'file-saver';
-// import * as XLSX from 'xlsx';
-// import xlsxStyle from 'xlsx-style';
 export default {
   name: "Online",
   components: {
@@ -769,44 +765,43 @@ export default {
     //导出excel
     export_excel() {
       this.$nextTick(() => {
-        const dom = this.$refs.multipleTable.$el;
-        this.exportDomToXlsx(dom,'...分析表')
+      
         
-      //   this.$nextTick(() => {
-      //   let tableDom = document.getElementById("tableId");
+        this.$nextTick(() => {
+        let tableDom = document.getElementById("tableId");
 
-      //   let fix = document.querySelector(".el-table__fixed");
-      //   console.log("fix", fix);
-      //   let tableDom0 = tableDom.firstElementChild.removeChild(fix);
-      //   tableDom.firstElementChild.appendChild(fix);
+        let fix = document.querySelector(".el-table__fixed");
+        console.log("fix", fix);
+        let tableDom0 = tableDom.firstElementChild.removeChild(fix);
+        tableDom.firstElementChild.appendChild(fix);
 
-      //   console.log("tableDom0", tableDom0);
-      //   console.log("tableDom", tableDom0.innerHTML);
-      //   var excelBlob = new Blob([tableDom0.innerHTML], {
-      //     type: "application/vnd.ms-excel",
-      //   });
-      //   console.log("excelBlob", excelBlob);
-      //   var oa = document.createElement("a");
-      //   oa.href = URL.createObjectURL(excelBlob);
+        console.log("tableDom0", tableDom0);
+        console.log("tableDom", tableDom0.innerHTML);
+        var excelBlob = new Blob([tableDom0.innerHTML], {
+          type: "application/vnd.ms-excel",
+        });
+        console.log("excelBlob", excelBlob);
+        var oa = document.createElement("a");
+        oa.href = URL.createObjectURL(excelBlob);
 
-      //   let dateStr;
-      //   let y = this.base_date.getFullYear();
-      //   let m = this.base_date.getMonth() + 1;
-      //   let d = this.base_date.getDate();
+        let dateStr;
+        let y = this.base_date.getFullYear();
+        let m = this.base_date.getMonth() + 1;
+        let d = this.base_date.getDate();
 
-      //   dateStr = y + "年";
+        dateStr = y + "年";
 
-      //   if (this.tabType === "month") {
-      //     dateStr += m + "月的用能报表.xls";
-      //   } else if (this.tabType === "day") {
-      //     dateStr += m + "月" + d + "日的用能报表.xls";
-      //   } else {
-      //     dateStr += "的用能报表.xls";
-      //   }
+        if (this.tabType === "month") {
+          dateStr += m + "月的用能报表.xls";
+        } else if (this.tabType === "day") {
+          dateStr += m + "月" + d + "日的用能报表.xls";
+        } else {
+          dateStr += "的用能报表.xls";
+        }
 
-      //   oa.download = dateStr;
-      //   oa.click();
-      // });
+        oa.download = dateStr;
+        oa.click();
+      });
 
       });
     },

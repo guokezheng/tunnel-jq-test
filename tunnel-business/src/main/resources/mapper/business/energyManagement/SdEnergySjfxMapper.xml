@@ -53,6 +53,17 @@
         </foreach>
     </select>
 
+    <select id="getEnergySiteList" parameterType="EnergySjfx" resultMap="EnergySiteResult">
+        select * from energy_site  where
+             statistics_type = #{statisticsType}
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and create_time &lt;= #{params.endTime}
+        </if>
+    </select>
+
 
     <insert id="insertEnergySiteData" parameterType="java.util.List">
         insert  into energy_site
@@ -367,5 +378,18 @@
           AND DATE_FORMAT( ei.create_time, '%Y-%m-%d' ) = DATE_FORMAT( '2023-07-12', '%Y-%m-%d' )
           AND ei.statistics_type = '1'
           AND ei.tunnel_id = #{tunnelId}
+    </select>
+
+    <select id="selectMonthValueSum" parameterType="EnergySjfx" resultMap="EnergySiteResult">
+        select SUM(ene.energy_value) as energy_value , id from energy_classification ene WHERE
+        ene.statistics_type  = 1 and
+        ene.classification_code =49
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and create_time &lt;= #{params.endTime}
+        </if>
+        GROUP BY ene.statistics_type
     </select>
 </mapper>

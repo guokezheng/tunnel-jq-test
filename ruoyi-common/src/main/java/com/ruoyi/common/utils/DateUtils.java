@@ -3,6 +3,7 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -54,6 +55,43 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     public static final String getTime()
     {
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS);
+    }
+    //获取月初时间
+    public static final String getBeginningTime()
+    {
+        // 获取当前时间
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        // 获取月初时间
+        LocalDateTime monthStart = currentTime.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+
+        // 定义时间格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // 格式化时间为指定格式
+        String formattedTime = monthStart.format(formatter);
+
+        // 打印格式化后的时间
+        System.out.println(formattedTime);
+        return formattedTime;
+    }
+    //当前时间减一个月
+    public static final String getsubtractOneTime(String dateStr)
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // 解析日期字符串为LocalDateTime对象
+        LocalDateTime dateTime = LocalDateTime.parse(dateStr, formatter);
+
+        // 在给定日期上加一个月
+        LocalDateTime oneMonthLater = dateTime.minusMonths(1);
+
+        // 格式化时间为指定格式
+        String formattedTime = oneMonthLater.format(formatter);
+
+        // 打印格式化后的时间
+        System.out.println(formattedTime);
+        return formattedTime;
     }
 
     public static final String dateTimeNow()

@@ -3,6 +3,7 @@ package com.tunnel.business.service.energyManagement;
 import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EnergyAnalysisElectricityBillService {
 
@@ -12,4 +13,10 @@ public interface EnergyAnalysisElectricityBillService {
      * @return
      */
     public List<EnergyAnalysisElectricityBill> selectEnergyAnalysisElectricityBillList(EnergyAnalysisElectricityBill energyAnalysisElectricityBill);
+
+    /**
+     * 计算用能总电量
+     * @return
+     */
+    public Map selectEnergyValueSum();
 }

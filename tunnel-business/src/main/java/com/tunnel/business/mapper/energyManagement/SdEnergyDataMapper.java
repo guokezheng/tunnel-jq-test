@@ -22,6 +22,13 @@ public interface SdEnergyDataMapper
     List<EnergySjfx> getEnergySiteData(@Param("list") List<EnergySjfx> list);
 
     /**
+     * 查询昨天今天实时用电量
+     * @param energySjfx 能源分析电力账单实体
+     * @return
+     */
+    List<EnergySjfx> getEnergySiteList(EnergySjfx energySjfx);
+
+    /**
      *批量插入
      * @param list
      * @return
@@ -112,4 +119,11 @@ public interface SdEnergyDataMapper
      * @return
      */
     EnergySjfx getFengOrZhao(EnergySjfx energySjfx);
+
+    /**
+     * 计算本月城市用电总量
+     * @param energySjfx
+     * @return
+     */
+    List<EnergySjfx> selectMonthValueSum(EnergySjfx energySjfx);
 }

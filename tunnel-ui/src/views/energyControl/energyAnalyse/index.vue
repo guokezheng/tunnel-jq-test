@@ -3,6 +3,7 @@
     <el-col :span="16" >
       <el-row :gutter="24" style="clear:both;">
         <el-col :span="24">
+<!--          <el-button type="info" size="small" icon="el-icon-location-outline"@click="ddddd" class="tunnelNameButton">eee</el-button>-->
           <div  class="energyAnalyse" ref="energyAnalyse" style="width: 99%; height: 400px;border: 8px solid #004375;"></div>
         </el-col>
       </el-row>
@@ -26,14 +27,14 @@
                       <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
                     </div>
 
-                    <div style="width:60% ;float:left; margin-top: 10%">
-                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <div style="width:69% ;float:left; margin-top: 10%">
+                      <span style="color: #FFFFFF;font-size: 15px;">本月总电费 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthElectricity"> 213214</span>
                       <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                     </div>
                     <div style="width:60% ;float:left;">
-                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                      <span style="color: #FFFFFF;font-size: 15px;"  >对比同期 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthComparison"> 213214</span>
                       <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                     </div>
                   </div>
@@ -47,62 +48,62 @@
                     <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
                   </div>
 
-                  <div style="width:60% ;float:left; margin-top: 10%">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  <div style="width:69% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月城市电费 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityMonthElectricity"> 213214</span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;" >MWH</span>
                   </div>
                   <div style="width:60% ;float:left;">
                     <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"v-html="cityMonthComparison"> 213214</span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                   </div>
                 </div>
               </el-col>
             </el-row>
-            <el-row style="margin-top: 3px">
-              <el-col :span="12">
-                <div >
+<!--            <el-row style="margin-top: 3px">-->
+<!--              <el-col :span="12">-->
+<!--                <div >-->
 
-                  <div style="height: 100px;width: 97%; background-color:#1B5480;">
-                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
-                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
-                    </div>
+<!--                  <div style="height: 100px;width: 97%; background-color:#1B5480;">-->
+<!--                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
+<!--                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">-->
+<!--                    </div>-->
 
-                    <div style="width:60% ;float:left; margin-top: 10%">
-                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                    </div>
-                    <div style="width:60% ;float:left;">
-                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                    </div>
-                  </div>
+<!--                    <div style="width:60% ;float:left; margin-top: 10%">-->
+<!--                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>-->
+<!--                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
+<!--                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
+<!--                    </div>-->
+<!--                    <div style="width:60% ;float:left;">-->
+<!--                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>-->
+<!--                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
+<!--                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
+<!--                    </div>-->
+<!--                  </div>-->
 
-                </div>
+<!--                </div>-->
 
-              </el-col>
-              <el-col :span="12">
-                <div style="height: 100px;width: 97%; background-color:#1B5480;">
-                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
-                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
-                  </div>
+<!--              </el-col>-->
+<!--              <el-col :span="12">-->
+<!--                <div style="height: 100px;width: 97%; background-color:#1B5480;">-->
+<!--                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
+<!--                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">-->
+<!--                  </div>-->
 
-                  <div style="width:60% ;float:left; margin-top: 10%">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                  </div>
-                  <div style="width:60% ;float:left;">
-                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                  </div>
-                </div>
-              </el-col>
-            </el-row>
+<!--                  <div style="width:60% ;float:left; margin-top: 10%">-->
+<!--                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>-->
+<!--                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
+<!--                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
+<!--                  </div>-->
+<!--                  <div style="width:60% ;float:left;">-->
+<!--                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>-->
+<!--                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
+<!--                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </el-col>-->
+<!--            </el-row>-->
           </el-col>
         </el-col>
       </el-row>
@@ -202,7 +203,8 @@
 
 <script>
 import * as echarts from "echarts";
-import {selectEnergyAnalysisElectricityBillList} from "@/api/energy/api";
+import {selectEnergyAnalysisElectricityBillList,getEnergySiteList,getAccumulated} from "@/api/energy/api";
+import {listList} from "@/api/electromechanicalPatrol/faultManage/fault";
 
 export default {
   name: "energyAnalyse",
@@ -218,6 +220,14 @@ export default {
       yDataEnergyOne1:[],
       yDataEnergyOne2:[],
       energyAnalyseTwo:null,
+      //本月电费
+      monthElectricity:"",
+      //对比同期
+      monthComparison:"",
+      //城市本月电费
+      cityMonthElectricity:"",
+      //城市对比同期
+      cityMonthComparison:"",
     }
   },
   mounted() {
@@ -225,35 +235,60 @@ export default {
   created(){
     this.getEchartsData()
     this.getEchartsDataTwo()
+    //累计数据计算
+    this.getAccumulatedData()
   },
   methods:{
+    ddddd(){
+      this.getEchartsData()
+      this.getEchartsDataTwo()
+      //累计数据计算
+      this.getAccumulatedData()
+    },
     //获取当日用电的数据
-    getEchartsData() {
+    async getEchartsData() {
       debugger
       //清空上次数据
       this.XDataEnergy = []
       this.yDataEnergy = []
       this.yDataEnergy1 = []
       this.yDataEnergy2 = []
+      let queryParams = {}
+      //时间
+      let dateRange = []
+      queryParams.statisticsType = 0
+      console.log(this.getCurrentDateTime())
+      debugger
+      // dateRange.push("2023-08-16 00:00:00")
+      // dateRange.push("2023-08-16 23:59:59")
+      dateRange.push(this.getCurrentDateTime().endTime)
+      dateRange.push(this.getCurrentDateTime().startTime)
+      await getEnergySiteList(this.addDateRange(queryParams, dateRange)).then(
+        (response) => {
+          if(response.code==200){
+            let endTime = this.getCurrentDateTime().endTime
+            const endTimeDatePart = endTime.split(' ')[0];
+            let startTime = this.getCurrentDateTime().startTime
+            const startTimeDatePart = startTime.split(' ')[0];
+            for (let i = 0; i < response.rows.length; i++) {
+              if( response.rows[i].createTime.includes(endTimeDatePart)){
+                let  createTime = response.rows[i].createTime
+                const createTimeDatePart = createTime.split(' ')[1];
+                this.XDataEnergy.push(createTimeDatePart)
+                this.yDataEnergy.push(response.rows[i].energyValue)
+              }
+              if( response.rows[i].createTime.includes("2023-08-16")){
+                this.yDataEnergy1.push(response.rows[i].energyValue)
+              }
+            }
+          }
+        }
+      );
 
-
-      // this.XDataEnergyOne = []
-      // // y  时间
-      // this.yDataEnergyOne = []
-      // // y  时间
-      // this.yDataEnergyOne1 = []
-      // //y  时间
-      // this.yDataEnergyOne2 = []
-      //刷新数据
-      // if(type=="refresh"){
-      //   this.lightChangeEvent()
-      //   this.lightChangeEventWei()
-      // }
-
-      this.XDataEnergy = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-      this.yDataEnergy =[21,32,3,43,2,43,75,23,723,72,723,71,23,23,2,23,34,23,23,62,24,32,32,54,136,34]
-      this.yDataEnergy1 =[21,32,3,43,2,43,75,23,723,72,723,71,23,23,2,23,34,23,23,62,24,32,32,54,136,34]
-      this.yDataEnergy2 =[21,34,56,32,2,76,78,87,723,72,33,71,32,23,2,23,34,23,23,62,24,32,32,54,136,34]
+      // this.XDataEnergy = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+      // this.yDataEnergy =[21,32,3,43,2,43,75,23,723,72,723,71,23,23,2,23,34,23,23,62,24,32,32,54,136,34]
+      // this.yDataEnergy1 =[21,32,3,43,2,43,75,23,723,72,723,71,23,23,2,23,34,23,23,62,24,32,32,54,136,34]
+      // this.yDataEnergy2 =[21,34,56,32,2,76,78,87,723,72,33,71,32,23,2,23,34,23,23,62,24,32,32,54,136,34]
 
         setTimeout(() => {
           this.$nextTick(() => {
@@ -286,7 +321,8 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["今日用电", "昨日用电", "电费"],
+            // data: ["今日用电", "昨日用电", "电费"],
+            data: ["今日用电", "昨日用电"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -590,6 +626,48 @@ export default {
         });
       });
     },
+    formatDateTime(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    },
+    getCurrentDateTime() {
+      const currentDate = new Date();
+      const formattedDate = this.formatDateTime(currentDate);
+
+      const startTime = `${formattedDate} 23:59:59`;
+
+      // 获取当前日期的下一天
+      const nextDate = new Date(currentDate);
+      nextDate.setDate(nextDate.getDate() - 3);
+      const formattedNextDate =  this.formatDateTime(nextDate);
+      const endTime = `${formattedNextDate} 00:00:00`;
+
+      return { startTime, endTime };
+    },
+    async getAccumulatedData(){
+      await getAccumulated().then(
+        (response) => {
+          if(response.code==200){
+            let num = 0
+            for (let key in  response.data) {
+              if(num==0){
+                this.monthElectricity =key
+                this.monthComparison = response.data[key]
+                num = num+1
+              }else{
+                this.cityMonthElectricity =key
+                this.cityMonthComparison = response.data[key]
+              }
+            }
+
+          }
+        }
+      );
+    }
+
   }
 }
 </script>

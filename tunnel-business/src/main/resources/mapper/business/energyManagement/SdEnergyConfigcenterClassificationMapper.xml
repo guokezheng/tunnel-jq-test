@@ -79,10 +79,16 @@
         </foreach>
     </update>
 
-
-
-
-
-
-
+    <select id="getFicationMap" parameterType="java.util.List" resultType="hashmap">
+        SELECT
+            ecc.classification_name AS name,
+            ecc.classification_code AS id
+        FROM
+            energy_configcenter_classification ecc
+        WHERE
+            ecc.classification_code in
+        <foreach collection="codeList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

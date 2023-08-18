@@ -1766,7 +1766,16 @@ public class SdEventServiceImpl implements ISdEventService {
                 if(eqTypeId == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || eqTypeId == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()){
                     List<Map<String, Object>> linkList = sdDevicesMapper.selectDevices(item.getEquipments(), Integer.valueOf(item.getState()) > 0 ? "1" : "2");
                     linkList.stream().forEach(tem -> {
-                        tem.put("stateName",Integer.valueOf(item.getState()) > 0 ? tem.get("stateName") + "," + "亮度值：" + item.getState() + "%" : tem.get("stateName"));
+                        String mes = null;
+                        if(Integer.valueOf(item.getState()) > 0 && item.getStateNum() != null && !"".equals(item.getStateNum())){
+                            mes = tem.get("stateName") + "," + "亮度值：" + item.getStateNum() + "%";
+                        }else if(Integer.valueOf(item.getState()) > 0 && item.getStateNum() == null || "".equals(item.getStateNum())){
+                            mes = tem.get("stateName") + "," + "亮度值：" + item.getState() + "%";
+                        }else if(Integer.valueOf(item.getState()) == 0){
+                            mes = tem.get("stateName").toString();
+                        }
+                        //String stateData = Integer.valueOf(item.getState()) > 0 ? tem.get("stateName") + "," + "亮度值：" + item.getState() + "%" : tem.get("stateName").toString();
+                        tem.put("stateName",mes);
                     });
                     maps = linkList;
                 }else {

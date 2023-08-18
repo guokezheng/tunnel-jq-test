@@ -5,6 +5,7 @@ import com.tunnel.business.domain.energyManagement.EnergyConfigcenterItemized;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类表Mapper接口
@@ -28,4 +29,11 @@ public interface SdEnergyConfigcenterItemizedMapper
     List<EnergyConfigcenterItemized> selectItemizedList(EnergyConfigcenterItemized itemized);
 
     void updateEnergyItemizedData(@Param("list")List<EnergyConfigcenterItemized> list);
+
+    /**
+     * 查询分项数据
+     * @param codeList
+     * @return
+     */
+    List<Map<String, Object>> getItemizedMap(@Param("codeList") List<String> codeList);
 }

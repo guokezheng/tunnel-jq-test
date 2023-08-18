@@ -5,6 +5,7 @@ import com.tunnel.business.domain.energyManagement.EnergyConfigcenterClassificat
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类表Mapper接口
@@ -39,4 +40,11 @@ public interface SdEnergyConfigcenterClassificationMapper
      * @return
      */
     int updateEnergyTypeData(List<EnergyConfigcenterClassification> list);
+
+    /**
+     * 查询分类数据
+     * @param codeList
+     * @return
+     */
+    List<Map<String, Object>> getFicationMap(@Param("codeList") List<String>codeList);
 }

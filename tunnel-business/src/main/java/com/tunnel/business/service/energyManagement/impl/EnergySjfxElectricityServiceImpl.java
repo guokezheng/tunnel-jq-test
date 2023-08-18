@@ -2,11 +2,14 @@ package com.tunnel.business.service.energyManagement.impl;
 
 
 import com.tunnel.business.datacenter.domain.enumeration.StatisticTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.datacenter.util.ArithUtil;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.energyManagement.*;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.energyManagement.EnergySjfxElectricityMapper;
+import com.tunnel.business.mapper.energyManagement.SdEnergyConfigcenterClassificationMapper;
+import com.tunnel.business.mapper.energyManagement.SdEnergyConfigcenterItemizedMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import com.tunnel.business.utils.util.DateUtil;
@@ -35,6 +38,12 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
     @Autowired
     private SdTunnelsMapper sdTunnelsMapper;
 
+    @Autowired
+    private SdEnergyConfigcenterItemizedMapper itemizedMapper;
+
+    @Autowired
+    private SdEnergyConfigcenterClassificationMapper classificationMapper;
+
 
     /**
      * 获取回路用能报表
@@ -57,6 +66,8 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         List<ElectricityData> newlist = new ArrayList<>();
         List<List<ElectricityData>> resultList = new ArrayList<>();
         List<String> deptCodes = null;
+        //初始化数据
+        List<Map<String, Object>> infoList = new ArrayList<>();
         if(deptCode!=null){
             // 查询deptCode所有子节点
             List<SdTunnels>depts = sdTunnelsMapper.getChildCodeList(deptCode);
@@ -69,6 +80,18 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     .forEach((model, list) -> {
                         resultList.add(list);
                     });
+            if(energyList.size() == 0){
+                //储存隧道数据
+                List<Map<String, Object>> list = new ArrayList<>();
+                List<String> collect = codeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+                collect.stream().forEach(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id",item);
+                    map.put("name",TunnelEnum.getValue(item));
+                    list.add(map);
+                });
+                infoList = list;
+            }
         }else if ("3".equals(tabType)) { // 分项
 
             energyList = mapper.getItemizedEnergyByDateType(codeList, statisticType, baseTime, deptCodes);
@@ -76,6 +99,10 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     .forEach((model, list) -> {
                         resultList.add(list);
                     });
+            if(energyList.size() == 0){
+                //分项数据
+                infoList = itemizedMapper.getItemizedMap(codeList);
+            }
 
         } else if ("4".equals(tabType)) { // 分类
 
@@ -84,11 +111,18 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     .forEach((model, list) -> {
                         resultList.add(list);
                     });
-
+            if(energyList.size() == 0){
+                infoList = classificationMapper.getFicationMap(codeList);
+            }
         } else {
             throw new Exception("tabType类型错误");
         }
-
+        if(resultList.size() == 0){
+            List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, infoList);
+            for(List<ElectricityData> item : lists){
+                resultList.add(item);
+            }
+        }
         return resultList;
     }
 
@@ -129,7 +163,31 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         }
         List <EnergyDayparting> energyDataList =  mapper.getEnergyDayparting(deptCodeList,baseTime,statisticType);
         if (energyDataList.isEmpty()) {
-            return new ArrayList<>();
+            List<String> collect = deptCodeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+            for(String item : collect){
+                SplitTimeDto dto = new SplitTimeDto();
+                dto.setCode(item);
+                dto.setName(TunnelEnum.getValue(item));
+                dto.setjPrice(0.0);
+                dto.setpPrice(0.0);
+                dto.setsPrice(0.0);
+                dto.setgPrice(0.0);
+                dto.setfPrice(0.0);
+                dto.setSumGPrice(0.0);
+                dto.setSumJPrice(0.0);
+                dto.setSumPPrice(0.0);
+                dto.setSumSPrice(0.0);
+                dto.setSumFPrice(0.0);
+                dto.setfValue(0.0);
+                dto.setgValue(0.0);
+                dto.setjValue(0.0);
+                dto.setpValue(0.0);
+                dto.setsValue(0.0);
+                dto.setSumValue(0.0);
+                dto.setSumPrice(0.0);
+                result.add(dto);
+            }
+            return result;
         }
         HashMap<String, Double> meanUnitPriceOfYear = new HashMap<>();
         List<EnergyConfigcenterElectricityPrice> priceList = new ArrayList<>();
@@ -243,8 +301,6 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         List<Map<String, Object>> result = new ArrayList<>();
         //每月天数、每年月份
         List<String> dateTimeList = getDateTimeList(baseTime, type);
-        //数据
-        Map<String, Object> map = new HashMap<>();
         //区分月报年报
         if(type.equals(StatisticTypeEnum.YUEBAO.getName())){
             statisticType = StatisticTypeEnum.YUEBAO.getCode();
@@ -254,7 +310,30 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         //查询用电量
         List <EnergyAnalysisElectricityBill> energyDataList =  mapper.getElectricityBillByDept(deptCodeList,baseTime,statisticType);
         if (energyDataList.isEmpty()) {
-            return new ArrayList<>();
+            List<String> collect = deptCodeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+            List<Map<String, Object>> list = new ArrayList<>();
+            collect.stream().forEach(item -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id",item);
+                map.put("name",TunnelEnum.getValue(item));
+                list.add(map);
+            });
+            List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, list);
+            List<List<Map<String, Object>>> infoList = new ArrayList<>();
+            for(int i = 0; i < lists.size(); i++){
+                List<ElectricityData> list1 = lists.get(i);
+                List<Map<String, Object>> mapList = new ArrayList<>();
+                list1.stream().forEach(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id",item.getId());
+                    map.put("name",item.getName());
+                    map.put("rt",item.getRt());
+                    map.put("value",item.getValue());
+                    mapList.add(map);
+                });
+                infoList.add(mapList);
+            }
+            return infoList;
         }
         //获取用电量
         List<EnergyConfigcenterElectricityPrice> priceList = selectPrice(type,baseTime);
@@ -378,7 +457,15 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         calendar.setTime(time);
         List<String> result = new ArrayList<>();
-         if ("month".equals(type)) {
+        if ("day".equals(type)) {
+            for (int i = 0; i < 24; i++) {
+                calendar.set(Calendar.HOUR_OF_DAY, i);
+                result.add(DateUtil.dateToStr(calendar.getTime(), "yyyy-MM-dd HH"));
+            }
+            /*calendar.add(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            result.add(DateUtil.dateToStr(calendar.getTime(), "yyyy-MM-dd HH"));*/
+        }else if ("month".equals(type)) {
             int maxDay = DateUtil.getMaxDayOfMonth(time);
             for (int i = 1; i <= maxDay; i++) {
                 calendar.set(Calendar.DAY_OF_MONTH, i);
@@ -430,5 +517,37 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         return p.getUnitPrice2().doubleValue() * cof + p.getUnitPrice3().doubleValue() * cof + p.getUnitPrice4().doubleValue() + p.getUnitPrice5().doubleValue() + p.getUnitPrice6().doubleValue();
     }
 
-
+    /**
+     * 能耗报表初始化表格展示
+     * @param statisticType
+     * @param baseTime
+     * @param codeList
+     * @return
+     */
+    public List<List<ElectricityData>> setDataInfo(Integer statisticType, Date baseTime, List<Map<String, Object>> codeList){
+        List<List<ElectricityData>> dataList = new ArrayList<>();
+        String type = "";
+        if(statisticType == 0){
+            type = "day";
+        }else if(statisticType == 1){
+            type = "month";
+        }else {
+            type = "year";
+        }
+        //获取时间
+        List<String> dateData = getDateTimeList(baseTime, type);
+        for(Map<String, Object> item : codeList){
+            List<ElectricityData> list = new ArrayList<>();
+            for(String date : dateData){
+                ElectricityData electricityData = new ElectricityData();
+                electricityData.setId(item.get("id").toString());
+                electricityData.setRt(date);
+                electricityData.setName(item.get("name").toString());
+                electricityData.setValue(0.0);
+                list.add(electricityData);
+            }
+            dataList.add(list);
+        }
+        return dataList;
+    }
 }

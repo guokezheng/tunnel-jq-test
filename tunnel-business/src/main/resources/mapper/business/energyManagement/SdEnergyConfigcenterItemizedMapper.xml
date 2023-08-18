@@ -70,7 +70,16 @@
         </foreach>
     </update>
 
-
-
-
+    <select id="getItemizedMap" parameterType="java.util.List" resultType="hashmap">
+        SELECT
+            eci.itemized_name AS name,
+            eci.itemized_code AS id
+        FROM
+            energy_configcenter_itemized eci
+        WHERE
+            eci.itemized_code in
+            <foreach collection="codeList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </select>
 </mapper>

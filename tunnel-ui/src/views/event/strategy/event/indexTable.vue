@@ -1286,7 +1286,7 @@ export default {
     },
     /** 查询控制策略列表 */
     getList() {
-      console.log( this.queryParams )
+      console.log( this.queryParams,"this.queryParams" )
       this.loading = true;
       this.queryParams.strategyGroup = this.activeName == 'one' ? '1' : '2'
       listStrategy(this.queryParams).then((response) => {

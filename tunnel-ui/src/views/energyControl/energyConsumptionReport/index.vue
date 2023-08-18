@@ -220,9 +220,9 @@ import departmentSelect3 from "@/views/components/department/index3.vue";
 import ClassificationTree from "@/views/components/classificationTree";
 import { getElectricityReportList } from "@/api/energy/api";
 
-import FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
-import xlsxStyle from 'xlsx-style';
+// import FileSaver from 'file-saver';
+// import * as XLSX from 'xlsx';
+// import xlsxStyle from 'xlsx-style';
 export default {
   name: "Online",
   components: {
@@ -772,93 +772,42 @@ export default {
         const dom = this.$refs.multipleTable.$el;
         this.exportDomToXlsx(dom,'...分析表')
         
-        // let tableDom = document.getElementById("tableId");
-        // console.log(tableDom,"tableDom")
+      //   this.$nextTick(() => {
+      //   let tableDom = document.getElementById("tableId");
 
-        // let fix = document.querySelector(".el-table__fixed");
-        // console.log("fix", fix);
-        // let tableDom0 = tableDom.firstElementChild.removeChild(fix);
-        // tableDom.firstElementChild.appendChild(fix);
-        // // tableDom0.innerHTML.replace('border="0"', 'border="1"');
-        // tableDom0.innerHTML.replace('div', 'span');
+      //   let fix = document.querySelector(".el-table__fixed");
+      //   console.log("fix", fix);
+      //   let tableDom0 = tableDom.firstElementChild.removeChild(fix);
+      //   tableDom.firstElementChild.appendChild(fix);
 
-        //   // console.log(tableDom0)
-        //   // console.log(typeof tableDom0.innerHTML)
+      //   console.log("tableDom0", tableDom0);
+      //   console.log("tableDom", tableDom0.innerHTML);
+      //   var excelBlob = new Blob([tableDom0.innerHTML], {
+      //     type: "application/vnd.ms-excel",
+      //   });
+      //   console.log("excelBlob", excelBlob);
+      //   var oa = document.createElement("a");
+      //   oa.href = URL.createObjectURL(excelBlob);
 
-        // // tableDom0.style.borderCollapse = 'collapse';
-        // // tableDom0.style.border = '1px solid black';
+      //   let dateStr;
+      //   let y = this.base_date.getFullYear();
+      //   let m = this.base_date.getMonth() + 1;
+      //   let d = this.base_date.getDate();
 
-        // // console.log("tableDom0", tableDom0);
-        // console.log("tableDom", tableDom0.innerHTML);
-        // var excelBlob = new Blob([tableDom0.innerHTML], {
-        //   type: "application/vnd.ms-excel",
-        // });
-        // // console.log("excelBlob", excelBlob);
-        // var oa = document.createElement("a");
-        // oa.href = URL.createObjectURL(excelBlob);
+      //   dateStr = y + "年";
 
-        // let dateStr;
-        // let y = this.base_date.getFullYear();
-        // let m = this.base_date.getMonth() + 1;
-        // let d = this.base_date.getDate();
+      //   if (this.tabType === "month") {
+      //     dateStr += m + "月的用能报表.xls";
+      //   } else if (this.tabType === "day") {
+      //     dateStr += m + "月" + d + "日的用能报表.xls";
+      //   } else {
+      //     dateStr += "的用能报表.xls";
+      //   }
 
-        // dateStr = y + "年";
+      //   oa.download = dateStr;
+      //   oa.click();
+      // });
 
-        // if (this.tabType === "month") {
-        //   dateStr += m + "月的用能报表.xls";
-        // } else if (this.tabType === "day") {
-        //   dateStr += m + "月" + d + "日的用能报表.xls";
-        // } else {
-        //   dateStr += "的用能报表.xls";
-        // }
-
-        // oa.download = dateStr;
-        // oa.click();
-
-
-
-
-        // const encodedUri = encodeURI(tableDom0);
-        // const link = document.createElement("a");
-        // link.setAttribute("href", encodedUri);
-        // link.setAttribute("download", dateStr);
-        // document.body.appendChild(link);
-        // link.click();
-
-  //       let html = document
-  //         .getElementById("tableId")
-  //         .outerHTML.replace(/<(\w+) (.+?)>/g, (m, p1) => `<${p1}>`)
-  //         .replace("<table>", "<table border>");
-  //       // vnd.ms-excel.numberformat:@; 格式化文本
-  //       // xmlns 和 head 中 用于显示网格线
-  //       html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
-  // <head>
-  //   <xml>
-  //     <x:ExcelWorkbook>
-  //       <x:ExcelWorksheets>
-  //         <x:ExcelWorksheet>
-  //           <x:WorksheetOptions>
-  //             <x:Print><x:ValidPrinterInfo /></x:Print>
-  //           </x:WorksheetOptions>
-  //         </x:ExcelWorksheet>
-  //       </x:ExcelWorksheets>
-  //     </x:ExcelWorkbook>
-  //   </xml>
-  // </head>
-  // <style>
-  //   table{vnd.ms-excel.numberformat:@;}
-  // </style>
-  //   ${html}
-  // </html>`;
-
-  //       const excelBlob = new Blob([html], {
-  //         type: "application/vnd.ms-excel",
-  //       });
-  //       const a = document.createElement("a");
-  //       a.href = URL.createObjectURL(excelBlob);
-  //       a.download = "excel.xls";
-  //       a.click();
-  //       URL.revokeObjectURL(a.href); // 释放资源
       });
     },
     // 列合计

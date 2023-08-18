@@ -2,8 +2,6 @@
 <template>
   <div
     class="app-container"
-    v-loading.fullscreen.lock="loading"
-    element-loading-background="rgba(255, 255, 255, 0.3)"
   >
     <el-row :gutter="20">
       <!-- 左侧下拉 -->
@@ -99,7 +97,7 @@ export default {
         },
       },
       loopIds: [], //选中的站点列表id
-      loading: false, // 遮罩层
+      // loading: false, // 遮罩层
       myChart: "",
       tabType: "day",
       base_date: new Date(), //选择的日期 默认当前时间
@@ -143,7 +141,7 @@ export default {
         });
         return;
       }
-      this.loading = true
+      // this.loading = true
       // 参数
       this.queryParams.deptCodeList = this.loopIds
         .filter((e) => e != null)
@@ -155,9 +153,9 @@ export default {
       if (res.code === 200) {
         console.log(res,"echarts数据")
         this.linksData = res.data
-        this.loading = false
+        // this.loading = false
       }else{
-        this.loading = false
+        // this.loading = false
       }
 
       // 获取namesData

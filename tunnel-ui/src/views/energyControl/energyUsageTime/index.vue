@@ -598,9 +598,15 @@ export default {
     //导出excel
     export_excel() {
       this.$nextTick(() => {
-        let tableDom0 = document.getElementById("tableid");
+        let tableDom = document.getElementById("tableid");
+        let fix = document.querySelector(".el-table__fixed");
+        let tableDom0 = tableDom.firstElementChild.removeChild(fix);
+        tableDom.firstElementChild.appendChild(fix);
 
-        var excelBlob = new Blob([tableDom0.innerHTML], {
+        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g,"border='1'")
+        console.log(tableDom0,"tableDom0")
+
+        var excelBlob = new Blob([tableDom0], {
           type: "application/vnd.ms-excel",
         });
         console.log("excelBlob", excelBlob);

@@ -399,13 +399,12 @@ export default {
         let tableDom = document.getElementById("tableId");
 
         let fix = document.querySelector(".el-table__fixed");
-        // console.log('fix', fix)
         let tableDom0 = tableDom.firstElementChild.removeChild(fix);
         tableDom.firstElementChild.appendChild(fix);
+        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g,"border='1'")
 
-        // console.log('tableDom0', tableDom0)
-        // console.log('tableDom', tableDom0.innerHTML)
-        var excelBlob = new Blob([tableDom0.innerHTML], {
+
+        var excelBlob = new Blob([tableDom0], {
           type: "application/vnd.ms-excel",
         });
         // console.log('excelBlob', excelBlob)

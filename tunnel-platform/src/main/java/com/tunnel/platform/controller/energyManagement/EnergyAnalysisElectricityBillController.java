@@ -2,6 +2,7 @@ package com.tunnel.platform.controller.energyManagement;
 
 
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill;
 import com.tunnel.business.service.energyManagement.EnergyAnalysisElectricityBillService;
@@ -37,6 +38,15 @@ public class EnergyAnalysisElectricityBillController extends BaseController {
     public TableDataInfo selectEnergyAnalysisElectricityBillList(EnergyAnalysisElectricityBill energyAnalysisElectricityBill){
         startPage();
         return getDataTable(energyAnalysisElectricity.selectEnergyAnalysisElectricityBillList(energyAnalysisElectricityBill));
+    }
+
+    /**
+     * 计算用能总电量
+     * @return
+     */
+    @GetMapping("/selectEnergyValueSum")
+    public Result selectEnergyValueSum(){
+        return Result.success(energyAnalysisElectricity.selectEnergyValueSum());
     }
 
 }

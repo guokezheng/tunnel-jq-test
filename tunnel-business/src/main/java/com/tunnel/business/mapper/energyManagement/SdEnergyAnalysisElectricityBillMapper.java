@@ -37,6 +37,12 @@ public interface SdEnergyAnalysisElectricityBillMapper
     public List<EnergyAnalysisElectricityBill> selectEnergyAnalysisTimeFrame(EnergyAnalysisElectricityBill energyAnalysisElectricityBill);
 
     /**
+     * 计算用能总电量
+     * @return 能源分析电力账单集合
+     */
+    public EnergyAnalysisElectricityBill selectEnergyValueSum(EnergyAnalysisElectricityBill energyAnalysisElectricityBill);
+
+    /**
      * 新增能源分析电力账单
      * 
      * @param energyAnalysisElectricityBill 能源分析电力账单

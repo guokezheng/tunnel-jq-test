@@ -36,6 +36,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         ORDER BY statistics_date  ASC ,  split_time_type ASC
     </select>
+
+    <select id="selectEnergyValueSum" parameterType="EnergyAnalysisElectricityBill" resultMap="EnergyAnalysisElectricityBillResult">
+        select SUM(value) as value , id from energy_analysis_electricity_bill ene WHERE
+        ene.statistics_type =2
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and statistics_date &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and statistics_date &lt;= #{params.endTime}
+        </if>
+        GROUP BY ene.statistics_type
+    </select>
     
     <select id="selectEnergyAnalysisElectricityBillById" parameterType="Long" resultMap="EnergyAnalysisElectricityBillResult">
         <include refid="selectEnergyAnalysisElectricityBillVo"/>

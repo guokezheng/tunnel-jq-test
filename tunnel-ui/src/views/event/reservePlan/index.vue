@@ -1290,6 +1290,9 @@ export default {
   },
   methods: {
     handleChangeControl(num){
+      this.planTypeData = []
+      this.queryParams.planTypeId = ''
+      this.reservePlanDrawForm.planTypeId = ''
       this.$forceUpdate();
       //查询事件类型
       let prevControlType = {
@@ -2294,10 +2297,12 @@ export default {
         this.planCategory = response.data;
       });
       getPlan(id).then((response) => {
+        console.log(response,"response修改弹窗")
         this.reservePlanDrawForm = response.data;
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
         this.reservePlanDrawForm.category = response.data.category;
+
         if (
           this.reservePlanDrawForm.strategyId != -1 &&
           this.reservePlanDrawForm.strategyId != "-1" &&

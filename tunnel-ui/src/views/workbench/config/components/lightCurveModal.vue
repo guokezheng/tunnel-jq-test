@@ -52,7 +52,22 @@
               height="300px"
             >
               <el-row :gutter="24" style="clear:both; ">
-                <el-col :span="12">
+                <el-col :span="6">
+                  <el-form-item label="启用" align="center" prop="schedulerTime"  class="el-form-item-data-type">
+                    <template slot-scope="scope">
+                      <el-switch
+                        v-model="lightFilesModel.isStatus"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-value="0"
+                        inactive-value="1"
+                        @change="changeCattate()"
+                      >
+                      </el-switch>
+                    </template>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="9">
                   <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                     <el-select
                       :disabled="tunnelDisabled"
@@ -71,10 +86,10 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="9">
                   <el-form-item label="隧道方向" prop="direction" class="el-form-item-data">
                     <el-select
-                      :disabled="tunnelDisabled"
+                      disabled="true"
                       clearable
                       v-model="lightFilesModel.direction"
                       placeholder="请选择隧道方向"
@@ -92,32 +107,15 @@
                 </el-col>
               </el-row>
 
-              <el-row :gutter="24" style="clear:both;">
-                <el-col :span="24">
-                  <el-form-item label="状态" align="center" prop="schedulerTime">
-                    <template slot-scope="scope">
-                      <el-switch
-                        v-model="lightFilesModel.isStatus"
-                        active-color="#13ce66"
-                        inactive-color="#ff4949"
-                        active-value="0"
-                        inactive-value="1"
-                        @change="changeCattate()"
-                      >
-                      </el-switch>
-                    </template>
-                  </el-form-item>
-                </el-col>
-              </el-row>
               <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
                 <el-col :span="24">
-                  <el-form-item label="下修比例"  v-for="(item, index) in lightFormItems" :key="index"  class="el-form-item-direction">
+                  <el-form-item label="选择设备"  v-for="(item, index) in lightFormItems" :key="index"  class="el-form-item-direction-Item">
 
                     <el-select
                       clearable
                       v-model="item.lightParagraph"
-                      placeholder="请选择"
-                      style="width: 60%"
+                      placeholder="请选择设备"
+                      style="width: 30%"
                     >
                       <el-option
                         v-for="dict in lightParagraphList"
@@ -126,8 +124,11 @@
                         :value="dict.dictValue"
                       />
                     </el-select>
-                    <el-input style="width: 20%;"  v-model="item.beforeLuminance"   ></el-input>
-                    <div class="buttonBox" style="width: 20% ;float: right;" >
+                    <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
+                      <el-input style="width: 30%;margin-left: 5px"     placeholder="下修比例"  v-model="item.beforeLuminance"   ></el-input>
+
+
+                    <div class="buttonBox" style="width: 20% ;float: right;margin-left: 10px" >
                       <el-button
                         class="delete"
                         @click="deleteHandleUpdate(index)"
@@ -174,7 +175,22 @@
               height="300px"
             >
               <el-row :gutter="24" style="clear:both; ">
-                <el-col :span="12">
+                <el-col :span="6">
+                  <el-form-item label="启用" align="center" prop="schedulerTime" class="el-form-item-data-type">
+                    <template slot-scope="scope">
+                      <el-switch
+                        v-model="lightFilesModelWei.isStatus"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-value="0"
+                        inactive-value="1"
+
+                      >
+                      </el-switch>
+                    </template>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="9">
                   <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                     <el-select
                       :disabled="tunnelDisabled"
@@ -193,10 +209,10 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="9">
                   <el-form-item label="隧道方向" prop="direction"  class="el-form-item-data">
                     <el-select
-                      :disabled="tunnelDisabled"
+                      disabled="true"
                       clearable
                       v-model="lightFilesModelWei.direction"
                       placeholder="请选择隧道方向"
@@ -213,32 +229,15 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row :gutter="24" style="clear:both;">
-                <el-col :span="24">
-                  <el-form-item label="状态" align="center" prop="schedulerTime">
-                    <template slot-scope="scope">
-                      <el-switch
-                        v-model="lightFilesModelWei.isStatus"
-                        active-color="#13ce66"
-                        inactive-color="#ff4949"
-                        active-value="0"
-                        inactive-value="1"
-
-                      >
-                      </el-switch>
-                    </template>
-                  </el-form-item>
-                </el-col>
-              </el-row>
               <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
                 <el-col :span="24">
-                  <el-form-item label="下修比例"  v-for="(item, index) in lightFormItemsWei" :key="index"  class="el-form-item-direction">
+                  <el-form-item label="选择设备"  v-for="(item, index) in lightFormItemsWei" :key="index" class="el-form-item-direction-Item">
 
                     <el-select
                       clearable
                       v-model="item.lightParagraph"
-                      placeholder="请选择"
-                      style="width: 60%"
+                      placeholder="请选择选择设备"
+                      style="width: 30%"
                     >
                       <el-option
                         v-for="dict in lightParagraphList"
@@ -247,7 +246,8 @@
                         :value="dict.dictValue"
                       />
                     </el-select>
-                    <el-input style="width: 20%;"  v-model="item.beforeLuminance"   ></el-input>
+                    <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
+                    <el-input style="width: 30%;margin-left: 5px"     placeholder="下修比例" v-model="item.beforeLuminance"   ></el-input>
                     <div class="buttonBox" style="width: 20% ;float: right;" >
                       <el-button
                         class="delete"
@@ -287,9 +287,9 @@ export default {
       //光照曲线ref
       loginChart: null,
       //光强配置文件
-      lightFilesModel:{beforeLuminance:''},
+      lightFilesModel:{beforeLuminance:'',direction:'2'},
       //潍坊光强配置文件
-      lightFilesModelWei:{beforeLuminance:''},
+      lightFilesModelWei:{beforeLuminance:'',direction:'1'},
       lightFormItems: [
         {
           lightParagraph: '',
@@ -1093,7 +1093,7 @@ export default {
       this.lightFormItems.push(form)
     },
     deleteHandleUpdateWei(index){
-      if (this.lightFormItems.length == 1) {
+      if (this.lightFormItemsWei.length == 1) {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.lightFormItemsWei.splice(index,1)
@@ -1144,11 +1144,32 @@ export default {
   .el-form-item__content{
     width:60%;
   }
+  .el-form-item__label{
+    width:70px !important;
+  }
+}
+.el-form-item-data-type{
+  .el-form-item__content{
+    width:30%;
+  }
+  .el-form-item__label{
+    width:70px !important;
+  }
 }
 .el-form-item-direction{
 .el-form-item__content{
-  width:80%;
+  width:60%;
 }
+.el-form-item__label{
+  width:70px !important;
+}
+}
+.el-form-item-direction-Item {
+
+.el-form-item__content {
+  width: 80%;
+}
+
 }
 .buttonBox {
   display: flex;

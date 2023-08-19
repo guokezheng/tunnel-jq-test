@@ -66,3 +66,20 @@ export function selectEnergyAnalysisElectricityBillList(params) {
     params: params
   })
 }
+
+// 查询时段用电柱状图
+export function getEnergySiteList(params) {
+  return request({
+    url: '/energySiteController/getEnergySiteList',
+    method: 'get',
+    params: params
+  })
+}
+
+// 累计数据展示
+export function getAccumulated() {
+  return request({
+    url: '/energyAnalysisElectricityBillController/selectEnergyValueSum',
+    method: 'get',
+  })
+}

@@ -3227,8 +3227,14 @@ export default {
     },
     async richangUpdate(row) {
       let params = row;
+      const loading = this.$loading({
+          lock: true,
+          text: "Loading",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)",
+        });
       await listRl({ strategyId: params.id }).then((response) => {
-        // console.log(response, "设备数据");
+        console.log(response, "设备数据");
         params.manualControl = response.rows;
         params.manualControl.equipmentTypeId = params.manualControl.eqTypeId;
         for (let i = 0; i < response.rows.length; i++) {
@@ -3258,9 +3264,12 @@ export default {
         }
       });
       await manualControlInfo(params).then((res) => {
+        loading.close();
         if (res.code == 200) {
           this.$modal.msgSuccess("执行成功");
         }
+      }).catch(()=>{
+        loading.close();
       });
     },
     richanghandleUpdate(row) {
@@ -3270,7 +3279,9 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
+        
         that.richangUpdate(row);
+        
       });
     },
     directionFormat(row, column) {

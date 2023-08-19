@@ -900,6 +900,7 @@ export default {
       ],
       manageStation: this.$cache.local.get("manageStation"),
       manageStationSelect: this.$cache.local.get("manageStationSelect"),
+      evtWebsoktList:[]
     };
   },
   watch: {
@@ -909,6 +910,7 @@ export default {
       this.queryParams.eventTypeId = "";
       this.getTunnelLane();
     },
+    
   },
   created() {},
   mounted() {
@@ -1158,6 +1160,7 @@ export default {
             this.eventFormDetail.laneNo =
               this.eventFormDetail.laneNo.toString();
           }
+          console.log(this.evtWebsoktList[0].ids,"this.evtWebsoktList[0].ids")
 
           updateEvent(this.eventFormDetail).then((response) => {
             this.processDialog = false;
@@ -1179,6 +1182,7 @@ export default {
             //   });
             // }
             loading.close();
+              
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件

@@ -52,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelName != null and tunnelName != ''"> and INSTR(t.tunnel_name, #{tunnelName}) > 0</if>
             <if test="direction != null "> and direction = #{direction}</if>
         </where>
+        ORDER BY direction
     </select>
 
 

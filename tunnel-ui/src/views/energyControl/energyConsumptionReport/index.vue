@@ -765,22 +765,15 @@ export default {
     //导出excel
     export_excel() {
       this.$nextTick(() => {
-      
-        
-        this.$nextTick(() => {
         let tableDom = document.getElementById("tableId");
-
         let fix = document.querySelector(".el-table__fixed");
-        console.log("fix", fix);
         let tableDom0 = tableDom.firstElementChild.removeChild(fix);
         tableDom.firstElementChild.appendChild(fix);
+        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g,"border='1'")
 
-        console.log("tableDom0", tableDom0);
-        console.log("tableDom", tableDom0.innerHTML);
-        var excelBlob = new Blob([tableDom0.innerHTML], {
+        var excelBlob = new Blob([tableDom0], {
           type: "application/vnd.ms-excel",
         });
-        console.log("excelBlob", excelBlob);
         var oa = document.createElement("a");
         oa.href = URL.createObjectURL(excelBlob);
 
@@ -788,9 +781,7 @@ export default {
         let y = this.base_date.getFullYear();
         let m = this.base_date.getMonth() + 1;
         let d = this.base_date.getDate();
-
         dateStr = y + "年";
-
         if (this.tabType === "month") {
           dateStr += m + "月的用能报表.xls";
         } else if (this.tabType === "day") {
@@ -801,8 +792,6 @@ export default {
 
         oa.download = dateStr;
         oa.click();
-      });
-
       });
     },
     // 列合计

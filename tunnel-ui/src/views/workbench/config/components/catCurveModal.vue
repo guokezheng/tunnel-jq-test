@@ -53,8 +53,22 @@
           height="300px"
         >
           <el-row :gutter="24" style="clear:both;">
-            <el-col :span="12">
-              <el-form-item label="隧道名称" prop="tunnelId">
+            <el-col :span="6">
+              <el-form-item label="状态" align="center" prop="schedulerTime"  class="el-form-item-data-type">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="catFilesModel.isStatus"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-value="0"
+                    inactive-value="1"
+                  >
+                  </el-switch>
+                </template>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <el-form-item label="隧道名称" prop="tunnelId"  class="el-form-item-data">
                 <el-select
                   style="width: 100%"
                   :disabled="tunnelDisabled"
@@ -72,8 +86,8 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="方向" prop="direction">
+            <el-col :span="9">
+              <el-form-item label="方向" prop="direction"  class="el-form-item-data">
                 <el-select
                   clearable
                   :disabled="tunnelDisabled"
@@ -92,47 +106,25 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row :gutter="24" style="clear:both;">
-            <el-col :span="12">
-              <el-form-item label="状态" align="center" prop="schedulerTime">
-                <template slot-scope="scope">
-                  <el-switch
-                    v-model="catFilesModel.isStatus"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                    active-value="0"
-                    inactive-value="1"
-                  >
-                  </el-switch>
-                </template>
-              </el-form-item>
-            </el-col>
-<!--            <el-col :span="12">-->
-<!--              <el-form-item label="下修比例"  >-->
-<!--                <el-input  v-model="catFilesModel.beforeLuminance"    @change="beforeLuminanceEvent"></el-input>-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
-          </el-row>
-<!--          <el-row :gutter="24" style="clear:both;">-->
 
-<!--          </el-row>-->
           <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
             <el-col :span="24">
-              <el-form-item label="时间段"  v-for="(item, index) in formItems" :key="index"  class="el-form-item-data">
+              <el-form-item label="时间段"  v-for="(item, index) in formItems" :key="index"   class="el-form-item-direction-Item">
 
                 <el-time-picker
                   placeholder="选择开始时间"
                   v-model="item.startTime"
-                  style="width: 30%"
+                  style="width: 25%"
                 ></el-time-picker>
 
                 <el-time-picker
                   placeholder="选择结束时间"
                   v-model="item.endTime"
-                  style="width: 30%"
+                  style="width:25%;margin-left: 5px"
                 ></el-time-picker>
-                <el-input style="width: 20%;"  v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
-                <div class="buttonBox" style="width: 20% ;float: right;" >
+                <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
+                <el-input style="width: 15%;margin-left: 5px"  v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
+                <div class="buttonBox" style="width: 15% ;float: right;" >
                   <el-button
                     class="delete"
                     @click="deleteHandleUpdate(index)"
@@ -175,8 +167,22 @@
           height="300px"
         >
           <el-row :gutter="24" style="clear:both;">
-            <el-col :span="12">
-              <el-form-item label="隧道名称" prop="tunnelId">
+            <el-col :span="6">
+              <el-form-item label="状态" align="center" prop="schedulerTime" class="el-form-item-data-type">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="catFilesModelWei.isStatus"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-value="0"
+                    inactive-value="1"
+                  >
+                  </el-switch>
+                </template>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                 <el-select
                   style="width: 100%"
                   :disabled="tunnelDisabled"
@@ -194,8 +200,8 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="方向" prop="direction">
+            <el-col :span="9">
+              <el-form-item label="方向" prop="direction" class="el-form-item-data">
                 <el-select
                   clearable
                   :disabled="tunnelDisabled"
@@ -214,47 +220,25 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row :gutter="24" style="clear:both;">
-            <el-col :span="12">
-              <el-form-item label="状态" align="center" prop="schedulerTime">
-                <template slot-scope="scope">
-                  <el-switch
-                    v-model="catFilesModelWei.isStatus"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                    active-value="0"
-                    inactive-value="1"
-                  >
-                  </el-switch>
-                </template>
-              </el-form-item>
-            </el-col>
-<!--            <el-col :span="12">-->
-<!--              <el-form-item label="下修比例"  >-->
-<!--                <el-input  v-model="catFilesModelWei.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
-          </el-row>
-          <!--          <el-row :gutter="24" style="clear:both;">-->
 
-          <!--          </el-row>-->
           <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
             <el-col :span="24">
-              <el-form-item label="时间段"  v-for="(item, index) in formItemsWei" :key="index"  class="el-form-item-data">
+              <el-form-item label="时间段"  v-for="(item, index) in formItemsWei" :key="index" class="el-form-item-direction-Item">
 
                 <el-time-picker
                   placeholder="选择开始时间"
                   v-model="item.startTime"
-                  style="width: 30%"
+                  style="width: 25%"
                 ></el-time-picker>
 
                 <el-time-picker
                   placeholder="选择结束时间"
                   v-model="item.endTime"
-                  style="width: 30%"
+                  style="width: 25%;margin-left: 5px"
                 ></el-time-picker>
-                <el-input style="width: 20%;"  v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
-                <div class="buttonBox" style="width: 20% ;float: right;" >
+                <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
+                <el-input style="width: 15%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
+                <div class="buttonBox" style="width: 15% ;float: right;" >
                   <el-button
                     class="delete"
                     @click="deleteHandleUpdateWei(index)"
@@ -1223,5 +1207,29 @@ export default {
   .el-form-item__content{
     width:85%;
   }
+}
+
+.el-form-item-data-type{
+.el-form-item__content{
+  width:30%;
+}
+.el-form-item__label{
+  width:70px !important;
+}
+}
+.el-form-item-data{
+.el-form-item__content{
+  width:60%;
+}
+.el-form-item__label{
+  width:70px !important;
+}
+}
+.el-form-item-direction-Item {
+
+.el-form-item__content {
+  width: 80%;
+}
+
 }
 </style>

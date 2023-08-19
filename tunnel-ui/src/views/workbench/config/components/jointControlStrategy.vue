@@ -41,8 +41,8 @@
 
 
               <div v-for="item in strategyList" :key="item.id" class="content-centre">
-              <span class="diagonal-text-no" v-if="item.strategyState==1">未生效</span>
-              <span class="diagonal-text-yes"  v-if="item.strategyState==0">已生效</span>
+<!--              <span class="diagonal-text-no" v-if="item.strategyState==1">未生效</span>-->
+<!--              <span class="diagonal-text-yes"  v-if="item.strategyState==0">已生效</span>-->
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">名称</el-col>
                 <el-col :span="20" class="elcolNameOne" v-html="item.strategyName"></el-col>
@@ -105,17 +105,27 @@
               <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">隧道</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName   +'-'+   item.directionName"></el-col>
+                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName"></el-col>
               </el-row>
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">状态</el-col>
-                <el-col :span="20" class="elcolNameOne" > <el-switch
+                <el-col :span="4" class="elcolName">潍坊</el-col>
+                <el-col :span="4" class="elcolNameOne" > <el-switch
                   v-model="item.isStatus"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                   :active-value=parseInt(0)
                   :inactive-value=parseInt(1)
                   @change="changeSdWisdomIsStatus(item)"
+                >
+                </el-switch></el-col>
+                <el-col :span="4" class="elcolName">济南</el-col>
+                <el-col :span="4" class="elcolNameOne" > <el-switch
+                  v-model="item.isStatusWei"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value=parseInt(0)
+                  :inactive-value=parseInt(1)
+                  @change="changeSdWisdomIsStatus(item,true)"
                 >
                 </el-switch></el-col>
               </el-row>
@@ -148,21 +158,32 @@
           </div>
           <div  v-if="treeModel==2" style=" overflow: auto; width: 100%; height: 88%;" >
             <div v-for="item in catStrategyList" :key="item.id" class="content-centre-tree">
-              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>
-              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>
+<!--              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>-->
+<!--              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>-->
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">隧道</el-col>
-                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName  +'-'+  item.directionName"></el-col>
+                <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName "></el-col>
               </el-row>
+
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">状态</el-col>
-                <el-col :span="20" class="elcolNameOne" > <el-switch
+                <el-col :span="4" class="elcolName">潍坊</el-col>
+                <el-col :span="4" class="elcolNameOne" > <el-switch
                   v-model="item.isStatus"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                   :active-value=parseInt(0)
                   :inactive-value=parseInt(1)
                   @change="changeSdWisdomIsStatus(item)"
+                >
+                </el-switch></el-col>
+                <el-col :span="4" class="elcolName">济南</el-col>
+                <el-col :span="4" class="elcolNameOne" > <el-switch
+                  v-model="item.isStatusWei"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value=parseInt(0)
+                  :inactive-value=parseInt(1)
+                  @change="changeSdWisdomIsStatus(item,true)"
                 >
                 </el-switch></el-col>
               </el-row>
@@ -398,25 +419,29 @@ export default {
         debugger
         if( response.rows.length>0){
           this.lightStrategyList = []
-
           for (let i = 0; i < response.rows.length; i++) {
-            if(response.rows[i].direction==1){
-              response.rows[i].directionName = "潍坊方向"
-            }else if(response.rows[i].direction==2){
-              response.rows[i].directionName = "济南方向"
-            }else{
-              response.rows[i].directionName = ""
-            }
-            if(!!response.rows[i].beforeLuminance){
-              let jsonArray = JSON.parse(response.rows[i].beforeLuminance);
-              response.rows[i].instructNum =jsonArray.length
-            }else{
-              response.rows[i].instructNum =0
-            }
+            let tunnelItem  = this.lightStrategyList.find(item => item.tunnelId == response.rows[i].tunnelId)
 
-            this.lightStrategyList.push( response.rows[i])
+            if(!!tunnelItem){
+              let tunnelItem = this.lightStrategyList.find(item => item.tunnelId == response.rows[i].tunnelId)
+              if(!!response.rows[i].beforeLuminance){
+                let jsonArray = JSON.parse(response.rows[i].beforeLuminance);
+                tunnelItem.instructNum = parseInt(tunnelItem.instructNum)+parseInt(jsonArray.length)
+              }else{
+                tunnelItem.instructNum =0
+              }
+              tunnelItem.isStatusWei = response.rows[i].isStatus
+              tunnelItem.idWei =  response.rows[i].id
+            }else{
+              if(!!response.rows[i].beforeLuminance){
+                let jsonArray = JSON.parse(response.rows[i].beforeLuminance);
+                response.rows[i].instructNum =jsonArray.length
+              }else{
+                response.rows[i].instructNum =0
+              }
+              this.lightStrategyList.push(response.rows[i])
+            }
           }
-
         }
         this.$forceUpdate();
       })
@@ -432,23 +457,48 @@ export default {
         if( response.rows.length>0){
           this.catStrategyList = []
           for (let i = 0; i < response.rows.length; i++) {
-            if(response.rows[i].direction==2){
-              response.rows[i].directionName = "济南方向"
-            }else if(response.rows[i].direction==1){
-              response.rows[i].directionName = "潍坊方向"
+            let tunnelItem  = this.catStrategyList.find(item => item.tunnelId == response.rows[i].tunnelId)
+            console.log( this.catStrategyList)
+            console.log(tunnelItem)
+            if(!!tunnelItem){
+              let tunnelItem = this.catStrategyList.find(item => item.tunnelId == response.rows[i].tunnelId)
+              if(!!response.rows[i].timeSlot){
+                let jsonArray = JSON.parse(response.rows[i].timeSlot);
+                tunnelItem.instructNum = parseInt(tunnelItem.instructNum)+parseInt(jsonArray.length)
+              }else{
+                tunnelItem.instructNum =0
+              }
+              tunnelItem.isStatusWei = response.rows[i].isStatus
+              tunnelItem.idWei =  response.rows[i].id
             }else{
-              response.rows[i].directionName = ""
+              if(!!response.rows[i].timeSlot){
+                let jsonArray = JSON.parse(response.rows[i].timeSlot);
+                response.rows[i].instructNum =jsonArray.length
+              }else{
+                response.rows[i].instructNum =0
+              }
+              this.catStrategyList.push(response.rows[i])
             }
-            if(!!response.rows[i].timeSlot){
-              let jsonArray = JSON.parse(response.rows[i].timeSlot);
-              response.rows[i].instructNum =jsonArray.length
-            }else{
-              response.rows[i].instructNum =0
-            }
-
-
-            this.catStrategyList.push( response.rows[i])
           }
+          // this.catStrategyList = []
+          // for (let i = 0; i < response.rows.length; i++) {
+          //   if(response.rows[i].direction==2){
+          //     response.rows[i].directionName = "济南方向"
+          //   }else if(response.rows[i].direction==1){
+          //     response.rows[i].directionName = "潍坊方向"
+          //   }else{
+          //     response.rows[i].directionName = ""
+          //   }
+          //   if(!!response.rows[i].timeSlot){
+          //     let jsonArray = JSON.parse(response.rows[i].timeSlot);
+          //     response.rows[i].instructNum =jsonArray.length
+          //   }else{
+          //     response.rows[i].instructNum =0
+          //   }
+          //
+          //
+          //   this.catStrategyList.push( response.rows[i])
+          // }
         }
         this.$forceUpdate();
       })
@@ -646,9 +696,9 @@ export default {
     //删除照明策略
     lightStrategyDelete(row){
       debugger
-      const ids = row.id;
-      const rlIds = row.id ;
-      const jobRelationId = row.jobRelationId;
+      const ids = []
+      ids.push( row.id)
+      ids.push( row.idWei)
       this.$confirm("是否确认删除？", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -744,17 +794,34 @@ export default {
         }
       });
     },
-    changeSdWisdomIsStatus(row){
+    changeSdWisdomIsStatus(row,type){
       debugger
-      let data = {id: row.id, isStatus: row.isStatus};
+      //type==true 说明是另一个
+      let data = {}
+      if(type){
+        data = {id: row.idWei, isStatus: row.isStatusWei};
+      }else{
+        data = {id: row.id, isStatus: row.isStatus};
+      }
+
       updateSdWisdomIsStatus(data).then((result) => {
 
         if(result.code == 200){
-          if(row.isStatus == 0){
-            this.$modal.msgSuccess("开启成功");
+          if(type){
+            if(row.isStatusWei == 0){
+              this.$modal.msgSuccess("开启成功");
+            }else{
+              this.$modal.msgSuccess("关闭成功");
+            }
+            this.$forceUpdate()
           }else{
-            this.$modal.msgSuccess("关闭成功");
+            if(row.isStatus == 0){
+              this.$modal.msgSuccess("开启成功");
+            }else{
+              this.$modal.msgSuccess("关闭成功");
+            }
           }
+
         }else{
           this.$modal.msgSuccess(result.msg);
         }

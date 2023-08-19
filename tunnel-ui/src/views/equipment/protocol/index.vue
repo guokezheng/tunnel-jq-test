@@ -6,7 +6,7 @@
         <el-button
           size="small"
           @click="handleAdd"
-          v-if="edit == true"
+          v-if="editt"
           v-hasPermi="['system:devices:add']"
         >新增
         </el-button>
@@ -14,7 +14,7 @@
         <el-button
           size="small"
           :disabled="multiple"
-          v-if="edit == true"
+          v-if="editt"
           @click="handleDelete"
           v-hasPermi="['system:devices:remove']"
         >删除
@@ -23,7 +23,7 @@
         <el-button
           size="small"
           @click="handleImport"
-          v-if="edit != true"
+          v-if="!editt"
           v-hasPermi="['system:devices:import']"
         >导入
         </el-button>
@@ -35,7 +35,7 @@
         </el-button>
 
 
-        <el-button size="small" v-if="edit == true"  @click="handleClose">关闭</el-button>
+        <el-button size="small" v-if="editt"  @click="handleClose">关闭</el-button>
         <el-button size="small" @click="resetQuery">刷新</el-button>
         <!--          <el-button-->
         <!--            type="info"-->
@@ -62,7 +62,27 @@
         </div>
       </el-col>
     </el-row>
+    <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="80px"
+      >
+        <el-form-item label="点位类型" style="width: 100%" prop="isReserved">
 
+        </el-form-item>
+          
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
 
     <el-table
         v-loading="loading"
@@ -147,7 +167,7 @@
             <el-option label="请选择字典生成" value="" />
           </el-select>
         </el-form-item>-->
-        <el-form-item label="数据项" prop="itemId"    v-if="edit == true">
+        <el-form-item label="数据项" prop="itemId"    v-if="editt">
           <el-select ref="itemRef" v-model="form.itemId" placeholder="请选择数据项" style="width:100%">
             <el-option
               v-for="(item) in itemList"
@@ -314,6 +334,7 @@ export default {
   name: "Point",
   data() {
     return {
+      boxShow:false,
       // 遮罩层
       loading: true,
       serverJSON:"",
@@ -376,6 +397,7 @@ export default {
         dataLength: null,
         edit:false
       },
+      editt:false,
       // 用户导入参数
       upload: {
         // 是否显示弹出层（用户导入）
@@ -413,7 +435,7 @@ export default {
 
 
     if(this.typeId && this.eqId && this.protocolId){
-      this.edit = true;
+      this.editt = true;
     }
 
 
@@ -425,7 +447,23 @@ export default {
 
 
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if(self.boxShow){
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
+        }
+      }
+    },
 
     isReservedFormat(row, column){
 

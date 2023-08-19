@@ -131,11 +131,11 @@
                         let that = this
                       this.player.on( flvjs.Events.ERROR, function(errorType, errorDetails) {
                         // 处理错误
-                        console.log("3333333333333333333333333333333333333")
+                        // console.log("3333333333333333333333333333333333333")
                         // console.error(`FLV.js Error - Type: ${errorType}, Details: ${errorDetails}`);
-                        debugger
+                        // debugger
                         // if (this.player) {
-                        debugger
+                        // debugger
                         that.destroyFlv();
                         that.init();
                       });
@@ -167,7 +167,7 @@
                 }
             },
           destroyFlv() {
-              debugger
+              // debugger
             console.log(this.player)
             if (this.player) {
               this.player.pause();
@@ -175,6 +175,8 @@
               this.player.detachMediaElement();
               this.player.destroy();
               this.player = null;
+              this.timerId = null
+              clearInterval(this.timerId);
             }
           },
           init(){
@@ -201,7 +203,7 @@
                   //     autoCleanupSourceBuffer: true // 是否自动清理缓存
                   // }
                 );
-                debugger
+                // debugger
                 this.player.attachMediaElement(video);
                 try {
                   this.player.load();

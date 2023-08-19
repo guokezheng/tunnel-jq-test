@@ -2311,6 +2311,7 @@ export default {
             this.closeProcessDialog = false;
             this.processType = false;
             this.details = false;
+            this.cameraPlayer = false
             if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
             }
@@ -3010,6 +3011,7 @@ export default {
     cancel() {
       this.open = false;
       this.details = false;
+      this.cameraPlayer = false
       this.processDialog = false;
       this.processType = false;
       this.reset();

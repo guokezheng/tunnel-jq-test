@@ -1068,7 +1068,7 @@ export default {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
         getCategoryTree().then((data) => {
-          debugger
+          // debugger
           let dataNum = 0;
           for (let j = 0; j < data.data.length; j++) {
            if( data.data[j].label=="巡检机器人"){
@@ -1130,7 +1130,7 @@ export default {
         listItem({
           deviceTypeId: this.strategyForm.triggers.deviceTypeId,
         }).then((res) => {
-          debugger
+          // debugger
           if(!!res.rows){
             let rowsNum = null
             for (let i = 0; i < res.rows.length; i++) {

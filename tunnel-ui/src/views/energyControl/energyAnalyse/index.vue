@@ -4,6 +4,21 @@
       <el-row :gutter="24" style="clear:both;">
         <el-col :span="24">
 <!--          <el-button type="info" size="small" icon="el-icon-location-outline"@click="ddddd" class="tunnelNameButton">eee</el-button>-->
+
+            <el-select
+              style="width: 10%;    float: right;margin-top: 10px;margin-right: 25px;    z-index: 9999;"
+              v-model="tunnelIdStr"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
           <div  class="energyAnalyse" ref="energyAnalyse" style="width: 99%; height: 400px;border: 8px solid #004375;"></div>
         </el-col>
       </el-row>
@@ -28,13 +43,13 @@
                     </div>
 
                     <div style="width:69% ;float:left; margin-top: 10%">
-                      <span style="color: #FFFFFF;font-size: 15px;">本月总电费 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthElectricity"> 213214</span>
+                      <span style="color: #FFFFFF;font-size: 15px;">本月能耗 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthElectricity"> </span>
                       <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                     </div>
-                    <div style="width:60% ;float:left;">
+                    <div style="width:69% ;float:left;">
                       <span style="color: #FFFFFF;font-size: 15px;"  >对比同期 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthComparison"> 213214</span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthComparison"> </span>
                       <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                     </div>
                   </div>
@@ -49,61 +64,61 @@
                   </div>
 
                   <div style="width:69% ;float:left; margin-top: 10%">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月城市电费 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityMonthElectricity"> 213214</span>
+                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityMonthElectricity"> </span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;" >MWH</span>
                   </div>
-                  <div style="width:60% ;float:left;">
+                  <div style="width:69% ;float:left;">
                     <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"v-html="cityMonthComparison"> 213214</span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"v-html="cityMonthComparison"> </span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                   </div>
                 </div>
               </el-col>
             </el-row>
-<!--            <el-row style="margin-top: 3px">-->
-<!--              <el-col :span="12">-->
-<!--                <div >-->
+            <el-row style="margin-top: 3px">
+              <el-col :span="12">
+                <div >
 
-<!--                  <div style="height: 100px;width: 97%; background-color:#1B5480;">-->
-<!--                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">-->
-<!--                    </div>-->
+                  <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                    </div>
 
-<!--                    <div style="width:60% ;float:left; margin-top: 10%">-->
-<!--                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>-->
-<!--                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
-<!--                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
-<!--                    </div>-->
-<!--                    <div style="width:60% ;float:left;">-->
-<!--                      <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>-->
-<!--                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
-<!--                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
-<!--                    </div>-->
-<!--                  </div>-->
+                    <div style="width:60% ;float:left; margin-top: 10%">
+                      <span style="color: #FFFFFF;font-size: 15px;">照明电量 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="lightMonthElectricity"> </span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;" >MWH</span>
+                    </div>
+                    <div style="width:60% ;float:left;">
+                      <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"v-html="lightMonthComparison"> </span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                    </div>
+                  </div>
 
-<!--                </div>-->
+                </div>
 
-<!--              </el-col>-->
-<!--              <el-col :span="12">-->
-<!--                <div style="height: 100px;width: 97%; background-color:#1B5480;">-->
-<!--                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">-->
-<!--                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">-->
-<!--                  </div>-->
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                  </div>
 
-<!--                  <div style="width:60% ;float:left; margin-top: 10%">-->
-<!--                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>-->
-<!--                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
-<!--                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
-<!--                  </div>-->
-<!--                  <div style="width:60% ;float:left;">-->
-<!--                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>-->
-<!--                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>-->
-<!--                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </el-col>-->
-<!--            </el-row>-->
+                  <div style="width:60% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">风机电量 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="draughtMonthElectricity"> </span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                  <div style="width:60% ;float:left;">
+                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="draughtMonthComparison"> </span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
           </el-col>
         </el-col>
       </el-row>
@@ -112,22 +127,18 @@
           <el-row>
             <el-col :span="12">
               <div >
-                <h1 style="color:#4675BA  ;font-weight: bold;font-size: 20px;margin-left: 10px">实时监控</h1>
+                <h1 style="color:#4675BA  ;font-weight: bold;font-size: 20px;margin-left: 10px">分类数据</h1>
                 <div style="height: 100px;width: 97%; background-color:#1B5480; ">
                   <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
                     <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
                   </div>
 
-                  <div style="width:60% ;float:left; margin-top: 10%">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                  <div style="width:60% ;float:left; margin-top: 12%">
+                    <span style="color: #FFFFFF;font-size: 15px;">市电 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityelectricity"> </span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                   </div>
-                  <div style="width:60% ;float:left;">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                  </div>
+
                 </div>
 
               </div>
@@ -139,14 +150,9 @@
                   <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
                 </div>
 
-                <div style="width:60% ;float:left; margin-top: 10%">
-                  <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
-                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                  <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                </div>
-                <div style="width:60% ;float:left;">
-                  <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
-                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                <div style="width:60% ;float:left; margin-top: 12%">
+                  <span style="color: #FFFFFF;font-size: 15px;">光伏自用 </span>
+                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="lightyelectricity"> </span>
                   <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                 </div>
               </div>
@@ -161,14 +167,9 @@
                     <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
                   </div>
 
-                  <div style="width:60% ;float:left; margin-top: 10%">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                  </div>
-                  <div style="width:60% ;float:left;">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月耗能 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                  <div style="width:60% ;float:left; margin-top: 12%">
+                    <span style="color: #FFFFFF;font-size: 15px;">柴发 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="lfirewoodElectricity"> </span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                   </div>
                 </div>
@@ -182,14 +183,9 @@
                   <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
                 </div>
 
-                <div style="width:60% ;float:left; margin-top: 10%">
-                  <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
-                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
-                  <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
-                </div>
-                <div style="width:60% ;float:left;">
-                  <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
-                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"> 213214</span>
+                <div style="width:60% ;float:left; margin-top: 12%">
+                  <span style="color: #FFFFFF;font-size: 15px;">风电 </span>
+                  <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="windElectricity"> </span>
                   <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                 </div>
               </div>
@@ -203,8 +199,9 @@
 
 <script>
 import * as echarts from "echarts";
-import {selectEnergyAnalysisElectricityBillList,getEnergySiteList,getAccumulated} from "@/api/energy/api";
+import {selectEnergyAnalysisElectricityBillList,getEnergySiteList,getAccumulated,getrealTimeData} from "@/api/energy/api";
 import {listList} from "@/api/electromechanicalPatrol/faultManage/fault";
+import {listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "energyAnalyse",
@@ -220,30 +217,81 @@ export default {
       yDataEnergyOne1:[],
       yDataEnergyOne2:[],
       energyAnalyseTwo:null,
-      //本月电费
+      //本月能耗
       monthElectricity:"",
       //对比同期
       monthComparison:"",
-      //城市本月电费
+      //本月电费
       cityMonthElectricity:"",
       //城市对比同期
       cityMonthComparison:"",
+      //照明电费
+      lightMonthElectricity:"",
+      //照明对比同期
+      lightMonthComparison:"",
+      //风机电费
+      draughtMonthElectricity:"",
+      //风机对比同期
+      draughtMonthComparison:"",
+      //实时数据市电
+      cityelectricity:"",
+      //光电
+      lightyelectricity:"",
+      //柴电
+      lfirewoodElectricity:"",
+      //风电
+      windElectricity:'',
+      tunnelData:[],
+      tunnelIdStr:"JQ-WeiFang-JiuLongYu-HSD",
+      paramsData:{}
     }
   },
   mounted() {
   },
   created(){
+    listTunnels(this.paramsData).then((response) => {
+      this.tunnelData = response.rows;
+      console.log(this.tunnelData, "隧道列表");
+    });
     this.getEchartsData()
     this.getEchartsDataTwo()
     //累计数据计算
     this.getAccumulatedData()
+    //实时数据
+    this.getrealTimeDataMethods()
   },
   methods:{
-    ddddd(){
+    changeEvent(){
+      //本月能耗
+      this.monthElectricity="",
+        //对比同期
+        this.monthComparison="",
+        //本月电费
+        this.cityMonthElectricity="",
+        //城市对比同期
+        this.cityMonthComparison="",
+        //照明电费
+        this.lightMonthElectricity="",
+        //照明对比同期
+        this.lightMonthComparison="",
+        //风机电费
+        this.draughtMonthElectricity="",
+        //风机对比同期
+        this.draughtMonthComparison="",
       this.getEchartsData()
       this.getEchartsDataTwo()
       //累计数据计算
       this.getAccumulatedData()
+      //实时数据
+      this.getrealTimeDataMethods()
+    },
+    ddddd(){
+
+
+      this.getEchartsData()
+      this.getEchartsDataTwo()
+      //累计数据计算
+      this.getrealTimeDataMethods()
     },
     //获取当日用电的数据
     async getEchartsData() {
@@ -257,6 +305,7 @@ export default {
       //时间
       let dateRange = []
       queryParams.statisticsType = 0
+      queryParams.tunnelId = this.tunnelIdStr
       console.log(this.getCurrentDateTime())
       debugger
       // dateRange.push("2023-08-16 00:00:00")
@@ -266,19 +315,25 @@ export default {
       await getEnergySiteList(this.addDateRange(queryParams, dateRange)).then(
         (response) => {
           if(response.code==200){
+
             let endTime = this.getCurrentDateTime().endTime
             const endTimeDatePart = endTime.split(' ')[0];
             let startTime = this.getCurrentDateTime().startTime
             const startTimeDatePart = startTime.split(' ')[0];
-            for (let i = 0; i < response.rows.length; i++) {
-              if( response.rows[i].createTime.includes(endTimeDatePart)){
-                let  createTime = response.rows[i].createTime
-                const createTimeDatePart = createTime.split(' ')[1];
-                this.XDataEnergy.push(createTimeDatePart)
-                this.yDataEnergy.push(response.rows[i].energyValue)
-              }
-              if( response.rows[i].createTime.includes("2023-08-16")){
-                this.yDataEnergy1.push(response.rows[i].energyValue)
+            if(!!response.rows && response.rows.length>0){
+              for (let i = 0; i < response.rows.length; i++) {
+                if( response.rows[i].createTime.includes(startTimeDatePart)){
+                // if( response.rows[i].createTime.includes("2023-08-16")){
+                  let  createTime = response.rows[i].createTime
+                  const createTimeDatePart = createTime.split(' ')[1];
+                  this.XDataEnergy.push(createTimeDatePart)
+                  this.yDataEnergy.push(response.rows[i].energyValue)
+                }
+
+                if( response.rows[i].createTime.includes(endTimeDatePart)){
+                // if( response.rows[i].createTime.includes("2023-08-15")){
+                  this.yDataEnergy1.push(response.rows[i].energyValue)
+                }
               }
             }
           }
@@ -457,28 +512,31 @@ export default {
       queryParams.pageNum =1
       queryParams.pageSize =15
       queryParams.statisticsType = 1
+      queryParams.deptCode = this.tunnelIdStr
       const  res = await selectEnergyAnalysisElectricityBillList(queryParams);
       if(res.code == 200 ){
         //设置X轴
         let yDataEnergyOneSon =[]
-        for (let i = 0; i < res.rows.length; i++) {
-          if (!this.XDataEnergyOne.includes(res.rows[i].statisticsDate)) {
-            this.XDataEnergyOne.push(res.rows[i].statisticsDate)
-            if(yDataEnergyOneSon.length>0){
+        if(!!res.rows && res.rows.length>0){
+          for (let i = 0; i < res.rows.length; i++) {
+            if (!this.XDataEnergyOne.includes(res.rows[i].statisticsDate)) {
+              this.XDataEnergyOne.push(res.rows[i].statisticsDate)
+              if(yDataEnergyOneSon.length>0){
+                yDataEnergyOne.push(yDataEnergyOneSon)
+                yDataEnergyOneSon =[]
+              }
+            }
+            yDataEnergyOneSon.push(res.rows[i].value)
+            if( res.rows.length==i+1){
               yDataEnergyOne.push(yDataEnergyOneSon)
               yDataEnergyOneSon =[]
             }
           }
-          yDataEnergyOneSon.push(res.rows[i].value)
-          if( res.rows.length==i+1){
-            yDataEnergyOne.push(yDataEnergyOneSon)
-            yDataEnergyOneSon =[]
-          }
         }
       }
-      console.log(yDataEnergyOne)
-      yDataEnergyOne.sort((a, b) => b[0] - a[0]);
-      console.log(yDataEnergyOne)
+      // console.log(yDataEnergyOne)
+      // yDataEnergyOne.sort((a, b) => b[0] - a[0]);
+      // console.log(yDataEnergyOne)
         this.$nextTick(() => {
           this.initLoginChartTwo(yDataEnergyOne);
         });
@@ -641,28 +699,62 @@ export default {
 
       // 获取当前日期的下一天
       const nextDate = new Date(currentDate);
-      nextDate.setDate(nextDate.getDate() - 3);
+      nextDate.setDate(nextDate.getDate() -1);
       const formattedNextDate =  this.formatDateTime(nextDate);
       const endTime = `${formattedNextDate} 00:00:00`;
 
       return { startTime, endTime };
     },
     async getAccumulatedData(){
-      await getAccumulated().then(
+      let queryParams ={}
+      queryParams.tunnelId = this.tunnelIdStr
+      await getAccumulated(queryParams).then(
         (response) => {
           if(response.code==200){
             let num = 0
-            for (let key in  response.data) {
-              if(num==0){
-                this.monthElectricity =key
-                this.monthComparison = response.data[key]
+            if(!!response.data){
+              for (let key in  response.data) {
+                if(key=="本月电费"){
+                  this.cityMonthElectricity =response.data[key].split(",")[0]
+                  this.cityMonthComparison = response.data[key].split(",")[1]
+                }else if(key=="本月能耗"){
+                  this.monthElectricity =response.data[key].split(",")[0]
+                  this.monthComparison = response.data[key].split(",")[1]
+                }else if(key=="照明电量"){
+                  this.lightMonthElectricity =response.data[key].split(",")[0]
+                  this.lightMonthComparison = response.data[key].split(",")[1]
+                }else if(key=="风机电量"){
+                  this.draughtMonthElectricity =response.data[key].split(",")[0]
+                  this.draughtMonthComparison = response.data[key].split(",")[1]
+                }
                 num = num+1
-              }else{
-                this.cityMonthElectricity =key
-                this.cityMonthComparison = response.data[key]
               }
             }
-
+          }
+        }
+      );
+    },
+    async getrealTimeDataMethods(){
+      let queryParams ={}
+      queryParams.tunnelId = this.tunnelIdStr
+      await getrealTimeData(queryParams).then(
+        (response) => {
+          if(response.code==200){
+            let num = 0
+            if(!!response.data){
+              for (let key in  response.data) {
+                if(key=="光伏自用"){
+                  this.lightyelectricity =response.data[key]
+                }else if(key=="市电"){
+                  this.cityelectricity =response.data[key]
+                }else if(key=="柴发"){
+                  this.lfirewoodElectricity =response.data[key]
+                }else if(key=="风发"){
+                  this.windElectricity =response.data[key]
+                }
+                num = num+1
+              }
+            }
           }
         }
       );

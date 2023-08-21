@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill;
+import com.tunnel.business.domain.energyManagement.EnergySite;
 import com.tunnel.business.service.energyManagement.EnergyAnalysisElectricityBillService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,17 @@ public class EnergyAnalysisElectricityBillController extends BaseController {
      * @return
      */
     @GetMapping("/selectEnergyValueSum")
-    public Result selectEnergyValueSum(){
-        return Result.success(energyAnalysisElectricity.selectEnergyValueSum());
+    public Result selectEnergyValueSum(EnergySite energySite){
+        return Result.success(energyAnalysisElectricity.selectEnergyValueSum(energySite));
+    }
+
+    /**
+     * 实时电量展示
+     * @return
+     */
+    @GetMapping("/getrealTimeData")
+    public Result getrealTimeData(EnergySite energySite){
+        return Result.success(energyAnalysisElectricity.getrealTimeData(energySite));
     }
 
 }

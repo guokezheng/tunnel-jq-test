@@ -125,5 +125,19 @@ public interface SdEnergyDataMapper
      * @param energySjfx
      * @return
      */
-    List<EnergySjfx> selectMonthValueSum(EnergySjfx energySjfx);
+    EnergySjfx selectMonthValueSum(EnergySjfx energySjfx);
+
+    /**
+     * 计算本月能耗
+     * @param energySjfx
+     * @return
+     */
+    EnergySjfx getEnergyMonthSum(EnergySjfx energySjfx);
+
+    /**
+     * 计算月分项电量汇总
+     * @param energySjfx
+     * @return
+     */
+    EnergySjfx getEnergySubentryMonthSum(EnergySjfx energySjfx);
 }

@@ -77,9 +77,18 @@ export function getEnergySiteList(params) {
 }
 
 // 累计数据展示
-export function getAccumulated() {
+export function getAccumulated(params) {
   return request({
     url: '/energyAnalysisElectricityBillController/selectEnergyValueSum',
     method: 'get',
+    params: params
+  })
+}
+// 实时数据展示
+export function getrealTimeData(params) {
+  return request({
+    url: '/energyAnalysisElectricityBillController/getrealTimeData',
+    method: 'get',
+    params: params
   })
 }

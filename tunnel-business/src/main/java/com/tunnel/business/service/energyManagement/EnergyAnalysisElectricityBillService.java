@@ -1,6 +1,7 @@
 package com.tunnel.business.service.energyManagement;
 
 import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill;
+import com.tunnel.business.domain.energyManagement.EnergySite;
 
 import java.util.List;
 import java.util.Map;
@@ -18,5 +19,11 @@ public interface EnergyAnalysisElectricityBillService {
      * 计算用能总电量
      * @return
      */
-    public Map selectEnergyValueSum();
+    public Map selectEnergyValueSum(EnergySite energySite);
+
+    /**
+     * energySite
+     * @return
+     */
+    public Map getrealTimeData(EnergySite energySite);
 }

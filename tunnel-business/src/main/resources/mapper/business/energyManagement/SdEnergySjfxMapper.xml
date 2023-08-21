@@ -56,6 +56,9 @@
     <select id="getEnergySiteList" parameterType="EnergySjfx" resultMap="EnergySiteResult">
         select * from energy_site  where
              statistics_type = #{statisticsType}
+        <if test="tunnelId != null">
+            AND tunnel_id = #{tunnelId}
+        </if>
         <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
             and create_time &gt;= #{params.beginTime}
         </if>
@@ -381,15 +384,62 @@
     </select>
 
     <select id="selectMonthValueSum" parameterType="EnergySjfx" resultMap="EnergySiteResult">
-        select SUM(ene.energy_value) as energy_value , id from energy_classification ene WHERE
-        ene.statistics_type  = 1 and
-        ene.classification_code =49
+        SELECT
+        SUM( ene.energy_value ) AS energy_value,
+        ene.id
+        FROM
+        energy_classification ene
+        LEFT JOIN energy_configcenter_classification ecc ON ene.classification_code = ecc.classification_code
+        WHERE
+        1=1
+        <if test="statisticsType != null">
+            and  ene.statistics_type = #{statisticsType}
+        </if>
+        <if test="classificationName != null">
+            and  ecc.classification_name = #{classificationName}
+        </if>
+        <if test="tunnelId != null">
+            and  ene.tunnel_id = #{tunnelId}
+        </if>
         <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-            and create_time &gt;= #{params.beginTime}
+            and ene.create_time &gt;= #{params.beginTime}
         </if>
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-            and create_time &lt;= #{params.endTime}
+            and ene.create_time &lt;= #{params.endTime}
         </if>
         GROUP BY ene.statistics_type
+    </select>
+
+    <select id="getEnergyMonthSum" parameterType="EnergySjfx" resultMap="EnergySiteResult">
+        select * from energy_site  where
+        statistics_type = #{statisticsType}
+        <if test="tunnelId != null">
+            and  tunnel_id = #{tunnelId}
+        </if>
+        <if test="createTime != null">
+            and create_time = #{createTime}
+        </if>
+    </select>
+
+    <select id="getEnergySubentryMonthSum" parameterType="EnergySjfx"  resultMap="EnergySiteResult">
+        select ei.id  ,SUM( ei.energy_value ) as energy_value from energy_item  ei
+            LEFT JOIN energy_configcenter_itemized  eci on eci.itemized_code = ei.itemized_code
+        where
+        <if test="itemizedName != null">
+            eci.itemized_name = #{itemizedName}
+        </if>
+        <if test="tunnelId != null">
+            and ei.tunnel_id = #{tunnelId}
+        </if>
+        <if test="statisticsType != null">
+            and ei.statistics_type = #{statisticsType}
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and ei.create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and ei.create_time &lt;= #{params.endTime}
+        </if>
+        GROUP BY ei.statistics_type
     </select>
 </mapper>

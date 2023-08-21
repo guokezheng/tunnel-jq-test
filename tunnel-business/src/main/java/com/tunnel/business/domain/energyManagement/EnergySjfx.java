@@ -55,6 +55,10 @@ public class EnergySjfx extends BaseEntity {
     //@JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    private String itemizedName;
+
+    private String classificationName;
+
     public String getItemizedCode() {
         return itemizedCode;
     }
@@ -123,6 +127,22 @@ public class EnergySjfx extends BaseEntity {
     @Override
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getItemizedName() {
+        return itemizedName;
+    }
+
+    public void setItemizedName(String itemizedName) {
+        this.itemizedName = itemizedName;
+    }
+
+    public String getClassificationName() {
+        return classificationName;
+    }
+
+    public void setClassificationName(String classificationName) {
+        this.classificationName = classificationName;
     }
 
     @Override

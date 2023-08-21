@@ -70,7 +70,20 @@
         label-width="80px"
       >
         <el-form-item label="点位类型" style="width: 100%" prop="isReserved">
-
+          <el-select
+            v-model="queryParams.isReserved"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in isReservedList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
           
         <el-form-item class="bottomBox">
@@ -334,6 +347,17 @@ export default {
   name: "Point",
   data() {
     return {
+      // 点位类型
+      isReservedList:[
+        {
+          label:"只读",
+          value:"1",
+        },
+        {
+          label:"控制",
+          value:"2",
+        },
+      ],
       boxShow:false,
       // 遮罩层
       loading: true,

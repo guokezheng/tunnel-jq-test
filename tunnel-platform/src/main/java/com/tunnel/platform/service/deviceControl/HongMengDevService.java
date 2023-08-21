@@ -187,9 +187,9 @@ public class HongMengDevService {
             map.put("msg",jsonObject1.getString("msg"));
 
         } catch (Exception e) {
-            log.error(IpUtils.getIpAddr(ServletUtils.getRequest()) + "设备控制失败！{}", e.getMessage());
+            log.error(IpUtils.getIpAddr(ServletUtils.getRequest()) + "控制失败！{}", e.getMessage());
             map.put("code","500");
-            map.put("msg","设备控制失败");
+            map.put("msg","控制失败");
         }
 
         return map;

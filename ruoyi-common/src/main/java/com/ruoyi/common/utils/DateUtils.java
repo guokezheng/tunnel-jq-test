@@ -94,6 +94,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return formattedTime;
     }
 
+    //当前时间减一个月
+    public static final Date StrChangeDate(String dateStr)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = formatter.parse(dateStr);
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static final String dateTimeNow()
     {
         return dateTimeNow(YYYYMMDDHHMMSS);

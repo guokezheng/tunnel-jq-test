@@ -194,10 +194,17 @@
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备ID" prop="deviceId">
-          <el-input v-model="form.deviceId" placeholder="请输入设备ID" />
+          <el-row :gutter="20">
+            <el-col :span="16" style="padding: 0;">
+              <el-input v-model="form.deviceId" placeholder="请输入设备ID" />
+            </el-col>
+            <el-col :span="7">
+              <el-button size="small" @click="getEqName()">匹配设备名称</el-button>
+            </el-col>     
+          </el-row>
         </el-form-item>
         <el-form-item label="设备名称" prop="deviceName">
-          <el-input v-model="form.deviceName" placeholder="请输入设备名称" />
+          <el-input v-model="form.deviceName" placeholder="请输入设备名称" disabled/>
         </el-form-item>
         <el-form-item label="更换时间" prop="changeTime">
           <!-- <el-date-picker
@@ -259,7 +266,9 @@ import {
   updateChange,
   exportChange,
 } from "@/api/equipment/change/change";
-
+import {
+  getDevices,
+} from "@/api/equipment/eqlist/api";
 export default {
   name: "Change",
   data() {
@@ -331,6 +340,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    getEqName(){
+      getDevices(this.form.deviceId).then((response) => {
+        this.form.deviceName = response.data.eqName
+      })
+    },
+    
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
@@ -346,12 +361,14 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if(self.boxShow){
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
     },

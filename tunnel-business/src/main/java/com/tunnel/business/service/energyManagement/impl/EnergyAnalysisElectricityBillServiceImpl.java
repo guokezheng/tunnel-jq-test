@@ -3,6 +3,7 @@ package com.tunnel.business.service.energyManagement.impl;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill;
+import com.tunnel.business.domain.energyManagement.EnergySite;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
 import com.tunnel.business.mapper.energyManagement.SdEnergyAnalysisElectricityBillMapper;
 import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 能源分析电力账单
@@ -46,10 +45,10 @@ public class EnergyAnalysisElectricityBillServiceImpl implements EnergyAnalysisE
      * @return
      */
     @Override
-    public Map selectEnergyValueSum() {
+    public Map selectEnergyValueSum(EnergySite energySite) {
         EnergyAnalysisElectricityBill energyAnaly = new EnergyAnalysisElectricityBill();
         //返回数据map
-        HashMap<Object, Object> resultMap = new HashMap<>();
+        Map<Object, Object> resultMap = new HashMap<>();
         //获取月总用电量map
         Map<String, Object> dateMap = new HashMap<>();
         //获取当前时间
@@ -63,7 +62,7 @@ public class EnergyAnalysisElectricityBillServiceImpl implements EnergyAnalysisE
         dateMap.put("beginTime",beginningTime);
         dateMap.put("endTime",timeStr);
         energyAnaly.setParams(dateMap);
-
+        energyAnaly.setDeptCode(energySite.getTunnelId());
         //本月累计总电量
         EnergyAnalysisElectricityBill energyAnalysisElectricityBill = energyAnalysisElectricityBillMapper.selectEnergyValueSum(energyAnaly);
         Map<String, Object> dateMapOne = new HashMap<>();
@@ -82,33 +81,119 @@ public class EnergyAnalysisElectricityBillServiceImpl implements EnergyAnalysisE
             growthRate = difference.divide(previousYearValue, 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
         }
 
-        //本月城市总用电  同比上个月增涨率
-        double growthRateDouble = 0;
+        //本月累计能耗
+        // 获取月初时间
+        Date monthStart = DateUtils.StrChangeDate(beginningTime);
         EnergySjfx energySjfx = new EnergySjfx();
-        Map<String, Object> sjfxMap = new HashMap<>();
-        sjfxMap.put("beginTime",beginningTime);
-        sjfxMap.put("endTime",timeStr);
-        energySjfx.setParams(sjfxMap);
-        List<EnergySjfx> energySjfxes = sdEnergyDataMapper.selectMonthValueSum(energySjfx);
+        energySjfx.setStatisticsType(2);
+        energySjfx.setCreateTime(monthStart);
+        energySjfx.setTunnelId(energySite.getTunnelId());
 
-        Map<String, Object> sjfxMapOne = new HashMap<>();
-        sjfxMapOne.put("beginTime",beginningTimeOne);
-        sjfxMapOne.put("endTime",timeStrOne);
-        energySjfx.setParams(sjfxMapOne);
-        List<EnergySjfx> energySjfxesOne = sdEnergyDataMapper.selectMonthValueSum(energySjfx);
-        if(StringUtils.isNotNull(energySjfxes)&&StringUtils.isNotNull(energySjfxesOne)){
-            Double currentValue =energySjfxes.get(0).getEnergyValue();  // 当前值
-            Double previousYearValue = energySjfxesOne.get(0).getEnergyValue();  // 前一年的值
-            // 计算同比增长率
-            growthRateDouble = ((double) (currentValue - previousYearValue) / previousYearValue) * 100;
-        }
-        // 创建 DecimalFormat 对象，并设置格式化模式
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        // 格式化数字
-        String result = decimalFormat.format(growthRateDouble);
-        resultMap.put(energyAnalysisElectricityBill.getValue(),growthRate.setScale(2, RoundingMode.HALF_UP));
+        EnergySjfx energySjfxes = sdEnergyDataMapper.getEnergyMonthSum(energySjfx);
 
-        resultMap.put(energySjfxes.get(0).getEnergyValue(),result);
+        Date monthStartOne = DateUtils.StrChangeDate(beginningTimeOne);
+        EnergySjfx energySjfxOne = new EnergySjfx();
+        energySjfxOne.setStatisticsType(2);
+        energySjfxOne.setCreateTime(monthStartOne);
+        energySjfxOne.setTunnelId(energySite.getTunnelId());
+        EnergySjfx energySjfxesOne = sdEnergyDataMapper.getEnergyMonthSum(energySjfxOne);
+
+        //本月照明电量
+        EnergySjfx energySjfxIllumination = new EnergySjfx();
+        energySjfxIllumination.setItemizedName("隧道照明");
+        energySjfxIllumination.setStatisticsType(1);
+        Map<String, Object> dateMapIllumination = new HashMap<>();
+        dateMapIllumination.put("beginTime",beginningTime);
+        dateMapIllumination.put("endTime",timeStr);
+        energySjfxIllumination.setParams(dateMapIllumination);
+        energySjfxIllumination.setTunnelId(energySite.getTunnelId());
+        EnergySjfx energySubentryMonthSum = sdEnergyDataMapper.getEnergySubentryMonthSum(energySjfxIllumination);
+        //同期照明电量
+        EnergySjfx energySjfxIlluminationOne = new EnergySjfx();
+        energySjfxIlluminationOne.setItemizedName("隧道照明");
+        energySjfxIlluminationOne.setTunnelId(energySite.getTunnelId());
+        energySjfxIlluminationOne.setStatisticsType(1);
+        Map<String, Object> dateMapIlluminationOne = new HashMap<>();
+        dateMapIlluminationOne.put("beginTime",beginningTimeOne);
+        dateMapIlluminationOne.put("endTime",timeStrOne);
+        energySjfxIlluminationOne.setParams(dateMapIlluminationOne);
+        EnergySjfx energySubentryMonthSumOne = sdEnergyDataMapper.getEnergySubentryMonthSum(energySjfxIlluminationOne);
+
+        //本月风机电量
+        EnergySjfx energySjfxDraught = new EnergySjfx();
+        energySjfxDraught.setItemizedName("风机");
+        energySjfxDraught.setStatisticsType(1);
+        Map<String, Object> dateMapDraught = new HashMap<>();
+        dateMapDraught.put("beginTime",beginningTime);
+        dateMapDraught.put("endTime",timeStr);
+        energySjfxDraught.setParams(dateMapDraught);
+        energySjfxDraught.setTunnelId(energySite.getTunnelId());
+        EnergySjfx energyDraughtMonthSum = sdEnergyDataMapper.getEnergySubentryMonthSum(energySjfxDraught);
+        //同期照明电量
+        EnergySjfx energySjfxDraughtOne = new EnergySjfx();
+        energySjfxDraughtOne.setItemizedName("风机");
+        energySjfxDraughtOne.setStatisticsType(1);
+        Map<String, Object> dateMapDraughtOne = new HashMap<>();
+        dateMapDraughtOne.put("beginTime",beginningTimeOne);
+        dateMapDraughtOne.put("endTime",timeStrOne);
+        energySjfxDraughtOne.setParams(dateMapDraughtOne);
+        energySjfxDraughtOne.setTunnelId(energySite.getTunnelId());
+        EnergySjfx energyDraughtMonthSumOne = sdEnergyDataMapper.getEnergySubentryMonthSum(energySjfxDraughtOne);
+
+
+
+
+        //本月电费  -对比同期
+        String ds = StringUtils.isNotNull(energyAnalysisElectricityBill )?energyAnalysisElectricityBill.getValue().toString() : "0";
+        String ds1 = StringUtils.isNotNull(energyAnalysisElectricity) ? energyAnalysisElectricity.getValue().toString():"0";
+        String energyStr = ds+ ","+ ds1;
+        resultMap.put("本月电费",energyStr);
+        //本月能耗  -对比同期
+        String energySjfxesStr =   StringUtils.isNotNull(energySjfxes ) ?energySjfxes.getEnergyValue().toString() :"0";
+        String energySjfxesStrOne =   StringUtils.isNotNull(energySjfxesOne ) ?energySjfxesOne.getEnergyValue().toString() :"0";
+        String energyStrOne = energySjfxesStr+","+energySjfxesStrOne;
+        resultMap.put("本月能耗",energyStrOne);
+        //照明电量  -对比同期
+        String energySubentryMonthSumStr =   StringUtils.isNotNull(energySubentryMonthSum ) ? energySubentryMonthSum.getEnergyValue().toString() :"0";
+        String energySubentryMonthSumStrOne =   StringUtils.isNotNull(energySubentryMonthSumOne ) ?energySubentryMonthSumOne.getEnergyValue().toString() :"0";
+        String energyStrTwo = energySubentryMonthSumStr+","+energySubentryMonthSumStrOne;
+        resultMap.put("照明电量",energyStrTwo);
+        //风机电量  -对比同期
+        String energyDraughtMonthSumStr =   StringUtils.isNotNull(energyDraughtMonthSum ) ?energyDraughtMonthSum.getEnergyValue().toString():"0";
+        String energyDraughtMonthSumOneStr =   StringUtils.isNotNull(energyDraughtMonthSumOne ) ?energyDraughtMonthSumOne.getEnergyValue().toString() :"0";
+        String energyStrThree = energyDraughtMonthSumStr+","+energyDraughtMonthSumOneStr;
+        resultMap.put("风机电量",energyStrThree);
+        return resultMap;
+    }
+
+    @Override
+    public Map getrealTimeData(EnergySite energySite) {
+        //获取当前时间
+        String timeStr = DateUtils.getTime();
+        //获取月初时间
+        String beginningTime = DateUtils.getBeginningTime();
+        EnergySjfx energySjfxOne = new EnergySjfx();
+        energySjfxOne.setTunnelId("JQ-WeiFang-JiuLongYu-HSD");
+        energySjfxOne.setStatisticsType(1);
+        energySjfxOne.setClassificationName("市电");
+        Map<String, Object> dateMap = new HashMap<>();
+        dateMap.put("beginTime",beginningTime);
+        dateMap.put("endTime",timeStr);
+        energySjfxOne.setParams(dateMap);
+        energySjfxOne.setTunnelId(energySite.getTunnelId());
+        EnergySjfx energySjfxescity = sdEnergyDataMapper.selectMonthValueSum(energySjfxOne);
+        energySjfxOne.setClassificationName("光伏自用");
+        EnergySjfx energySjfxescityLight = sdEnergyDataMapper.selectMonthValueSum(energySjfxOne);
+        energySjfxOne.setClassificationName("柴发");
+        EnergySjfx energySjfxescityFirewood = sdEnergyDataMapper.selectMonthValueSum(energySjfxOne);
+        energySjfxOne.setClassificationName("风发");
+        EnergySjfx energySjfxescityLightWind = sdEnergyDataMapper.selectMonthValueSum(energySjfxOne);
+        System.out.print(energySjfxescityLight);
+        Map resultMap = new HashMap();
+        resultMap.put("市电", StringUtils.isNotNull(energySjfxescity) ? energySjfxescity.getEnergyValue():0);
+        resultMap.put("光伏自用",StringUtils.isNotNull(energySjfxescityLight)?energySjfxescityLight.getEnergyValue() :0);
+        resultMap.put("柴发",StringUtils.isNotNull(energySjfxescityFirewood)? energySjfxescityFirewood.getEnergyValue() : 0);
+        resultMap.put("风发",StringUtils.isNotNull(energySjfxescityLightWind)? energySjfxescityLightWind.getEnergyValue():0);
         return resultMap;
     }
 

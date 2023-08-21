@@ -96,11 +96,6 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道分区对象")
     private SdTunnelSubarea sdTunnelSubarea;
 
-
-
-
-
-
     @ApiModelProperty("管控方向")
     private String controlDirection;
 
@@ -120,6 +115,19 @@ public class SdReservePlan extends BaseEntity
     private String eventGrade;
 
     private String ids;
+
+    /**
+     * 防控类型
+     */
+    private String prevControlType;
+
+    public String getPrevControlType() {
+        return prevControlType;
+    }
+
+    public void setPrevControlType(String prevControlType) {
+        this.prevControlType = prevControlType;
+    }
 
     public String getDj() {
         return this.dj;

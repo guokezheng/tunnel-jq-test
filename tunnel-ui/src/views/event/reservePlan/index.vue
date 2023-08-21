@@ -1156,6 +1156,8 @@ export default {
       drawerTitle: "",
       //搜索-事件类型
       planTypeData: [],
+      // 表格内回显事件类型
+      planTypeDataAll:[],
       //from表单参数
       reservePlanDrawForm: {
         planTypeId: null, //事件类型
@@ -1244,7 +1246,7 @@ export default {
   },
   created() {
     this.getList();
-    // this.getPlanType(); //事件类型下拉
+    this.getPlanType(); //事件类型下拉
     // this.getStrategyInfo();//策略下拉
     // this.getTunnelData(this.tunnelId);
     this.lightSwitchFunc();
@@ -1289,17 +1291,27 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleChangeControl(num){
+    handleChangeControl(type,num){
+      console.log(type,num,"type,num")
       this.planTypeData = []
-      this.queryParams.planTypeId = ''
-      this.reservePlanDrawForm.planTypeId = ''
+      // this.queryParams.planTypeId = ''
+      // this.reservePlanDrawForm.planTypeId = ''
       this.$forceUpdate();
+      let prevControlType = ''
+      if(type == 1){
+        prevControlType = this.queryParams.prevControlType
+      }else if(type == 2){
+        prevControlType = this.reservePlanDrawForm.prevControlType
+      }else if(type == 3){
+        prevControlType = num
+      }
       //查询事件类型
-      let prevControlType = {
+      let params = {
         isUsable: "1",
-        prevControlType: num==1?this.queryParams.prevControlType:this.reservePlanDrawForm.prevControlType,
+        prevControlType: prevControlType,
       };
-      listEventType(prevControlType).then((response) => {
+      listEventType(params).then((response) => {
+        console.log(this.planTypeData,"this.planTypeData")
         this.planTypeData = [...response.rows];
       });
     },
@@ -1478,7 +1490,7 @@ export default {
       }
     },
     getPlanTypeData(id) {
-      for (var item of this.planTypeData) {
+      for (var item of this.planTypeDataAll) {
         if (item.id == id) {
           return item.eventType;
         }
@@ -1602,6 +1614,9 @@ export default {
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
       this.fileList = [];
+      this.$nextTick(() => {
+        this.$refs["addform1"].resetFields();
+      });
       this.$refs.planTable.clearSelection();
       //this.handleQuery();
       this.resetReservePlanDrawForm();
@@ -2198,6 +2213,10 @@ export default {
               "eventGrade",
               Number(this.reservePlanDrawForm.eventGrade)
             );
+            this.fileData.append(
+              "prevControlType",
+              Number(this.reservePlanDrawForm.prevControlType)
+            );
             if (this.planChangeSink == "add") {
               addPlanFile(this.fileData).then((response) => {
                 if (response.code === 200) {
@@ -2237,6 +2256,9 @@ export default {
             this.multipleSelectionIds = [];
           }
           this.dloading = false;
+          this.$nextTick(() => {
+            this.$refs["addform1"].resetFields();
+          });
         }
       });
     },
@@ -2253,9 +2275,7 @@ export default {
     },
     /** 新增按钮操作 **/
     handleAdd() {
-      this.$nextTick(() => {
-        this.$refs["addform1"].resetFields();
-      });
+      
       this.resetReservePlanDrawForm();
       this.title = "新增预案";
       this.planChangeSink = "add";
@@ -2297,12 +2317,13 @@ export default {
         this.planCategory = response.data;
       });
       getPlan(id).then((response) => {
-        console.log(response,"response修改弹窗")
+        console.log(response.data,"response修改弹窗")
         this.reservePlanDrawForm = response.data;
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
         this.reservePlanDrawForm.category = response.data.category;
 
+        this.handleChangeControl(3,response.data.prevControlType)
         if (
           this.reservePlanDrawForm.strategyId != -1 &&
           this.reservePlanDrawForm.strategyId != "-1" &&
@@ -2311,7 +2332,6 @@ export default {
           this.multipleSelectionIds =
             this.reservePlanDrawForm.strategyId.split(";");
         }
-
         let fileInfo = response.data.pFileList;
         this.$nextTick(() => {
           if(fileInfo){
@@ -2403,13 +2423,13 @@ export default {
         this.strategyData = response.rows;
       });
     },
-    // /** 查询事件类型下拉列表 */
-    // getPlanType() {
-    //   let data = {};
-    //   listEventType(data).then((response) => {
-    //     this.planTypeData = response.rows;
-    //   });
-    // },
+    /** 查询事件类型下拉列表 */
+    getPlanType() {
+      let data = {};
+      listEventType(data).then((response) => {
+        this.planTypeDataAll = response.rows;
+      });
+    },
     //关闭drawer
     handleClose(done) {
       done();

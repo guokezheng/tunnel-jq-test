@@ -101,8 +101,8 @@
 
           <div v-if="treeModel==1"  style=" overflow: auto; width: 100%; height: 88%;" >
             <div v-for="item in lightStrategyList" :key="item.id" class="content-centre-one">
-              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>
-              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>
+<!--              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>-->
+<!--              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>-->
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">隧道</el-col>
                 <el-col :span="20" class="elcolNameOne"  v-html="item.tunnelName"></el-col>

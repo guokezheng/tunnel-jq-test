@@ -797,6 +797,10 @@ export default {
           ],
           yAxis: [
             {
+              name:"元",
+              nameTextStyle:{
+                color:"#fff"
+              },
               type: "value",
               splitLine: {
                 show: true,
@@ -853,6 +857,19 @@ export default {
 .table {
   width: 100%;
   height: 45%;
+  ::v-deep .el-table__body-wrapper {
+    max-height: 27vh;
+  }
+  ::v-deep .el-table__fixed,
+  .el-table__fixed-right {
+    max-height: 35vh;
+  }
+  ::v-deep .el-table__fixed-body-wrapper {
+    max-height: 25.8vh;
+  }
+  ::v-deep th.el-table__cell {
+    background: #004f8b;
+  }
 }
 // .el-table {
 // overflow-y: auto !important;

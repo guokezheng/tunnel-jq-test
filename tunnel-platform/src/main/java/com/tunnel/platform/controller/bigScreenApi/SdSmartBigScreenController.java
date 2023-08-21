@@ -287,4 +287,31 @@ public class SdSmartBigScreenController extends BaseController {
         map.put("threeLane",three);
         return AjaxResult.success(map);
     }
+
+    /**
+     * 隧道平均车速以及车流
+     * @return
+     */
+    @GetMapping("/getAllTunnelVehicleSpeed")
+    public AjaxResult getAllTunnelVehicleSpeed(){
+        return sdSmartBigScreenService.getAllTunnelVehicleSpeed();
+    }
+
+    /**
+     * 隧道平均车速
+     * @return
+     */
+    @GetMapping("/getTunnelSpeed")
+    public AjaxResult getTunnelSpeed(){
+        return sdSmartBigScreenService.getTunnelSpeed();
+    }
+
+    /**
+     * 获取各隧道数据
+     * @return
+     */
+    @GetMapping("/getTunnelStatis")
+    public AjaxResult getTunnelStatis(){
+        return sdSmartBigScreenService.getTunnelStatis();
+    }
 }

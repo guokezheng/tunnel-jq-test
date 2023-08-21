@@ -1637,6 +1637,9 @@ public class KafkaReadListenToHuaWeiTopic {
         sdLaneStatistics.setCreateTime(DateUtils.getNowDate());
         SdLaneStatisticsMapper sdLaneStatisticsMapper = SpringUtils.getBean(SdLaneStatisticsMapper.class);
         sdLaneStatisticsMapper.insertSdLaneStatistics(sdLaneStatistics);
+        JSONObject jsonObject1 = JSONObject.parseObject(sdLaneStatistics.toString());
+        //推送至物联中台
+        kafkaTwoTemplate.send(TopicEnum.LANE_STATISTICS_TOPIC.getCode(),jsonObject1.toString());
     }
 
     /**
@@ -1668,6 +1671,9 @@ public class KafkaReadListenToHuaWeiTopic {
         SdRoadSectionStatisticsMapper sectionStatisticsMapper = SpringUtils.getBean(SdRoadSectionStatisticsMapper.class);
         sectionStatisticsMapper.insertSdRoadSectionStatistics(statistics);
         setRedis(statistics);
+        JSONObject jsonObject1 = JSONObject.parseObject(statistics.toString());
+        //推送至物联中台
+        kafkaTwoTemplate.send(TopicEnum.TUNNEL_STATISTICS_TOPIC.getCode(),jsonObject1.toString());
     }
 
     /**

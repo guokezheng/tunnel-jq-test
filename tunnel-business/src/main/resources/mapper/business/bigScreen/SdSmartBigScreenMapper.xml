@@ -586,4 +586,59 @@
         GROUP BY
             d.eq_type
     </select>
+
+    <select id="getTunnelVehicleCount" resultType="hashmap">
+        SELECT
+            IFNULL(b.tunnel_id,'') AS tunnelId,
+            t.tunnel_name AS tunnelName,
+            count( b.vehicle_license ) AS num
+        FROM
+            (
+                SELECT DISTINCT
+                    rddt.vehicle_license,
+                    DATE_FORMAT( rddt.detect_time, '%Y-%m-%d %H' ) AS detect_time,
+                    rddt.tunnel_id
+                FROM
+                    sd_radar_detect_data_temporary rddt
+                WHERE
+                    rddt.detect_time >= ( NOW() - INTERVAL 1 HOUR )
+                  AND rddt.vehicle_license != ''
+		          AND rddt.vehicle_license IS NOT NULL
+                  <if test="model == 1">
+                      AND rddt.vehicle_type IN ( '13', '15', '16', '19', '24', '25' )
+                  </if>
+                  <if test="model == 2">
+                      AND rddt.vehicle_type IN ( '14', '17', '26' )
+                  </if>
+            ) b LEFT JOIN sd_tunnels t ON b.tunnel_id = t.tunnel_id
+    </select>
+
+    <select id="getTunnelVehicleSpeed" resultType="hashmap">
+        SELECT
+            ls.tunnel_id AS tunnelId,
+            ROUND( ROUND( sum( ls.speed )/ 2, 2 )/ 3, 2 ) AS speed
+        FROM
+            sd_lane_statistics ls
+        WHERE
+            1 = 1
+          AND ls.TIME IN ( SELECT Max( TIME ) FROM sd_lane_statistics GROUP BY tunnel_id )
+        GROUP BY
+            ls.tunnel_id
+    </select>
+    
+    <select id="getTunnelDataStatis" resultType="hashmap">
+        SELECT
+            t.tunnel_name AS tunnelName,
+            rss.tunnel_id AS tunnelId,
+            ROUND( sum( rss.speed )/ 2, 2 ) AS speed,
+            sum( rss.cars ) AS cars
+        FROM
+            sd_road_section_statistics rss
+                LEFT JOIN sd_tunnels t ON rss.tunnel_id = t.tunnel_id
+        WHERE
+            1 = 1
+          AND rss.TIME IN ( SELECT Max( TIME ) FROM sd_road_section_statistics GROUP BY tunnel_id )
+        GROUP BY
+            rss.tunnel_id
+    </select>
 </mapper>

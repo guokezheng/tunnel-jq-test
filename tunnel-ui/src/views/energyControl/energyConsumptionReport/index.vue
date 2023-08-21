@@ -129,10 +129,11 @@
             <el-table
               v-if="activeName == 'second'"
               :data="tableData"
-              style="width: 100%"
+              border
               ref="multipleTable"
               max-height="100%"
               class="allTable"
+              :key="Math.random()"
             >
               <el-table-column
                 fixed="left"
@@ -168,6 +169,7 @@
             </el-table>
             <el-table
               v-else
+              border
               :data="tableData"
               style="width: 100%"
               ref="multipleTable"
@@ -284,6 +286,18 @@ export default {
 
       tableName: "站点名称",
     };
+  },
+  watch:{
+    "tableData":{
+      handler(){
+      console.log(22222)
+
+        this.$nextTick(()=>{
+          this.$refs.multipleTable.doLayout()
+        });
+      },
+      deep:true
+    }
   },
   computed: {
     ...mapState({
@@ -745,6 +759,10 @@ export default {
           },
           yAxis: {
             type: "value",
+            name:'kW-h',
+            nameTextStyle:{
+              color:"#fff"
+            },
             splitLine: {
               show: true,
               lineStyle: {
@@ -892,6 +910,7 @@ export default {
 .table {
   width: 100%;
   height: 45%;
+  box-sizing: border-box;
   ::v-deep .el-table__body-wrapper {
     max-height: 27vh;
   }
@@ -904,6 +923,13 @@ export default {
   }
   ::v-deep th.el-table__cell {
     background: #004f8b;
+  }
+  &::before{
+    height: 0px;
+  }
+  .el-table--border::after, .el-table--group::after{
+    width: 0px;
+    height: 0px;
   }
 }
 // .el-table {

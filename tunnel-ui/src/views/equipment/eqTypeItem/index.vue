@@ -85,7 +85,7 @@
           />
         </el-form-item> -->
         <el-form-item label="设备类型" style="width: 100%" prop="deviceTypeId">
-          <el-select
+          <!-- <el-select
             v-model="queryParams.deviceTypeId"
             placeholder="请选择设备类型"
             clearable
@@ -97,7 +97,15 @@
               :value="item.typeId"
             >
             </el-option>
-          </el-select>
+          </el-select> -->
+          <el-cascader
+              v-model="queryParams.deviceTypeId"
+              :options="eqTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              @change="changeEquipmentType(index)"
+              style="width: 100%"
+            ></el-cascader>
         </el-form-item>
         <!--        <el-form-item label="单位名称" style="width: 100%" prop="unit">-->
         <!--          <el-input-->
@@ -194,7 +202,7 @@
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="设备类型" prop="deviceTypeId">
-          <el-select
+          <!-- <el-select
             v-model="form.deviceTypeId"
             placeholder="请选择设备类型"
             class="deviceTypeId"
@@ -206,7 +214,15 @@
               :value="item.typeId"
             >
             </el-option>
-          </el-select>
+          </el-select> -->
+          <el-cascader
+              v-model="form.deviceTypeId"
+              :options="eqTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              @change="changeEquipmentType(index)"
+              style="width: 100%"
+            ></el-cascader>
         </el-form-item>
         <el-form-item label="数据项名称" prop="itemName">
           <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
@@ -238,11 +254,20 @@ import {
   updateItem,
   exportItem,
 } from "@/api/equipment/eqTypeItem/item";
+import {
+  getCategoryTree,
+} from "@/api/event/strategy";
 import { listType } from "@/api/equipment/type/api";
 export default {
   name: "Item",
   data() {
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       boxShow: false,
       // 遮罩层
       loading: true,
@@ -308,12 +333,16 @@ export default {
   },
   created() {
     this.getList();
+    this.getEqType();
+
   },
   mounted() {
-    this.getEqType();
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    changeEquipmentType(index){
+      console.log(index)
+    },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
@@ -351,21 +380,12 @@ export default {
     },
     /** 设备类型 */
     getEqType() {
-      listType().then((response) => {
-        this.eqTypeData = response.rows;
-        console.log(
-          this.eqTypeData,
-          "eqTypeDataeqTypeDataeqTypeDataeqTypeData"
-        );
-        // this.itemList.forEach((item,index)=>{
-        //   this.eqTypeData.forEach((it,id)=>{
-        //       if(item.deviceTypeId == it.typeId){
-        //         item.deviceTypeId= it.typeName
-        //       }
-        //   })
-        // })
-        console.log(this.itemList, "itemListitemListitemListitemList");
-      });
+      // listType().then((response) => {
+      //   this.eqTypeData = response.rows;
+      // });
+      getCategoryTree().then((data) => {
+        this.eqTypeData = data.data;
+      })
     },
     /** 查询设备类型数据项列表 */
     getList() {

@@ -34,7 +34,7 @@
         label-width="80px"
       >
         <el-form-item label="设备类型" prop="stateTypeId">
-          <el-select
+          <!-- <el-select
             v-model="queryParams.stateTypeId"
             placeholder="请选择设备类型"
             clearable
@@ -46,7 +46,15 @@
               :label="item.typeName"
               :value="item.typeId"
             />
-          </el-select>
+          </el-select> -->
+          <el-cascader
+            v-model="queryParams.stateTypeId"
+            :options="eqTypeData"
+            :props="equipmentTypeProps"
+            :show-all-levels="false"
+            @change="changeEquipmentType(index)"
+            style="width: 100%"
+          ></el-cascader>
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
@@ -408,6 +416,7 @@ import {
   updateType,
 } from "@/api/equipment/type/api";
 import moment from "moment";
+import { getCategoryAllTree } from "@/api/event/strategy";
 // import { array } from "yargs";
 import Template from "../../information/template";
 export default {
@@ -415,6 +424,14 @@ export default {
   components: { Template },
   data() {
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
+      //设备类型
+      eqTypeData: [],
       boxShow: false,
 
       imageUrl: "",
@@ -532,6 +549,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getEqType();
     this.getStateEqType();
     this.getDicts("sys_type_control").then((response) => {
       // console.log(response.data,'response.dataresponse.data')
@@ -545,14 +563,28 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
+    changeEquipmentType(index) {
+      console.log(index);
+    },
+    /** 设备类型 */
+    getEqType() {
+      getCategoryAllTree().then((data) => {
+        this.eqTypeData = data.data;
+      });
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if (self.boxShow) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
     },
@@ -607,7 +639,7 @@ export default {
       if (!!this.equipmentStates[index].id) {
         //需要删除的集合
         // debugger
-        this.deleteEquipmentStates.push(rowid)
+        this.deleteEquipmentStates.push(rowid);
         // deleteRow(rowid).then((res) => {
         //   console.log(res, "shanchu");
         //   if ((res.code = 200)) {
@@ -654,7 +686,7 @@ export default {
       this.reset();
       console.log(this.iconFileIdAll, "this.iconFileIdAllthis.iconFileIdAll");
       this.currentDeleteFile = "";
-      this.deleteEquipmentStates=[]
+      this.deleteEquipmentStates = [];
       // if(this.iconFileIdAllz1!==''){
       //      deletePicture(this.iconFileIdAll).then(res=>{
       //      console.log(res,'取消按钮')
@@ -967,9 +999,13 @@ export default {
               }
               updatePic(this.equipmentStates).then((res) => {
                 if (res.code == 200) {
-                  if(this.deleteEquipmentStates.length>0){
-                    for (let i = 0; i < this.deleteEquipmentStates.length; i++) {
-                      deleteRow( this.deleteEquipmentStates[i]).then((res) => {
+                  if (this.deleteEquipmentStates.length > 0) {
+                    for (
+                      let i = 0;
+                      i < this.deleteEquipmentStates.length;
+                      i++
+                    ) {
+                      deleteRow(this.deleteEquipmentStates[i]).then((res) => {
                         console.log(res, "shanchu");
                         if ((res.code = 200)) {
                           // this.$modal.msgSuccess("删除成功");

@@ -1548,6 +1548,10 @@ export default {
 
     // 返回安全预警
     backSafeWarn() {
+      this.videoForm1.cameraPlayer = false;
+      this.videoForm2.cameraPlayer = false;
+      this.videoForm3.cameraPlayer = false;
+      this.videoForm4.cameraPlayer = false;
       this.$router.push({
         path: "/emergency/safeWarn",
       });

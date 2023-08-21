@@ -267,8 +267,8 @@
     border-width:50px;
   }
   ::-webkit-scrollbar {
-      width: 12px;
-      height: 12px !important;
+      width: 10px;
+      height: 10px !important;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
       border-radius: 5px;
@@ -1444,7 +1444,7 @@
       border-right: 1px solid rgba(225,228,230,.16);
     }
     .el-table__fixed-footer-wrapper tbody td.el-table__cell{
-      background-color: #004F8B;
+      background-color: #004375;
       border:none;
       color: white;
     }
@@ -1468,7 +1468,7 @@
   }
   //  表格下边框
   .el-table td.el-table__cell{
-    border-bottom: 1px solid rgba(225, 228, 230, .16) !important;
+    border: 1px solid rgba(225, 228, 230, .16) !important;
   }
   .el-table td:last-of-type {
     border-right: 1px solid rgba(225, 228, 230, .16) !important;
@@ -2137,7 +2137,7 @@
     border: solid 1px #00ACED;
   }
   .el-button--mini{
-    padding: 7px 15px !important;
+    // padding: 7px 15px !important; 故障详情表单内受影响
   }
 }
   .userDialog{

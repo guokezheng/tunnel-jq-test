@@ -1215,7 +1215,7 @@
             <el-date-picker
               v-model="dateRange1"
               size="small"
-              style="width: 252px"
+              style="width: 100%"
               value-format="yyyy-MM-dd HH:mm:ss"
               type="datetimerange"
               range-separator="-"

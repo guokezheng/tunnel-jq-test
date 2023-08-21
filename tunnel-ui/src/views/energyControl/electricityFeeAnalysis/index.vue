@@ -73,6 +73,7 @@
               ref="multipleTable"
               max-height="100%"
               class="allTable"
+              border
             >
               <el-table-column
                 fixed
@@ -376,6 +377,10 @@ export default {
             data: this.xData,
           },
           yAxis: {
+            name:"元",
+            nameTextStyle:{
+              color:"#fff"
+            },
             type: "value",
             splitLine: {
               show: true,
@@ -534,26 +539,27 @@ export default {
 .table {
   width: 100%;
   height: 45%;
-  // padding: 20px;
-  // background: white;
-  // overflow: auto;
-  // ::v-deep .el-table .el-table__fixed-header-wrapper th{
-  //   background: #E7F5FF;
-  // }
-  // ::v-deep .el-table .el-table__header-wrapper th{
-  //   background: #E7F5FF;
-  // }
-  // /* 修改滚动条宽度 */
-  // ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
-  //   // width: 7px;
-  //   // height: 7px;
-  //   background: #F4F4F4;
-  // }
-  /* 修改滚动条颜色 */
-  // ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
-  //   background-color: rgba(91, 143, 216, 0.5);
-  //   border-radius: 6px;
-  // }
+  box-sizing: border-box;
+  ::v-deep .el-table__body-wrapper {
+    max-height: 27vh;
+  }
+  ::v-deep .el-table__fixed,
+  .el-table__fixed-right {
+    max-height: 35vh;
+  }
+  ::v-deep .el-table__fixed-body-wrapper {
+    max-height: 25.8vh;
+  }
+  ::v-deep th.el-table__cell {
+    background: #004f8b;
+  }
+  &::before{
+    height: 0px;
+  }
+  .el-table--border::after, .el-table--group::after{
+    width: 0px;
+    height: 0px;
+  }
 }
 .el-table {
   overflow-y: auto !important;

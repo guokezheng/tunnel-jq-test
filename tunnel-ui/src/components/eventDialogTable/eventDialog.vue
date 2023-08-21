@@ -115,7 +115,7 @@
               <el-carousel-item
                 v-for="(item, index) in videoList"
                 :key="index"
-                v-if="item.liveUrl != null"
+                v-show="item.liveUrl != null"
               >
                 <videoPlayer
                   v-show="item.liveUrl != null && item.liveUrl != ''"
@@ -624,7 +624,7 @@
         :key="index"
         v-show="deviceIndexShow == index"
       >
-        <el-table :data="item.devicesList" style="width: 100%">
+        <el-table :data="item.devicesList" style="width: 100%" :key="tableKey">
           <el-table-column prop="eqName" label="设备名称" align="center">
           </el-table-column>
           <el-table-column prop="pile" label="桩号" align="center">
@@ -687,6 +687,7 @@ export default {
   },
   data() {
     return {
+      tableKey:0,
       rules: {
         otherContent: [
           { max: 100, message: "最长输入100个字符", trigger: "blur" },
@@ -1167,6 +1168,7 @@ export default {
             this.closeProcessDialog = false;
             this.processType = false;
             this.details = false;
+            this.cameraPlayer = false
             this.$modal.msgSuccess("修改成功");
             //主动安全
             //策略不为空
@@ -1323,6 +1325,7 @@ export default {
     handleClickDevice(tab, event) {
       console.log(tab.index);
       this.deviceIndexShow = tab.index;
+      this.tableKey = tab.index
     },
     getImgUrl(item) {
       this.urlsList = [];
@@ -1487,6 +1490,7 @@ export default {
     cancel() {
       this.open = false;
       this.details = false;
+      this.cameraPlayer = false
       this.processDialog = false;
       this.processType = false;
       this.reset();
@@ -1915,7 +1919,7 @@ export default {
     }
   }
   .el-form-item {
-    margin-bottom: 14px !important;
+    margin-bottom: 10px !important;
   }
   .evtCarStyle {
     width: calc(100% - 10px);

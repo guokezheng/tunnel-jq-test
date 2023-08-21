@@ -201,9 +201,11 @@ export default {
         var option = {
           tooltip: {
             trigger: "item",
-            formatter: function (data) {
-              return data.name + " : " + data.value.toFixed(2);
-            },
+            triggerOn: 'mousemove',
+            // formatter: function (data) {
+            //   console.log(data,"data")
+            //   return data.name + " : " + data.value.toFixed(2);
+            // },
           },
           series: {
             type: "sankey",

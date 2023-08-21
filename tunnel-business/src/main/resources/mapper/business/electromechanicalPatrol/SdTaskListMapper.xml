@@ -545,7 +545,14 @@
             fsd.mac,
             d.protocol_id,
             sdp.is_reserved,
-            sdp.function_json
+            sdp.function_json,
+            p.impression,
+            p.network,
+            p.power,
+            p.eq_status as eqStatus,
+            p.run_status as runStatus,
+            p.fault_clstatus as faultClstatus,
+            p.img_file_id as imgFileId
         FROM
             sd_patrol_list p
             LEFT JOIN sd_task_list t ON t.id = p.task_id
@@ -575,7 +582,14 @@
                 fsd.mac,
                 d.protocol_id,
                 sdp.is_reserved,
-                sdp.function_json
+                sdp.function_json,
+                p.impression,
+                p.network,
+                p.power,
+                p.eq_status as eqStatus,
+                p.run_status as runStatus,
+                p.fault_clstatus as faultClstatus,
+                p.img_file_id as imgFileId
 
             FROM
                 sd_patrol_list p

@@ -1,13 +1,19 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
+import com.deepoove.poi.data.PictureRenderData;
+import com.deepoove.poi.data.PictureType;
+import com.deepoove.poi.data.Pictures;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISdAppVersionService;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.util.*;
 
 /**
@@ -251,7 +258,56 @@ public class SdAppTaskListController extends BaseController
     @GetMapping("/app/getTaskAllList")
     public Result getTaskAllList(){
 
-        return Result.success(sdTaskListService.getTaskAllList());
+        List<Map> taskList = sdTaskListService.getTaskAllList();
+
+        for (Map map: taskList) {
+
+            if(map.get("patrolInfo") == null){
+                break;
+            }
+
+            List<Map> mapList = (List<Map>) map.get("patrolInfo");
+
+            if(mapList.size()>0){
+                //巡检设备
+                for(Map map1 : mapList) {
+                    String faultImgId = map1.get("imgFileId") != null?map1.get("imgFileId").toString():null;
+                /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                sdTrafficImage.setBusinessId(faultImgId);*/
+                    if(faultImgId == null){
+                        continue;
+                    }
+                    String[] businessId = faultImgId.split(",");
+                    List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileLists(businessId);
+                    //List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
+                    if (imageList.size() > 0) {
+                        List<PictureRenderData> photoList = new ArrayList<>();
+                        for (int y = 0; y < imageList.size(); y++) {
+                            String faultPhoto = "faultPhoto" + y;
+                            // 图片的处理
+                            String imageBaseStr = imageList.get(y).getImgUrl();
+                            Base64.Decoder decoder = Base64.getDecoder();
+                            // 去掉base64前缀
+                            imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
+                            byte[] b = decoder.decode(imageBaseStr);
+                            // 处理数据
+                            for (int a = 0; a < b.length; ++a) {
+                                if (b[a] < 0) {
+                                    b[a] += 256;
+                                }
+                            }
+                            byte[] bytes = decoder.decode(imageBaseStr);
+                            PictureRenderData pictureRenderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
+                                    .size(250, 160).create();
+                            photoList.add(pictureRenderData);
+                            map1.put(faultPhoto, pictureRenderData);
+                        }
+                    }
+                }
+            }
+        }
+
+        return Result.success(taskList);
     }
 
     /**

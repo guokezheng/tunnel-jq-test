@@ -17,7 +17,11 @@ public enum TopicEnum {
     //物联中台隧道基础数据topic
     TUNNEL_BASE_TOPIC("tunnelBaseData", "tunnelBaseData"),
     //物联中台雷达轨迹数据topic
-    TUNNEL_RADAR_TOPIC("tunnelRadarData","tunnelRadarData");
+    TUNNEL_RADAR_TOPIC("tunnelRadarData","tunnelRadarData"),
+    //隧道车辆统计
+    TUNNEL_STATISTICS_TOPIC("tunnelStatistics","tunnelStatistics"),
+    //隧道车辆速度统计
+    LANE_STATISTICS_TOPIC("laneStatistics","laneStatistics");
 
     private String code;
     private String name;

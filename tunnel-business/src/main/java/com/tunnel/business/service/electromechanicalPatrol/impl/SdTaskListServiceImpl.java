@@ -861,6 +861,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 //            jsonObjectFault.put("optType","2");//更新故障状态
 //            kafkaTwoTemplate.send("test", jsonObjectFault.toString());
         }
+
+        // 修改巡检任务状态为 巡检中
+        SdTaskList sdTaskList = new SdTaskList();
+        sdTaskList.setId(sdPatrolList.getTaskId());
+        sdTaskList.setTaskStatus(TaskStatus.XUNCHAZHONG.getCode());
+        updateGsySdTaskList(sdTaskList);
 //
 //        JSONObject  jsonObject = new JSONObject();
 //        //任务数据推送

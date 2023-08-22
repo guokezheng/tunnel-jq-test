@@ -198,4 +198,24 @@ public interface SdSmartBigScreenMapper {
      * @return
      */
     List<Map<String, Object>> getStatisticalDevice(@Param("tunnelId") String tunnelId);
+
+    /**
+     * 隧道内统计1小时车流量
+     * @param model
+     * @return
+     */
+    List<Map<String, Object>> getTunnelVehicleCount(@Param("model") String model);
+
+    /**
+     * 获取平均车速
+     *
+     * @return
+     */
+    List<Map<String, Object>> getTunnelVehicleSpeed();
+
+    /**
+     * 获取各隧道数据
+     * @return
+     */
+    List<Map<String, Object>> getTunnelDataStatis();
 }

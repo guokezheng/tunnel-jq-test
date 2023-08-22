@@ -136,3 +136,12 @@ export function getVmsDataList(query) {
     params: query
   })
 }
+
+// 判断预案名称是否重复
+export function checkPlanName(query) {
+  return request({
+    url: '/plan/checkPlanName',
+    method: 'get',
+    params: query
+  })
+}

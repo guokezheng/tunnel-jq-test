@@ -425,6 +425,7 @@ export default {
           target:'.strategy-dialog',
         });
         let data = response.data;
+        console.log(data,"data")
         // this.strategyForm = data;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;

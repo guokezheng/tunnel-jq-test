@@ -22,7 +22,7 @@
           :rtsp="videoForm.liveUrl"
           :open="cameraPlayer"
         ></videoPlayer>
-        <video
+        <!-- <video
           src="https://media.w3.org/2010/05/sintel/trailer.mp4"
           v-if="radio1 == '演示'"
           controls
@@ -30,7 +30,7 @@
           loop
           autoplay
           fluid
-        ></video>
+        ></video> -->
         <img :src="noPicUrl" v-if="radio1 == '视频' && !videoForm.liveUrl" />
       </div>
       <div class="picVideoBox" v-if="eqInfo.clickEqType == 47">
@@ -43,7 +43,7 @@
           v-if="eqInfo.clickEqType == 33"
         >
           <el-radio-button label="图像"></el-radio-button>
-          <el-radio-button label="演示"></el-radio-button>
+          <!-- <el-radio-button label="演示"></el-radio-button> -->
           <el-radio-button label="视频"></el-radio-button>
         </el-radio-group>
         <div class="x2all">
@@ -136,7 +136,7 @@
         :rtsp="videoForm.liveUrl"
         :open="cameraPlayer"
       ></videoPlayer>
-      <video
+      <!-- <video
           src="https://media.w3.org/2010/05/sintel/trailer.mp4"
           v-if="radio1 == '演示'"
           style="height: 400px; object-fit: cover"
@@ -145,7 +145,7 @@
           loop
           autoplay
           fluid
-        ></video>
+        ></video> -->
     </el-dialog>
     <el-dialog
       v-dialogDrag
@@ -172,7 +172,7 @@
       ></videoPlayer>
       <!-- src="../../../../assets/Example/v1.mp4" -->
 
-      <video
+      <!-- <video
           src="https://media.w3.org/2010/05/sintel/trailer.mp4"
           v-if="radio1 == '演示'"
           style="height: 100%; object-fit: cover"
@@ -181,7 +181,7 @@
           loop
           autoplay
           fluid
-        ></video>
+        ></video> -->
     </el-dialog>
   </div>
 </template>

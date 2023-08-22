@@ -1815,12 +1815,15 @@ export default {
                 " : " +
                 param[0].value +
                 "%<br>";
-              tooltip +=
-                param[1].marker +
-                param[1].seriesName +
-                " : " +
-                param[1].value +
-                "%";
+                if(param.length>2){
+                  tooltip +=
+                  param[1].marker +
+                  param[1].seriesName +
+                  " : " +
+                  param[1].value +
+                  "%";
+                }
+              
 
               return tooltip;
             },
@@ -1974,6 +1977,7 @@ export default {
                 disabled: true,
                 focus: "none",
               },
+              barWidth: 14,
               data: normalArr,
             },
             {

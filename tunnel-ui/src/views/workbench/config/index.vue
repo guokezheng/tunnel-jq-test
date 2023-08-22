@@ -4908,6 +4908,9 @@ export default {
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
+                // if(deviceData.eqType == '1'){
+                //   console.log(deviceData,"deviceData")
+                // }
                 let arr = [
                   5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
                   40, 39, 48, 41,
@@ -4954,12 +4957,14 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
+                  
                   if (deviceData.eqStatus == "1") {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
+                      
                       if (this.eqTypeStateList[k].state == deviceData.state) {
                         // 照明图标后加数据
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {

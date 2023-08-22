@@ -52,17 +52,21 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
+            style="
+              border-right: #00c8ff solid 1px !important;
+              border-radius: 3px;
+            "
           >
-            <el-button
+            <!-- <el-button
               slot="append"
               class="searchTable"
               @click="boxShow = !boxShow"
-            ></el-button>
+            ></el-button> -->
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div ref="cc" class="searchBox" v-show="boxShow">
+    <!-- <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -95,7 +99,7 @@
           >
         </el-form-item>
       </el-form>
-    </div>
+    </div> -->
 
     <el-table
         v-loading="loading"
@@ -472,22 +476,22 @@ export default {
 
   },
   mounted(){
-    document.addEventListener("click", this.bodyCloseMenus);
+    // document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    bodyCloseMenus(e) {
-      let self = this;
-      if(self.boxShow){
-        if (
-          !this.$refs.main.contains(e.target) &&
-          !this.$refs.cc.contains(e.target)
-        ) {
-          if (self.boxShow == true) {
-            self.boxShow = false;
-          }
-        }
-      }
-    },
+    // bodyCloseMenus(e) {
+    //   let self = this;
+    //   if(self.boxShow){
+    //     if (
+    //       !this.$refs.main.contains(e.target) &&
+    //       !this.$refs.cc.contains(e.target)
+    //     ) {
+    //       if (self.boxShow == true) {
+    //         self.boxShow = false;
+    //       }
+    //     }
+    //   }
+    // },
 
     isReservedFormat(row, column){
 

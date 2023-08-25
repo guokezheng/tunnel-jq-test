@@ -159,6 +159,7 @@ public class SdEventServiceImpl implements ISdEventService {
     public SdEvent selectSdEventById(Long id) {
         SdEvent sdEvent = sdEventMapper.selectSdEventById(id);
         if(sdEvent != null){
+            sdEvent.setIds(sdEvent.getId().toString());
             SdTrafficImage image = new SdTrafficImage();
             image.setBusinessId(id.toString());
             image.setImgType("1");

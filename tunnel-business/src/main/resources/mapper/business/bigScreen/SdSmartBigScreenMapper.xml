@@ -630,14 +630,14 @@
         SELECT
             t.tunnel_name AS tunnelName,
             rss.tunnel_id AS tunnelId,
-            ROUND( sum( rss.speed )/ 2, 2 ) AS speed,
+            ROUND( sum( rss.speed )/ count( rss.id ), 2 ) AS speed,
             sum( rss.cars ) AS cars
         FROM
             sd_road_section_statistics rss
                 LEFT JOIN sd_tunnels t ON rss.tunnel_id = t.tunnel_id
         WHERE
             1 = 1
-          AND rss.TIME IN ( SELECT Max( TIME ) FROM sd_road_section_statistics GROUP BY tunnel_id )
+          AND DATE_FORMAT( rss.TIME, '%Y-%m-%d' ) = DATE_FORMAT(NOW(), '%Y-%m-%d' )
         GROUP BY
             rss.tunnel_id
     </select>

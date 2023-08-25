@@ -354,6 +354,9 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         for(int i = 0; i < speedList.size(); i++){
             speedNum = speedNum.add(new BigDecimal(speedList.get(i).get("speed").toString()));
         }
+        if(speedNum.compareTo(new BigDecimal(0)) == 0){
+            return AjaxResult.success(0);
+        }
         BigDecimal divide = speedNum.divide(new BigDecimal(speedList.size()), 2, BigDecimal.ROUND_UP);
         return AjaxResult.success(divide);
     }
@@ -384,6 +387,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
                     item.put("cars",0);
                 }
             }
+        }
+        if(tunnelDataStatis.size() == 0){
+            mapList.stream().forEach(item -> {
+                item.put("speed",0);
+                item.put("cars",0);
+            });
         }
         return AjaxResult.success(mapList);
     }

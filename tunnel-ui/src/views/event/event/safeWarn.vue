@@ -2314,11 +2314,11 @@ export default {
             this.cameraPlayer = false
             if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
-            }
-              if(this.evtWebsoktList[0].ids == this.eventFormDetail.id){
+              if(this.evtWebsoktList.length > 0 && this.evtWebsoktList[0].ids == this.eventFormDetail.id){
                 console.log("点复核提交 关弹窗")
                 bus.$emit("closeDialog");
               }
+            }
             this.getList();
             //主动安全
             //策略不为空

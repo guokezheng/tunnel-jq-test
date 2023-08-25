@@ -1161,8 +1161,6 @@ export default {
             this.eventFormDetail.laneNo =
               this.eventFormDetail.laneNo.toString();
           }
-          console.log(this.evtWebsoktList[0].ids,"this.evtWebsoktList[0].ids")
-
           updateEvent(this.eventFormDetail).then((response) => {
             this.processDialog = false;
             this.closeProcessDialog = false;
@@ -1170,6 +1168,10 @@ export default {
             this.details = false;
             this.cameraPlayer = false
             this.$modal.msgSuccess("修改成功");
+            if(this.evtWebsoktList.length > 0 && this.evtWebsoktList[0].ids == this.eventFormDetail.id){
+                console.log("点复核提交 关弹窗")
+                bus.$emit("closeDialog");
+              }
             //主动安全
             //策略不为空
             // if (

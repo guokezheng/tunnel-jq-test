@@ -45,12 +45,23 @@ public class SdRadarDevice {
     @ApiModelProperty("设备IP")
     private String ip;
 
+    @ApiModelProperty("隧道id")
+    private String tunnelId;
+
     /**
      * 设备数据：包括设备实时数据、实时状态，根据deviceType区分
      */
 //    private WjDeviceData deviceData;
 
     private JSONObject deviceData;
+
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
 
     public String getIp() {
         return ip;

@@ -91,6 +91,22 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     list.add(map);
                 });
                 infoList = list;
+            }else {
+                Map<String, List<ElectricityData>> groupId = energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId));
+                Set<String> strings = groupId.keySet();
+                //储存隧道数据
+                List<Map<String, Object>> list = new ArrayList<>();
+                List<String> collect = codeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+                for(String id : strings){
+                    collect.remove(id);
+                }
+                collect.stream().forEach(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id",item);
+                    map.put("name",TunnelEnum.getValue(item));
+                    list.add(map);
+                });
+                infoList = list;
             }
         }else if ("3".equals(tabType)) { // 分项
 
@@ -101,6 +117,13 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     });
             if(energyList.size() == 0){
                 //分项数据
+                infoList = itemizedMapper.getItemizedMap(codeList);
+            }else {
+                Map<String, List<ElectricityData>> groupId = energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId));
+                Set<String> strings = groupId.keySet();
+                for(String id : strings){
+                    codeList.remove(id);
+                }
                 infoList = itemizedMapper.getItemizedMap(codeList);
             }
 
@@ -113,16 +136,23 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     });
             if(energyList.size() == 0){
                 infoList = classificationMapper.getFicationMap(codeList);
+            }else {
+                Map<String, List<ElectricityData>> groupId = energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId));
+                Set<String> strings = groupId.keySet();
+                for(String id : strings){
+                    codeList.remove(id);
+                }
+                infoList = classificationMapper.getFicationMap(codeList);
             }
         } else {
             throw new Exception("tabType类型错误");
         }
-        if(resultList.size() == 0){
-            List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, infoList);
-            for(List<ElectricityData> item : lists){
-                resultList.add(item);
-            }
+
+        List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, infoList);
+        for(List<ElectricityData> item : lists){
+            resultList.add(item);
         }
+
         return resultList;
     }
 
@@ -130,7 +160,6 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
      * 能耗足迹
      * @param codeList
      * @param baseTime
-     * @param statisticType
      * @return
      */
     @Override

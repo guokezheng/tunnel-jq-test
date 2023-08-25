@@ -101,4 +101,11 @@ public interface ISdReservePlanService {
      * @return
      */
     AjaxResult getReservePlanData(SdReservePlan sdReservePlan);
+
+    /**
+     * 校验预案名称
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult checkPlanName(SdReservePlan sdReservePlan);
 }

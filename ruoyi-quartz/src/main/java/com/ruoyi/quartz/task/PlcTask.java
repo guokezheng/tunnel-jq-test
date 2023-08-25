@@ -120,7 +120,8 @@ public class PlcTask {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("runStatus", state);
                             map.put("deviceData", jsonObject);
-                            radarEventService.sendBaseDeviceStatus(map);
+                            //todo 万集数据推送
+                            //radarEventService.sendBaseDeviceStatus(map);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -157,7 +158,8 @@ public class PlcTask {
                             jsonObject.put("windSpeed", FS.toString());
                             jsonObject.put("windDirection", windDirection);
                             map.put("deviceData", jsonObject);
-                            radarEventService.sendBaseDeviceStatus(map);
+                            //todo 万集数据推送
+                            //radarEventService.sendBaseDeviceStatus(map);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -183,7 +185,8 @@ public class PlcTask {
                         jsonObject.put("runDate", number.toString());
                         jsonObject.put("unit", "lux");
                         map.put("deviceData", jsonObject);
-                        radarEventService.sendBaseDeviceStatus(map);
+                        //todo 万集数据推送
+                        //radarEventService.sendBaseDeviceStatus(map);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -208,7 +211,8 @@ public class PlcTask {
                         jsonObject.put("runDate", number.toString());
                         jsonObject.put("unit", "cd/㎡");
                         map.put("deviceData", jsonObject);
-                        radarEventService.sendBaseDeviceStatus(map);
+                        //todo 万集数据推送
+                        //radarEventService.sendBaseDeviceStatus(map);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -242,7 +246,8 @@ public class PlcTask {
                             jsonObject.put("CO", CO.toString());
                             jsonObject.put("VI", VI.toString());
                             map.put("deviceData", jsonObject);
-                            radarEventService.sendBaseDeviceStatus(map);
+                            //todo 万集数据推送
+                            //radarEventService.sendBaseDeviceStatus(map);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

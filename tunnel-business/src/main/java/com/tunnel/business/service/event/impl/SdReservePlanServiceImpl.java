@@ -144,14 +144,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public AjaxResult insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
-        SdReservePlan searchObj = new SdReservePlan();
-        searchObj.setTunnelId(sdReservePlan.getTunnelId());
-        searchObj.setPlanName(sdReservePlan.getPlanName());
-        //校验预案名称
-        int nameCount = sdReservePlanMapper.checkPlanName(searchObj);
-        if(nameCount > 0){
-            return AjaxResult.error("预案名称已存在请重新输入！");
-        }
         int result = -1;
         List<SdReservePlanFile> list = new ArrayList<SdReservePlanFile>();
         if ("#^#".equals(sdReservePlan.getPlanDescription())) {
@@ -210,15 +202,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
-        SdReservePlan searchObj = new SdReservePlan();
-        searchObj.setId(sdReservePlan.getId());
-        searchObj.setTunnelId(sdReservePlan.getTunnelId());
-        searchObj.setPlanName(sdReservePlan.getPlanName());
-        //校验预案名称
-        int nameCount = sdReservePlanMapper.checkPlanName(searchObj);
-        if(nameCount > 0){
-            return AjaxResult.error("预案名称已存在请重新输入！");
-        }
         //查询预案名称是否存在
         /*int currCount = sdReservePlanMapper.checkCurrId(searchObj);
         if(currCount > 0){
@@ -443,5 +426,19 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             }
         }
         return AjaxResult.success(list);
+    }
+
+    @Override
+    public AjaxResult checkPlanName(SdReservePlan sdReservePlan) {
+        SdReservePlan searchObj = new SdReservePlan();
+        searchObj.setId(sdReservePlan.getId());
+        searchObj.setTunnelId(sdReservePlan.getTunnelId());
+        searchObj.setPlanName(sdReservePlan.getPlanName());
+        //校验预案名称
+        int nameCount = sdReservePlanMapper.checkPlanName(searchObj);
+        if(nameCount > 0){
+            return AjaxResult.error("预案名称已存在请重新输入！");
+        }
+        return AjaxResult.success();
     }
 }

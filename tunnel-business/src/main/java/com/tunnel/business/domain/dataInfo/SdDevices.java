@@ -335,8 +335,8 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 设备状态	1-故障，2-告警
      */
-    @Excel(name = "设备状态	1-故障，2-告警",type= Excel.Type.IMPORT)
-    @ApiModelProperty("设备状态\t1-故障，2-告警")
+    @Excel(name = "设备状态 1-在线，2-离线，3-故障，4-报警",dictType = "sd_monitor_state",type= Excel.Type.IMPORT)
+    @ApiModelProperty("设备状态\t1-在线，2-离线，3-故障，4-报警")
     private String eqStatus;
 
     /**

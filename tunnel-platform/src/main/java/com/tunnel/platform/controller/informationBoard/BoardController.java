@@ -134,8 +134,11 @@ public class BoardController extends BaseController {
     @ResponseBody
     public AjaxResult loadRealtimeInf(Long deviceId) {
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+        if(device == null){
+            return AjaxResult.error("设备不存在");
+        }
         if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
-            return null;
+            return AjaxResult.error("设备离线");
         }
         List<String> paramsList = new ArrayList<String>();
         AjaxResult ajaxResult;
@@ -1211,6 +1214,21 @@ public class BoardController extends BaseController {
             sdDeviceData1.setDeviceId(deviceId);
             sdDeviceData1.setCreateTime(DateUtils.getNowDate());
             deviceDataMapper.insertSdDeviceData(sdDeviceData1);
+        }
+    }
+
+    /**
+     * 提供情报板实时信息
+     * @param deviceId
+     * @return
+     */
+    @GetMapping("/getRealTimeBoard")
+    public AjaxResult getRealTimeBoard(String deviceId){
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
+        if(sdDevices == null || sdDevices.getAssociatedDeviceId() == null || "".equals(sdDevices.getAssociatedDeviceId())){
+            return AjaxResult.error("设备不存在");
+        }else {
+            return loadRealtimeInf(sdDevices.getAssociatedDeviceId());
         }
     }
 }

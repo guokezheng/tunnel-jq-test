@@ -336,7 +336,7 @@
             <template slot-scope="scope">
               <el-button
                 size="small"
-                class="tableDelButtton"
+                class="tableBlueButtton"
                 @click="cancelAuthUser(scope.row)"
                 >取消</el-button
               >
@@ -351,7 +351,7 @@
           @pagination="getUserList"
         />
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div  class="dialog-footer">
         <el-button class="closeButton" @click="teamsUserCancel">关闭</el-button>
       </div>
     </el-dialog>
@@ -458,7 +458,7 @@
           @pagination="getListUnuser"
         />
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer">
         <el-button class="submitButton" @click="handleSelectUser"
           >确 定</el-button
         >
@@ -884,6 +884,9 @@ export default {
     ::v-deep .el-table th.gutter{
         display: table-cell !important;
     }
+  }
+  .el-table{
+    margin-bottom: 20px;
   }
 }
 </style>

@@ -2085,6 +2085,7 @@ export default {
 
   data() {
     return {
+      showScreenEqName:false,
       actuatorTooltip:false,
       actuatorCKItem:{
         eqType:47,
@@ -3613,6 +3614,11 @@ export default {
               console.log(item.eqName,"item.eqName")
               bigType = item.bigType;
               this.showTooltipIndex = i
+              this.showScreenEqName = true
+              setTimeout(() => {
+                this.showTooltipIndex = 9999
+                this.showScreenEqName = false
+              }, 2000);
               if (
                 this.currentTunnel.lane.width - item.position.left > 864 &&
                 item.position.left > 864
@@ -3870,11 +3876,15 @@ export default {
         }
       });
       this.$forceUpdate();
-      this.showTooltipIndex = index;
+      if(!this.showScreenEqName){
+        this.showTooltipIndex = index;
+      }
       // this.sensorDisabled(item);
     },
     closeTooltip(item) {
-      this.showTooltipIndex = 9999;
+      if(!this.showScreenEqName){
+        this.showTooltipIndex = 9999;
+      }
     },
     openTooltip2(item, index) {
       this.actuatorTooltip = true

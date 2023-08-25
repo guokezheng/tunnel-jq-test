@@ -129,7 +129,7 @@
         >
           <el-select
             v-model="queryParams.eqStatus"
-            placeholder="请选择所属隧道"
+            placeholder="请选择设备状态"
             clearable
             size="small"
           >
@@ -172,7 +172,7 @@
         type="index"
         :index="indexMethod"
         label="序号"
-        width="68"
+        width="55"
         align="center"
       ></el-table-column>
 
@@ -235,7 +235,17 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="设备状态" align="center" prop="eqStatus">
+      
+      <el-table-column label="设备IP" align="center" prop="ip" width="120"/>
+      <el-table-column label="设备端口号" align="center" prop="port" />
+      <el-table-column
+        label="设备桩号"
+        align="center"
+        prop="pile"
+        width="100"
+        show-overflow-tooltip
+      />
+      <el-table-column label="设备状态" align="center" prop="eqStatus" width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.eqStatus == '1'">在线</span>
           <span v-else-if="scope.row.eqStatus == '2' || !scope.row.eqStatus"
@@ -245,16 +255,7 @@
           <span v-else>报警</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备IP" align="center" prop="ip" />
-      <el-table-column label="设备端口号" align="center" prop="port" />
-      <el-table-column
-        label="桩号"
-        align="center"
-        prop="pile"
-        width="100"
-        show-overflow-tooltip
-      />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
       <el-table-column
         label="操作"
         align="center"
@@ -315,7 +316,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-row>
+        <el-row style="display: flex;flex-wrap: wrap;">
           <el-col :span="12">
             <el-form-item label="所属隧道" prop="eqTunnelId">
               <el-select
@@ -1356,9 +1357,8 @@ export default {
       this.loading = true;
       this.boxShow = false;
       this.queryParams.exportIds = "";
-
-      console.log(this.queryParams,"this.queryParams")
       listDevices(this.queryParams).then((response) => {
+        console.log(response,"设备列表")
         this.devicesList = response.rows;
         this.total = response.total;
         this.loading = false;

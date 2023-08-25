@@ -6,7 +6,7 @@
 <!--          <el-button type="info" size="small" icon="el-icon-location-outline"@click="ddddd" class="tunnelNameButton">eee</el-button>-->
 
             <el-select
-              style="width: 10%;    float: right;margin-top: 10px;margin-right: 25px;    z-index: 9999;"
+              style="width: 10%;    float: right;margin-top: 10px;margin-right: 25px;z-index:999"
               v-model="tunnelIdStr"
               placeholder="请选择隧道"
               clearable

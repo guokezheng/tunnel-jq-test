@@ -968,7 +968,7 @@ export default {
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
       console.log(this.queryParams.strategyGroup)
-      debugger
+      // debugger
       if (this.queryParams.strategyGroup == 1) {
         this.$nextTick(() => {
           this.dialogVisible = true;
@@ -1088,7 +1088,7 @@ export default {
             break;
 
           case "1":
-            debugger
+            // debugger
             console.log(this.insertStrategyTypeOptions)
             this.insertStrategyTypeOptionsCopy=[]
             let dictLabelStrategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="定时控制")
@@ -1378,7 +1378,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      debugger
+      // debugger
       this.queryParams.pageNum = 1;
       this.queryParams.tunnelId = null
       this.queryParams.strategyName = null
@@ -1517,7 +1517,7 @@ export default {
         this.exportLoading = true;
         return export1(queryParams);
       }).then(response => {
-        debugger
+        // debugger
         console.log(response.msg)
         this.$download.name(response.msg);
         this.exportLoading = false;

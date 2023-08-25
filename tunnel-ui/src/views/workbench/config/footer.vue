@@ -113,7 +113,6 @@
               class="table_list"
               :data-index="JSON.stringify(item)"
               :id="item.id"
-              
             >
               <el-col :span="2">
                 <div
@@ -624,7 +623,7 @@ export default {
       immediate: true,
       handler: function (event) {
         console.log(event, "事件弹窗websockt推送");
-        this.getWarnList()
+        this.getWarnList();
       },
     },
     deep: true,
@@ -646,7 +645,7 @@ export default {
       this.tunnelId = tunnelId;
       // setTimeout(() => {
       this.getWarnList();
-        
+
       // }, 2000);
       this.vehicleEcharts();
       // this.specialVehicleEcharts()
@@ -656,7 +655,7 @@ export default {
     },
     // 预警事件列表
     getWarnList() {
-      console.log("预警事件列表")
+      console.log("预警事件列表");
       const param = {
         eventState: "3",
       };
@@ -693,7 +692,7 @@ export default {
     actionFun() {
       if (this.trafficList.length > 6) {
         this.tableTimerFun();
-      } 
+      }
       // else {
       //   this.fillTableList();
       // }
@@ -719,7 +718,6 @@ export default {
       if (this.trafficList.length > this.maxCanSee) {
         //tableList是列表的数据对象，maxCanSee代表可视范围内的最大完整数据条数
         this.tableTimer = setInterval(() => {
-
           if (count < (this.trafficList.length / 2) * this.tableLineHeight) {
             //如果还没滚动到最后一条数据，则列表向上移动以上的高度
             this.tableTop -= 1; //tableLineHeight代表列表中一行的高度
@@ -1809,21 +1807,23 @@ export default {
             },
             formatter: function (param) {
               var tooltip = param[0].name + "<br>";
-              tooltip +=
-                param[0].marker +
-                param[0].seriesName +
-                " : " +
-                param[0].value +
-                "%<br>";
-                if(param.length>2){
-                  tooltip +=
+              if (param.length > 1) {
+                tooltip +=
+                  param[0].marker +
+                  param[0].seriesName +
+                  " : " +
+                  param[0].value +
+                  "%<br>";
+              }
+
+              if (param.length > 2) {
+                tooltip +=
                   param[1].marker +
                   param[1].seriesName +
                   " : " +
                   param[1].value +
                   "%";
-                }
-              
+              }
 
               return tooltip;
             },
@@ -2003,7 +2003,6 @@ export default {
         if (this.nameArr.length > 0) {
           window.clearInterval(this.myChart);
           this.deviceChart.setOption(this.option);
-          console.log(1111111)
           this.deviceChart.on("mouseover", () => {
             this.stop();
           });
@@ -2019,9 +2018,6 @@ export default {
       });
     },
     autoMove() {
-      console.log(this.nameArr.length,"this.nameArr.length")
-      console.log(this.option.dataZoom[0].endValue,"this.option.dataZoom[0].endValue")
-      console.log(this.option.dataZoom[0].startValue,"this.option.dataZoom[0].startValue")
       this.myChart = setInterval(() => {
         if (this.option.dataZoom[0].endValue == this.nameArr.length) {
           this.option.dataZoom[0].endValue = 8;
@@ -2351,8 +2347,8 @@ export default {
     width: 100%;
     position: absolute;
     transition: all 0.5s;
-    .table_list{
-      .el-col{
+    .table_list {
+      .el-col {
         display: flex;
         align-items: center;
         height: 29px;
@@ -2395,7 +2391,7 @@ export default {
       rgba($color: #0079db, $alpha: 0.8)
     );
     border: solid 0.1px #0067b2;
-    box-shadow:none;
+    box-shadow: none;
   }
   ::v-deep .el-radio-button__inner {
     background: #010913;

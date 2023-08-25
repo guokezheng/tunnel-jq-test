@@ -45,7 +45,8 @@
         ref="queryForm"
         :inline="true"
         :model="queryParams"
-        label-width="75px"
+        label-width="75px">
+
       >
         <el-form-item
           label="所属隧道"
@@ -530,7 +531,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="事件类型" prop="planTypeId">
+        <el-form-item label="事件类型" prop="planTypeId" key="planTypeId">
           <el-select
             v-model="reservePlanDrawForm.planTypeId"
             placeholder="请选择事件类型"
@@ -1326,7 +1327,10 @@ export default {
         this.queryParams.planTypeId = "";
       } else if (type == 2) {
         prevControlType = this.reservePlanDrawForm.prevControlType;
-        this.reservePlanDrawForm.planTypeId = "";
+        this.reservePlanDrawForm.planTypeId = null;
+        this.$nextTick(() => {
+            this.$refs["addform1"].clearValidate('planTypeId')
+        })
       } else if (type == 3) {
         prevControlType = num;
       }
@@ -1336,7 +1340,6 @@ export default {
         prevControlType: prevControlType,
       };
       listEventType(params).then((response) => {
-        console.log(this.planTypeData, "this.planTypeData");
         this.planTypeData = [...response.rows];
       });
     },

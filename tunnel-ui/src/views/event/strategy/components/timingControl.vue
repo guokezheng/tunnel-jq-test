@@ -498,7 +498,7 @@ export default {
     },
 
     init(timingType) {
-      debugger
+      // debugger
       if (this.sink == "add") {
         this.timingType =timingType
         this.resetForm();
@@ -797,7 +797,7 @@ export default {
         item.state = item.state.toString();
       });
       let params = this.strategyForm;
-      debugger
+      // debugger
       params.timingType = this.timingType
       addStrategyInfo(params).then((res) => {
         this.resetForm();

@@ -623,6 +623,10 @@
     <select id="getOptionListByEqId" resultType="map">
         select device_state,state_name,is_control from sd_equipment_state ses where state_type_id  = #{typeId}
 
+        <if test="typeId == 29">
+            and is_control != 1
+        </if>
+
     </select>
 
 

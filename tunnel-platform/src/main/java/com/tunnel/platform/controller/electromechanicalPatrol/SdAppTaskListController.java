@@ -44,6 +44,9 @@ public class SdAppTaskListController extends BaseController
     @Autowired
     private ISdAppVersionService sdAppVersionService;
 
+    @Autowired
+    private SdTrafficImageMapper sdTrafficImageMapper;
+
 
     /**
      * app端获取任务状态
@@ -272,9 +275,16 @@ public class SdAppTaskListController extends BaseController
                 //巡检设备
                 for(Map map1 : mapList) {
                     String faultImgId = map1.get("imgFileId") != null?map1.get("imgFileId").toString():null;
+
+                    if (faultImgId != null && !"".equals(faultImgId) && !"null".equals(faultImgId)) {
+                        String[] businessId = faultImgId.split(",");
+                        List<SdTrafficImage> iFileList = sdTrafficImageMapper.selectPatrolFaultImgFileList(businessId);
+                        map1.put("iFileList",iFileList);
+                    }
+
                 /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
                 sdTrafficImage.setBusinessId(faultImgId);*/
-                    if(faultImgId == null){
+                    /*if(faultImgId == null){
                         continue;
                     }
                     String[] businessId = faultImgId.split(",");
@@ -302,7 +312,7 @@ public class SdAppTaskListController extends BaseController
                             photoList.add(pictureRenderData);
                             map1.put(faultPhoto, pictureRenderData);
                         }
-                    }
+                    }*/
                 }
             }
         }

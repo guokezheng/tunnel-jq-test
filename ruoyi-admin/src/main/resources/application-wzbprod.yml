@@ -65,7 +65,23 @@ spring:
         max-poll-records: 500
       properties:
         max.poll.interval.ms: 1000000
-device:
-  hongmeng:
-    #正式环境部署地址
-    url: http://100.7.187.28:60400/qxsd-iot
+
+
+mqtt:
+  #emqx地址+ MQTT协议端⼝ 1883 映射外网地址
+  url: tcp://10.7.179.15:1883
+  clientInId: mqtt_hs_client_in
+  clientOutId: mqtt_hs_client_out
+  #rhy/iot/#通配符监听所有的鸿蒙控制器topic
+  topics: rhy/iot/#
+  qoslevel: 1
+  #MQTT 认证
+  username: admin
+  password: admin@123
+#提供给鸿蒙控制器使用的账号
+#  username:  hongmeng
+#  password: hongmeng@123
+  # 10s
+  timeout: 10000
+  #20s
+  keepalive: 20

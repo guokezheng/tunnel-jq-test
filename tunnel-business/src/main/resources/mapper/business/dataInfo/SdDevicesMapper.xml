@@ -1368,6 +1368,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 LEFT JOIN sd_tunnels C ON B.eq_tunnel_id = C.tunnel_id
         WHERE
             A.eq_type = 47
+            and B.eq_id  is not null
             <if test="tunnelArray != null and tunnelArray.size > 0">
                 and A.eq_tunnel_id in
                 <foreach item="id" collection="tunnelArray" open="(" separator="," close=")">

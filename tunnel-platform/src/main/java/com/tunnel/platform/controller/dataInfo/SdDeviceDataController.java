@@ -55,8 +55,8 @@ public class SdDeviceDataController extends BaseController
     private SdDevicesMapper sdDevicesMapper;
 
     @Autowired
-    @Qualifier("kafkaFourTemplate")
-    private KafkaTemplate<String, String> kafkaFourTemplate;
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
     /**
      * 查询设备实时数据（存储模拟量）列表
@@ -348,6 +348,6 @@ public class SdDeviceDataController extends BaseController
         deviceRadar.stream().forEach(item -> item.setTunnelId(tunnelId));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("deviceList",deviceRadar);
-        kafkaFourTemplate.send("baseDeviceStatus",jsonObject.toString());
+        kafkaOneTemplate.send("baseDeviceStatus",jsonObject.toString());
     }
 }

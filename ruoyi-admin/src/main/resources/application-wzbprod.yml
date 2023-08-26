@@ -33,7 +33,7 @@ spring:
         # 小车前端显示消费者组
         group-id-Two: HuaWeiGroup_Formal_Cat
 
-    hushan:
+    wanji:
       #非正式环境使用地址，避免接收推送数据
       bootstrap-servers: 10.7.179.15:9092
       # 生产者

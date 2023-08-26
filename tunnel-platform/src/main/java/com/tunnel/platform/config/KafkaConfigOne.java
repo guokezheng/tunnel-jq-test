@@ -28,10 +28,8 @@ public class KafkaConfigOne {
     private boolean enableAutoCommit;
     @Value("${spring.kafka.wanji.consumer.group-id}")
     private String groupId;
-//    @Value("${spring.kafka.wanji.producer.linger-ms}")
-//    private Integer lingerMs;
-//    @Value("${spring.kafka.wanji.producer.max-request-size}")
-//    private Integer maxRequestSize;
+    @Value("${spring.kafka.wanji.consumer.group-id-Two}")
+    private String groupIdTwo;
     @Value("${spring.kafka.wanji.producer.batch-size}")
     private Integer batchSize;
     @Value("${spring.kafka.wanji.producer.buffer-memory}")
@@ -53,6 +51,17 @@ public class KafkaConfigOne {
         return factory;
     }
 
+    @Bean
+    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaOneContainerFactoryTwo() {
+        ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryTwo());
+        factory.setConcurrency(3);
+        factory.setBatchListener(true);
+        factory.getContainerProperties().setPollTimeout(3000);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
+        return factory;
+    }
+
     private ProducerFactory<String, String> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
@@ -61,11 +70,13 @@ public class KafkaConfigOne {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
+    public ConsumerFactory<Integer, String> consumerFactoryTwo() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigsTwo());
+    }
+
     private Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-//        props.put(ProducerConfig.LINGER_MS_CONFIG,lingerMs);
-//        props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, maxRequestSize);
         props.put(ProducerConfig.BATCH_SIZE_CONFIG,batchSize);
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG,bufferMemory);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -80,6 +91,18 @@ public class KafkaConfigOne {
         props.put(ConsumerConfig.GROUP_ID_CONFIG,groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000000);
+        return props;
+    }
+
+    private Map<String, Object> consumerConfigsTwo() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG,groupIdTwo);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000000);
         return props;
     }
 }

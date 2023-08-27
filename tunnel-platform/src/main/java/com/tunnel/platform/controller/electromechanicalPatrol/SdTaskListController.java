@@ -408,6 +408,8 @@ public class SdTaskListController extends BaseController
                     //添加巡查记录序号
                     map.put("xcTime",xcTime);
                     map.put("remark",obj.getXcSort()+1);
+                    // 修复 桩号异常显示null
+                    map.put("position",map.get("position") == null ? "" : map.get("position").toString().replaceAll("null",""));
                     convertList.add(map);
                 }
             } catch (Exception e) {

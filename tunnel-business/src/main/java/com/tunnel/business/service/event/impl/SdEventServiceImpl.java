@@ -1850,7 +1850,7 @@ public class SdEventServiceImpl implements ISdEventService {
      * @return
      */
     public String getToken(){
-        String url = address+"/apiLogin";
+
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
@@ -1865,11 +1865,13 @@ public class SdEventServiceImpl implements ISdEventService {
         ExternalSystem externalSystem = list.get(0);
         // 获取数据库第三方配置信息
         if(externalSystem != null){
-            url = externalSystem.getSystemUrl();
+            address = externalSystem.getSystemUrl();
             userName = externalSystem.getUsername();
             password = externalSystem.getPassword();
           //  deptId = externalSystem.getSystemParam();
         }
+
+        String url = address+"/apiLogin";
 
         HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", userName);

@@ -17,7 +17,7 @@
         align="center"
         allowfullscreen="true"
         allow="autoplay"
-        src="http://106.120.201.126:14712/dashboard"
+        src="http://10.7.179.141:9528/tunnel_hushan"
       ></iframe>
     </div>
     <div class="workBenchButton">

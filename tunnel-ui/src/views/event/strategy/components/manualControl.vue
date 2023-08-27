@@ -79,7 +79,7 @@
               <el-input
                 :maxlength="50"
                 v-model="items.disposalName"
-                placeholder="处置名称"
+                placeholder="请输入处置名称"
                 style="width: 100%"
               />
             </el-form-item>
@@ -92,6 +92,10 @@
               :show-all-levels="false"
               @change="changeEquipmentType(index)"
               style="width: 100%"
+              placeholder="请选择设备类型"
+              clearable
+              @visible-change="elCascaderOnClick"
+              :key="refresh"
             ></el-cascader>
 <!--            <el-select
               v-model="items.equipmentTypeId"
@@ -274,6 +278,7 @@ export default {
   },
   data() {
     return {
+      refresh:0,
       checkStrictly: {
         multiple: false,
         emitPath: false,
@@ -337,6 +342,12 @@ export default {
     };
   },
   methods: {
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
     handleClose(){
       this.dialogVisibleTem = false
     },

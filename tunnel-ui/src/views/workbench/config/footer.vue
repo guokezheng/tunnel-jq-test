@@ -1378,7 +1378,7 @@ export default {
           },
 
           xAxis: {
-            name: "辆",
+            name: "时",
             nameTextStyle: {
               color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
@@ -1403,7 +1403,7 @@ export default {
             },
           },
           yAxis: {
-            name: "时",
+            name: "辆",
             nameTextStyle: {
               color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,

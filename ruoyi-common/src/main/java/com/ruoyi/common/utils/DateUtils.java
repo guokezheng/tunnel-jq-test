@@ -3,11 +3,16 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -106,7 +111,60 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         }
         return null;
     }
+    //
+    public static List getAtYear() {
+        // 获取当前年份
+        int year = Year.now().getValue();
 
+        // 获取当前月份
+        int month = LocalDate.now().getMonthValue();
+
+        // 创建当前年初的日期
+        LocalDate date = LocalDate.of(year, 1, 1);
+
+        // 格式化日期
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateString = date.format(formatter);
+
+        // 格式化当前月份
+        String monthString = String.format("%02d", month);
+
+        String atYear =  year + "-" + monthString + "-01";
+        // 输出结果
+        System.out.println("年初时间：" + startDateString);
+        System.out.println("当前月份：" + year + "-" + monthString + "-01");
+        List<Object> yearList = new ArrayList<>();
+        yearList.add(startDateString);
+        yearList.add(atYear);
+        return yearList;
+    }
+
+    public static List getAtLastYear() {
+        // 获取当前年份
+        int year = Year.now().getValue();
+
+        // 获取上一年份
+        int lastYear = year - 1;
+
+        // 创建上一年初的日期
+        LocalDate lastYearStartDate = LocalDate.of(lastYear, 1, 1);
+
+        // 创建上一年当前月份的日期
+        LocalDate lastYearCurrentMonthDate = LocalDate.of(lastYear, LocalDate.now().getMonthValue(), 1);
+
+        // 格式化日期
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String lastYearStartDateString = lastYearStartDate.format(formatter);
+        String lastYearCurrentMonthDateString = lastYearCurrentMonthDate.format(formatter);
+
+        // 输出结果
+        System.out.println("上一年年初时间：" + lastYearStartDateString);
+        System.out.println("上一年当前月份时间：" + lastYearCurrentMonthDateString);
+        List<Object> yearList = new ArrayList<>();
+        yearList.add(lastYearStartDateString);
+        yearList.add(lastYearCurrentMonthDateString);
+        return yearList;
+    }
     public static final String dateTimeNow()
     {
         return dateTimeNow(YYYYMMDDHHMMSS);

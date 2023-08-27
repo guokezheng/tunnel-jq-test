@@ -98,6 +98,44 @@ public class EnergyAnalysisElectricityBillServiceImpl implements EnergyAnalysisE
         energySjfxOne.setTunnelId(energySite.getTunnelId());
         EnergySjfx energySjfxesOne = sdEnergyDataMapper.getEnergyMonthSum(energySjfxOne);
 
+        //本年累计能耗
+        EnergySjfx energyYearSjfx = new EnergySjfx();
+        energyYearSjfx.setStatisticsType(2);
+        List atYearConsumption = DateUtils.getAtYear();
+        Map<String, Object> yearConsumptionMap = new HashMap<>();
+        yearConsumptionMap.put("beginTime",atYearConsumption.get(0));
+        yearConsumptionMap.put("endTime",atYearConsumption.get(1));
+        energyYearSjfx.setParams(yearConsumptionMap);
+        energyYearSjfx.setTunnelId(energySite.getTunnelId());
+        EnergySjfx yearEnergySjfxes = sdEnergyDataMapper.getYearEnergySiteList(energyYearSjfx);
+        //去本年累计能耗
+        EnergySjfx EnergylastYearSjfx = new EnergySjfx();
+        EnergylastYearSjfx.setStatisticsType(2);
+        List lastYearConsumption = DateUtils.getAtLastYear();
+        Map<String, Object> lastYearConsumptionMap = new HashMap<>();
+        lastYearConsumptionMap.put("beginTime",lastYearConsumption.get(0));
+        lastYearConsumptionMap.put("endTime",lastYearConsumption.get(1));
+        EnergylastYearSjfx.setParams(lastYearConsumptionMap);
+        EnergylastYearSjfx.setTunnelId(energySite.getTunnelId());
+        EnergySjfx lastYearEnergySjfxes = sdEnergyDataMapper.getYearEnergySiteList(EnergylastYearSjfx);
+
+        //本年累计电量
+        Map<String, Object> yearDateMap = new HashMap<>();
+        List atYear = DateUtils.getAtYear();
+        yearDateMap.put("beginTime",atYear.get(0));
+        yearDateMap.put("endTime",atYear.get(1));
+        energyAnaly.setParams(yearDateMap);
+        //计算年总用电量
+        EnergyAnalysisElectricityBill yearElectricitySum = energyAnalysisElectricityBillMapper.selectEnergyValueSum(energyAnaly);
+        //对比同期 去年累计电量
+        Map<String, Object> lastYearDateMap = new HashMap<>();
+        List atLastYear = DateUtils.getAtLastYear();
+        lastYearDateMap.put("beginTime",atLastYear.get(0));
+        lastYearDateMap.put("endTime",atLastYear.get(1));
+        energyAnaly.setParams(lastYearDateMap);
+        //计算去年年总用电量
+        EnergyAnalysisElectricityBill lastYearElectricitySum = energyAnalysisElectricityBillMapper.selectEnergyValueSum(energyAnaly);
+
         //本月照明电量
         EnergySjfx energySjfxIllumination = new EnergySjfx();
         energySjfxIllumination.setItemizedName("隧道照明");
@@ -163,6 +201,18 @@ public class EnergyAnalysisElectricityBillServiceImpl implements EnergyAnalysisE
         String energyDraughtMonthSumOneStr =   StringUtils.isNotNull(energyDraughtMonthSumOne ) ?energyDraughtMonthSumOne.getEnergyValue().toString() :"0";
         String energyStrThree = energyDraughtMonthSumStr+","+energyDraughtMonthSumOneStr;
         resultMap.put("风机电量",energyStrThree);
+
+        //年总用电量  -对比同期
+        String yearElectricitySumStr =   StringUtils.isNotNull(yearElectricitySum ) ?yearElectricitySum.getValue().toString():"0";
+        String lastYearElectricitySumStr =   StringUtils.isNotNull(lastYearElectricitySum ) ?lastYearElectricitySum.getValue().toString() :"0";
+        String lastYearElectricity = yearElectricitySumStr+","+lastYearElectricitySumStr;
+        resultMap.put("本年电费",lastYearElectricity);
+
+        //年总耗能  -对比同期
+        String yearEnergySjfxesStr =   StringUtils.isNotNull(yearEnergySjfxes ) ?yearEnergySjfxes.getEnergyValue().toString():"0";
+        String lastYearEnergySjfxesStr =   StringUtils.isNotNull(lastYearEnergySjfxes ) ?lastYearEnergySjfxes.getEnergyValue().toString() :"0";
+        String energyStrThere = yearEnergySjfxesStr+","+lastYearEnergySjfxesStr;
+        resultMap.put("本年能耗",energyStrThere);
         return resultMap;
     }
 

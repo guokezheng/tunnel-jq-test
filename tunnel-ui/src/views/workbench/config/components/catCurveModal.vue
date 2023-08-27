@@ -758,9 +758,9 @@ export default {
             trigger: "axis",
           },
           title: {
-            text: '历史车辆数',
+            text: '济南方向历史车辆数',
             textStyle: {
-              color: '#00396B', // 设置标题颜色
+              color: '#05AAFD', // 设置标题颜色
             },
           },
           legend: {
@@ -893,9 +893,9 @@ export default {
             trigger: "axis",
           },
           title: {
-            text: '历史车辆数',
+            text: '潍坊方向历史车辆数',
             textStyle: {
-              color: '#00396B', // 设置标题颜色
+              color: '#05AAFD', // 设置标题颜色
             },
           },
           legend: {

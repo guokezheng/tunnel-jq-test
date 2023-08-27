@@ -123,6 +123,16 @@
             <el-col :span="6" style="padding-left:0">
 
               <el-cascader
+                v-if="equipmentType"
+                v-model="items.equipmentTypeId"
+                :options="equipmentTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="changeEquipmentType(index)"
+                style="width: 100%"
+              ></el-cascader>
+              <el-cascader
+                v-if="!equipmentType"
                 v-model="items.equipmentTypeId"
                 :options="equipmentTypeData"
                 :props="equipmentTypeProps"
@@ -431,6 +441,7 @@ export default {
       dialogVisibleTem:false,
       //定时策略光照和普通区分字段
       timingType:"",
+      equipmentType:true,
     };
   },
   methods: {
@@ -497,8 +508,11 @@ export default {
       return  true;
     },
 
-    init(timingType) {
+    init(timingType,operationName) {
       debugger
+      if(!!operationName&&"调光"==operationName){
+        this.equipmentType = false
+      }
       if (this.sink == "add") {
         this.timingType =timingType
         this.resetForm();
@@ -511,19 +525,28 @@ export default {
       this.getTunnels();
       this.getDirection();
     },
-    async getStrategyData(row) {
-      // debugger
+    getStrategyData: async function (row) {
+      debugger
       console.log(row, "当前策略数据");
-      await  getCategoryTree().then((data) => {
+      await getCategoryTree().then((data) => {
         let dataNum = 0;
         for (let j = 0; j < data.data.length; j++) {
-          if( data.data[j].label=="巡检机器人"){
+          //剔除巡检机器人
+          if (data.data[j].label == "巡检机器人") {
             dataNum = j
             break;
           }
         }
+        debugger
         data.data.splice(dataNum, 1);
-        this.equipmentTypeData = data.data;
+        //判断是否是智慧调光 只保留照明
+        if (!this.equipmentType) {
+          let  equipmentData =  data.data.find(item => item.label == "照明");
+          this.equipmentTypeData =equipmentData
+        }else{
+          this.equipmentTypeData = data.data;
+        }
+
       });
       getStrategy(this.id).then((response) => {
         const loading = this.$loading({
@@ -531,7 +554,7 @@ export default {
           text: 'Loading',
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)',
-          target:'.strategy-dialog',
+          target: '.strategy-dialog',
         });
         let data = response.data;
         this.strategyForm.id = data.id;
@@ -545,17 +568,17 @@ export default {
         this.strategyForm.schedulerTime = data.schedulerTime;
         this.strategyForm.execDate = data.execDate;
         this.strategyForm.execTime = data.execTime;
-        listRl({ strategyId: row.id }).then((response) => {
+        listRl({strategyId: row.id}).then((response) => {
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
           let params = {
             eqType: response.rows[0].eqTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
             eqDirection: this.strategyForm.direction, //方向
-            params:{
-              orderBy : 'eqName'
+            params: {
+              orderBy: 'eqName'
             }
           }
-          if(this.strategyForm.direction == 3){
+          if (this.strategyForm.direction == 3) {
             params.eqDirection = null;
           }
           listDevices(params).then((res) => {
@@ -576,18 +599,18 @@ export default {
               attr.eqTypeId
             );
 
-            let  equipmentArray = attr.equipments.split(",");
+            let equipmentArray = attr.equipments.split(",");
             if (
               this.strategyForm.autoControl[i].equipmentTypeId == 16 ||
               this.strategyForm.autoControl[i].equipmentTypeId == 36
             ) {
               this.strategyForm.autoControl[i].state = +attr.state;
-              this.qbgChange(i,equipmentArray,true);
+              this.qbgChange(i, equipmentArray, true);
             }
             this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
 
             //基本照明限制 最低亮度为 30
-            if(this.strategyForm.autoControl[i].equipmentTypeId == 9){
+            if (this.strategyForm.autoControl[i].equipmentTypeId == 9) {
               this.$set(this.strategyForm.autoControl[i], "limitMin", 30);
             }
 
@@ -596,11 +619,11 @@ export default {
               eqType: attr.eqTypeId,
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
-              params:{
-                orderBy : 'eqName'
+              params: {
+                orderBy: 'eqName'
               }
             };
-            if(this.strategyForm.direction == 3){
+            if (this.strategyForm.direction == 3) {
               params.eqDirection = null;
             }
             listDevices(params).then((res) => {
@@ -1009,9 +1032,20 @@ export default {
             }
           }
           data.data.splice(dataNum, 1);
-          this.$set(autoControl[i], "equipmentTypeData", data.data);
-          this.equipmentTypeData = data.data;
+          debugger
+          console.log(data.data)
+          //判断是否是智慧调光 只保留照明
+          if (!this.equipmentType) {
+            let  equipmentData =  data.data.find(item => item.label == "照明");
+            this.equipmentTypeData =equipmentData
+            this.$set(autoControl[i], "equipmentTypeData", equipmentData);
+          }else{
+            this.$set(autoControl[i], "equipmentTypeData", data.data);
+            this.equipmentTypeData = data.data;
+          }
+
         });
+
       }
     },
     changeValue(value) {

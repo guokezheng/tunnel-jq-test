@@ -6,7 +6,7 @@
 <!--          <el-button type="info" size="small" icon="el-icon-location-outline"@click="ddddd" class="tunnelNameButton">eee</el-button>-->
 
             <el-select
-              style="width: 10%;    float: right;margin-top: 10px;margin-right: 25px;    z-index: 9999;"
+              style="width: 10%;    float: right;margin-top: 10px;margin-right: 25px;    z-index: 10;"
               v-model="tunnelIdStr"
               placeholder="请选择隧道"
               clearable
@@ -29,8 +29,7 @@
       </el-row>
     </el-col>
     <el-col :span="8">
-
-      <el-row :gutter="24" style="height: 31.4vh;clear:both;border: 8px solid #004375;">
+      <el-row :gutter="24" style="height: 50vh;border: 8px solid #004375;">
         <el-col :span="24">
           <el-col :span="24">
             <el-row>
@@ -43,13 +42,13 @@
                     </div>
 
                     <div style="width:69% ;float:left; margin-top: 10%">
-                      <span style="color: #FFFFFF;font-size: 15px;">本月能耗 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthElectricity"> </span>
+                      <span style="color: #FFFFFF;font-size: 15px;">本年能耗 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="yearElectricity"> </span>
                       <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                     </div>
                     <div style="width:69% ;float:left;">
                       <span style="color: #FFFFFF;font-size: 15px;"  >对比同期 </span>
-                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthComparison"> </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="yearComparison"> </span>
                       <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
                     </div>
                   </div>
@@ -64,11 +63,54 @@
                   </div>
 
                   <div style="width:69% ;float:left; margin-top: 10%">
-                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
-                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityMonthElectricity"> </span>
+                    <span style="color: #FFFFFF;font-size: 15px;">本年电费 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityYearElectricity"> </span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;" >MWH</span>
                   </div>
                   <div style="width:69% ;float:left;">
+                    <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"v-html="cityYearhComparison"> </span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row style="margin-top: 3px">
+              <el-col :span="12">
+                <div >
+
+                  <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                    <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                      <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                    </div>
+
+                    <div style="width:60% ;float:left; margin-top: 10%">
+                      <span style="color: #FFFFFF;font-size: 15px;">本月能耗 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"  v-html="monthElectricity"> </span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;" >MWH</span>
+                    </div>
+                    <div style="width:60% ;float:left;">
+                      <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
+                      <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="monthComparison"> </span>
+                      <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </el-col>
+              <el-col :span="12">
+                <div style="height: 100px;width: 97%; background-color:#1B5480;">
+                  <div style="height: 100px;width: 20%; display: flex; align-items: center;margin-left: 30px;float:left; ">
+                    <img src="../../../assets/cloudControl/energy-yue.png" width="40px" height="40px" alt="Image">
+                  </div>
+
+                  <div style="width:60% ;float:left; margin-top: 10%">
+                    <span style="color: #FFFFFF;font-size: 15px;">本月电费 </span>
+                    <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;" v-html="cityMonthElectricity"> </span>
+                    <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
+                  </div>
+                  <div style="width:60% ;float:left;">
                     <span style="color: #FFFFFF;font-size: 15px;">对比同期 </span>
                     <span style="margin-left: 1px;color: #9ACDF0;font-size: 15px;"v-html="cityMonthComparison"> </span>
                     <span style="margin-left: 3px;color: #9ACDF0;font-size: 8px;">MWH</span>
@@ -122,7 +164,9 @@
           </el-col>
         </el-col>
       </el-row>
-      <el-row :gutter="24" style="height: 54vh;border: 8px solid #004375;">
+      <el-row :gutter="24" style="height: 35.4vh;clear:both;border: 8px solid #004375;">
+
+
         <el-col :span="24">
           <el-row>
             <el-col :span="12">
@@ -193,6 +237,7 @@
           </el-row>
         </el-col>
       </el-row>
+
     </el-col>
   </el-row>
 </template>
@@ -221,10 +266,18 @@ export default {
       monthElectricity:"",
       //对比同期
       monthComparison:"",
+      //本年能耗
+      yearElectricity:"",
+      //对比同期
+      yearComparison:"",
       //本月电费
       cityMonthElectricity:"",
       //城市对比同期
       cityMonthComparison:"",
+      //本年电费
+      cityYearElectricity:"",
+      //城市对比同期
+      cityYearhComparison:"",
       //照明电费
       lightMonthElectricity:"",
       //照明对比同期
@@ -263,13 +316,23 @@ export default {
   methods:{
     changeEvent(){
       //本月能耗
-      this.monthElectricity="",
+        this.monthElectricity="",
         //对比同期
         this.monthComparison="",
+        //本月能耗
+        this.yearElectricity="",
+        //对比同期
+        this.yearComparison="",
         //本月电费
         this.cityMonthElectricity="",
         //城市对比同期
         this.cityMonthComparison="",
+
+        //本月电费
+        this.cityYearElectricity="",
+        //城市对比同期
+        this.cityYearhComparison="",
+
         //照明电费
         this.lightMonthElectricity="",
         //照明对比同期
@@ -626,7 +689,7 @@ export default {
           },
           yAxis: {
             type: "value",
-            name: "时段用电",
+            name: "时段用电kw-h",
             nameTextStyle: {
               color: "#FFB500",
               fontSize: 10,
@@ -726,6 +789,12 @@ export default {
                 }else if(key=="风机电量"){
                   this.draughtMonthElectricity =response.data[key].split(",")[0]
                   this.draughtMonthComparison = response.data[key].split(",")[1]
+                } else if(key=="本年电费"){
+                  this.cityYearElectricity =response.data[key].split(",")[0]
+                  this.cityYearhComparison = response.data[key].split(",")[1]
+                }else if(key=="本年能耗"){
+                  this.yearElectricity =response.data[key].split(",")[0]
+                  this.yearComparison = response.data[key].split(",")[1]
                 }
                 num = num+1
               }

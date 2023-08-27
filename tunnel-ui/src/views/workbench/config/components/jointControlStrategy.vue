@@ -19,7 +19,7 @@
       <div class="left-content">
         <div data-v-6425604c="" class="content-header-one">
           <span data-v-6425604c="">策略分组</span>
-          <el-tree :data="dataTree" :props="defaultProps"  style="margin-top: 40px;height: 0px" v-model="treeModel"  default-expand-all @node-click="handleNodeClick">
+          <el-tree :data="dataTree" :props="defaultProps"  style="margin-top: 40px;height: 0px"  :default-expanded-keys="['0']" :default-checked-keys="['0']" v-model="treeModel"  default-expand-all @node-click="handleNodeClick">
           </el-tree>
         </div>
       </div>
@@ -738,7 +738,7 @@ export default {
             let dictLabelStrategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="定时控制")
             this.insertStrategyTypeOptionsCopy.push(dictLabelStrategy)
             this.$refs.timingControl.sink = this.sink;
-            this.$refs.timingControl.init("0");
+            this.$refs.timingControl.init("0","调光");
             if (this.sink == "edit") {
               this.$nextTick(() => {
                 // this.$refs.timingControl.sink = "edit";
@@ -964,5 +964,12 @@ export default {
   .el-dialog__body{
     height: 500px;
   }
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -140,4 +140,10 @@ public interface SdEnergyDataMapper
      * @return
      */
     EnergySjfx getEnergySubentryMonthSum(EnergySjfx energySjfx);
+    /**
+     * 计算年总能耗
+     * @param energySjfx
+     * @return
+     */
+    EnergySjfx getYearEnergySiteList(EnergySjfx energySjfx);
 }

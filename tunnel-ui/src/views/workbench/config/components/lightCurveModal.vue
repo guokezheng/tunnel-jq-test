@@ -89,7 +89,7 @@
                 <el-col :span="9">
                   <el-form-item label="隧道方向" prop="direction" class="el-form-item-data">
                     <el-select
-                      disabled="true"
+                      disabled=true
                       clearable
                       v-model="lightFilesModel.direction"
                       placeholder="请选择隧道方向"
@@ -347,6 +347,8 @@ export default {
         {dictLabel:"出口段",dictValue:"出口段"},
       ],
       directionOptions:[],
+      mathNum:2000,
+      mathNum1:2000,
     }
   },
   mounted() {
@@ -387,7 +389,7 @@ export default {
           title: {
             text: '济南方向洞外亮度',
             textStyle: {
-              color: '#00396B', // 设置标题颜色
+              color: '#05AAFD', // 设置标题颜色
             },
           },
           legend: {
@@ -446,6 +448,8 @@ export default {
             axisTick: {
               show: false,
             },
+            min: 0, // 设置 Y 轴的默认最小值
+            max: this.mathNum, // 设置 Y 轴的默认最大值
             splitLine: {
               show: true,
               lineStyle: {
@@ -524,7 +528,7 @@ export default {
           title: {
             text: '潍坊方向洞外亮度',
             textStyle: {
-              color: '#00396B', // 设置标题颜色
+              color: '#05AAFD', // 设置标题颜色
             },
           },
           legend: {
@@ -583,6 +587,8 @@ export default {
             axisTick: {
               show: false,
             },
+            min: 0, // 设置 Y 轴的默认最小值
+            max: this.mathNum1, // 设置 Y 轴的默认最大值
             splitLine: {
               show: true,
               lineStyle: {
@@ -592,6 +598,7 @@ export default {
                 type: "dashed",
               },
             },
+
           },
           series: [
             {
@@ -823,7 +830,9 @@ export default {
             let ds = this.getdate(currentDate)//当前
             let ds1 = this.getdate(twoDaysAgo)//前天
             let ds2 = this.getdate(threeDaysAgo)//昨天
-            this.XDataLight = this.generateTimeList()
+            debugger
+            let todayDate = ds[0].split(" ")[0]
+            this.XDataLight = this.generateTimeList(todayDate)
             this.XDataLightOne =  this.XDataLight
             //查询济南光照曲线
             dataLogInfoLineList(
@@ -860,6 +869,34 @@ export default {
               }
               setTimeout(() => {
                 this.$nextTick(() => {
+
+                  let mathList = []
+                  if( this.yDataLight.length>0){
+                    var max = this.yDataLight.sort(function(a,b){
+                      return b-a;
+                    })[0];
+                    mathList.push(max)
+                  }
+
+                  if( this.yDataLight1.length>0){
+                    var max1 = this.yDataLight1.sort(function(a,b){
+                      return b-a;
+                    })[0];
+                    mathList.push(max1)
+                  }
+                  if( this.yDataLight2.length>0){
+                    var max2 = this.yDataLight2.sort(function(a,b){
+                      return b-a;
+                    })[0];
+                    mathList.push(max2)
+                  }
+                  var max3 = mathList.sort(function(a,b){
+                    return b-a;
+                  })[0];
+                  console.log(max3)
+                  if(!!max3){
+                    this.mathNum = max3
+                  }
                   this.initLoginChart();
                 });
               }, 500);
@@ -901,6 +938,34 @@ export default {
               debugger
               setTimeout(() => {
                 this.$nextTick(() => {
+                  let mathList = []
+                  if( this.yDataLightOne.length>0){
+                    var max = this.yDataLightOne.sort(function(a,b){
+                      return b-a;
+                    })[0];
+                    mathList.push(max)
+                  }
+
+                  if( this.yDataLightOne1.length>0){
+                    var max1 = this.yDataLightOne1.sort(function(a,b){
+                      return b-a;
+                    })[0];
+                    mathList.push(max1)
+                  }
+                  if( this.yDataLightOne2.length>0){
+                    var max2 = this.yDataLightOne2.sort(function(a,b){
+                      return b-a;
+                    })[0];
+                    mathList.push(max2)
+                  }
+                  var max3 = mathList.sort(function(a,b){
+                    return b-a;
+                  })[0];
+                  console.log(max3)
+                  if(!!max3){
+                    this.mathNum1 = max3
+                  }
+
                   this.initLoginChart1();
                 });
               }, 500);
@@ -909,13 +974,13 @@ export default {
         }
       );
     },
-    generateTimeList() {
+    generateTimeList(today) {
       let timeList = [];
       debugger
       let date = new Date();
       date.setHours(0, 0, 0, 0); // 设置时间为凌晨00:00
       while (date.getHours() < 24 ) {
-        timeList.push("2023-08-01" +" "+this.formatTime(date.getHours(), date.getMinutes()));
+        timeList.push(today +" "+this.formatTime(date.getHours(), date.getMinutes()));
         if(this.formatTime(date.getHours(), date.getMinutes())=="00:10"){
           break
         }

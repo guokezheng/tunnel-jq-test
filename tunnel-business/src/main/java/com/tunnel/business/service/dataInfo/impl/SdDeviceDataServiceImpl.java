@@ -8,6 +8,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
@@ -376,6 +377,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         ExternalSystem externalSystem = new ExternalSystem();
         externalSystem.setTunnelId(tunnelId);
         externalSystem.setBrandId(DevicesBrandEnum.SHAN_DONG_ZHENG_CHEN.getCode());
+        externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE_OF_TUNNEL.getCode());
         List<ExternalSystem> externalSystems = externalSystemService.queryExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
             return setAllData();

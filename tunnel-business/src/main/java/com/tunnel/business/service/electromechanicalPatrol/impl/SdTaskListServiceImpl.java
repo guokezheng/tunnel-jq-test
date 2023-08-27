@@ -867,6 +867,13 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         sdTaskList.setId(sdPatrolList.getTaskId());
         sdTaskList.setTaskStatus(TaskStatus.XUNCHAZHONG.getCode());
         updateGsySdTaskList(sdTaskList);
+
+//        SdTaskOpt sdTaskOpt = new SdTaskOpt();
+//        sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+//        sdTaskOpt.setTaskId(sdTaskList.getId());
+//        sdTaskOpt.setOptType(OptType.JEISHOU.getCode());
+//        sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+//        sdTaskListMapper.insertTaskOpt(sdTaskOpt);
 //
 //        JSONObject  jsonObject = new JSONObject();
 //        //任务数据推送

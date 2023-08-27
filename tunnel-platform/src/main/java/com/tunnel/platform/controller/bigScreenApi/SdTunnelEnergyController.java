@@ -6,6 +6,7 @@ import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,8 @@ public class SdTunnelEnergyController extends BaseController {
         Map<String, Object> allDataList = new HashMap<>();
         ExternalSystem externalSystem = new ExternalSystem();
         externalSystem.setTunnelId(tunnelId);
-        externalSystem.setSystemName("能源管控平台");
+        //externalSystem.setSystemName("能源管控平台");
+        externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE_OF_TUNNEL.getCode());
         List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
             return AjaxResult.success(allDataList);
@@ -109,7 +111,8 @@ public class SdTunnelEnergyController extends BaseController {
         Map<String, Object> allDataList = new HashMap<>();
         ExternalSystem externalSystem = new ExternalSystem();
         externalSystem.setTunnelId(tunnelId);
-        externalSystem.setSystemName("能源管控平台");
+        //externalSystem.setSystemName("能源管控平台");
+        externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE_OF_TUNNEL.getCode());
         List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
             return AjaxResult.success(allDataList);

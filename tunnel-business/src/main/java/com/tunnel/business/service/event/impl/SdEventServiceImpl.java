@@ -14,6 +14,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -30,6 +31,7 @@ import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
@@ -1848,14 +1850,32 @@ public class SdEventServiceImpl implements ISdEventService {
      * @return
      */
     public String getToken(){
-        String url = address+"/apiLogin";
+
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
 
+        String userName = "hsdsdVideo";
+        String password = "hsdsdVideo";
+
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        ExternalSystem externalSystem = list.get(0);
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+            userName = externalSystem.getUsername();
+            password = externalSystem.getPassword();
+          //  deptId = externalSystem.getSystemParam();
+        }
+
+        String url = address+"/apiLogin";
+
         HashMap<String, Object> requestBody = new HashMap<>();
-        requestBody.put("username", "hsdsdVideo");
-        requestBody.put("password", "hsdsdVideo");
+        requestBody.put("username", userName);
+        requestBody.put("password", password);
 
         HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
         /*UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)

@@ -984,11 +984,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          sdd.update_time,
          es.icon_file_id
         FROM
-         sd_devices t
-         left join sd_device_data sdd  on t.eq_id = sdd.device_id
-         left join sd_equipment_state es on sdd.`data` = es.device_state and es.state_type = '2'
-         LEFT JOIN sys_dict_data e ON e.dict_value = t.eq_status
-        AND e.dict_type = 'sd_monitor_state'
+            sd_devices t
+            -- left join sd_equipment_state es on sdd.`data` = es.device_state and es.state_type = '2'
+            left join sd_equipment_state es on t.eq_type = es.state_type_id and es.state_type = '2'
+            left join sd_device_data sdd  on t.eq_id = sdd.device_id
+            LEFT JOIN sys_dict_data e ON e.dict_value = t.eq_status
+            AND e.dict_type = 'sd_monitor_state'
         WHERE
          1 = 1
          AND t.eq_id = #{eqId}

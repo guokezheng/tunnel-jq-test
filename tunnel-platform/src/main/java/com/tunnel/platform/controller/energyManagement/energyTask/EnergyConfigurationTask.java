@@ -4,6 +4,7 @@ package com.tunnel.platform.controller.energyManagement.energyTask;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.energyManagement.EnergyConfigcenterClassification;
@@ -64,7 +65,8 @@ public class EnergyConfigurationTask {
         } else {
             //for (int i = 0; i < tunnelList.size(); i++) {
                 //externalSystem.setTunnelId(tunnelList.get(i).getTunnelId());
-                externalSystem.setSystemName("能源管控(能源数据同步)");
+                //externalSystem.setSystemName("能源管控(能源数据同步)");
+                externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE.getCode());
                 List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
                 if (externalSystems.isEmpty()) {
                     return;

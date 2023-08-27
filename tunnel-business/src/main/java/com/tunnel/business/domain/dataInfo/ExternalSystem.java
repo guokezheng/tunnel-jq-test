@@ -50,9 +50,32 @@ public class ExternalSystem extends BaseEntity
     @Excel(name = "系统名称")
     private String systemName;
 
+    /** 系统标识 **/
+    private String systemCode;
+
+    /** 系统参数 **/
+    private String systemParam;
+
     /** 系统地址 */
     @Excel(name = "系统地址")
     private String systemUrl;
+
+
+    public String getSystemParam() {
+        return systemParam;
+    }
+
+    public void setSystemParam(String systemParam) {
+        this.systemParam = systemParam;
+    }
+
+    public String getSystemCode() {
+        return systemCode;
+    }
+
+    public void setSystemCode(String systemCode) {
+        this.systemCode = systemCode;
+    }
 
     public String getTunnel() {
         return tunnel;

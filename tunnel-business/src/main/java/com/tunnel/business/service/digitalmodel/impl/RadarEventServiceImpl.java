@@ -954,7 +954,10 @@ public class RadarEventServiceImpl implements RadarEventService {
                     devMap.put("deviceCode",sdDevices.getEqId());
                     //情报板数据
                     String data = map.get("data").toString();
-                    JSONArray objects = JSONObject.parseArray(data);
+                    JSONArray objects = new JSONArray();
+                    if(data != null && !"".equals(data) && data.contains("[")){
+                        objects = JSONObject.parseArray(data);
+                    }
                     devMap.put("list",objects);
                     sdRadarDevice.setDeviceData(devMap);
                     list.add(sdRadarDevice);

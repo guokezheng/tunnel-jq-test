@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.energyManagement.EnergyDayparting;
 import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
@@ -43,7 +44,8 @@ public class EnergyDaypartingDataTask {
     public void synchronousEnergyDataTask() throws ParseException {
         ExternalSystem externalSystem = new ExternalSystem();
             List<EnergyDayparting>energyDaypartingList  = new ArrayList<>();
-            externalSystem.setSystemName("能源管控(能源数据同步)");
+            //externalSystem.setSystemName("能源管控(能源数据同步)");
+            externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE.getCode());
                 List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
                 if (externalSystems.isEmpty()) {
                     return;

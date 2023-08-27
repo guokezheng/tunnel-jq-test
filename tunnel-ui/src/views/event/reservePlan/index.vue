@@ -45,7 +45,8 @@
         ref="queryForm"
         :inline="true"
         :model="queryParams"
-        label-width="75px"
+        label-width="75px">
+
       >
         <el-form-item
           label="所属隧道"
@@ -187,6 +188,12 @@
         prop="direction"
         width="130"
         :formatter="directionFormat"
+      />
+      <el-table-column
+        align="center"
+        label="防控类型"
+        prop="prevControlType"
+        :formatter="prevControlTypeFormat"
       />
       <el-table-column align="center" label="事件类型" prop="planTypeId">
         <template slot-scope="scope">
@@ -524,7 +531,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="事件类型" prop="planTypeId">
+        <el-form-item label="事件类型" prop="planTypeId" key="planTypeId">
           <el-select
             v-model="reservePlanDrawForm.planTypeId"
             placeholder="请选择事件类型"
@@ -585,6 +592,7 @@
             v-model="reservePlanDrawForm.planName"
             placeholder="请输入预案名称"
             style="width: 100%"
+            @blur="getCheckPlanName"
           />
         </el-form-item>
         <el-form-item label="预案描述" prop="planDescription">
@@ -960,6 +968,7 @@ import {
   getTreeDeviceList,
   exportPlan,
   getVmsDataList,
+  checkPlanName,
 } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
 import {
@@ -1128,7 +1137,7 @@ export default {
           message: "请选择方向",
           trigger: "change",
         },
-        prevControlType:{
+        prevControlType: {
           required: true,
           message: "请选择防控类型",
           trigger: "change",
@@ -1157,7 +1166,7 @@ export default {
       //搜索-事件类型
       planTypeData: [],
       // 表格内回显事件类型
-      planTypeDataAll:[],
+      planTypeDataAll: [],
       //from表单参数
       reservePlanDrawForm: {
         planTypeId: null, //事件类型
@@ -1291,19 +1300,39 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleChangeControl(type,num){
-      console.log(type,num,"type,num")
-      this.planTypeData = []
-      // this.queryParams.planTypeId = ''
-      // this.reservePlanDrawForm.planTypeId = ''
+    // 判断预案名称是否重复
+    getCheckPlanName() {
+      if (
+        this.reservePlanDrawForm.planName &&
+        this.reservePlanDrawForm.tunnelId
+      ) {
+        const param = {
+          planName: this.reservePlanDrawForm.planName,
+          tunnelId: this.reservePlanDrawForm.tunnelId,
+        };
+        checkPlanName(param).then((res) => {
+          console.log(res, "res");
+        }).catch(()=>{
+          this.reservePlanDrawForm.planName = ''
+        });
+      }
+    },
+    handleChangeControl(type, num) {
+      console.log(type, num, "type,num");
+      this.planTypeData = [];
       this.$forceUpdate();
-      let prevControlType = ''
-      if(type == 1){
-        prevControlType = this.queryParams.prevControlType
-      }else if(type == 2){
-        prevControlType = this.reservePlanDrawForm.prevControlType
-      }else if(type == 3){
-        prevControlType = num
+      let prevControlType = "";
+      if (type == 1) {
+        prevControlType = this.queryParams.prevControlType;
+        this.queryParams.planTypeId = "";
+      } else if (type == 2) {
+        prevControlType = this.reservePlanDrawForm.prevControlType;
+        this.reservePlanDrawForm.planTypeId = null;
+        this.$nextTick(() => {
+            this.$refs["addform1"].clearValidate('planTypeId')
+        })
+      } else if (type == 3) {
+        prevControlType = num;
       }
       //查询事件类型
       let params = {
@@ -1311,7 +1340,6 @@ export default {
         prevControlType: prevControlType,
       };
       listEventType(params).then((response) => {
-        console.log(this.planTypeData,"this.planTypeData")
         this.planTypeData = [...response.rows];
       });
     },
@@ -1501,6 +1529,9 @@ export default {
         this.controlDirectionList,
         row.controlDirection
       );
+    },
+    prevControlTypeFormat(row, column) {
+      return this.selectDictLabel(this.controlTypeOptions, row.prevControlType);
     },
     directionFormat(row, column) {
       return this.selectDictLabel(this.directionData, row.direction);
@@ -2218,18 +2249,26 @@ export default {
               Number(this.reservePlanDrawForm.prevControlType)
             );
             if (this.planChangeSink == "add") {
-              addPlanFile(this.fileData).then((response) => {
-                if (response.code === 200) {
-                  this.$modal.msgSuccess("保存成功");
-                  // this.drawer = false;//关闭drawer窗体
-                  this.dialogFormVisible = false;
-                  this.resetReservePlanDrawForm(); //重置表单
-                  //this.open = false;
-                  this.getList();
-                } else {
-                  this.$modal.msgError("保存失败");
-                }
-              });
+              let filess = Object.assign({}, this.fileData);
+              addPlanFile(this.fileData)
+                .then((response) => {
+                  if (response.code === 200) {
+                    this.$modal.msgSuccess("保存成功");
+                    // this.drawer = false;//关闭drawer窗体
+                    this.dialogFormVisible = false;
+                    this.resetReservePlanDrawForm(); //重置表单
+                    //this.open = false;
+                    this.getList();
+                  } else {
+                    console.log(filess, "filess");
+                    this.fileData = filess;
+                    this.$modal.msgError("保存失败");
+                  }
+                })
+                .catch(() => {
+                  console.log(this.fileData, "this.fileData");
+                  console.log("保存失败");
+                });
             } else if (this.planChangeSink == "edit") {
               this.fileData.append("id", this.reservePlanDrawForm.id);
               this.fileData.append("removeIds", this.removeIds);
@@ -2275,7 +2314,6 @@ export default {
     },
     /** 新增按钮操作 **/
     handleAdd() {
-      
       this.resetReservePlanDrawForm();
       this.title = "新增预案";
       this.planChangeSink = "add";
@@ -2291,6 +2329,7 @@ export default {
         if (item.tunnelId == e) {
           this.reservePlanDrawForm.sId = null;
           that.eqTunnelDataList = item.sdTunnelSubareas;
+          this.getCheckPlanName()
           that.$forceUpdate();
         }
       });
@@ -2302,7 +2341,7 @@ export default {
         text: "Loading",
         spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)",
-        });
+      });
 
       this.resetForm("addForm1");
       // this.resetReservePlanDrawForm();
@@ -2317,13 +2356,13 @@ export default {
         this.planCategory = response.data;
       });
       getPlan(id).then((response) => {
-        console.log(response.data,"response修改弹窗")
+        console.log(response.data, "response修改弹窗");
         this.reservePlanDrawForm = response.data;
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
         this.reservePlanDrawForm.category = response.data.category;
 
-        this.handleChangeControl(3,response.data.prevControlType)
+        this.handleChangeControl(3, response.data.prevControlType);
         if (
           this.reservePlanDrawForm.strategyId != -1 &&
           this.reservePlanDrawForm.strategyId != "-1" &&
@@ -2334,7 +2373,7 @@ export default {
         }
         let fileInfo = response.data.pFileList;
         this.$nextTick(() => {
-          if(fileInfo){
+          if (fileInfo) {
             for (var i = 0; i < fileInfo.length; i++) {
               let fileModel = {};
               fileModel.name = fileInfo[i].fileName;
@@ -2345,8 +2384,8 @@ export default {
           }
         });
         loading.close();
-          this.dialogFormVisible = true;
-          this.title = "修改预案信息";
+        this.dialogFormVisible = true;
+        this.title = "修改预案信息";
         //文件回显
       });
       // this.drawer = true;
@@ -2671,8 +2710,8 @@ export default {
     background-image: url(../../../assets/icons/add.png);
   }
 }
-.operationDiglog{
-  .el-dialog__body{
+.operationDiglog {
+  .el-dialog__body {
     padding: 20px !important;
   }
 }

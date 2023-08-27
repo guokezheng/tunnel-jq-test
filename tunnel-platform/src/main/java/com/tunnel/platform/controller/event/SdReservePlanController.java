@@ -241,4 +241,14 @@ public class SdReservePlanController extends BaseController {
     public AjaxResult getReservePlanData(SdReservePlan sdReservePlan){
         return sdReservePlanService.getReservePlanData(sdReservePlan);
     }
+
+    /**
+     * 校验预案名称
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/checkPlanName")
+    public AjaxResult checkPlanName(SdReservePlan sdReservePlan){
+        return sdReservePlanService.checkPlanName(sdReservePlan);
+    }
 }

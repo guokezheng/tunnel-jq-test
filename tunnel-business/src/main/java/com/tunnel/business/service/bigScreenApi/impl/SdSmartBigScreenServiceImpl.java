@@ -10,6 +10,7 @@ import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -33,6 +34,9 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private SdTunnelsMapper tunnelsMapper;
 
     @Override
     public Map<String, Object> getEventWarning(String tunnelId) {
@@ -290,6 +294,107 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         map.put("failureRate",multiply);
         map.put("list",devList);
         return AjaxResult.success(map);
+    }
+
+    @Override
+    public AjaxResult getAllTunnelVehicleSpeed() {
+        //客车
+        List<Map<String, Object>> carKe = sdSmartBigScreenMapper.getTunnelVehicleCount( "1");
+        //货车
+        List<Map<String, Object>> carHuo = sdSmartBigScreenMapper.getTunnelVehicleCount( "2");
+        //获取平均车速
+        List<Map<String, Object>> speedList = sdSmartBigScreenMapper.getTunnelVehicleSpeed();
+
+        //获取隧道列表
+        List<Map<String, String>> tunnelList = tunnelsMapper.getTunnelList();
+
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for(Map<String, String> tunnel : tunnelList){
+            Map<String, Object> map = new HashMap<>();
+            map.put("tunnelId",tunnel.get("tunnelId"));
+            map.put("tunnelName",tunnel.get("tunnelName"));
+            mapList.add(map);
+        }
+
+        //组装数据
+        for(Map<String, Object> item : mapList){
+            for(Map<String, Object> car: carKe){
+                if(item.get("tunnelId").toString().equals(car.get("tunnelId").toString())){
+                    item.put("carKe",car.get("num"));
+                }
+            }
+            for(Map<String, Object> car: carHuo){
+                if(item.get("tunnelId").toString().equals(car.get("tunnelId").toString())){
+                    item.put("carHuo",car.get("num"));
+                }
+            }
+            for(Map<String, Object> speed: speedList){
+                if(item.get("tunnelId").toString().equals(speed.get("tunnelId").toString())){
+                    item.put("speed",speed.get("speed"));
+                }
+            }
+            if(item.get("carKe") == null){
+                item.put("carKe",0);
+            }
+            if(item.get("carHuo") == null){
+                item.put("carHuo",0);
+            }
+            if(item.get("speed") == null){
+                item.put("speed",0);
+            }
+        }
+
+        return AjaxResult.success(mapList);
+    }
+
+    @Override
+    public AjaxResult getTunnelSpeed() {
+        List<Map<String, Object>> speedList = sdSmartBigScreenMapper.getTunnelVehicleSpeed();
+        BigDecimal speedNum = new BigDecimal(0);
+        for(int i = 0; i < speedList.size(); i++){
+            speedNum = speedNum.add(new BigDecimal(speedList.get(i).get("speed").toString()));
+        }
+        if(speedNum.compareTo(new BigDecimal(0)) == 0){
+            return AjaxResult.success(0);
+        }
+        BigDecimal divide = speedNum.divide(new BigDecimal(speedList.size()), 2, BigDecimal.ROUND_UP);
+        return AjaxResult.success(divide);
+    }
+
+    @Override
+    public AjaxResult getTunnelStatis() {
+        List<Map<String, Object>> tunnelDataStatis = sdSmartBigScreenMapper.getTunnelDataStatis();
+        //获取隧道列表
+        List<Map<String, String>> tunnelList = tunnelsMapper.getTunnelList();
+
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for(Map<String, String> tunnel : tunnelList){
+            Map<String, Object> map = new HashMap<>();
+            map.put("tunnelId",tunnel.get("tunnelId"));
+            map.put("tunnelName",tunnel.get("tunnelName"));
+            mapList.add(map);
+        }
+        for(Map<String, Object> item : mapList){
+            for(Map<String, Object> data : tunnelDataStatis){
+                if(item.get("tunnelId").toString().equals(data.get("tunnelId").toString())){
+                    item.put("speed",data.get("speed"));
+                    item.put("cars",data.get("cars"));
+                }
+                if(item.get("speed") == null){
+                    item.put("speed",0);
+                }
+                if(item.get("cars") == null){
+                    item.put("cars",0);
+                }
+            }
+        }
+        if(tunnelDataStatis.size() == 0){
+            mapList.stream().forEach(item -> {
+                item.put("speed",0);
+                item.put("cars",0);
+            });
+        }
+        return AjaxResult.success(mapList);
     }
 
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){

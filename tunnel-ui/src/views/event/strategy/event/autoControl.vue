@@ -224,6 +224,10 @@
                   :show-all-levels="false"
                   @change="changeEquipmentType(index)"
                   style="width: 100%"
+                  placeholder="请选择设备类型"
+                  clearable
+                  @visible-change="elCascaderOnClick"
+                  :key="refresh"
                 ></el-cascader>
                 <!-- <el-select
                   v-model="dain.equipmentTypeId"
@@ -462,6 +466,7 @@ export default {
   },
   data() {
     return {
+      refresh:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -614,6 +619,12 @@ export default {
       await this.getDirection();
       //给设备数据项赋值
       await this.getListItem();
+    },
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
     },
     // 请选择设备 照明
     selectStateVal(index) {

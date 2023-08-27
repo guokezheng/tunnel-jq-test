@@ -106,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                         "/wjData/eventData","/wjData/eventImage","/wjData/eventVideo","/wjData/specialCar",
                         "/zcData/baseDeviceStatus","/wjData/sendBaseDeviceStatus","/websocket","/websocket/test","/api/getToken",
                         "/thirdPart/testLogin", "/thirdPart/login","/workspace/commonControl","/system/warehouse/getHsdSparePartList","/testTopic/event"
-                        ,"/app/login"
+                        ,"/app/login","/equipmentApi/getEquipmentFault","/equipmentApi/getUnhandledFault","/equipmentApi/getEquipmentType","/parser/board/getRealTimeBoard","/parser/board/commonControlBoard"
                 ).anonymous()
                 .antMatchers(
                         HttpMethod.GET,

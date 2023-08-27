@@ -23,7 +23,7 @@
           :open="cameraPlayer"
         ></videoPlayer>
         <video
-          src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+          src="http://10.7.179.15:7080/video/fireVideo.mp4"
           v-if="radio1 == '演示'"
           controls
           muted
@@ -93,7 +93,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="13">
-            <el-form-item label="IP:"> </el-form-item>
+            <el-form-item label="IP:">
+              {{stateForm.ip}}
+            </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item
@@ -137,7 +139,7 @@
         :open="cameraPlayer"
       ></videoPlayer>
       <video
-          src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+          src="http://10.7.179.15:7080/video/fireVideo.mp4"
           v-if="radio1 == '演示'"
           style="height: 400px; object-fit: cover"
           controls
@@ -173,7 +175,7 @@
       <!-- src="../../../../assets/Example/v1.mp4" -->
 
       <video
-          src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+          src="http://10.7.179.15:7080/video/fireVideo.mp4"
           v-if="radio1 == '演示'"
           style="height: 100%; object-fit: cover"
           controls

@@ -119,7 +119,8 @@ public class YddTask {
         jsonObject.put("runStatus", Integer.valueOf(runStatus));
         jsonObject.put("runMode", Integer.valueOf(runMode));
         map.put("deviceData", jsonObject);
-        radarEventService.sendBaseDeviceStatus(map);
+        //todo 万集数据推送
+        //radarEventService.sendBaseDeviceStatus(map);
     }
 
     private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {

@@ -1,5 +1,7 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -12,11 +14,16 @@ import com.ruoyi.system.domain.SysLogininfor;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +48,16 @@ public class SdDeviceDataController extends BaseController
 
     @Autowired
     private SdEnergyDataMapper energyDataMapper;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
     /**
      * 查询设备实时数据（存储模拟量）列表
@@ -171,6 +188,7 @@ public class SdDeviceDataController extends BaseController
                 }
             }
         }
+        setDeviceDataList(tunnelId);
         return Result.success(map);
     }
 
@@ -321,4 +339,14 @@ public class SdDeviceDataController extends BaseController
         sdDeviceDataService.getFanSafeData(eqId);
     }
 
+    /**
+     * 推送设备实时信息
+     * @param tunnelId
+     */
+    public void setDeviceDataList(String tunnelId){
+        List<SdDevices> devices = sdDevicesMapper.selectDevice(tunnelId);
+        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(devices);
+        deviceRadar.stream().forEach(item -> item.setTunnelId(tunnelId));
+        kafkaOneTemplate.send("baseDeviceStatus",JSON.toJSONString(deviceRadar));
+    }
 }

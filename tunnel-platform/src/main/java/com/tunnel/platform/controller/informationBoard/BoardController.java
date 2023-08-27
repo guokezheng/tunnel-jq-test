@@ -72,57 +72,57 @@ public class BoardController extends BaseController {
     @Autowired
     private SdDeviceDataMapper deviceDataMapper;
 
-    /**
-     *
-     * 1分钟检测一次情报板的状态
-     */
-    @Scheduled(fixedRate = 60000 * 5)
-    public void getIcyData() {
-
-    	List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceList(new SdIotDevice());
-    	for(int i=0;i<list.size();i++){
-    		SdIotDevice iotDevice = list.get(i);
-            Long deviceId = iotDevice.getDeviceId();
-            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
-            try {
-                Map<String, String> boardData = DeviceManagerFactory.getInstance().getDeviceDisplayListByDeviceId(String.valueOf(iotDevice.getDeviceId()));
-                iotDevice.setDeviceStatus("0");
-                sdIotDeviceService.updateIotDevice(iotDevice);
-                device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
-                device.setEqStatusTime(new Date());
-                sdDevicesService.updateSdDevices(device);
-                String result = boardData.get("result");
-                String protocolType = boardData.get("vender");
-                String jsonResult = DataUtils.itemContentToJson(result, protocolType);
-                //隧道内
-                Long sdnCode = Long.valueOf(DevicesTypeItemEnum.SUI_DAO_NEI_CONTENT.getCode());
-                //门架式
-                Long mjsCode = Long.valueOf(DevicesTypeItemEnum.MEN_JIA_CONTENT.getCode());
-                //查询情报板实时内容
-                SdDeviceData sdDeviceData = new SdDeviceData();
-                sdDeviceData.setDeviceId(device.getEqId());
-                if("16".equals(device.getEqType().toString())){
-                    sdDeviceData.setItemId(sdnCode);
-                }else {
-                    sdDeviceData.setItemId(mjsCode);
-                }
-                List<SdDeviceData> sdDeviceDataList = deviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-                //存入实时数据
-                if("16".equals(device.getEqType().toString())){
-                    setDeviceData(device.getEqId(),sdnCode,jsonResult,sdDeviceDataList);
-                }else {
-                    setDeviceData(device.getEqId(),mjsCode,jsonResult,sdDeviceDataList);
-                }
-            } catch (Exception e) {
-            	iotDevice.setDeviceStatus("1");
-    			sdIotDeviceService.updateIotDevice(iotDevice);
-                device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
-                device.setEqStatusTime(new Date());
-                sdDevicesService.updateSdDevices(device);
-            }
-    	}
-
-    }
+//    /**
+//     *
+//     * 1分钟检测一次情报板的状态
+//     */
+//    @Scheduled(fixedRate = 60000 * 5)
+//    public void getIcyData() {
+//
+//    	List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceList(new SdIotDevice());
+//    	for(int i=0;i<list.size();i++){
+//    		SdIotDevice iotDevice = list.get(i);
+//            Long deviceId = iotDevice.getDeviceId();
+//            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+//            try {
+//                Map<String, String> boardData = DeviceManagerFactory.getInstance().getDeviceDisplayListByDeviceId(String.valueOf(iotDevice.getDeviceId()));
+//                iotDevice.setDeviceStatus("0");
+//                sdIotDeviceService.updateIotDevice(iotDevice);
+//                device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+//                device.setEqStatusTime(new Date());
+//                sdDevicesService.updateSdDevices(device);
+//                String result = boardData.get("result");
+//                String protocolType = boardData.get("vender");
+//                String jsonResult = DataUtils.itemContentToJson(result, protocolType);
+//                //隧道内
+//                Long sdnCode = Long.valueOf(DevicesTypeItemEnum.SUI_DAO_NEI_CONTENT.getCode());
+//                //门架式
+//                Long mjsCode = Long.valueOf(DevicesTypeItemEnum.MEN_JIA_CONTENT.getCode());
+//                //查询情报板实时内容
+//                SdDeviceData sdDeviceData = new SdDeviceData();
+//                sdDeviceData.setDeviceId(device.getEqId());
+//                if("16".equals(device.getEqType().toString())){
+//                    sdDeviceData.setItemId(sdnCode);
+//                }else {
+//                    sdDeviceData.setItemId(mjsCode);
+//                }
+//                List<SdDeviceData> sdDeviceDataList = deviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+//                //存入实时数据
+//                if("16".equals(device.getEqType().toString())){
+//                    setDeviceData(device.getEqId(),sdnCode,jsonResult,sdDeviceDataList);
+//                }else {
+//                    setDeviceData(device.getEqId(),mjsCode,jsonResult,sdDeviceDataList);
+//                }
+//            } catch (Exception e) {
+//            	iotDevice.setDeviceStatus("1");
+//    			sdIotDeviceService.updateIotDevice(iotDevice);
+//                device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+//                device.setEqStatusTime(new Date());
+//                sdDevicesService.updateSdDevices(device);
+//            }
+//    	}
+//
+//    }
 
 
     /**
@@ -134,8 +134,11 @@ public class BoardController extends BaseController {
     @ResponseBody
     public AjaxResult loadRealtimeInf(Long deviceId) {
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+        if(device == null){
+            return AjaxResult.error("设备不存在");
+        }
         if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
-            return null;
+            return AjaxResult.error("设备离线");
         }
         List<String> paramsList = new ArrayList<String>();
         AjaxResult ajaxResult;
@@ -1198,19 +1201,34 @@ public class BoardController extends BaseController {
         }
     }
 
-    public void setDeviceData(String deviceId, Long typeId, String content, List<SdDeviceData> sdDeviceDataList){
-        if(sdDeviceDataList.size() > 0){
-            SdDeviceData sdDeviceData1 = sdDeviceDataList.get(0);
-            sdDeviceData1.setData(content);
-            sdDeviceData1.setUpdateTime(DateUtils.getNowDate());
-            deviceDataMapper.updateKafkaDeviceData(sdDeviceData1);
+//    public void setDeviceData(String deviceId, Long typeId, String content, List<SdDeviceData> sdDeviceDataList){
+//        if(sdDeviceDataList.size() > 0){
+//            SdDeviceData sdDeviceData1 = sdDeviceDataList.get(0);
+//            sdDeviceData1.setData(content);
+//            sdDeviceData1.setUpdateTime(DateUtils.getNowDate());
+//            deviceDataMapper.updateKafkaDeviceData(sdDeviceData1);
+//        }else {
+//            SdDeviceData sdDeviceData1 = new SdDeviceData();
+//            sdDeviceData1.setData(content);
+//            sdDeviceData1.setItemId(typeId);
+//            sdDeviceData1.setDeviceId(deviceId);
+//            sdDeviceData1.setCreateTime(DateUtils.getNowDate());
+//            deviceDataMapper.insertSdDeviceData(sdDeviceData1);
+//        }
+//    }
+
+    /**
+     * 提供情报板实时信息
+     * @param deviceId
+     * @return
+     */
+    @GetMapping("/getRealTimeBoard")
+    public AjaxResult getRealTimeBoard(String deviceId){
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
+        if(sdDevices == null || sdDevices.getAssociatedDeviceId() == null || "".equals(sdDevices.getAssociatedDeviceId())){
+            return AjaxResult.error("设备不存在");
         }else {
-            SdDeviceData sdDeviceData1 = new SdDeviceData();
-            sdDeviceData1.setData(content);
-            sdDeviceData1.setItemId(typeId);
-            sdDeviceData1.setDeviceId(deviceId);
-            sdDeviceData1.setCreateTime(DateUtils.getNowDate());
-            deviceDataMapper.insertSdDeviceData(sdDeviceData1);
+            return loadRealtimeInf(sdDevices.getAssociatedDeviceId());
         }
     }
 }

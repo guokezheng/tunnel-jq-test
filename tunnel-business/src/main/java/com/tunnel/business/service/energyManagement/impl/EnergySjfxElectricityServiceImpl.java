@@ -91,6 +91,22 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     list.add(map);
                 });
                 infoList = list;
+            }else {
+                Map<String, List<ElectricityData>> groupId = energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId));
+                Set<String> strings = groupId.keySet();
+                //储存隧道数据
+                List<Map<String, Object>> list = new ArrayList<>();
+                List<String> collect = codeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+                for(String id : strings){
+                    collect.remove(id);
+                }
+                collect.stream().forEach(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id",item);
+                    map.put("name",TunnelEnum.getValue(item));
+                    list.add(map);
+                });
+                infoList = list;
             }
         }else if ("3".equals(tabType)) { // 分项
 
@@ -101,6 +117,13 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     });
             if(energyList.size() == 0){
                 //分项数据
+                infoList = itemizedMapper.getItemizedMap(codeList);
+            }else {
+                Map<String, List<ElectricityData>> groupId = energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId));
+                Set<String> strings = groupId.keySet();
+                for(String id : strings){
+                    codeList.remove(id);
+                }
                 infoList = itemizedMapper.getItemizedMap(codeList);
             }
 
@@ -113,16 +136,23 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                     });
             if(energyList.size() == 0){
                 infoList = classificationMapper.getFicationMap(codeList);
+            }else {
+                Map<String, List<ElectricityData>> groupId = energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId));
+                Set<String> strings = groupId.keySet();
+                for(String id : strings){
+                    codeList.remove(id);
+                }
+                infoList = classificationMapper.getFicationMap(codeList);
             }
         } else {
             throw new Exception("tabType类型错误");
         }
-        if(resultList.size() == 0){
-            List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, infoList);
-            for(List<ElectricityData> item : lists){
-                resultList.add(item);
-            }
+
+        List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, infoList);
+        for(List<ElectricityData> item : lists){
+            resultList.add(item);
         }
+
         return resultList;
     }
 
@@ -130,7 +160,6 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
      * 能耗足迹
      * @param codeList
      * @param baseTime
-     * @param statisticType
      * @return
      */
     @Override
@@ -164,29 +193,7 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         List <EnergyDayparting> energyDataList =  mapper.getEnergyDayparting(deptCodeList,baseTime,statisticType);
         if (energyDataList.isEmpty()) {
             List<String> collect = deptCodeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
-            for(String item : collect){
-                SplitTimeDto dto = new SplitTimeDto();
-                dto.setCode(item);
-                dto.setName(TunnelEnum.getValue(item));
-                dto.setjPrice(0.0);
-                dto.setpPrice(0.0);
-                dto.setsPrice(0.0);
-                dto.setgPrice(0.0);
-                dto.setfPrice(0.0);
-                dto.setSumGPrice(0.0);
-                dto.setSumJPrice(0.0);
-                dto.setSumPPrice(0.0);
-                dto.setSumSPrice(0.0);
-                dto.setSumFPrice(0.0);
-                dto.setfValue(0.0);
-                dto.setgValue(0.0);
-                dto.setjValue(0.0);
-                dto.setpValue(0.0);
-                dto.setsValue(0.0);
-                dto.setSumValue(0.0);
-                dto.setSumPrice(0.0);
-                result.add(dto);
-            }
+            result = getResult(collect);
             return result;
         }
         HashMap<String, Double> meanUnitPriceOfYear = new HashMap<>();
@@ -292,6 +299,13 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                 result.add(dto);
             }
         }
+        //储存隧道数据
+        List<String> collect = deptCodeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+        for(SplitTimeDto item : result){
+            collect.remove(item.getCode());
+        }
+        List<SplitTimeDto> result1 = getResult(collect);
+        result.addAll(result1);
         return result;
     }
 
@@ -311,34 +325,22 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         List <EnergyAnalysisElectricityBill> energyDataList =  mapper.getElectricityBillByDept(deptCodeList,baseTime,statisticType);
         if (energyDataList.isEmpty()) {
             List<String> collect = deptCodeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
-            List<Map<String, Object>> list = new ArrayList<>();
-            collect.stream().forEach(item -> {
-                Map<String, Object> map = new HashMap<>();
-                map.put("id",item);
-                map.put("name",TunnelEnum.getValue(item));
-                list.add(map);
-            });
-            List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, list);
-            List<List<Map<String, Object>>> infoList = new ArrayList<>();
-            for(int i = 0; i < lists.size(); i++){
-                List<ElectricityData> list1 = lists.get(i);
-                List<Map<String, Object>> mapList = new ArrayList<>();
-                list1.stream().forEach(item -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("id",item.getId());
-                    map.put("name",item.getName());
-                    map.put("rt",item.getRt());
-                    map.put("value",item.getValue());
-                    mapList.add(map);
-                });
-                infoList.add(mapList);
-            }
+            List<List<Map<String, Object>>> infoList = getDfList(collect, statisticType, baseTime);
             return infoList;
         }
         //获取用电量
         List<EnergyConfigcenterElectricityPrice> priceList = selectPrice(type,baseTime);
         //计算电费
         List<List<Map<String, Object>>> list = countData(energyDataList, type, priceList, dateTimeList);
+        List<String> idList = new ArrayList<>();
+        for(List<Map<String, Object>> item : list){
+            idList.add(item.get(0).get("id").toString());
+        }
+        //获取隧道id
+        List<String> collect = deptCodeList.stream().filter(item -> TunnelEnum.contains(item) == true).collect(Collectors.toList());
+        idList.stream().forEach(item -> collect.remove(item));
+        List<List<Map<String, Object>>> dfList = getDfList(collect, statisticType, baseTime);
+        list.addAll(dfList);
         return list;
     }
 
@@ -549,5 +551,71 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
             dataList.add(list);
         }
         return dataList;
+    }
+
+    /**
+     * 电费分析无数据时返回
+     * @param collect
+     * @param statisticType
+     * @param baseTime
+     * @return
+     */
+    public List<List<Map<String, Object>>> getDfList(List<String> collect, Integer statisticType, Date baseTime){
+        List<Map<String, Object>> list = new ArrayList<>();
+        collect.stream().forEach(item -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id",item);
+            map.put("name",TunnelEnum.getValue(item));
+            list.add(map);
+        });
+        List<List<ElectricityData>> lists = setDataInfo(statisticType, baseTime, list);
+        List<List<Map<String, Object>>> infoList = new ArrayList<>();
+        for(int i = 0; i < lists.size(); i++){
+            List<ElectricityData> list1 = lists.get(i);
+            List<Map<String, Object>> mapList = new ArrayList<>();
+            list1.stream().forEach(item -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id",item.getId());
+                map.put("name",item.getName());
+                map.put("rt",item.getRt());
+                map.put("value",item.getValue());
+                mapList.add(map);
+            });
+            infoList.add(mapList);
+        }
+        return infoList;
+    }
+
+    /**
+     * 分时段用能无数据时返回
+     * @param collect
+     * @return
+     */
+    public List<SplitTimeDto> getResult(List<String> collect){
+        List<SplitTimeDto> result = new ArrayList<>();
+        for(String item : collect){
+            SplitTimeDto dto = new SplitTimeDto();
+            dto.setCode(item);
+            dto.setName(TunnelEnum.getValue(item));
+            dto.setjPrice(0.0);
+            dto.setpPrice(0.0);
+            dto.setsPrice(0.0);
+            dto.setgPrice(0.0);
+            dto.setfPrice(0.0);
+            dto.setSumGPrice(0.0);
+            dto.setSumJPrice(0.0);
+            dto.setSumPPrice(0.0);
+            dto.setSumSPrice(0.0);
+            dto.setSumFPrice(0.0);
+            dto.setfValue(0.0);
+            dto.setgValue(0.0);
+            dto.setjValue(0.0);
+            dto.setpValue(0.0);
+            dto.setsValue(0.0);
+            dto.setSumValue(0.0);
+            dto.setSumPrice(0.0);
+            result.add(dto);
+        }
+        return result;
     }
 }

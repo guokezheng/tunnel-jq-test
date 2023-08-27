@@ -151,4 +151,22 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getStatisticalDevice(String tunnelId);
+
+    /**
+     * 隧道平均车速以及车流
+     * @return
+     */
+    AjaxResult getAllTunnelVehicleSpeed();
+
+    /**
+     * 隧道平均车速
+     * @return
+     */
+    AjaxResult getTunnelSpeed();
+
+    /**
+     * 获取各隧道数据
+     * @return
+     */
+    AjaxResult getTunnelStatis();
 }

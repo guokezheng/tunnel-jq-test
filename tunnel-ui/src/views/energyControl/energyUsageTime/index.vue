@@ -2,8 +2,6 @@
 <template>
   <div
     class="app-container"
-    v-loading.fullscreen.lock="loading"
-    element-loading-background="rgba(255, 255, 255, 0.3)"
   >
     <!-- 顶部 -->
     <el-row class="top_tabs">

@@ -521,7 +521,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("runDate", runDate);
         map.put("deviceData", jsonObject);
-        sendBaseDeviceStatus(map);
+        //todo 万集数据推送
+        //sendBaseDeviceStatus(map);
     }
 
     @Override
@@ -632,10 +633,10 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
-        List<SdRadarDevice> list = new ArrayList<>();
-        int shouBaoAlarmCode = DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode();
-        int flameDetectorAlarmCode = DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode();
-        for (SdDevices f : devices) {
+        //List<SdRadarDevice> list = new ArrayList<>();
+        /*int shouBaoAlarmCode = DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode();
+        int flameDetectorAlarmCode = DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode();*/
+        /*for (SdDevices f : devices) {
             //设备类型34对应的是消防主机，没有必要提供给万集
             if (f.getEqType().longValue() == 34L) {
                 continue;
@@ -666,59 +667,243 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("unit", map.get("unit").toString());
                     }
                 }
+            }else if ("17".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode()).longValue()) {
+                        deviceData.put("windSpeed", Double.parseDouble(map.get("data").toString()));
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode()).longValue()) {
+                        deviceData.put("windDirection", map.get("data").toString());
+                    }
+                }
+            } else if ("19".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.CO.getCode()).longValue()) {
+                        deviceData.put("CO", Double.parseDouble(map.get("data").toString()));
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.VI.getCode()).longValue()) {
+                        deviceData.put("VI", Double.parseDouble(map.get("data").toString()));
+                    }
+                }
+            }else if ("23".equals(sdRadarDevice.getDeviceType()) || "26".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null) {
+                        deviceData.put("runDate", map.get("data").toString());
+                    }
+                }
+            } else if ("16".equals(sdRadarDevice.getDeviceType()) || "36".equals(sdRadarDevice.getDeviceType())) {
+                //隧道内情报板
+                List<Map<String, Object>> vmsData = deviceDataMapper.getVmsData(f.getEqId());
+                for (int i = 0;i < vmsData.size();i++) {
+                    Map<String, Object> map = vmsData.get(i);
+                    //设备id
+                    String deviceId = map.get("deviceId").toString();
+                    SdDevices sdDevices = devicesMapper.selectSdDevicesById(deviceId);
+                    JSONObject devMap = new JSONObject();
+                    //情报板编号
+                    devMap.put("boardNo",sdDevices.getAssociatedDeviceId());
+                    //隧道id
+                    devMap.put("tunnelId",sdDevices.getEqTunnelId());
+                    //设备id
+                    devMap.put("deviceCode",sdDevices.getEqId());
+                    //情报板数据
+                    String data = map.get("data").toString();
+                    JSONArray objects = JSONObject.parseArray(data);
+                    devMap.put("list",objects);
+                    sdRadarDevice.setDeviceData(devMap);
+                    list.add(sdRadarDevice);
+                }
             }
-            /*else if ("31".equals(sdRadarDevice.getDeviceType())) {
+            if(!"16".equals(sdRadarDevice.getDeviceType()) && !"36".equals(sdRadarDevice.getDeviceType())){
+                sdRadarDevice.setDeviceData(deviceData);
+                list.add(sdRadarDevice);
+            }
+        }
+        //获取万集雷达相机数据
+        Collection<String> wanJiDevice = redisCache.keys("wanJiDevice");
+        List<Map<String, Object>> deviceDataList = (List<Map<String, Object>>)redisTemplate.opsForValue().multiGet(wanJiDevice);
+        for(Map<String, Object> map : deviceDataList){
+            JSONObject deviceData = new JSONObject();
+            String deviceType = map.get("deviceType").toString();
+            SdDevices sdDevices = new SdDevices();
+            sdDevices.setEqType(Long.valueOf(deviceType));
+            sdDevices.setIp(map.get("ip").toString());
+            List<SdDevices> devicesList = devicesMapper.selectSdDevicesList(sdDevices);
+            SdRadarDevice sdRadarDevice = setRadarDevice(devicesList.get(0));
+            if("26".equals(deviceType)){
+                deviceData.put("line",Integer.valueOf(map.get("line").toString()));
+            }else {
+                deviceData.put("rate",Integer.valueOf(map.get("rate").toString()));
+            }
+            deviceData.put("errorContent",map.get("errorContent").toString());
+            sdRadarDevice.setDeviceData(deviceData);
+            list.add(sdRadarDevice);
+        }*/
+        //获取实时信息
+        List<SdRadarDevice> list = getDeviceRadar(devices);
+
+        //在线
+        int normal = 0;
+        //离线
+        int errorNum = 0;
+        //故障
+        int offlineNum = 0;
+        for (SdRadarDevice sdRadarDevice : list) {
+            if (sdRadarDevice.getDeviceStatus() != null) {
+                if (sdRadarDevice.getDeviceStatus() == 1) {
+                    normal += 1;
+                } else if (sdRadarDevice.getDeviceStatus() == 3) {
+                    errorNum += 1;
+                } else if (sdRadarDevice.getDeviceStatus() == 2) {
+                    offlineNum += 1;
+                }
+            }
+        }
+        JSONObject object = new JSONObject();
+        object.put("onlineNum", normal);
+        object.put("errorNum", errorNum);
+        object.put("offlineNum", offlineNum);
+        object.put("deviceList", list);
+        return JSONUtil.parse(object);
+    }
+
+    /**
+     * 实时数据信息
+     * @param f
+     * @return
+     */
+    public SdRadarDevice setRadarDevice(SdDevices f){
+        SdRadarDevice sdRadarDevice = new SdRadarDevice();
+        sdRadarDevice.setDeviceId(f.getEqId());
+        sdRadarDevice.setIp(f.getIp());
+        sdRadarDevice.setDeviceType(f.getEqType() + "");
+        if (f.getEqName().contains("k")) {
+            sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("k") - 1));
+        } else {
+            sdRadarDevice.setDeviceName(f.getEqName());
+        }
+        sdRadarDevice.setDeviceStatus((f.getEqStatus() == null || "".equals(f.getEqStatus())) ? 2 : Integer.parseInt(f.getEqStatus()));
+        if (StringUtils.isNotEmpty(f.getLng())) {
+            sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
+        }
+        if (StringUtils.isNotEmpty(f.getLat())) {
+            sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
+        }
+        sdRadarDevice.setDirection(f.getEqDirection());
+        sdRadarDevice.setStakeNum(f.getPile());
+        sdRadarDevice.setTransform(f.getRemark());
+        return sdRadarDevice;
+    }
+
+
+    private String picName(String urlName) {
+        String[] split = urlName.split("/");
+        String s = split[split.length - 1];
+        return s;
+    }
+
+    public Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+    /**
+     * 将车辆快照转map
+     *
+     * @param sdRadarDetectData
+     */
+    public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+//        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
+        return  map;
+    }
+
+    /**
+     * 将数据推送至物联
+     * @param sdRadarDetectData
+     */
+    public void sendKafka(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = new JSONObject(map);
+        kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
+    }
+
+    /**
+     * 查询设备实时状态
+     * @param devices
+     * @return
+     */
+    public List<SdRadarDevice> getDeviceRadar(List<SdDevices> devices){
+        List<SdRadarDevice> list = new ArrayList<>();
+        for (SdDevices f : devices) {
+            //设备类型34对应的是消防主机，没有必要提供给万集
+            if (f.getEqType().longValue() == 34L) {
+                continue;
+            }
+            SdRadarDevice sdRadarDevice = setRadarDevice(f);
+            com.alibaba.fastjson.JSONObject deviceData = new com.alibaba.fastjson.JSONObject();
+            if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
+                    || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType())
+                    || "6".equals(sdRadarDevice.getDeviceType()) || "7".equals(sdRadarDevice.getDeviceType()) || "8".equals(sdRadarDevice.getDeviceType()) || "9".equals(sdRadarDevice.getDeviceType())
+                    || "30".equals(sdRadarDevice.getDeviceType()) || "31".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null && map.get("itemId") != null
-                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode()).longValue()) {
-                        if (Integer.parseInt(map.get("data").toString()) == 0) {
-                            deviceData.put("runStatus", 2);
-                        } else {
-                            deviceData.put("runStatus", 1);
-                        }
+                    if (map.get("data") != null) {
+                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
                     } else {
-                        deviceData.put("runStatus", 2);
-                    }
-                    if (map.get("data") != null && map.get("itemId") != null
-                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()).longValue()) {
-                        if (Integer.parseInt(map.get("data").toString()) == 2) {
-                            deviceData.put("runMode", 1);
-                        } else {
-                            deviceData.put("runMode", 2);
-                        }
+                        deviceData.put("runStatus", 0);
                     }
                 }
-            } else if ("30".equals(sdRadarDevice.getDeviceType())) {
+            } else if ("5".equals(sdRadarDevice.getDeviceType()) || "15".equals(sdRadarDevice.getDeviceType()) || "28".equals(sdRadarDevice.getDeviceType()) || "18".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null && map.get("itemId") != null
-                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode()).longValue()) {
-                        if (Integer.parseInt(map.get("data").toString()) == 0) {
-                            deviceData.put("runStatus", 2);
-                        } else {
-                            deviceData.put("runStatus", 1);
-                        }
-                    } else {
-                        deviceData.put("runStatus", 2);
+                    if (map.get("data") != null) {
+                        deviceData.put("runDate", Double.parseDouble(map.get("data").toString()));
                     }
-                    if (map.get("data") != null && map.get("itemId") != null
-                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()).longValue()) {
-                        if (Integer.parseInt(map.get("data").toString()) == 2) {
-                            deviceData.put("runMode", 1);
-                        } else {
-                            deviceData.put("runMode", 2);
-                        }
-                    }
-                    if (map.get("data") != null && map.get("itemId") != null
-                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()).longValue()) {
-                        deviceData.put("fireMark", Integer.parseInt(map.get("data").toString()));
+                    if (map.get("unit") != null) {
+                        deviceData.put("unit", map.get("unit").toString());
                     }
                 }
-            } */
-            else if ("17".equals(sdRadarDevice.getDeviceType())) {
+            }else if ("17".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
@@ -800,119 +985,6 @@ public class RadarEventServiceImpl implements RadarEventService {
             sdRadarDevice.setDeviceData(deviceData);
             list.add(sdRadarDevice);
         }
-
-        //在线
-        int normal = 0;
-        //离线
-        int errorNum = 0;
-        //故障
-        int offlineNum = 0;
-        for (SdRadarDevice sdRadarDevice : list) {
-            if (sdRadarDevice.getDeviceStatus() != null) {
-                if (sdRadarDevice.getDeviceStatus() == 1) {
-                    normal += 1;
-                } else if (sdRadarDevice.getDeviceStatus() == 3) {
-                    errorNum += 1;
-                } else if (sdRadarDevice.getDeviceStatus() == 2) {
-                    offlineNum += 1;
-                }
-            }
-        }
-        JSONObject object = new JSONObject();
-        object.put("onlineNum", normal);
-        object.put("errorNum", errorNum);
-        object.put("offlineNum", offlineNum);
-        object.put("deviceList", list);
-        return JSONUtil.parse(object);
-    }
-
-    /**
-     * 实时数据信息
-     * @param f
-     * @return
-     */
-    public SdRadarDevice setRadarDevice(SdDevices f){
-        SdRadarDevice sdRadarDevice = new SdRadarDevice();
-        sdRadarDevice.setDeviceId(f.getEqId());
-        sdRadarDevice.setIp(f.getIp());
-        sdRadarDevice.setDeviceType(f.getEqType() + "");
-        if (f.getEqName().contains("k")) {
-            sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("k") - 1));
-        } else {
-            sdRadarDevice.setDeviceName(f.getEqName());
-        }
-        if (StringUtils.isNotEmpty(f.getEqStatus())) {
-            sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
-        }
-        if (StringUtils.isNotEmpty(f.getLng())) {
-            sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
-        }
-        if (StringUtils.isNotEmpty(f.getLat())) {
-            sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
-        }
-        sdRadarDevice.setDirection(f.getEqDirection());
-        sdRadarDevice.setStakeNum(f.getPile());
-        sdRadarDevice.setTransform(f.getRemark());
-        return sdRadarDevice;
-    }
-
-
-    private String picName(String urlName) {
-        String[] split = urlName.split("/");
-        String s = split[split.length - 1];
-        return s;
-    }
-
-    public Date dateZh(String timeData){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //转换
-        Date time = null;
-        try {
-            if(timeData != null && !"".equals(timeData)){
-                time = sdf.parse(timeData);
-                return time;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return time;
-    }
-    /**
-     * 将车辆快照转map
-     *
-     * @param sdRadarDetectData
-     */
-    public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
-        Map<String, Object> map = new HashMap<>();
-        map.put("tunnelId",sdRadarDetectData.getTunnelId());
-        map.put("roadDir",sdRadarDetectData.getRoadDir());
-        map.put("speed",sdRadarDetectData.getSpeed());
-        map.put("laneNo",sdRadarDetectData.getLaneNum());
-        map.put("vehicleType",sdRadarDetectData.getVehicleType());
-        map.put("lat",sdRadarDetectData.getLatitude());
-        map.put("lng",sdRadarDetectData.getLongitude());
-        map.put("distance",sdRadarDetectData.getDistance());
-        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
-//        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
-        return  map;
-    }
-
-    /**
-     * 将数据推送至物联
-     * @param sdRadarDetectData
-     */
-    public void sendKafka(SdRadarDetectData sdRadarDetectData){
-        Map<String, Object> map = new HashMap<>();
-        map.put("tunnelId",sdRadarDetectData.getTunnelId());
-        map.put("direction",sdRadarDetectData.getRoadDir());
-        map.put("speed",sdRadarDetectData.getSpeed());
-        map.put("laneNo",sdRadarDetectData.getLaneNum());
-        map.put("vehicleType",sdRadarDetectData.getVehicleType());
-        map.put("lat",sdRadarDetectData.getLatitude());
-        map.put("lng",sdRadarDetectData.getLongitude());
-        map.put("distance",sdRadarDetectData.getDistance());
-        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
-        JSONObject jsonObject = new JSONObject(map);
-        kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
+        return list;
     }
 }

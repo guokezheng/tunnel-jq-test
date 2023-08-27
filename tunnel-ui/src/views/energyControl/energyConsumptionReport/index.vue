@@ -738,6 +738,23 @@ export default {
           ],
           tooltip: {
             trigger: "axis",
+            position: 'bottom',
+            confine: true,
+            appendToBody: true,
+            enterable: true, // 防止tooltip浮层在折线或柱体等上时，触发mouseover事件
+            formatter: function(p){
+              console.log(p)
+              let content = p[0].name
+              content += "<div style='max-height:200px;overflow-x:auto'>"
+              
+              for(let item of p){
+                content += "<div style='display:flex;justify-content:space-between;width:160px'>"
+                content += "<div>"+item.marker + item.seriesName+"</div><div style='margin-right:10px'>" + item.value +"kW-h</div>"
+                content += "</div>"
+              }
+              content += "</div>"
+              return content
+            }
           },
           grid: {
             left: "1%",

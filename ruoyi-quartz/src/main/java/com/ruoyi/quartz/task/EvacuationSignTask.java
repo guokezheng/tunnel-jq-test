@@ -119,7 +119,8 @@ public class EvacuationSignTask {
         jsonObject.put("runStatus", Integer.valueOf(runStatus));
         jsonObject.put("runMode", runMode);
         map.put("deviceData", jsonObject);
-        radarEventService.sendBaseDeviceStatus(map);
+        //todo 万集数据推送
+        //radarEventService.sendBaseDeviceStatus(map);
     }
 
     private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {

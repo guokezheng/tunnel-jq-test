@@ -137,8 +137,12 @@
                 :options="equipmentTypeData"
                 :props="equipmentTypeProps"
                 :show-all-levels="false"
-                @change="changeEquipmentType(index)"
+                @change="changeEquipmentType($event,index)"
                 style="width: 100%"
+                placeholder="请选择设备类型"
+                clearable
+                @visible-change="elCascaderOnClick"
+                :key="refresh"
               ></el-cascader>
 <!--              <el-select
                 v-model="items.equipmentTypeId"
@@ -347,6 +351,7 @@ export default {
   dicts: ["sys_job_group", "sys_job_status"],
   data() {
     return {
+      refresh:0,
       checkStrictly: {
         multiple: false,
         emitPath: false,
@@ -445,6 +450,12 @@ export default {
     };
   },
   methods: {
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
     handleClose(){
       this.dialogVisibleTem = false
     },
@@ -643,7 +654,10 @@ export default {
 
     },
     // 改变设备类型
-    changeEquipmentType(index) {
+    changeEquipmentType(e,index) {
+      if(!e){
+        ++this.refresh
+      }
       // debugger
       this.$set(this.strategyForm.autoControl[index], "content", null);
       this.$set(this.strategyForm.autoControl[index], "stateNum", null);
@@ -820,7 +834,7 @@ export default {
         item.state = item.state.toString();
       });
       let params = this.strategyForm;
-      debugger
+      // debugger
       params.timingType = this.timingType
       addStrategyInfo(params).then((res) => {
         this.resetForm();
@@ -1047,6 +1061,7 @@ export default {
         });
 
       }
+      console.log(this.strategyForm.autoControl,"this.strategyForm.autoControl")
     },
     changeValue(value) {
       this.changeVal = value;

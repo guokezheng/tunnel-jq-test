@@ -107,7 +107,8 @@ public class RadarEventController {
     public void send(@RequestBody Map<String,Object> map) throws ParseException {
 //        kafkaTemplate.send("matchResultData",  "key", "测试kafka消息");
 //        log.info("发送成功");
-        service.sendBaseDeviceStatus(map);
+        //todo 万集数据推送
+        //service.sendBaseDeviceStatus(map);
     }
 
     /**
@@ -134,7 +135,8 @@ public class RadarEventController {
      */
     @PostMapping("wjData/sendBaseDeviceStatus")
     public String sendBaseDeviceStatus(@RequestBody Map<String,Object> map){
-        service.sendBaseDeviceStatus(map);
+        //todo 万集数据推送
+        //service.sendBaseDeviceStatus(map);
         return "向主题发送数据信息";
     }
 

@@ -115,13 +115,33 @@
             />
           </el-select> -->
           <el-cascader
-              v-model="queryParams.eqType"
-              :options="eqTypeData"
-              :props="equipmentTypeProps"
-              :show-all-levels="false"
-              @change="changeEquipmentType(index)"
-              style="width: 100%"
-            ></el-cascader>
+            v-model="queryParams.eqType"
+            :options="eqTypeData"
+            :props="equipmentTypeProps"
+            :show-all-levels="false"
+            clearable
+            placeholder="请选择设备类型"
+            @change="changeEquipmentType"
+            style="width: 100%"
+            @visible-change="elCascaderOnClick"
+            :key="refresh"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="设备状态" prop="eqStatus">
+          <el-select
+            v-model="queryParams.eqStatus"
+            placeholder="请选择设备状态"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in eqStatusList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+              @change="$forceUpdate()"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
@@ -154,7 +174,7 @@
         type="index"
         :index="indexMethod"
         label="序号"
-        width="68"
+        width="55"
         align="center"
       ></el-table-column>
 
@@ -217,16 +237,32 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="设备IP" align="center" prop="ip" />
+
+      <el-table-column label="设备IP" align="center" prop="ip" width="120" />
       <el-table-column label="设备端口号" align="center" prop="port" />
       <el-table-column
-        label="桩号"
+        label="设备桩号"
         align="center"
         prop="pile"
         width="100"
         show-overflow-tooltip
       />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column
+        label="设备状态"
+        align="center"
+        prop="eqStatus"
+        width="100"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.eqStatus == '1'">在线</span>
+          <span v-else-if="scope.row.eqStatus == '2' || !scope.row.eqStatus"
+            >离线</span
+          >
+          <span v-else-if="scope.row.eqStatus == '3'">故障</span>
+          <span v-else>报警</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
       <el-table-column
         label="操作"
         align="center"
@@ -234,7 +270,7 @@
         width="280"
       >
         <template slot-scope="scope">
-<!--          <el-button
+          <!--          <el-button
             size="mini"
             class="tableBlueButtton"
             @click="updateCmd(scope.row)"
@@ -246,7 +282,7 @@
             class="tableBlueButtton"
             @click="settingPoint(scope.row)"
             v-hasPermi="['system:devices:edit']"
-          >点位设置
+            >点位设置
           </el-button>
           <el-button
             size="mini"
@@ -287,7 +323,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-row>
+        <el-row style="display: flex; flex-wrap: wrap">
           <el-col :span="12">
             <el-form-item label="所属隧道" prop="eqTunnelId">
               <el-select
@@ -333,7 +369,11 @@
           </el-col>
           <el-col :span="21">
             <el-form-item label="设备ID" prop="eqId" v-if="submitMode == 1">
-              <el-input v-model="form.eqId"   @input="handleInput" placeholder="请输入设备ID" />
+              <el-input
+                v-model="form.eqId"
+                @input="handleInput"
+                placeholder="请输入设备ID"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="1" style="margin: 5px" v-if="submitMode == 1">
@@ -927,9 +967,7 @@ import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
 import { treeSelectYG1 } from "@/api/system/dept";
 import { getTeams } from "@/api/electromechanicalPatrol/teamsManage/teams";
-import {
-  getCategoryAllTree,
-} from "@/api/event/strategy";
+import { getCategoryAllTree } from "@/api/event/strategy";
 export default {
   name: "Devices",
   //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
@@ -951,6 +989,7 @@ export default {
       }
     };
     return {
+      refresh:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -1030,6 +1069,7 @@ export default {
         deviceState: null,
         searchValue: null,
         exportIds: "",
+        eqState: null,
       },
       queryCmdParams: {
         codeDeviceId: null,
@@ -1084,7 +1124,7 @@ export default {
             message: "请填写设备ID",
             trigger: "blur",
           },
-          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
+          { max: 100, message: "最长输入100个字符", trigger: "blur" },
           /*{
             pattern: /^[0-9a-zA-Z_-]{1,}$/,
             message: "请输入数字字母或1横线",
@@ -1169,6 +1209,7 @@ export default {
       // zhanshi:false,
       input: "",
       externalSystemList: [],
+      eqStatusList: [],
     };
   },
 
@@ -1187,7 +1228,10 @@ export default {
     /* this.getDicts("sys_eq_state").then(response => {
           this.deviceStateOptions = response.data;
         }); */
-
+    this.getDicts("sd_monitor_state").then((response) => {
+      this.eqStatusList = response.data;
+      console.log(this.eqStatusList, "设备状态");
+    });
     this.getDevBrandList();
     this.getExternalSystemList();
   },
@@ -1196,8 +1240,14 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    changeEquipmentType(index){
-      console.log(index)
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
+    changeEquipmentType(index) {
+      console.log(index,"index");
     },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
@@ -1214,12 +1264,14 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if (self.boxShow) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
     },
@@ -1236,8 +1288,8 @@ export default {
     },
     getExternalSystemList() {
       let params = {
-        tunnelId : this.form.eqTunnelId
-      }
+        tunnelId: this.form.eqTunnelId,
+      };
       listAllSystem(params).then((result) => {
         console.log("externalSystemList:>>>", result.data);
         this.externalSystemList = result.data;
@@ -1275,7 +1327,7 @@ export default {
       }
     },
     handleInput() {
-      this.form.eqId = this.form.eqId.replace(/[\u4e00-\u9fa5]/g, '');
+      this.form.eqId = this.form.eqId.replace(/[\u4e00-\u9fa5]/g, "");
     },
     // 新增弹窗 自动生成id
     automaticGenerationID(form) {
@@ -1322,6 +1374,7 @@ export default {
       this.boxShow = false;
       this.queryParams.exportIds = "";
       listDevices(this.queryParams).then((response) => {
+        console.log(response, "设备列表");
         this.devicesList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -1357,7 +1410,6 @@ export default {
     },
     /** 设备类型 */
     getEqType() {
-      
       getCategoryAllTree().then((data) => {
         this.eqTypeData = data.data;
       });
@@ -1447,11 +1499,13 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.eqTypeData = []
-      this.getEqType()
+      this.eqTypeData = [];
+      this.getEqType();
       this.checkeBox = [];
       this.queryParams.remark = "";
       this.queryParams.searchValue = "";
+      this.queryParams.eqState = "";
+
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -1529,14 +1583,14 @@ export default {
       });
     },
     /** 点位设置 **/
-    settingPoint(row){
+    settingPoint(row) {
       const eqId = row.eqId || 0;
       const eqType = row.eqType || 0;
       const protocolId = row.protocolId || 0;
 
       this.$router.push({
         path: "/equipment/eqlist-point/index",
-        query: { eqId: eqId ,typeId : eqType,protocolId:protocolId},
+        query: { eqId: eqId, typeId: eqType, protocolId: protocolId },
       });
     },
     /** 修改控制指令操作 */
@@ -1589,7 +1643,7 @@ export default {
       this.reset();
       const eqId = row.eqId || this.ids;
       getDevices(eqId).then((response) => {
-        console.log(response.data,"修改按钮操作")
+        console.log(response.data, "修改按钮操作");
         this.form = response.data;
         this.form.eqType = String(response.data.eqType);
         this.open = true;

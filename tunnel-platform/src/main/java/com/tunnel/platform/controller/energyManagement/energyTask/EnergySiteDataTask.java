@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.energyManagement.EnergyConfigcenterClassification;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
@@ -48,7 +49,8 @@ public class EnergySiteDataTask {
     public void synchronousEnergyDataTask() throws ParseException {
         ExternalSystem externalSystem = new ExternalSystem();
             List<EnergySjfx>energySiteList  = new ArrayList<>();
-            externalSystem.setSystemName("能源管控(能源数据同步)");
+            //externalSystem.setSystemName("能源管控(能源数据同步)");
+             externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE.getCode());
                 List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
                 if (externalSystems.isEmpty()) {
                     return;

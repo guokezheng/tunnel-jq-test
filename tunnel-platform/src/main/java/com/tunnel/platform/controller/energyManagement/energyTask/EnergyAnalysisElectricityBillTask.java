@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.energyManagement.energyTask;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill;
 import com.tunnel.business.domain.energyManagement.EnergySite;
@@ -36,7 +37,8 @@ public class EnergyAnalysisElectricityBillTask {
     @Scheduled(cron = "0 0 1 * * ? ")
     public void syncEnergyAnalysis(){
         ExternalSystem externalSystem = new ExternalSystem();
-        externalSystem.setSystemName("能源管控(能源数据同步)");
+        //externalSystem.setSystemName("能源管控(能源数据同步)");
+        externalSystem.setSystemCode(ExternalSystemCode.ENERGY_MANAGE.getCode());
         List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
             return;

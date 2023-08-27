@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.system.service.ISElemonitorService;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +50,8 @@ public class ElemonitorController {
     public Result getThreeUrl()
     {
         String tunnelId ="JQ-WeiFang-JiuLongYu-HSD";
-        String sysName = "能源管控平台";
+        //String sysName = "能源管控平台";
+        String sysName = ExternalSystemCode.ENERGY_MANAGE_OF_TUNNEL.getCode();
         List<Map> externalSystem=elemonitorService.getExternalSystemEnergy(tunnelId,sysName);
         return Result.success(externalSystem);
     }

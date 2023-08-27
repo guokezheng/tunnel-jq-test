@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null and tunnelId != ''"> and INSTR(tunnel_id ,#{tunnelId}) > 0 </if>
             <if test="systemUrl != null  and systemUrl != ''"> and system_url = #{systemUrl}</if>
             <if test="systemName != null and systemName != ''"> and system_name = #{systemName} </if>
+            <if test="systemCode != null  and systemCode != ''"> and `code` = #{systemCode}</if>
         </where>
         order by create_time desc
     </select>

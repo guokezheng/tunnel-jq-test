@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
     :visible.sync="visibleSync"
     width="80%"
-    destroy-on-close
+
     append-to-body
     :lock-scroll="true"
     :before-close="closeLogin"
@@ -19,25 +19,152 @@
       <div class="left-content">
         <div data-v-6425604c="" class="content-header-one">
           <span data-v-6425604c="">策略分组</span>
-          <el-tree :data="dataTree" :props="defaultProps"  style="margin-top: 40px;height: 0px"  :default-expanded-keys="['0']" :default-checked-keys="['0']" v-model="treeModel"  default-expand-all @node-click="handleNodeClick">
+          <el-tree :data="dataTree" :props="defaultProps"
+                   style="margin-top: 40px;height: 0px"
+                   :default-expanded-keys="checkDefault"
+                   :default-checked-keys="[0]"
+                   v-model="treeModel"
+                   default-expand-all
+                   highlight-current
+                   @node-click="handleNodeClick">
           </el-tree>
         </div>
       </div>
       <div class="content">
         <div class="handControl-container">
           <div data-v-6425604c="" class="content-header">
-            <span data-v-6425604c="">策略清单</span>
+<!--            <span data-v-6425604c="">策略清单</span>-->
+
+<!--            <el-row :gutter="6" class="tabTopFormRow">-->
+<!--              <el-col :span="6" :offset="12">-->
+                <div class="grid-content bg-purple" style=" width: 30%; float: right;" ref="main">
+                  <el-input
+                    v-model="queryParams.strategyName"
+                    placeholder="请输入策略名称，回车搜索"
+                    clearable
+                    size="small"
+                    @keyup.enter.native="handleQuery"
+                  >
+                    <el-button
+                      slot="append"
+                      class="searchTable"
+                      @click="boxShow = !boxShow"
+                    ></el-button>
+                  </el-input>
+                </div>
             <el-button
-              style="float: right; margin-right: 20px"
-              size="mini"
+              style="float: left; height: 30px;"
+              size="small"
               type="primary"
               icon="el-icon-plus"
               class="tableBlueButtton"
               @click="openInsertStrategy"
             >新增策略</el-button
             >
+<!--              </el-col>-->
+<!--            </el-row>-->
+            <div class="searchBox" v-show="boxShow">
+              <el-form
+                ref="queryForm"
+                :inline="true"
+                :model="queryParams"
+                label-width="75px"
+              >
+                <el-form-item label="隧道名称" prop="tunnelId">
+                  <el-select
+                    v-model="queryParams.tunnelId"
+                    placeholder="请选择隧道"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in tunnelData"
+                      :key="item.tunnelId"
+                      :label="item.tunnelName"
+                      :value="item.tunnelId"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="方向" prop="direction">
+                  <el-select
+                    v-model="queryParams.direction"
+                    placeholder="请选择方向"
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="(item, index) in directionOptions"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <!-- <el-form-item label="策略类型" prop="strategyType">
+                  <el-select
+                    v-model="queryParams.strategyType"
+                    placeholder="请选择策略类型"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="dict in strategyTypeOptions"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+                </el-form-item> -->
+                <el-form-item class="bottomBox" style="height: 50px">
+                  <el-button size="small" type="primary" @click="handleQuery"
+                  >搜索
+                  </el-button
+                  >
+                  <el-button size="small" @click="resetQuery" type="primary" plain
+                  >重置
+                  </el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </div>
+<!--            <el-button-->
+<!--              style="float: right; margin-right: 20px"-->
+<!--              size="small"-->
+<!--              type="primary"-->
+<!--              class="tableBlueButtton"-->
+<!--              @click="openInsertStrategy"-->
+<!--            >查询</el-button-->
+<!--            >-->
+<!--            <el-select-->
+<!--              v-model="queryParams.direction"-->
+<!--              placeholder="请选择方向"-->
+<!--              size="small"-->
+<!--              class="bottomBoxSelect"-->
+<!--              style="width: 10%;margin-right: 20px;float: right;"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                v-for="(item, index) in directionOptions"-->
+<!--                :key="index"-->
+<!--                :label="item.dictLabel"-->
+<!--                :value="item.dictValue"-->
+<!--              ></el-option>-->
+<!--            </el-select>-->
+<!--            <el-select-->
+<!--              v-model="queryParams.tunnelId"-->
+<!--              placeholder="请选择隧道"-->
+<!--              clearable-->
+<!--              class="bottomBoxSelect"-->
+<!--              style="width: 15%;margin-right: 22px;float: right;"-->
+<!--              size="small"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                v-for="item in tunnelData"-->
+<!--                :key="item.tunnelId"-->
+<!--                :label="item.tunnelName"-->
+<!--                :value="item.tunnelId"-->
+<!--              />-->
+<!--            </el-select>-->
           </div>
-          <div  v-if="treeModel==0" style=" overflow: auto; width: 100%; height: 88%;">
+          <div  v-if="treeModel=='0'" style=" overflow: auto; width: 100%; height: 88%;">
 
 
               <div v-for="item in strategyList" :key="item.id" class="content-centre">
@@ -99,7 +226,7 @@
 
           </div>
 
-          <div v-if="treeModel==1"  style=" overflow: auto; width: 100%; height: 88%;" >
+          <div v-if="treeModel=='1'"  style=" overflow: auto; width: 100%; height: 88%;" >
             <div v-for="item in lightStrategyList" :key="item.id" class="content-centre-one">
 <!--              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>-->
 <!--              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>-->
@@ -156,7 +283,7 @@
             </div>
 
           </div>
-          <div  v-if="treeModel==2" style=" overflow: auto; width: 100%; height: 88%;" >
+          <div  v-if="treeModel=='2'" style=" overflow: auto; width: 100%; height: 88%;" >
             <div v-for="item in catStrategyList" :key="item.id" class="content-centre-tree">
 <!--              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>-->
 <!--              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>-->
@@ -282,6 +409,7 @@ export default {
       dataTree: [
         {
           label: '日常联控',
+          value:'0',
           children: [
             {
             label: '时序自动控制', value:'0',
@@ -290,6 +418,7 @@ export default {
         },
         {
           label: '节能照明联控',
+          value:'1',
           children: [
             {
             label: '亮度差联控照明', value:'1',
@@ -304,15 +433,17 @@ export default {
         children: 'children',
         label: 'label'
       },
+      checkDefault: [0],//存放默认选中节点的id
       //主定时任务列表
       strategyList:[],
       //主定时任务滚动
       isOneLoading:false,
       //光照任务列表
       lightStrategyList:[],
+      boxShow:false,
       //车辆任务列表
       catStrategyList:[],
-      treeModel:0,
+      treeModel:'0',
       //光照曲线ref
       loginChart: null,
       //光强配置文件
@@ -347,6 +478,7 @@ export default {
       tunnelLists:[],
       //隧道列表
       tunnelData:[],
+      directionOptions:[],
       formItems: [
         {
           label: '',
@@ -369,6 +501,7 @@ export default {
       dialogVisible:false,
       lightCurveModalShow:false,
       catCurveModalShow:false,
+      queryParams:{}
     }
   },
   mounted() {
@@ -381,8 +514,31 @@ export default {
     });
   },
   methods:{
+    handleQuery(){
+
+      if(this.treeModel  == '0' ){//时序自动控制
+        this.selectListStrategy()
+      }
+      if(this.treeModel == '1' ){//亮度差联控照明
+        this.selectLightStrategyList()
+      }
+      if(this.treeModel == '2' ){//车流量联控照明
+        this.selectCatStrategyList()
+      }
+    },
+    resetQuery(){
+      if(this.treeModel  == '0' ){//时序自动控制
+        this.selectListStrategy("resetQuery")
+      }
+      if(this.treeModel == '1' ){//亮度差联控照明
+        this.selectLightStrategyList("resetQuery")
+      }
+      if(this.treeModel == '2' ){//车流量联控照明
+        this.selectCatStrategyList("resetQuery")
+      }
+    },
     //主定时任务列表
-    selectListStrategy(){
+    selectListStrategy(data){
       debugger
       // const loading = this.$loading({
       //   lock: true,
@@ -397,6 +553,16 @@ export default {
       queryParams.strategyType =1
       queryParams.strategyGroup =1
       queryParams.timingType =0
+      if(data=="resetQuery"){
+        this.queryParams = {}
+      }
+      if(!!this.queryParams.tunnelId){
+        queryParams.tunnelId =  this.queryParams.tunnelId
+      }
+      if(!!this.queryParams.direction){
+        queryParams.direction =  this.queryParams.direction
+      }
+
       listStrategy(queryParams).then((response) => {
         this.strategyList = response.rows;
         this.isOneLoading = false
@@ -410,9 +576,15 @@ export default {
       );
     },
     //光照任务列表
-    selectLightStrategyList(){
+    selectLightStrategyList(data){
 
       let queryParams = {pageSize:999,pageNum:1,modeType:0}
+      if(data=="resetQuery"){
+        this.queryParams = {}
+      }
+      if(!!this.queryParams.tunnelId){
+        queryParams.tunnelId =  this.queryParams.tunnelId
+      }
       //查询出原有配置并且显示
       this.lightStrategyList =[]
       listConfig(queryParams).then((response) => {
@@ -447,9 +619,15 @@ export default {
       })
     },
     //车辆任务列表
-    selectCatStrategyList(){
+    selectCatStrategyList(data){
 
       let queryParams = {pageSize:999,pageNum:1,modeType:1}
+      if(data=="resetQuery"){
+        this.queryParams = {}
+      }
+      if(!!this.queryParams.tunnelId){
+        queryParams.tunnelId =  this.queryParams.tunnelId
+      }
       //查询出原有配置并且显示
       this.catStrategyList= []
       listConfig(queryParams).then((response) => {
@@ -508,16 +686,16 @@ export default {
       this.visibleSync = false
     },
     handleNodeClick(data) {
-      if(data.value == 0 ){//时序自动控制
-        this.treeModel = 0
+      if(data.value == '0' ){//时序自动控制
+        this.treeModel = '0'
         this.selectListStrategy()
       }
-      if(data.value == 1 ){//亮度差联控照明
-        this.treeModel = 1
+      if(data.value == '1' ){//亮度差联控照明
+        this.treeModel = '1'
         this.selectLightStrategyList()
       }
-      if(data.value == 2 ){//车流量联控照明
-        this.treeModel = 2
+      if(data.value == '2' ){//车流量联控照明
+        this.treeModel = '2'
         this.selectCatStrategyList()
       }
     },
@@ -625,7 +803,7 @@ export default {
     },
     //新建策略按钮
     openInsertStrategy(type) {
-      if(this.treeModel==0){
+      if(this.treeModel=='0'){
         this.title = "新增策略";
         this.sink = "add";
         this.$set(this.strategyForm, "strategyType", "1");
@@ -634,11 +812,11 @@ export default {
           this.dialogVisible = true;
           this.strategyTypeClose();
         })
-      }else if(this.treeModel==1){
+      }else if(this.treeModel=='1'){
         this.lightCurveModalShow = !this.lightCurveModalShow
         // console.log(this.$refs.lightCurveModal)
         this.$refs.lightCurveModal.getEchartsData(null,null)
-      }else if (this.treeModel==2){
+      }else if (this.treeModel=='2'){
         this.catCurveModalShow = !this.catCurveModalShow
         // console.log(this.$refs.lightCurveModal)
         this.$refs.catCurveModal.getEchartsTrend(null,null)
@@ -833,10 +1011,23 @@ export default {
 
   },
   watch:{
+    checkDefault: {
+      handler(newVal, oldVal) {
+        debugger
+        if (newVal) {
+          this.$nextTick(() => {
+            document.querySelector('.el-tree-node__content').click()
+            //默认选中第一层级的第一个节点
+            document.querySelector('.el-tree-node__children .el-tree-node__content').click();
+          })
+        }
+      },
+      immediate: true,
+    },
     show:{
       async handler(newValue, oldValue){
         debugger
-        this.treeModel = 0
+        this.treeModel = '0'
         this.visibleSync = !this.visibleSync
         //查询主策略
         this.selectListStrategy()
@@ -844,7 +1035,14 @@ export default {
         await this.getTunnels()
         //查询方向
         await this.getDirection()
-
+        this.$nextTick(() => {
+          debugger
+          document.querySelector('.el-tree-node__content').click()
+          //默认选中第一层级的第一个节点
+          document.querySelector('.el-tree-node__children .el-tree-node__content').click();
+          const firstNode = document.querySelector('.el-tree-node')
+          firstNode.click();
+        })
       }
     }
   }
@@ -971,5 +1169,15 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+.bottomBoxSelect{
+  .el-input__inner{
+    height: 33px;
+  }
+}
+.searchBox{
+  top: 12% !important;
+  right: 0.8% !important;
+  width: 30% !important;
 }
 </style>

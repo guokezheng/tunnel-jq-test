@@ -24,9 +24,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +60,13 @@ public class SdDeviceDataController extends BaseController
     @Autowired
     @Qualifier("kafkaOneTemplate")
     private KafkaTemplate<String, String> kafkaOneTemplate;
+
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**
      * 查询设备实时数据（存储模拟量）列表
@@ -188,7 +197,12 @@ public class SdDeviceDataController extends BaseController
                 }
             }
         }
-        setDeviceDataList(tunnelId);
+
+        //向万集推送机电设备实时数据，使用线程池实现功能，避免影响工作台数据加载
+        threadPoolTaskExecutor.execute(()->{
+            setDeviceDataList(tunnelId);
+        });
+
         return Result.success(map);
     }
 

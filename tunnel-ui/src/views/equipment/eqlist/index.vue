@@ -119,14 +119,15 @@
             :options="eqTypeData"
             :props="equipmentTypeProps"
             :show-all-levels="false"
-            @change="changeEquipmentType(index)"
+            clearable
+            placeholder="请选择设备类型"
+            @change="changeEquipmentType"
             style="width: 100%"
+            @visible-change="elCascaderOnClick"
+            :key="refresh"
           ></el-cascader>
         </el-form-item>
-        <el-form-item
-          label="设备状态"
-          prop="eqStatus"
-        >
+        <el-form-item label="设备状态" prop="eqStatus">
           <el-select
             v-model="queryParams.eqStatus"
             placeholder="请选择设备状态"
@@ -138,6 +139,7 @@
               :key="item.dictValue"
               :label="item.dictLabel"
               :value="item.dictValue"
+              @change="$forceUpdate()"
             />
           </el-select>
         </el-form-item>
@@ -235,8 +237,8 @@
           />
         </template>
       </el-table-column>
-      
-      <el-table-column label="设备IP" align="center" prop="ip" width="120"/>
+
+      <el-table-column label="设备IP" align="center" prop="ip" width="120" />
       <el-table-column label="设备端口号" align="center" prop="port" />
       <el-table-column
         label="设备桩号"
@@ -245,7 +247,12 @@
         width="100"
         show-overflow-tooltip
       />
-      <el-table-column label="设备状态" align="center" prop="eqStatus" width="100">
+      <el-table-column
+        label="设备状态"
+        align="center"
+        prop="eqStatus"
+        width="100"
+      >
         <template slot-scope="scope">
           <span v-if="scope.row.eqStatus == '1'">在线</span>
           <span v-else-if="scope.row.eqStatus == '2' || !scope.row.eqStatus"
@@ -316,7 +323,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-row style="display: flex;flex-wrap: wrap;">
+        <el-row style="display: flex; flex-wrap: wrap">
           <el-col :span="12">
             <el-form-item label="所属隧道" prop="eqTunnelId">
               <el-select
@@ -982,6 +989,7 @@ export default {
       }
     };
     return {
+      refresh:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -1061,7 +1069,7 @@ export default {
         deviceState: null,
         searchValue: null,
         exportIds: "",
-        eqState:null,
+        eqState: null,
       },
       queryCmdParams: {
         codeDeviceId: null,
@@ -1201,7 +1209,7 @@ export default {
       // zhanshi:false,
       input: "",
       externalSystemList: [],
-      eqStatusList:[]
+      eqStatusList: [],
     };
   },
 
@@ -1222,7 +1230,7 @@ export default {
         }); */
     this.getDicts("sd_monitor_state").then((response) => {
       this.eqStatusList = response.data;
-      console.log(this.eqStatusList,"设备状态")
+      console.log(this.eqStatusList, "设备状态");
     });
     this.getDevBrandList();
     this.getExternalSystemList();
@@ -1232,8 +1240,14 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
     changeEquipmentType(index) {
-      console.log(index);
+      console.log(index,"index");
     },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
@@ -1250,12 +1264,14 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if (self.boxShow) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
     },
@@ -1358,7 +1374,7 @@ export default {
       this.boxShow = false;
       this.queryParams.exportIds = "";
       listDevices(this.queryParams).then((response) => {
-        console.log(response,"设备列表")
+        console.log(response, "设备列表");
         this.devicesList = response.rows;
         this.total = response.total;
         this.loading = false;

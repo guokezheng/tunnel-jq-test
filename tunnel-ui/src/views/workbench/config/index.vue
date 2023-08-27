@@ -1168,11 +1168,15 @@
               />
             </el-select> -->
             <el-cascader
+              placeholder="请选择设备类型"
               v-model="operationParam.eqTypeId"
               :options="eqTypeData"
               :props="equipmentTypeProps"
               :show-all-levels="false"
               style="width: 100%"
+              clearable
+              @visible-change="elCascaderOnClick"
+              :key="refresh"
             ></el-cascader>
           </el-form-item>
 
@@ -2085,6 +2089,7 @@ export default {
 
   data() {
     return {
+      refresh:0,
       showScreenEqName:false,
       actuatorTooltip:false,
       actuatorCKItem:{
@@ -2956,6 +2961,12 @@ export default {
     //   }
     //   this.openStateSwitch(this.actuatorCKItem)
     // },
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
     mouseSrollAuto(e){
       console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if(e.target.scrollLeft > 0){

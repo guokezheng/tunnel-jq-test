@@ -105,6 +105,10 @@
               :show-all-levels="false"
               @change="changeEquipmentType(index)"
               style="width: 100%"
+              placeholder="请选择设备类型"
+              clearable
+              @visible-change="elCascaderOnClick"
+              :key="refresh"
             ></el-cascader>
         </el-form-item>
         <!--        <el-form-item label="单位名称" style="width: 100%" prop="unit">-->
@@ -262,6 +266,7 @@ export default {
   name: "Item",
   data() {
     return {
+      refresh:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -340,6 +345,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
     changeEquipmentType(index){
       console.log(index)
     },

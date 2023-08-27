@@ -54,6 +54,10 @@
             :show-all-levels="false"
             @change="changeEquipmentType(index)"
             style="width: 100%"
+            placeholder="请选择设备类型"
+            clearable
+            @visible-change="elCascaderOnClick"
+            :key="refresh"
           ></el-cascader>
         </el-form-item>
         <el-form-item class="bottomBox">
@@ -424,6 +428,7 @@ export default {
   components: { Template },
   data() {
     return {
+      refresh:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -563,6 +568,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 关闭级联选择器时 把打开的二级菜单折叠
+    elCascaderOnClick(f){
+      if(!f){
+        ++this.refresh
+      }
+    },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);
     },

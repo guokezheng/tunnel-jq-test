@@ -3,6 +3,7 @@ package com.tunnel.business.service.wisdomLight.impl;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.domain.wisdomLight.SdWisdomLight;
@@ -46,6 +47,8 @@ public class SdWisdomLightServiceImpl implements ISdWisdomLightService
     @Override
     public List<SdWisdomLight> selectSdWisdomLightList(SdWisdomLight sdWisdomLight)
     {
+        String deptId = SecurityUtils.getDeptId();
+        sdWisdomLight.getParams().put("deptId",deptId);
         return sdWisdomLightMapper.selectSdWisdomLightList(sdWisdomLight);
     }
 

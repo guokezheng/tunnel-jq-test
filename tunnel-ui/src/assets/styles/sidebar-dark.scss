@@ -468,6 +468,9 @@
           height: 8px;
           background-color: #fff !important;
         }
+        .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+          background-color: #042D5F !important;
+        }
       }
     .tunnelRelationDialog{
       .dialogButton{
@@ -533,9 +536,9 @@
           transform: translate(-29px,-4px) !important;
         }
       }
-      
-      
-      
+
+
+
     }
   }
   .el-dialog{

@@ -51,6 +51,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isTrafficVolume != null "> and elc.is_traffic_volume = #{isTrafficVolume}</if>
             <if test="tunnelName != null and tunnelName != ''"> and INSTR(t.tunnel_name, #{tunnelName}) > 0</if>
             <if test="direction != null "> and direction = #{direction}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (t.dept_id = #{params.deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
         ORDER BY direction
     </select>

@@ -5,8 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +56,26 @@ public class SdIntegratedVideoService {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
+        String userName = "hsdsdVideo";
+        String password = "hsdsdVideo";
+
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        ExternalSystem externalSystem = list.get(0);
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            url = externalSystem.getSystemUrl();
+            userName = externalSystem.getUsername();
+            password = externalSystem.getPassword();
+            deptId = externalSystem.getSystemParam();
+        }
 
         HashMap<String, Object> requestBody = new HashMap<>();
-        requestBody.put("username", "hsdsdVideo");
-        requestBody.put("password", "hsdsdVideo");
+        requestBody.put("username", userName);
+        requestBody.put("password", password);
+
 
         HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
         try{

@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -346,8 +347,6 @@ public class SdDeviceDataController extends BaseController
         List<SdDevices> devices = sdDevicesMapper.selectDevice(tunnelId);
         List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(devices);
         deviceRadar.stream().forEach(item -> item.setTunnelId(tunnelId));
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deviceList",deviceRadar);
-        kafkaOneTemplate.send("baseDeviceStatus",jsonObject.toString());
+        kafkaOneTemplate.send("baseDeviceStatus",JSON.toJSONString(deviceRadar));
     }
 }

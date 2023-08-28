@@ -3,22 +3,31 @@ package com.tunnel.webthings.kafka.consumer;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
+import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
+import com.zc.websocket.bo.ChannelProperty;
+import com.zc.websocket.constant.AttributeKeyConst;
+import com.zc.websocket.util.MsgUtil;
+import io.netty.channel.Channel;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -26,11 +35,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
@@ -39,6 +50,7 @@ import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
  * @author zhai
  * @date 2023/8/12
  */
+@Component
 public class KafkaReadListenToWanJiTopic {
 
     @Autowired
@@ -68,7 +80,7 @@ public class KafkaReadListenToWanJiTopic {
      * @param consumer
      * @throws Exception
      */
-    @KafkaListener(topics = "wj_events", containerFactory = "kafkaOneContainerFactory")
+    @KafkaListener(topics = {"wj_events"}, containerFactory = "kafkaOneContainerFactory")
     public void topicEventData(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
         log.info("监听到万集事件数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
@@ -88,7 +100,7 @@ public class KafkaReadListenToWanJiTopic {
      * @param consumer
      * @throws Exception
      */
-    @KafkaListener(topics = "wj_events_evi", containerFactory = "kafkaOneContainerFactory")
+    @KafkaListener(topics = {"wj_events_evi"}, containerFactory = "kafkaOneContainerFactory")
     public void topicEventImageData(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
         log.info("监听到万集事件图片视频数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
@@ -108,7 +120,7 @@ public class KafkaReadListenToWanJiTopic {
      * @param consumer
      * @throws Exception
      */
-    @KafkaListener(topics = "wj_device", containerFactory = "kafkaOneContainerFactory")
+    @KafkaListener(topics = {"wj_device"}, containerFactory = "kafkaOneContainerFactory")
     public void topicDeviceStatus(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
         log.info("监听到万集设备状态数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
@@ -121,6 +133,65 @@ public class KafkaReadListenToWanJiTopic {
         consumer.commitSync();
     }
 
+
+    /**
+     * 获取感知数据
+     * @param record
+     * @param item
+     * @param consumer
+     * @throws Exception
+     */
+    @KafkaListener(topics = {"wj_participants"}, containerFactory = "kafkaOneContainerFactory")
+    public void topicParticipants(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
+        log.info("监听到万集感知数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析感知数据
+            JSONObject objects = JSONObject.parseObject(record.value());
+            //String data = "{\"direction\":2,\"frameNum\":12175,\"participantList\":[{\"color\":0,\"courseAngle\":256.3,\"enGap\":323,\"id\":1128,\"laneNum\":2,\"latitude\":36.6283242,\"longitude\":117.5767885,\"plate\":\"默A00000\",\"speed\":50.0,\"type\":1}],\"participantNum\":1,\"timeStamp\":1693029615943,\"tunnelId\":\"JQ-JiNan-WenZuBei-MJY\"}";
+            //JSONObject objects = JSONObject.parseObject(data);
+            //储存感知数据
+            saveRadarData(objects);
+        }
+        //手动提交
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取感知数据
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"wj_participants"}, containerFactory = "kafkaOneContainerFactoryTwo")
+    public void topicParticipantsTwo(List<ConsumerRecord<String,Object>> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        for(ConsumerRecord<String,Object> item : record){
+            if(item.value() != null & item.value() != ""){
+                //解析车辆快照数据
+                JSONObject jsonObject = JSONObject.parseObject(item.value().toString());
+                //隧道id
+                String tunnelId = jsonObject.getString("tunnelId");
+                //监测时间
+                Date timeStamp = dateZh(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(jsonObject.getLongValue("timeStamp"))));
+                //隧道方向
+                String direction = jsonObject.getString("direction");
+                JSONArray track = JSONObject.parseArray(jsonObject.getString("participantList"));
+                long time = jsonObject.getLongValue("timeStamp");
+                Date date = new Date();
+                long time1 = date.getTime();
+                long time2 = time1 - time;
+                //转分钟
+                Long minutes = (time2 / 1000) / 60;
+                if(minutes>3){
+                    continue;
+                }
+                //新增车辆快照数据
+                saveAnalysisCarsnapTwo(track,time,tunnelId,direction,timeStamp);
+            }
+        }
+        consumer.commitSync();
+    }
+
     /**
      * 储存事件数据
      * @param jsonObject
@@ -128,6 +199,8 @@ public class KafkaReadListenToWanJiTopic {
     public void saveEvent(JSONObject jsonObject){
         //隧道id
         String tunnelId = jsonObject.getString("tunnelId");
+        //隧道方向
+        String direction = jsonObject.getString("direction");
         //事件列表
         JSONArray eventList = JSONObject.parseArray(jsonObject.get("eventList").toString());
 
@@ -152,7 +225,8 @@ public class KafkaReadListenToWanJiTopic {
             sdEvent.setLaneNo(eventData.getString("laneNo"));
             sdEvent.setEventSource("1");
             sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
-            //TODO 缺少方向桩号
+            sdEvent.setStakeNum(eventData.getString("stakeNum"));
+            sdEvent.setDirection(direction);
             if(data != null){
                 sdEvent.setEventState(data.getEventState());
                 sdEventMapper.updateSdEvent(sdEvent);
@@ -248,6 +322,37 @@ public class KafkaReadListenToWanJiTopic {
     }
 
     /**
+     * 储存感知数据
+     * @param jsonObject
+     */
+    public void saveRadarData(JSONObject jsonObject){
+        //隧道id
+        String tunnelId = jsonObject.getString("tunnelId");
+        //监测时间
+        Date timeStamp = dateZh(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(jsonObject.getLongValue("timeStamp"))));
+        //隧道方向
+        String direction = jsonObject.getString("direction");
+        //感知数据集合
+        JSONArray participantList = jsonObject.getJSONArray("participantList");
+        //车辆置信度
+        /*JSONObject eventInfo = jsonObject.getJSONObject("eventInfo");
+        WjConfidence wjConfidence = new WjConfidence();
+        wjConfidence.setEventIds(eventInfo.getLongValue("eventId"));*/
+        for(int i = 0; i < participantList.size(); i++){
+            //单条感知数据
+            JSONObject radar = JSONObject.parseObject(participantList.get(i).toString());
+            SdRadarDetectData radarDetectData = setRadarData(radar,tunnelId,direction,timeStamp);
+            SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
+            detectDataMapper.insertSdRadarDetectData(radarDetectData);
+            if(StringUtils.isNotEmpty(radarDetectData.getVehicleLicense()) && StringUtils.isNotNull(radarDetectData.getVehicleLicense())){
+                //将数据推送至物联
+                //sendKafka(sdRadarDetectData);
+                setCarsnapRedis(radarDetectData);
+            }
+        }
+    }
+
+    /**
      * 事件类型对应
      * @param type
      * @return
@@ -311,5 +416,140 @@ public class KafkaReadListenToWanJiTopic {
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());
         }
+    }
+
+    /**
+     * 时间转换
+     * @param timeData
+     * @return
+     */
+    public Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    /**
+     * 实时车辆数据
+     * @param jsonObject
+     * @return
+     */
+    public SdRadarDetectData setRadarData(JSONObject jsonObject, String tunnelId, String direction, Date timeStamp){
+        SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
+        sdRadarDetectData.setTunnelId(tunnelId);
+        sdRadarDetectData.setVehicleType(getVehicleType(jsonObject.getString("type")));
+        sdRadarDetectData.setVehicleColor(jsonObject.getString("color"));
+        sdRadarDetectData.setVehicleLicense(jsonObject.getString("plate"));
+        sdRadarDetectData.setLatitude(jsonObject.getString("latitude"));
+        sdRadarDetectData.setLongitude(jsonObject.getString("longitude"));
+        sdRadarDetectData.setCourseAngle(jsonObject.getString("courseAngle"));
+        sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
+        sdRadarDetectData.setDistance(jsonObject.getString("enGap"));
+        sdRadarDetectData.setLaneNum(jsonObject.getString("laneNum"));
+        sdRadarDetectData.setDetectTime(timeStamp);
+        sdRadarDetectData.setRoadDir(direction);
+        sdRadarDetectData.setVehicleId(jsonObject.getString("id"));
+        return sdRadarDetectData;
+    }
+
+    /**
+     * 对应车辆类型
+     *
+     * @param vehicleType
+     * @return
+     */
+    public String getVehicleType(String vehicleType){
+        String type = null;
+        type = WjVehicleTypeEnum.getValue(vehicleType);
+        if(type == null){
+            type = vehicleType;
+        }
+        return type;
+    }
+
+    /**
+     * 将车辆快照存入redis
+     *
+     * @param sdRadarDetectData
+     */
+    public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        map.put("detectTime",sdRadarDetectData.getDetectTime());
+        map.put("vehicleId",sdRadarDetectData.getVehicleId());
+        //redis-key命名规则，固定字段vehicleSnap:隧道id:隧道方向：+
+        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getRoadDir() + ":" + sdRadarDetectData.getVehicleLicense(),map,30, TimeUnit.SECONDS);
+        return  map;
+    }
+
+    public void saveAnalysisCarsnapTwo(JSONArray jsonArray,Long time, String tunnelId, String direction, Date timeStamp){
+        List<Map> list = new ArrayList<>();
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            jsonObject.put("time",time);
+            //保存车辆快照数据
+            Map map = saveRadarDataTwo(jsonObject,tunnelId,direction,timeStamp);
+            if(StringUtils.isNotEmpty(map)&&!"0".equals(map.get("distance"))){
+                list.add(map);
+            }
+        }
+        //传到前端实时展示
+        JSONObject object = new JSONObject();
+        object.put("radarDataList", list);
+        //caKokenList 判断小车是否运行的key
+        List<String> scanKey = redisCache.getCacheList("caKokenList");
+        List<Object> caKokenList = new ArrayList<>();
+
+        for (String key :scanKey) {
+            //获取隧道以及是否推送 map可能会有多个
+            Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+            //推送的token
+            String s = key.replaceAll(Constants.CAR_TOKEN, "");
+
+            //后台存在的token集合
+            for (Channel channel : MsgUtil.channels){
+                ChannelProperty channelProperty = channel.attr(AttributeKeyConst.CHANNEL_PROPERTY_KEY).get();
+                //第一步判断 token是否存活
+                if(s.equalsIgnoreCase(channelProperty.getTokenSN())){
+                    //便利map存放 隧道以及是否推送标志
+                    for(String keys : cacheMap.keySet()){
+                        //判断是否可以推送  && 前端可以推送的隧道是否和当前隧道匹配
+                        if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
+                            // 给指定客户端发送消息
+                            kafkaTool.sendAssignWebSocket(s,list,object);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public Map saveRadarDataTwo(JSONObject jsonObject, String tunnelId, String direction, Date timeStamp){
+        //单条感知数据
+        SdRadarDetectData radarDetectData = setRadarData(jsonObject,tunnelId,direction,timeStamp);
+        if(StringUtils.isNotEmpty(radarDetectData.getVehicleLicense()) && StringUtils.isNotNull(radarDetectData.getVehicleLicense())){
+            //将数据推送至物联
+            //sendKafka(sdRadarDetectData);
+            return setCarsnapRedis(radarDetectData);
+        }
+        return null;
     }
 }

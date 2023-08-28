@@ -115,6 +115,7 @@
             />
           </el-select> -->
           <el-cascader
+            ref="cc1"
             v-model="queryParams.eqType"
             :options="eqTypeData"
             :props="equipmentTypeProps"
@@ -364,6 +365,10 @@
                 :show-all-levels="false"
                 @change="changeEquipmentType(index)"
                 style="width: 100%"
+                :key="refresh"
+                clearable
+                placeholder="请选择设备类型"
+                @visible-change="elCascaderOnClick"
               ></el-cascader>
             </el-form-item>
           </el-col>
@@ -990,6 +995,7 @@ export default {
     };
     return {
       refresh:0,
+      refresh1:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -1267,7 +1273,8 @@ export default {
       if (self.boxShow) {
         if (
           !this.$refs.main.contains(e.target) &&
-          !this.$refs.cc.contains(e.target)
+          !this.$refs.cc.contains(e.target) &&
+          !this.$refs.cc1.contains(e.target)
         ) {
           if (self.boxShow == true) {
             self.boxShow = false;

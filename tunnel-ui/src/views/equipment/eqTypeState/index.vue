@@ -48,6 +48,7 @@
             />
           </el-select> -->
           <el-cascader
+            ref="cc1"
             v-model="queryParams.stateTypeId"
             :options="eqTypeData"
             :props="equipmentTypeProps"
@@ -591,7 +592,8 @@ export default {
       if (self.boxShow) {
         if (
           !this.$refs.main.contains(e.target) &&
-          !this.$refs.cc.contains(e.target)
+          !this.$refs.cc.contains(e.target) &&
+          !this.$refs.cc1.contains(e.target)
         ) {
           if (self.boxShow == true) {
             self.boxShow = false;

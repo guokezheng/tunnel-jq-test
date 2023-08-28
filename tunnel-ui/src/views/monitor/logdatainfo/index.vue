@@ -15,17 +15,11 @@
         :name="item.name"
         v-for="item in tabList"
         :key="item.name"
-
       >
-
       </el-tab-pane>
     </el-tabs>
 
-    <el-row
-      :gutter="20"
-      class="tabTopFormRow"
-      v-show="activeName == '1'"
-    >
+    <el-row :gutter="20" class="tabTopFormRow" v-show="activeName == '1'">
       <el-col :span="6">
         <el-button
           v-hasPermi="['system:list:add']"
@@ -34,9 +28,7 @@
           @click="handleExport"
           >导出
         </el-button>
-        <el-button size="small" @click="resetQuery"
-            >刷新</el-button
-          >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
@@ -72,7 +64,7 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>-->
-        <el-form-item label="状态" prop="status" >
+        <el-form-item label="状态" prop="status">
           <el-select
             v-model="queryParam.status"
             placeholder="登录状态"
@@ -160,24 +152,15 @@
           @click="handleExport"
         >导出</el-button>
       </el-form-item>-->
-    <el-row
-      :gutter="20"
-      class="tabTopFormRow"
-      v-show="activeName == '2'"
-    >
+    <el-row :gutter="20" class="tabTopFormRow" v-show="activeName == '2'">
       <el-col :span="6">
-        <el-button
-          size="small"
-          :loading="exportLoading"
-          @click="handleExport1"
+        <el-button size="small" :loading="exportLoading" @click="handleExport1"
           >导出
         </el-button>
-        <el-button size="small" @click="resetQuery"
-            >刷新</el-button
-          >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
-        <div class="grid-content bg-purple"  ref="main1">
+        <div class="grid-content bg-purple" ref="main1">
           <el-input
             placeholder="请输入设备名称、桩号、操作地址，回车搜索"
             v-model="queryParams.operIp"
@@ -216,17 +199,18 @@
             />
           </el-select> -->
           <el-cascader
-              v-model="queryParams.eqTypeId"
-              :options="eqTypeData"
-              :props="equipmentTypeProps"
-              :show-all-levels="false"
-              @change="changeEquipmentType(index)"
-              placeholder="请选择设备类型"
-              clearable
-              style="width: 100%"
-              @visible-change="elCascaderOnClick"
-              :key="refresh"
-            ></el-cascader>
+            ref="cc2"
+            v-model="queryParams.eqTypeId"
+            :options="eqTypeData"
+            :props="equipmentTypeProps"
+            :show-all-levels="false"
+            @change="changeEquipmentType(index)"
+            placeholder="请选择设备类型"
+            clearable
+            style="width: 100%"
+            @visible-change="elCascaderOnClick"
+            :key="refresh"
+          ></el-cascader>
         </el-form-item>
         <el-form-item
           label="隧道名称"
@@ -300,15 +284,26 @@
       height="62vh"
       :row-key="getRowKey1"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
       <!--      <el-table-column label="序号" align="center" prop="index"  />-->
-<!--      <el-table-column label="序号" align="center">
+      <!--      <el-table-column label="序号" align="center">
         <template slot-scope="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>-->
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
       <el-table-column
         label="用户名称"
         align="center"
@@ -362,16 +357,26 @@
       class="allTable"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="handleSelectionChange2"
-      style=" overflow-y: auto;"
+      style="overflow-y: auto"
       max-height="62vh"
       v-show="activeName == '2'"
       @sort-change="handleSortChange2"
       ref="tableFile"
       :row-key="getRowKey2"
-
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection />
-      <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod1"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
       <el-table-column
         label="隧道名称"
         align="center"
@@ -383,7 +388,7 @@
         prop="typeName.typeName"
       />
       <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-      <el-table-column label="方向" align="center" prop="direction" >
+      <el-table-column label="方向" align="center" prop="direction">
         <template slot-scope="scope">
           <dict-tag
             :options="dict.type.sd_direction"
@@ -398,7 +403,12 @@
         prop="stateName.stateName"
         :formatter="operationStateFormat"
       />
-      <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat" />
+      <el-table-column
+        label="控制方式"
+        align="center"
+        prop="controlType"
+        :formatter="controlTypeFormat"
+      />
       <el-table-column label="操作结果" align="center" prop="state" />
       <el-table-column label="操作地址" align="center" prop="operIp" />
       <el-table-column
@@ -441,15 +451,13 @@ import {
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
 import { exportLogininfor1, listLog } from "@/api/system/log";
-import {
-getCategoryTree,
-} from "@/api/event/strategy";
+import { getCategoryTree } from "@/api/event/strategy";
 export default {
   name: "Logininfor",
-  dicts: ["sys_common_status, sd_control_type","sd_direction"],
+  dicts: ["sys_common_status, sd_control_type", "sd_direction"],
   data() {
     return {
-      refresh:0,
+      refresh: 0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -469,12 +477,12 @@ export default {
       ],
       setoptions: {
         // 时间不能大于当前时间
-          disabledDate(time) {
-            let current_time = new Date().format('yyyy-MM-dd')+' 23:59:59';  //时间日期为：‘当前日期 23:59:59’
-            let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
-            return time.getTime() > t;
-          },
-        selectableRange: '00:00:00 - 23:59:59'
+        disabledDate(time) {
+          let current_time = new Date().format("yyyy-MM-dd") + " 23:59:59"; //时间日期为：‘当前日期 23:59:59’
+          let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
+          return time.getTime() > t;
+        },
+        selectableRange: "00:00:00 - 23:59:59",
       },
       manageStatin: this.$cache.local.get("manageStation"),
       xt_boxShow: false,
@@ -517,7 +525,7 @@ export default {
         ipaddr: null,
         userName: null,
         status: null,
-        ids:"",
+        ids: "",
       },
       queryParams: {
         pageNum: 1,
@@ -533,11 +541,11 @@ export default {
         controlType: null,
         state: null,
         description: null,
-        pile:null,
-        direction:null,
+        pile: null,
+        direction: null,
         // searchValue: null,
         operIp: "",
-        ids:"",
+        ids: "",
       },
     };
   },
@@ -564,13 +572,13 @@ export default {
   },
   methods: {
     // 关闭级联选择器时 把打开的二级菜单折叠
-    elCascaderOnClick(f){
-      if(!f){
-        ++this.refresh
+    elCascaderOnClick(f) {
+      if (!f) {
+        ++this.refresh;
       }
     },
-    changeEquipmentType(index){
-      console.log(index)
+    changeEquipmentType(index) {
+      console.log(index);
     },
     // 参数timer是过去的n个小时
     getPastTime() {
@@ -581,14 +589,15 @@ export default {
       const lastTime = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
       const startTime = this.timeFormat(lastTime);
       // 当天24点时间
-      let time = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1).getTime();
+      let time = new Date(
+        new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1
+      ).getTime();
       const endTime = this.timeFormat(time);
       return [startTime, endTime];
-
     },
 
     //时间生成并处理
-       timeFormat(time) {
+    timeFormat(time) {
       // 对应的方法
       const timeType = [
         "getFullYear",
@@ -596,7 +605,7 @@ export default {
         "getDate",
         "getHours",
         "getMinutes",
-        "getSeconds"
+        "getSeconds",
       ];
       // 分隔符
       const separator = {
@@ -605,7 +614,7 @@ export default {
         getDate: " ",
         getHours: ":",
         getMinutes: ":",
-        getSeconds: ""
+        getSeconds: "",
       };
       let resStr = "";
       for (let i = 0; i < timeType.length; i++) {
@@ -622,30 +631,34 @@ export default {
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey1(row) {
-      return row.infoId
+      return row.infoId;
     },
     getRowKey2(row) {
-      return row.id
+      return row.id;
     },
     bodyCloseMenus(e) {
       let self = this;
-      if(self.xt_boxShow == true){
-        if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-          if (self.xt_boxShow == true){
-            self.xt_boxShow = false;
-          }
+      if (self.xt_boxShow) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          self.xt_boxShow = false;
         }
       }
-
     },
 
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParam.pageNum-1)*this.queryParam.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParam.pageNum - 1) * this.queryParam.pageSize + 1
+      );
     },
     //翻页时不刷新序号
-    indexMethod1(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod1(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     bodyCloseMenus1(e) {
       let self = this;
@@ -654,18 +667,18 @@ export default {
       //     self.cz_boxShow = false;
       //   }
       // }
-      if(self.cz_boxShow == true){
-        if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
-          if (self.cz_boxShow == true){
-            self.cz_boxShow = false;
-          }
+      if (self.cz_boxShow) {
+        if (
+          !this.$refs.main1.contains(e.target) &&
+          !this.$refs.cc1.contains(e.target) &&
+          !this.$refs.cc2.contains(e.target)
+        ) {
+          self.cz_boxShow = false;
         }
       }
-
     },
 
-
-    handleClick(e){
+    handleClick(e) {
       this.dateRangeDl = this.getPastTime();
       this.dateRangeCz = this.getPastTime();
       this.resetForm("queryForm");
@@ -710,18 +723,19 @@ export default {
     loginStateFormat(row, column) {
       return this.selectDictLabel(this.loginStatusOptions, row.status);
     },
-    operationStateFormat(row,column){
+    operationStateFormat(row, column) {
       //没有状态名称的默认展示原有数据
-      return row.stateName.stateName != null ? row.stateName.stateName : row.operationState;
+      return row.stateName.stateName != null
+        ? row.stateName.stateName
+        : row.operationState;
     },
     /** 查询登录日志列表 */
     getList(inx) {
       this.loading = true;
       this.xt_boxShow = false;
       this.cz_boxShow = false;
-      console.log(inx,this.activeName,"+++++++++++++")
+      console.log(inx, this.activeName, "+++++++++++++");
       if (inx == "1" || this.activeName == "1") {
-
         console.log(this.activeName, "this.activeName");
         console.log(this.queryParam, "this.queryParam");
         list(this.addDateRange(this.queryParam, this.dateRangeDl)).then(
@@ -763,8 +777,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.eqTypeData = []
-      this.getEqType()
+      this.eqTypeData = [];
+      this.getEqType();
       this.dateRangeDl = this.getPastTime();
       this.dateRangeCz = this.getPastTime();
       this.resetForm("queryForm");
@@ -795,17 +809,17 @@ export default {
     },
     /** 排序触发事件 */
     handleSortChange(column, prop, order) {
-      console.log(column,"column")
+      console.log(column, "column");
       this.queryParam.orderByColumn = column.prop;
       this.queryParam.isAsc = column.order;
       this.getList();
     },
     /** 排序触发事件 */
     handleSortChange2(column, prop, order) {
-      console.log(column,"column")
+      console.log(column, "column");
       this.queryParams.orderByColumn = column.prop;
       this.queryParams.isAsc = column.order;
-      console.log(this.queryParams,"this.queryParamsthis.queryParams")
+      console.log(this.queryParams, "this.queryParamsthis.queryParams");
       this.getList();
     },
     /** 删除按钮操作 */
@@ -837,11 +851,11 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的系统日志数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的系统日志数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的系统日志数据项？";
       }
-      let  ids = this.ids.join();
+      let ids = this.ids.join();
       this.queryParam.ids = ids;
       const queryParams = this.queryParam;
       this.$modal
@@ -854,7 +868,7 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tables.clearSelection();
-          this.queryParam.ids = ''
+          this.queryParam.ids = "";
         })
         .catch(() => {});
     },
@@ -863,23 +877,23 @@ export default {
     handleExport1() {
       let startTime;
       let endTime;
-      if (this.dateRangeCz.length>0) {
-        startTime=new Date(this.dateRangeCz[0].replace(/-/g,"/"));//转换
-        endTime =  new Date(this.dateRangeCz[1].replace(/-/g,"/"));//转换
-      }else{
+      if (this.dateRangeCz.length > 0) {
+        startTime = new Date(this.dateRangeCz[0].replace(/-/g, "/")); //转换
+        endTime = new Date(this.dateRangeCz[1].replace(/-/g, "/")); //转换
+      } else {
         this.$message.warning("请先选择创建时间段");
         return;
       }
-      var dateDiff = endTime.getTime() - startTime.getTime();//时间差的毫秒数
-      if(dateDiff>(7*24*60*60*1000)){
+      var dateDiff = endTime.getTime() - startTime.getTime(); //时间差的毫秒数
+      if (dateDiff > 7 * 24 * 60 * 60 * 1000) {
         this.$message.warning("选中的创建时间段不得大于7天");
         return;
-      }else{
-        let confirmInfo ="是否确认导出所有的操作日志数据项？";
-        if(this.ids.length>0){
+      } else {
+        let confirmInfo = "是否确认导出所有的操作日志数据项？";
+        if (this.ids.length > 0) {
           confirmInfo = "是否确认导出所选的操作日志数据项？";
         }
-        let  ids = this.ids.join();
+        let ids = this.ids.join();
         this.queryParams.ids = ids;
         const queryParams = this.queryParams;
         this.$modal
@@ -892,13 +906,11 @@ export default {
             this.$download.name(response.msg);
             this.exportLoading = false;
             this.$refs.tableFile.clearSelection();
-            this.queryParams.ids = ''
+            this.queryParams.ids = "";
           })
           .catch(() => {});
       }
-
     },
-
   },
 };
 </script>
@@ -1025,11 +1037,10 @@ hr {
 ::v-deep .el-tabs__header {
   margin: 0 0 6px !important;
 }
-.searchBoxTab{
+.searchBoxTab {
   top: 12% !important;
   right: 0.8% !important;
   width: 23.8% !important;
 }
-
 </style>
 

@@ -256,7 +256,7 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
             String devId = devIds.get(i);
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
             Long associatedDeviceId = sdDevices.getAssociatedDeviceId();
-            if (associatedDeviceId.longValue() == 0L) {
+            if (associatedDeviceId == null ||associatedDeviceId.longValue() == 0L) {
                 break;
             }
             String devicePixel = "";

@@ -319,7 +319,7 @@ export default {
               lineStyle: {
                 //分割线的样式
                 color: ["rgba(0,0,0,0.3)"],
-                width: 1,
+                width: 2,
                 type: "dashed",
               },
             },
@@ -404,7 +404,7 @@ export default {
     handleClosee() {
       this.visible = false;
     },
-    
+
   },
 };
 </script>

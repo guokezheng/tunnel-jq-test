@@ -19,7 +19,7 @@
                 :value="item.tunnelId"
               />
             </el-select>
-          <div  class="energyAnalyse" ref="energyAnalyse" style="width: 99%; height: 400px;border: 8px solid #004375;"></div>
+          <div  id="energyAnalyse" ref="energyAnalyse" style="width: 99%; height: 400px;border: 8px solid #004375;"></div>
         </el-col>
       </el-row>
       <el-row :gutter="24" style="clear:both;">
@@ -422,10 +422,19 @@ export default {
       });
       //然后异步执行echarts的初始化函数
       newPromise.then(() => {
-        this.LoginMychart = echarts.init(this.$refs.energyAnalyse);
+        this.LoginMychart = echarts.init(document.getElementById("energyAnalyse"));
         var option = {
           tooltip: {
             trigger: "axis",
+            formatter: function (params) {
+              var str = params[0].marker ;
+              str += params[0].value + "</br>";
+              str += params[1].marker ;
+              str += params[1].value + "</br>";
+              str += params[2].marker ;
+              str += params[2].value + "</br>";
+              return str;
+            }
           },
           title: {
             text: '',

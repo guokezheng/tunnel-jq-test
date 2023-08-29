@@ -99,17 +99,18 @@
             </el-option>
           </el-select> -->
           <el-cascader
-              v-model="queryParams.deviceTypeId"
-              :options="eqTypeData"
-              :props="equipmentTypeProps"
-              :show-all-levels="false"
-              @change="changeEquipmentType(index)"
-              style="width: 100%"
-              placeholder="请选择设备类型"
-              clearable
-              @visible-change="elCascaderOnClick"
-              :key="refresh"
-            ></el-cascader>
+            ref="cc1"
+            v-model="queryParams.deviceTypeId"
+            :options="eqTypeData"
+            :props="equipmentTypeProps"
+            :show-all-levels="false"
+            @change="changeEquipmentType(index)"
+            style="width: 100%"
+            placeholder="请选择设备类型"
+            clearable
+            @visible-change="elCascaderOnClick"
+            :key="refresh"
+          ></el-cascader>
         </el-form-item>
         <!--        <el-form-item label="单位名称" style="width: 100%" prop="unit">-->
         <!--          <el-input-->
@@ -220,13 +221,13 @@
             </el-option>
           </el-select> -->
           <el-cascader
-              v-model="form.deviceTypeId"
-              :options="eqTypeData"
-              :props="equipmentTypeProps"
-              :show-all-levels="false"
-              @change="changeEquipmentType(index)"
-              style="width: 100%"
-            ></el-cascader>
+            v-model="form.deviceTypeId"
+            :options="eqTypeData"
+            :props="equipmentTypeProps"
+            :show-all-levels="false"
+            @change="changeEquipmentType(index)"
+            style="width: 100%"
+          ></el-cascader>
         </el-form-item>
         <el-form-item label="数据项名称" prop="itemName">
           <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
@@ -258,15 +259,13 @@ import {
   updateItem,
   exportItem,
 } from "@/api/equipment/eqTypeItem/item";
-import {
-  getCategoryTree,
-} from "@/api/event/strategy";
+import { getCategoryTree } from "@/api/event/strategy";
 import { listType } from "@/api/equipment/type/api";
 export default {
   name: "Item",
   data() {
     return {
-      refresh:0,
+      refresh: 0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -339,20 +338,19 @@ export default {
   created() {
     this.getList();
     this.getEqType();
-
   },
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
     // 关闭级联选择器时 把打开的二级菜单折叠
-    elCascaderOnClick(f){
-      if(!f){
-        ++this.refresh
+    elCascaderOnClick(f) {
+      if (!f) {
+        ++this.refresh;
       }
     },
-    changeEquipmentType(index){
-      console.log(index)
+    changeEquipmentType(index) {
+      console.log(index);
     },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
@@ -380,12 +378,15 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if (self.boxShow) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target) &&
+          !this.$refs.cc1.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
     },
@@ -396,7 +397,7 @@ export default {
       // });
       getCategoryTree().then((data) => {
         this.eqTypeData = data.data;
-      })
+      });
     },
     /** 查询设备类型数据项列表 */
     getList() {

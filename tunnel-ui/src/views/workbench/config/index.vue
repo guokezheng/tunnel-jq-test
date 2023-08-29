@@ -1168,6 +1168,7 @@
               />
             </el-select> -->
             <el-cascader
+              ref="cc2"
               placeholder="请选择设备类型"
               v-model="operationParam.eqTypeId"
               :options="eqTypeData"
@@ -3140,7 +3141,8 @@ export default {
         self.$nextTick(() => {
           if (
             !self.$refs.main1.contains(e.target) &&
-            !self.$refs.cc1.contains(e.target)
+            !self.$refs.cc1.contains(e.target) &&
+            !self.$refs.cc2.contains(e.target)
           ) {
             if (self.sycz_boxShow1 == true) {
               self.sycz_boxShow1 = false;

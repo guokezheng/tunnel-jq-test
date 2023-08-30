@@ -622,7 +622,7 @@ export default {
     sdEventList: {
       immediate: true,
       handler: function (event) {
-        console.log(event, "事件弹窗websockt推送");
+        // console.log(event, "事件弹窗websockt推送");
         this.getWarnList();
       },
     },
@@ -641,7 +641,7 @@ export default {
   },
   methods: {
     init(tunnelId) {
-      console.log(tunnelId, "tunnelId");
+      // console.log(tunnelId, "tunnelId");
       this.tunnelId = tunnelId;
       // setTimeout(() => {
       this.getWarnList();
@@ -655,7 +655,7 @@ export default {
     },
     // 预警事件列表
     getWarnList() {
-      console.log("预警事件列表");
+      // console.log("预警事件列表");
       const param = {
         eventState: "3",
       };
@@ -670,7 +670,7 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(id) {
-      console.log(id);
+      // console.log(id);
       // const item = e.target.closest(".listRow");
       // if (item) {
       //   // 是否是滚动组件的某一行/列
@@ -758,7 +758,7 @@ export default {
         tunnelId: this.tunnelId,
       };
       getHoursTrafficVolume(param).then((res) => {
-        console.log(res, "车辆监测数据");
+        // console.log(res, "车辆监测数据");
         var huoArr = [];
         var keArr = [];
         var keyArr = [];
@@ -781,7 +781,7 @@ export default {
         tunnelId: this.tunnelId,
       };
       getStatisticalDevice(param).then((res) => {
-        console.log(res, "设备健康监测");
+        // console.log(res, "设备健康监测");
         this.devNum = res.data.devNum;
         this.failureRate = res.data.failureRate;
         this.faultNum = res.data.faultNum;
@@ -1523,7 +1523,7 @@ export default {
     },
     getEnergyConsumption() {
       energyConsumptionDetection(this.tunnelId).then((res) => {
-        console.log(res, "能耗监测");
+        // console.log(res, "能耗监测");
         if (!res.data.year && !res.data.month && !res.data.day) {
           return;
         }

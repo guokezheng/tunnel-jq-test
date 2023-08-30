@@ -160,7 +160,7 @@ spring:
       ack-mode: manual_immediate
     wanji:
       #非正式环境使用地址，避免接收推送数据
-      bootstrap-servers: 10.7.179.15:9092
+      bootstrap-servers: 100.7.179.15:9092
       # 生产者
       producer:
         # 重试次数，设置大于0的值，则客户端会将发送失败的记录重新发送
@@ -175,9 +175,9 @@ spring:
       # 消费者
       consumer:
         # 消费者组
-        group-id: HuShanGroup_Formal
+        group-id: hushantest
         # 小车前端显示消费者组
-        group-id-Two: HuShanGroup_Formal_Cat
+        group-id-Two: hushantest_cat
         # 是否自动提交
         enable-auto-commit: false
         # 消费偏移配置

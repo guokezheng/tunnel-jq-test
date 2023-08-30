@@ -493,8 +493,9 @@
                   />
                 </el-select> -->
                 <el-cascader
+                  @change='getEqId()'
                   v-model="form.typeId"
-                  :options="eqTypeListData"
+                  :options="eqTypeListData" 
                   :props="equipmentTypeProps"
                   :show-all-levels="false"
                   style="width: 100%"
@@ -1087,6 +1088,9 @@ export default {
     });
   },
   methods: {
+    getEqId(){
+      this.form.eqId = ''
+    },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },

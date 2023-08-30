@@ -2828,7 +2828,7 @@ export default {
     },
 
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
+      // console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
 
       if (this.manageStation == "1") {
         getJlyTunnel().then((res) => {
@@ -2969,7 +2969,7 @@ export default {
       }
     },
     mouseSrollAuto(e){
-      console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      // console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if(e.target.scrollLeft > 0){
         this.resetCanvasFlag = true
       }else{
@@ -3248,7 +3248,7 @@ export default {
           background: "rgba(0, 0, 0, 0.7)",
         });
       await listRl({ strategyId: params.id }).then((response) => {
-        console.log(response, "设备数据");
+        // console.log(response, "设备数据");
         params.manualControl = response.rows;
         params.manualControl.equipmentTypeId = params.manualControl.eqTypeId;
         for (let i = 0; i < response.rows.length; i++) {
@@ -3624,7 +3624,7 @@ export default {
         for (var i=0;i< this.selectedIconList.length;i++) {
           let item = this.selectedIconList[i]
             if (item.eqName == this.screenEqName) {
-              console.log(item.eqName,"item.eqName")
+              // console.log(item.eqName,"item.eqName")
               bigType = item.bigType;
               this.showTooltipIndex = i
               this.showScreenEqName = true
@@ -3941,7 +3941,7 @@ export default {
     },
 
     checkData(obj, arr) {
-      // console.log(arr, "arr");
+      console.log(arr, "arr");
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.id);
         this.checkData(obj.children[0], arr);
@@ -3955,11 +3955,8 @@ export default {
 
     // 改变站点
     changeSite(index) {
+      console.log(index,"index")
       if (index) {
-        // console.log(
-        //   this.$cache.local.get("deptId"),
-        //   "this.$cache.local.get('deptId')"
-        // );
         // 判断是否有缓存的管理站id
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
         // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
@@ -4279,7 +4276,7 @@ export default {
     },
     getUserDept() {
       getUserDeptId(this.userQueryParams).then((response) => {
-        console.log(response, "管理站级联");
+        // console.log(response, "管理站级联");
         this.userDeptId = response.rows[0].deptId;
         this.getDeptList();
       });
@@ -4568,7 +4565,7 @@ export default {
     getTunnelList() {
       // debugger
       listTunnels(this.tunnelQueryParams).then((response) => {
-        console.log(response, "查询隧道列表");
+        // console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
           this.tunnelList = [];
           return false;
@@ -4766,7 +4763,7 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res,"获取隧道配置信息")
+          // console.log(res,"获取隧道配置信息")
           listType("")
             .then((response) => {
               // console.log(response,"response888")
@@ -4789,7 +4786,7 @@ export default {
               that.selectedIconList = res.eqList; //设备zxczczxc
               // 匹配设备方向
               listDevices().then((data) => {
-                console.log(data, "设备表");
+                // console.log(data, "设备表");
                 for (let item of that.selectedIconList) {
                   for (let itm of data.rows) {
                     if (item.eqId == itm.eqId) {
@@ -4800,7 +4797,7 @@ export default {
               });
               // 匹配设备是否可控
               listType().then((response) => {
-                console.log(response.rows, "设备图标 是否可控");
+                // console.log(response.rows, "设备图标 是否可控");
                 for (let item of that.selectedIconList) {
                   for (let itm of response.rows) {
                     if (item.eqType == itm.typeId) {
@@ -5103,7 +5100,7 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
-      console.log(value, lable,"value, lable")
+      // console.log(value, lable,"value, lable")
       // carShow
       for (var item of this.selectedIconList) {
         if (
@@ -5124,7 +5121,7 @@ export default {
         bigType: lable,
         index: value,
       };
-      console.log(this.selectBigType,"this.selectBigType")
+      // console.log(this.selectBigType,"this.selectBigType")
       let data = this.eqBigTypeList;
 
       var val = value.toString();
@@ -5248,7 +5245,7 @@ export default {
                 this.batchManageForm.eqDirection = itm.eqDirection;
                 this.$forceUpdate();
                 getType(itm.eqType).then((res) => {
-                  console.log(res, "查询设备图标宽高");
+                  // console.log(res, "查询设备图标宽高");
                   this.iconWidth = res.data.iconWidth;
                   this.iconHeight = res.data.iconHeight;
                 });

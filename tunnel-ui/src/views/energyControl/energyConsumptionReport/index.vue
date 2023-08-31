@@ -18,23 +18,23 @@
             ></site-tree>
           </el-card>
         </el-tab-pane>
-        <el-tab-pane label="分项用能" name="third">
-          <el-card class="my-card-height left_tree" shadow="never">
-            <department-select2
-              @getTreeFirst="getFirstId2"
-              @getTree="clickTree2"
-              @clearTree="clearTree2"
-              class="top_select"
-            ></department-select2>
-            <itemized-tree
-              @nodeCheck="handleCheckChange3"
-              @defaultCheck="defaultCheckLoop3"
-              :show_checkbox="true"
-              :default_check_first="true"
-              height="calc(100vh - 320px)"
-            ></itemized-tree>
-          </el-card>
-        </el-tab-pane>
+<!--        <el-tab-pane label="分项用能" name="third">-->
+<!--          <el-card class="my-card-height left_tree" shadow="never">-->
+<!--            <department-select2-->
+<!--              @getTreeFirst="getFirstId2"-->
+<!--              @getTree="clickTree2"-->
+<!--              @clearTree="clearTree2"-->
+<!--              class="top_select"-->
+<!--            ></department-select2>-->
+<!--            <itemized-tree-->
+<!--              @nodeCheck="handleCheckChange3"-->
+<!--              @defaultCheck="defaultCheckLoop3"-->
+<!--              :show_checkbox="true"-->
+<!--              :default_check_first="true"-->
+<!--              height="calc(100vh - 320px)"-->
+<!--            ></itemized-tree>-->
+<!--          </el-card>-->
+<!--        </el-tab-pane>-->
         <el-tab-pane label="分类用能" name="four">
           <el-card class="my-card-height left_tree" shadow="never">
             <department-select3
@@ -210,7 +210,7 @@
     </el-row>
   </div>
 </template>
-  
+
   <script>
 import * as echarts from "echarts";
 import { mapState } from "vuex";
@@ -746,7 +746,7 @@ export default {
               console.log(p)
               let content = p[0].name
               content += "<div style='max-height:200px;overflow-x:auto'>"
-              
+
               for(let item of p){
                 content += "<div style='display:flex;justify-content:space-between;width:160px'>"
                 content += "<div>"+item.marker + item.seriesName+"</div><div style='margin-right:10px'>" + item.value +"kW-h</div>"
@@ -1052,4 +1052,3 @@ export default {
   }
 }
 </style>
-  

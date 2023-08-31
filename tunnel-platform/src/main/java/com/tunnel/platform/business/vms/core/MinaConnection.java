@@ -14,32 +14,40 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
-public class MinaConnection implements IConnection {
+public class MinaConnection
+//		implements IConnection
+{
 
 	private static final Logger logger = LoggerFactory.getLogger(MinaConnection.class);
 
-	// 1.服务端ip
-	private String ip;
-	// 2.服务端端口
-	private int port;
-	// 3.中断循环标识
-	public static boolean isExit = false;
+//	// 1.服务端ip
+//	private String ip;
+//	// 2.服务端端口
+//	private int port;
+//	// 3.中断循环标识
+//	public static boolean isExit = false;
 	// 5.mina连接
-	NioSocketConnector connector = null;
-	// 6.获取连接session
-	IoSession ioSession = null;
+	private static NioSocketConnector connector = null;
+//	// 6.获取连接session
+//	IoSession ioSession = null;
 
-	public MinaConnection(String ip, int port) {
-		this.ip = ip;
-		this.port = port;
-		init();
+//	public MinaConnection(String ip, int port) {
+//		this.ip = ip;
+//		this.port = port;
+//		init();
+//	}
+
+	static{
+		initClient();
 	}
 
+
 	/**
-	 *
-	 * @Description: 初始化连接
+	 * 初始化Mina客户端，代码只执行一次
+	 *  new NioSocketConnector() 会创建大量连接数，频繁创建会造成系统资源耗尽，报错“文件过多”
+	 *  代码变更后new NioSocketConnector()只创建一次，避免此问题
 	 */
-	public void init() {
+	public static void initClient(){
 		/*
 		 * 2.创建nio socket客户端连接
 		 */
@@ -50,25 +58,49 @@ public class MinaConnection implements IConnection {
 		loggingFilter.setMessageSentLogLevel(LogLevel.NONE);
 		connector.getFilterChain().addLast("logger", loggingFilter);
 		connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
-
-		logger.info(" [init()] 连接Iot设备的初始化参数成功！ Iot设备： [" + ip + ":" + port + "] ");
+		//添加处理器
+		connector.setHandler(new MinaClientHandler());
 	}
+
+//	/**
+//	 *
+//	 * @Description: 初始化连接
+//	 */
+//	public void init() {
+//		/*
+//		 * 2.创建nio socket客户端连接
+//		 */
+//		connector = new NioSocketConnector();
+//		LoggingFilter loggingFilter = new LoggingFilter();
+//		// NONE级别是不打印日志
+//		loggingFilter.setMessageReceivedLogLevel(LogLevel.INFO);
+//		loggingFilter.setMessageSentLogLevel(LogLevel.INFO);
+//		connector.getFilterChain().addLast("logger", loggingFilter);
+//		connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+//
+////		logger.info(" [init()] 连接Iot设备的初始化参数成功！ Iot设备： [" + ip + ":" + port + "] ");
+//	}
 
 	/**
 	 *
 	 * @Description: 获取里连接session
 	 * @return
 	 */
-	public IoSession getIoSession() {
-		if (connector == null)
-			init();
-		if (connector == null)
+	public static IoSession getIoSession(String ip,int port) {
+		IoSession ioSession = null;
+		if (connector == null){
+			//重新初始化客户端
+			initClient();
+//			init();
+ 		}
+		if (connector == null) {
 			return null;
+		}
 		/*
 		 * 3.创建连接。
 		 */
 		ConnectFuture cf = connector.connect(new InetSocketAddress(ip, port));
-		// 3.1 等待连接创建完成
+		// 3.1 等待连接创建完成 3秒钟超时时间
 		cf.awaitUninterruptibly(3L,TimeUnit.SECONDS);
 
 		/*
@@ -76,35 +108,44 @@ public class MinaConnection implements IConnection {
 		 */
 		try {
 			ioSession = cf.getSession();
-//			logger.info(" [run()] 获取连接Iot设备成功！Iot设备：[" + ip + ":" + port + "]！创建时间： "+ioSession.getCreationTime());
+			logger.info(" [run()] 获取连接Iot设备成功！Iot设备：[" + ip + ":" + port + "]！创建时间： "+ioSession.getCreationTime());
 			return ioSession;
 		} catch (Exception e) {
-			logger.warn(" [run()] 获取连接Iot设备异常！Iot设备：[" + ip + ":" + port + "]！ " + e.getMessage());
-			connector.dispose();
-			connector = null;
-			e.printStackTrace();
+			//关闭session
+			if (ioSession != null) {
+				ioSession.closeOnFlush();
+			}
+			logger.error(" [run()] 获取连接Iot设备异常！Iot设备：[" + ip + ":" + port + "]！ " + e.getMessage());
+//			connector.dispose();
+//			connector = null;
+//			e.printStackTrace();
 		}
 		return null;
 	}
 
-	@Override
-	public boolean isConnection() {
+//	@Override
+	public boolean isConnection(IoSession ioSession) {
 		return ioSession == null ? false : ioSession.isConnected();
 	}
 
-	@Override
-	public void disconnect() {
-		if (connector == null || connector.isDisposed())
-			return;
-		if (isConnection()) {
-			ioSession.closeNow();
-			// 等待连接断开
-			ioSession.getCloseFuture().awaitUninterruptibly();
+//	@Override
+	public static void disconnect(IoSession ioSession) {
+//		if (connector == null || connector.isDisposed()) {
+//			return;
+//		}
+
+		if (ioSession != null) {
+			ioSession.closeOnFlush();
 		}
-		connector.dispose();
-		ioSession = null;
-		connector = null;
-		logger.info(" [disconnect()] Iot设备断开连接！Iot设备：[" + ip + ":" + port + "]！ ");
+//		if (isConnection()) {
+//			ioSession.closeNow();
+//			// 等待连接断开
+//			ioSession.getCloseFuture().awaitUninterruptibly();
+//		}
+//		connector.dispose();
+//		ioSession = null;
+//		connector = null;
+//		logger.info(" [disconnect()] Iot设备断开连接！Iot设备：[" + ip + ":" + port + "]！ ");
 	}
 
 	public NioSocketConnector getConnector() {

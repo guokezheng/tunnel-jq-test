@@ -653,6 +653,17 @@ export default {
       this.getDeviceChart();
       this.getNoDecelerationChart();
     },
+    changeActive(){
+      this.footChangeRadio = '图表'
+      this.cameraPlayer1 = false;
+      this.cameraPlayer2 = false;
+      this.cameraPlayer3 = false;
+      this.cameraPlayer4 = false;
+      this.cameraPlayer5 = false;
+      window.addEventListener("resize", function () {
+          this.deviceChart.resize();
+        });
+    },
     // 预警事件列表
     getWarnList() {
       // console.log("预警事件列表");

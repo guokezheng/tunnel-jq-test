@@ -74,20 +74,24 @@ public class DevicesManager {
         // 道路结冰
      /*else if("110".equals(type)){
         	dcBean = new DevicesConfig().getDevicesInfo(deviceId);
-        }*/else if("112".equals(type)){
-            dcBean = new DevicesConfig().getDevicesFogInduction(deviceId);
-        }
+//        }*/
+//     else if("112".equals(type)){
+//            dcBean = new DevicesConfig().getDevicesFogInduction(deviceId);
+//        }
 
 
         if (dcBean == null) {
             throw new BusinessException("设备配置文件中没有配置该设备！设备Id:[" + deviceId + "]");
         }
+        String ip = dcBean.getIp();
+        int port = dcBean.getPort();
         /*
          * 3.mina连接，并获取指令执行返回的结果
          */
-        MinaClient client = new MinaClient(dcBean.getIp(), dcBean.getPort());
+        //关键代码
+//        MinaClient client = new MinaClient(dcBean.getIp(), dcBean.getPort());
         logger.info("Mina连接：设备编号：[" + deviceId + "]");
-        String content = client.sendCommand(command, 16);
+        String content = MinaClient.sendCommand(ip,port,command, 16);
         if (content == null) {
             throw new BusinessException("Iot设备执行指令异常！");
         }
@@ -96,62 +100,62 @@ public class DevicesManager {
         return content;
     }
 
-    public String executeCommand1(String deviceId, String command,String type) {
-        if (CommonUtil.isNull(deviceId, command)) {
-            throw new BusinessException("传入的设备Id或指令为null！");
-        }
-        /*
-         * 2.查询设备的配置信息。
-         */
-        DevicesBean dcBean = null;
-       if("112".equals(type)){
-            dcBean = new DevicesConfig().getDevicesFogInduction(deviceId);
-        }
-        if (dcBean == null) {
-            throw new BusinessException("设备配置文件中没有配置该设备！设备Id:[" + deviceId + "]");
-        }
-        /*
-         * 3.mina连接，并获取指令执行返回的结果
-         */
-        MinaClient client = new MinaClient(dcBean.getIp(), dcBean.getPort());
-        logger.info("Mina连接：设备编号：[" + deviceId + "]");
-        String content = client.sendCommand1(command, 16);
-        if (content == null) {
-            throw new BusinessException("Iot设备执行指令异常！");
-        }
-        logger.info("[handler(standardProtocol)] -OK- 成功完成命令执行！返回结果：["
-                + content + "],命令：[" + command + "]");
-        return content;
-    }
-    /**
-     * 查询主机配置信息
-     * @param ip
-     * @param command
-     * @return
-     */
- public String hostConfigurationExecuteCommand(String ip, String command, String type) {
-        if (CommonUtil.isNull(ip, command)) {
-            throw new BusinessException("传入的主机配置IP或主机配置指令为null！");
-        }
-        DevicesBean dcBean = null;
-        /*if("112".equals(type)){
-        	dcBean = new DevicesConfig().getDevicesFogInduction(hostId);
-        }
-        if (dcBean == null) {
-            throw new BusinessException("设备配置文件中没有配置该设备！设备Id:[" + hostId + "]");
-        }*/
-         // 3.mina连接，并获取指令执行返回的结果
-        MinaClient client = new MinaClient(ip, Integer.parseInt("1030"));
-      //  logger.info("Mina连接：设备编号：[" + ip + "]");
-        String content = client.sendCommand(command, 16);
-        if (content == null) {
-            throw new BusinessException("查询设备控制指令异常！");
-        }
-        System.out.println("返回指令为"+content+"");
-        logger.info("[handler(standardProtocol)] -OK- 成功完成命令执行！返回结果：["
-                + content + "],命令：[" + command + "]");
-        return content;
-    }
+//    public String executeCommand1(String deviceId, String command,String type) {
+//        if (CommonUtil.isNull(deviceId, command)) {
+//            throw new BusinessException("传入的设备Id或指令为null！");
+//        }
+//        /*
+//         * 2.查询设备的配置信息。
+//         */
+//        DevicesBean dcBean = null;
+//       if("112".equals(type)){
+//            dcBean = new DevicesConfig().getDevicesFogInduction(deviceId);
+//        }
+//        if (dcBean == null) {
+//            throw new BusinessException("设备配置文件中没有配置该设备！设备Id:[" + deviceId + "]");
+//        }
+//        /*
+//         * 3.mina连接，并获取指令执行返回的结果
+//         */
+//        MinaClient client = new MinaClient(dcBean.getIp(), dcBean.getPort());
+//        logger.info("Mina连接：设备编号：[" + deviceId + "]");
+//        String content = client.sendCommand1(command, 16);
+//        if (content == null) {
+//            throw new BusinessException("Iot设备执行指令异常！");
+//        }
+//        logger.info("[handler(standardProtocol)] -OK- 成功完成命令执行！返回结果：["
+//                + content + "],命令：[" + command + "]");
+//        return content;
+//    }
+//    /**
+//     * 查询主机配置信息
+//     * @param ip
+//     * @param command
+//     * @return
+//     */
+// public String hostConfigurationExecuteCommand(String ip, String command, String type) {
+//        if (CommonUtil.isNull(ip, command)) {
+//            throw new BusinessException("传入的主机配置IP或主机配置指令为null！");
+//        }
+//        DevicesBean dcBean = null;
+//        /*if("112".equals(type)){
+//        	dcBean = new DevicesConfig().getDevicesFogInduction(hostId);
+//        }
+//        if (dcBean == null) {
+//            throw new BusinessException("设备配置文件中没有配置该设备！设备Id:[" + hostId + "]");
+//        }*/
+//         // 3.mina连接，并获取指令执行返回的结果
+//        MinaClient client = new MinaClient(ip, Integer.parseInt("1030"));
+//      //  logger.info("Mina连接：设备编号：[" + ip + "]");
+//        String content = client.sendCommand(command, 16);
+//        if (content == null) {
+//            throw new BusinessException("查询设备控制指令异常！");
+//        }
+//        System.out.println("返回指令为"+content+"");
+//        logger.info("[handler(standardProtocol)] -OK- 成功完成命令执行！返回结果：["
+//                + content + "],命令：[" + command + "]");
+//        return content;
+//    }
 
 
 

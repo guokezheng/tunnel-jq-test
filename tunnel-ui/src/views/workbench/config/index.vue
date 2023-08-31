@@ -5038,6 +5038,8 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      this.dialogClose();
+      this.$refs.footerRef.changeActive()
       this.resetCanvas();
       const loading = this.$loading({
         lock: true,

@@ -109,29 +109,11 @@
           </el-col>
           <el-col :span="9">
             <span style="padding-left: 10px; line-height: 30px"
-                >{{ stateForm2.volume }} %</span
-              >
+              >{{ stateForm2.volume }} %</span
+            >
           </el-col>
         </el-row>
-        <el-row v-if="brandTwo">
-          <el-col>
-            <el-form-item label="状态:">
-              <el-select 
-                v-model="stateForm2.loopStatus" 
-                placeholder="请选择状态"
-                clearable
-                size="mini"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
+
         <el-row>
           <el-col>
             <el-form-item label="播放文件:">
@@ -148,6 +130,39 @@
                   :value="item.fileName"
                 />
               </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="brandTwo">
+          <el-col>
+            <el-form-item label="状态:">
+              <el-radio-group
+                v-model="stateForm2.loopStatus"
+                v-for="item in options"
+                :key="item.value"
+                @change="$forceUpdate()"
+                style="display: flex; flex-direction: column"
+              >
+                <el-radio
+                  :label="item.label"
+                  class="el-radio flex-row"
+                  style="align-items: center"
+                 
+                ></el-radio>
+              </el-radio-group>
+              <!-- <el-select 
+                v-model="stateForm2.loopStatus" 
+                placeholder="请选择状态"
+                clearable
+                size="mini"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -174,15 +189,18 @@ import {
 export default {
   data() {
     return {
-      options: [{
-          value: '#PLY#',
-          label: '播放'
-        }, {
-          value: '#STOP#',
-          label: '停止'
-        }],
+      options: [
+        {
+          value: "#PLY#",
+          label: "播放",
+        },
+        {
+          value: "#STOP#",
+          label: "停止",
+        },
+      ],
       stateForm2: {
-        loopStatus:"",
+        loopStatus: "",
         loopCount: 1,
         loop: false,
         volume: 0,
@@ -197,7 +215,7 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
-      brandOne: true,
+      brandOne: false,
       brandTwo: false,
     };
   },
@@ -227,10 +245,10 @@ export default {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          if(res.data.brandId != "0060"){
+          if (res.data.brandId != "0060") {
             this.brandOne = false;
             this.brandTwo = true;
-          }else {
+          } else {
             this.brandOne = true;
             this.brandTwo = false;
           }
@@ -250,14 +268,15 @@ export default {
     // 关闭弹窗
     handleClosee() {
       this.visible = false;
+      this.stateForm2.loopStatus = "";
     },
     handleOK() {
       const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       const param = {
         lib: "YeastarHost",
         loop: this.stateForm2.loop,
@@ -270,13 +289,16 @@ export default {
         tunnelId: this.tunnelId,
       };
       console.log(param, "param");
-      playVoice(param).then((res) => {
-        loading.close();
-        this.$modal.msgSuccess("控制成功");
-      }).catch(()=>{
+      playVoice(param)
+        .then((res) => {
+          loading.close();
+          this.$modal.msgSuccess("控制成功");
+        })
+        .catch(() => {
           loading.close();
         });
       this.visible = false;
+      this.stateForm2.loopStatus = "";
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -321,5 +343,31 @@ export default {
 }
 ::v-deep .el-dialog {
   pointer-events: auto !important;
+}
+.el-radio-selcted {
+  padding: 5px 300px 5px 20px;
+  margin: 2px 0px;
+  color: #c0ccda;
+  border-radius: 4px;
+  background-color: #455d79;
+}
+
+.el-radio-button--medium .el-radio-button__inner {
+  padding: 5px 10px;
+}
+::v-deep .el-radio__label {
+  height: 40px !important;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 40px;
+  align-items: center;
+}
+.el-radio {
+  width: 240px;
+  height: 40px;
+  line-height: 40px;
 }
 </style>

@@ -4728,11 +4728,11 @@ export default {
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
-      for(let item of that.eqTypeStateList){
-        if(item.type == '23'){
-          console.log(item,"222222222222222222")
-        }
-      }
+      // for(let item of that.eqTypeStateList){
+      //   if(item.type == '23'){
+      //     console.log(item,"222222222222222222")
+      //   }
+      // }
     },
     /* 请求图片base64地址*/
     picture(fileUrl) {

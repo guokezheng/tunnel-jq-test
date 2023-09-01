@@ -1006,9 +1006,9 @@ export default {
         }
 
         var parseObject = JSON.parse(response.data[0]);
+        console.log(parseObject,"parseObject")
         var protocolType = parseObject.support.PROTOCOL_TYPE;
         var contents = parseObject.content;
-        console.log(parseObject, "parseObject");
         if (
           typeof contents == "undefined" ||
           typeof protocolType == "undefined"
@@ -1023,9 +1023,6 @@ export default {
         for (var i = 0; i < contents.length; i++) {
           var content = contents[i];
           var itemId = "ITEM" + this.formatNum(i, 3);
-          if (i == 0) {
-            currRowId = itemId;
-          }
           var con = content[itemId][0];
           con.COLOR = this.getColorStyle(con.COLOR);
           con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";

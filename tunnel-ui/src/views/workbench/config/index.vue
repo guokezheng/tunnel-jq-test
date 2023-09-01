@@ -4728,6 +4728,11 @@ export default {
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
+      // for(let item of that.eqTypeStateList){
+      //   if(item.type == '23'){
+      //     console.log(item,"222222222222222222")
+      //   }
+      // }
     },
     /* 请求图片base64地址*/
     picture(fileUrl) {
@@ -4769,8 +4774,8 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                // if(res.eqList[i].eqType == 47 && res.eqList[i].eqId == 'JQ-JiNan-WenZuBei-MJY-HMC-083'){
-                //   console.log(i,"0000000000000000000")
+                // if(res.eqList[i].eqType == 23){
+                //   console.log(res.eqList[i],"0000000000000000000")
                 // }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
@@ -4921,6 +4926,7 @@ export default {
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
+          // console.log(deviceData)
           if (deviceData) {
             // 需要换光标的
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
@@ -4928,19 +4934,23 @@ export default {
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
-                // if(deviceData.eqType == '1'){
+                // if(deviceData.eqType == 23 && arr.includes(deviceData.eqType)){
                 //   console.log(deviceData,"deviceData")
                 // }
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48, 41,
+                  '5', '14', '17', '18', '19', '20', '21', '23', '24', '25', '28', '29', '32', '33', '35', '22',
+                  '40', '39', '48', '41',
                 ];
+                
                 if (arr.includes(deviceData.eqType)) {
                   if (
                     // 摄像机之类的只有在线 离线 故障图标
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
+                    // if(deviceData.eqType == '23'){
+                    //   console.log(deviceData,"deviceData11111111111")
+                    // }
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
 
@@ -7108,13 +7118,13 @@ input {
   }
   .chezhiControlButton {
     width: 50px;
-    height: 32px;
+    height: 27px;
     padding: 0;
     // border:solid 1px #A3B7CF;
     border-radius: 2px;
     margin-left: 8px;
     text-align: center;
-    line-height: 31px;
+    line-height: 27px;
     cursor: pointer;
     color: white;
   }

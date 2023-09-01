@@ -35,7 +35,7 @@
           <div class="chezhiName">车道:</div>
           <el-select
             v-model="chezhiForm1.lane"
-            size="small"
+            size="mini"
             multiple
             collapse-tags
             class="chezhiLaneSelect"
@@ -50,7 +50,7 @@
           <div class="chezhiName">状态:</div>
           <el-select
             v-model="chezhiForm1.state"
-            size="small"
+            size="mini"
             class="chezhiStateSelect"
           >
             <el-option
@@ -89,7 +89,7 @@
           <div class="chezhiName">车道:</div>
           <el-select
             v-model="chezhiForm2.lane"
-            size="small"
+            size="mini"
             multiple
             collapse-tags
             class="chezhiLaneSelect"
@@ -104,7 +104,7 @@
           <div class="chezhiName">状态:</div>
           <el-select
             v-model="chezhiForm2.state"
-            size="small"
+            size="mini"
             class="chezhiStateSelect"
           >
             <el-option
@@ -138,14 +138,14 @@
         <div class="chezhiDrawerDirection" style="margin: 10px 0">
           {{ directionList[0].dictLabel }} -广播
         </div>
-        <div class="phoneBox1">
+        <div class="phoneBox1" v-show="brandId == '0060'">
           <div class="chezhiName">播放次数:</div>
           <el-input-number
             v-model.number="phoneForm1.loopCount"
             controls-position="right"
             @change="handleChangePhone(1)"
             :min="0"
-            size="small"
+            size="mini"
           />
           <el-checkbox
             v-model="phoneForm1.loop"
@@ -155,7 +155,7 @@
             >循环播放</el-checkbox
           >
         </div>
-        <div class="phoneBox1">
+        <div class="phoneBox1" v-show="brandId == '0060'">
           <div class="chezhiName">音量:</div>
 
           <el-slider
@@ -164,13 +164,29 @@
             class="sliderClass"
           ></el-slider>
         </div>
+        <div class="phoneBox1" v-show="brandId == '10011'">
+          <div class="chezhiName">播放状态:</div>
+          <el-select 
+                v-model="phoneForm1.loopStatus" 
+                placeholder="请选择状态"
+                clearable
+                size="mini"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+        </div>
         <div class="phoneBox1">
           <div class="chezhiName">播放文件:</div>
           <el-select
             v-model="phoneForm1.fileNames"
             placeholder="请选择播放文件"
             clearable
-            size="small"
+            size="mini"
             @click.native="clickFileNames(directionList[1].dictValue)"
           >
             <el-option
@@ -192,13 +208,13 @@
         <div class="chezhiDrawerDirection" style="margin: 10px 0">
           {{ directionList[1].dictLabel }} -广播
         </div>
-        <div class="phoneBox1">
+        <div class="phoneBox1" v-show="brandId == '0060'">
           <div class="chezhiName">播放次数:</div>
           <el-input-number
             v-model.number="phoneForm2.loopCount"
             controls-position="right"
             @change="handleChangePhone(2)"
-            size="small"
+            size="mini"
             :min="0"
           />
           <el-checkbox
@@ -209,7 +225,7 @@
             >循环播放</el-checkbox
           >
         </div>
-        <div class="phoneBox1">
+        <div class="phoneBox1" v-show="brandId == '0060'">
           <div class="chezhiName">音量:</div>
           <el-slider
             v-model="phoneForm2.volume"
@@ -217,13 +233,29 @@
             class="sliderClass"
           ></el-slider>
         </div>
+        <div class="phoneBox1" v-show="brandId == '10011'">
+          <div class="chezhiName">播放状态:</div>
+          <el-select 
+                v-model="phoneForm2.loopStatus" 
+                placeholder="请选择状态"
+                clearable
+                size="mini"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+        </div>
         <div class="phoneBox1">
           <div class="chezhiName">播放文件:</div>
           <el-select
             v-model="phoneForm2.fileNames"
             placeholder="请选择播放文件"
             clearable
-            size="small"
+            size="mini"
             @click.native="clickFileNames(directionList[1].dictValue)"
           >
             <el-option
@@ -261,13 +293,13 @@
             style="max-width: 340px; margin-right: 10px"
             class="overflowText"
             @mouseenter="showToolTip2(item.strategy_name)"
-            >
+          >
             <el-tooltip v-if="item.show" :content="item.strategy_name">
-                <span>{{ item.strategy_name }}</span>
-              </el-tooltip>
-              <span v-else>
-                {{ item.strategy_name }}
-              </span>
+              <span>{{ item.strategy_name }}</span>
+            </el-tooltip>
+            <span v-else>
+              {{ item.strategy_name }}
+            </span>
           </span>
           <el-switch
             v-model="item.strategy_state"
@@ -349,7 +381,7 @@
             <span>触发值</span>
           </el-col>
           <el-col :span="4">
-            <span >状态</span>
+            <span>状态</span>
           </el-col>
         </el-row>
 
@@ -388,7 +420,7 @@
               v-model="item.strategyState"
               active-value="0"
               inactive-value="1"
-              @change="changeStrategyState(item.id,item.strategyState)"
+              @change="changeStrategyState(item.id, item.strategyState)"
             ></el-switch>
           </el-col>
         </el-row>
@@ -411,11 +443,25 @@ import {
 import {
   getAudioFileList,
   playVoiceGroup,
+  getDeviceById
 } from "@/api/equipment/eqlist/api";
 import {changeJobStatus} from "@/api/monitor/job";
+import {
+  getTunnels,
+} from "@/api/equipment/tunnel/api.js";
 export default {
   data() {
     return {
+      options: [
+        {
+          value: "#PLY#",
+          label: "播放",
+        },
+        {
+          value: "#STOP#",
+          label: "停止",
+        },
+      ],
       drawerA: false,
       drawerB: false,
       drawerCVisible: false,
@@ -425,12 +471,14 @@ export default {
         loop: false,
         volume: 0,
         fileNames: [],
+        loopStatus:''
       },
       phoneForm2: {
         loopCount: 1,
         loop: false,
         volume: 0,
         fileNames: [],
+        loopStatus:''
       },
       // 一键车道指示器表单
       chezhiForm1: {
@@ -497,6 +545,7 @@ export default {
       tunnelId: "",
       tunnelLane: "",
       tunnelIdNew: "",
+      brandId:'',
     };
   },
   created() {
@@ -509,8 +558,32 @@ export default {
       // console.log(tunnelId,lane,"tunnelId,lane")
       this.tunnelId = tunnelId;
       this.tunnelLane = lane;
+      this.getTunnelData();
       this.getTunnelState();
     },
+    /* 获取隧道配置信息*/
+    getTunnelData(){
+      getTunnels(this.tunnelId).then((res1) => {
+        let res = res1.data.storeConfigure;
+        if (res != null && res != "" && res != undefined) {
+          res = JSON.parse(res);
+          let arr = []
+          // console.log(res,"获取隧道配置信息")
+          for (let i = 0; i < res.eqList.length; i++) {
+            if(res.eqList[i].eqType == 22 && res.eqList[0].eqId){
+              arr.push(res.eqList[i])
+            }
+          }
+          this.getMessage(arr[0].eqId)
+        }
+      })
+    },
+    async getMessage(eqId){
+      await getDeviceById(eqId).then((res) => {
+        console.log(res,"广播")
+        this.brandId = res.data.brandId
+      })
+    },  
     showToolTip(row) {
       // 改变列表数据的show字段，show为true时展示tooltip，false为隐藏tooltip
       this.isDrawerCList.forEach((item) => {
@@ -698,6 +771,7 @@ export default {
           loopCount: this.phoneForm1.loopCount,
           volume: this.phoneForm1.volume,
           fileNames: Array(this.phoneForm1.fileNames),
+          loopStatus:this.phoneForm1.loopStatus,
           direction: direction,
           tunnelId: this.tunnelId,
           controlType: "0",
@@ -718,6 +792,7 @@ export default {
           loopCount: this.phoneForm2.loopCount,
           volume: this.phoneForm2.volume,
           fileNames: Array(this.phoneForm2.fileNames),
+          loopStatus:this.phoneForm2.loopStatus,
           direction: direction,
           tunnelId: this.tunnelId,
           controlType: "0",

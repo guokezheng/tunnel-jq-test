@@ -4926,7 +4926,7 @@ export default {
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
-          console.log(deviceData)
+          // console.log(deviceData)
           if (deviceData) {
             // 需要换光标的
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
@@ -4934,12 +4934,12 @@ export default {
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
-                if(deviceData.eqType == 23 && arr.includes(deviceData.eqType)){
-                  console.log(deviceData,"deviceData")
-                }
+                // if(deviceData.eqType == 23 && arr.includes(deviceData.eqType)){
+                //   console.log(deviceData,"deviceData")
+                // }
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48, 41,
+                  '5', '14', '17', '18', '19', '20', '21', '23', '24', '25', '28', '29', '32', '33', '35', '22',
+                  '40', '39', '48', '41',
                 ];
                 
                 if (arr.includes(deviceData.eqType)) {
@@ -4948,9 +4948,9 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
-                    if(deviceData.eqType == '23'){
-                      console.log(deviceData,"deviceData11111111111")
-                    }
+                    // if(deviceData.eqType == '23'){
+                    //   console.log(deviceData,"deviceData11111111111")
+                    // }
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
 

@@ -34,8 +34,8 @@ public class MqttListener {
     @EventListener(classes = MqttConnectionFailedEvent.class)
     public void listenerAction(MqttConnectionFailedEvent mqttConnectionFailedEvent) {
         log.error("连接失败的事件通知,time="+new Date());
-        //将胡山隧道鸿蒙控制器以及子设备全部设置为离线
-        hongMengMqttCommonService.updateDeviceStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+//        //将胡山隧道鸿蒙控制器以及子设备全部设置为离线
+//        hongMengMqttCommonService.updateDeviceStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
     }
 
     /**
@@ -66,7 +66,7 @@ public class MqttListener {
     @EventListener(classes = MqttSubscribedEvent.class)
     public void listenerAction(MqttSubscribedEvent mqttSubscribedEvent) {
         log.error("消息订阅的事件通知,time="+new Date());
-        //将胡山隧道鸿蒙控制器以及子设备全部设置为在线
-        hongMengMqttCommonService.updateDeviceStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+//        //将胡山隧道鸿蒙控制器以及子设备全部设置为在线
+//        hongMengMqttCommonService.updateDeviceStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
     }
 }

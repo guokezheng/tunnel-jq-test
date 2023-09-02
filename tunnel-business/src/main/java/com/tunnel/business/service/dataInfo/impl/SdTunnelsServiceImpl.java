@@ -146,6 +146,11 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
         return sdTunnelsMapper.selectTunnelsList(deptId);
     }
 
+    @Override
+    public List<SdTunnels> selectTunnelsDeptIdList(String deptId) {
+        return sdTunnelsMapper.selectTunnelsDeptIdList(deptId);
+    }
+
     /**
      * 查询隧道列表
      * @param deptId

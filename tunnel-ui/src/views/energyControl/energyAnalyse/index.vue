@@ -246,7 +246,7 @@
 import * as echarts from "echarts";
 import {selectEnergyAnalysisElectricityBillList,getEnergySiteList,getAccumulated,getrealTimeData} from "@/api/energy/api";
 import {listList} from "@/api/electromechanicalPatrol/faultManage/fault";
-import {listTunnels} from "@/api/equipment/tunnel/api";
+import {listDepId, listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "energyAnalyse",
@@ -301,8 +301,8 @@ export default {
   },
   mounted() {
   },
-  created(){
-    listTunnels(this.paramsData).then((response) => {
+  async created(){
+    await listDepId(this.paramsData).then((response) => {
       this.tunnelData = response.rows;
       console.log(this.tunnelData, "隧道列表");
     });

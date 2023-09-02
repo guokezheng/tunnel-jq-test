@@ -95,6 +95,14 @@ public interface SdTunnelsMapper
     List<SdTunnels> selectTunnelsList(String deptId);
 
     /**
+     * 查询隧道list --根据权限
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnelsDeptIdList(String deptId);
+
+
+    /**
      * 查询隧道列表
      * @param deptId
      * @return

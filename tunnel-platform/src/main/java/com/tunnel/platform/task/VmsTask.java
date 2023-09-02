@@ -11,6 +11,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
+import com.tunnel.platform.controller.informationBoard.BoardController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +58,7 @@ public class VmsTask {
                 String result = boardData.get("result");
                 String protocolType = boardData.get("vender");
                 String jsonResult = DataUtils.itemContentToJson(result, protocolType);
+                BoardController.releaseContentMap.put(deviceId.toString(),result);
                 //隧道内
                 Long sdnCode = Long.valueOf(DevicesTypeItemEnum.SUI_DAO_NEI_CONTENT.getCode());
                 //门架式

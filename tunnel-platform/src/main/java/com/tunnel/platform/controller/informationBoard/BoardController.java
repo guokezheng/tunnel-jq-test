@@ -221,7 +221,16 @@ public class BoardController extends BaseController {
         AjaxResult ajaxResult = new AjaxResult();
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
         if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
-            return null;
+            Object object = nowContentMap.get(deviceId.toString());
+            JSONObject jsonObject = JSONObject.parseObject(object.toString());
+            List<String> paramsList = new ArrayList<String>();
+            if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
+                JSONObject items = new JSONObject();
+                items.put("content",jsonObject.get("content"));
+                items.put("support", "");
+                paramsList.add(items.toString());
+            }
+            return new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
         }
         List<String> paramsList = new ArrayList<String>();
         try {
@@ -263,7 +272,17 @@ public class BoardController extends BaseController {
             device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
-            return null;
+            JSONObject items = new JSONObject();
+            if(paramsList.size() == 0){
+                Object object = nowContentMap.get(deviceId.toString());
+                JSONObject jsonObject = JSONObject.parseObject(object.toString());
+                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
+                    items.put("content",jsonObject.get("content"));
+                    items.put("support", "");
+                    paramsList.add(items.toString());
+                }
+            }
+            return new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
         }
 
         return ajaxResult;

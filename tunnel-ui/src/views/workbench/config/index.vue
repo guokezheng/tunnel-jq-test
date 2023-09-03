@@ -366,7 +366,7 @@
                     <span>方向：{{ actuatorCKItem.eqDirection }}</span>
                   </div>
 
-                  <template>
+                  <!-- <template>
                     <div
                       style="
                         width: 1950px;
@@ -384,7 +384,7 @@
                         class="robotAnimation"
                       />
                     </div>
-                  </template>
+                  </template> -->
                   <!--      爆炸效果图       :style="{ top:10 +'px',left:value[key].left+ +'px',right:value[key].right+ +'px',width: 48+'px',height:48+'px' }"   -->
                   <div
                     class="accident"

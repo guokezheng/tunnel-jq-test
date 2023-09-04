@@ -549,7 +549,7 @@
                               item.eqTunnelId == 'JQ-JiNan-WenZuBei-JLY') ||
                             (item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
                               item.eqDirection == 1 &&
-                              item.associated_device_id == 1)
+                              item.associated_device_id == 2)
                               ? 'scale(-1,1)'
                               : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
                                 item.eqDirection == 2 &&
@@ -4825,9 +4825,9 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              setInterval(() => {
-                this.getRobot();
-              }, 2000);
+              // setInterval(() => {
+              //   this.getRobot();
+              // }, 2000);
               // 匹配设备方向
               listDevices().then((data) => {
                 // console.log(data, "设备表");

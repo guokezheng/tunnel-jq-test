@@ -222,13 +222,15 @@ public class BoardController extends BaseController {
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
         if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
             Object object = nowContentMap.get(deviceId.toString());
-            JSONObject jsonObject = JSONObject.parseObject(object.toString());
             List<String> paramsList = new ArrayList<String>();
-            if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
-                JSONObject items = new JSONObject();
-                items.put("content",jsonObject.get("content"));
-                items.put("support", "");
-                paramsList.add(items.toString());
+            if(object != null && !"".equals(object)){
+                JSONObject jsonObject = JSONObject.parseObject(object.toString());
+                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
+                    JSONObject items = new JSONObject();
+                    items.put("content",jsonObject.get("content"));
+                    items.put("support", "");
+                    paramsList.add(items.toString());
+                }
             }
             return new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
         }
@@ -275,12 +277,15 @@ public class BoardController extends BaseController {
             JSONObject items = new JSONObject();
             if(paramsList.size() == 0){
                 Object object = nowContentMap.get(deviceId.toString());
-                JSONObject jsonObject = JSONObject.parseObject(object.toString());
-                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
-                    items.put("content",jsonObject.get("content"));
-                    items.put("support", "");
-                    paramsList.add(items.toString());
+                if(object != null && !"".equals(object)){
+                    JSONObject jsonObject = JSONObject.parseObject(object.toString());
+                    if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
+                        items.put("content",jsonObject.get("content"));
+                        items.put("support", "");
+                        paramsList.add(items.toString());
+                    }
                 }
+
             }
             return new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
         }
@@ -1247,7 +1252,7 @@ public class BoardController extends BaseController {
         if(sdDevices == null || sdDevices.getAssociatedDeviceId() == null || "".equals(sdDevices.getAssociatedDeviceId())){
             return AjaxResult.error("设备不存在");
         }else {
-            return loadRealtimeInf(sdDevices.getAssociatedDeviceId());
+            return getBoardEditInfo(sdDevices.getAssociatedDeviceId());
         }
     }
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.IotDeviceAccess;
@@ -19,6 +20,7 @@ import com.tunnel.platform.controller.informationBoard.BoardController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,6 @@ public class VmsTask {
      * 定时检测一次情报板的状态
      */
     public void getVmsData() {
-
         List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceList(new SdIotDevice());
         for(int i=0;i<list.size();i++){
             SdIotDevice iotDevice = list.get(i);
@@ -115,9 +116,11 @@ public class VmsTask {
             } catch (Exception e) {
                 iotDevice.setDeviceStatus("1");
                 sdIotDeviceService.updateIotDevice(iotDevice);
-                device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
-                device.setEqStatusTime(new Date());
-                sdDevicesService.updateSdDevices(device);
+                if(device != null){
+                    device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+                    device.setEqStatusTime(new Date());
+                    sdDevicesService.updateSdDevices(device);
+                }
             }
         }
 
@@ -137,5 +140,10 @@ public class VmsTask {
             sdDeviceData1.setCreateTime(DateUtils.getNowDate());
             deviceDataMapper.insertSdDeviceData(sdDeviceData1);
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        getVmsData();
     }
 }

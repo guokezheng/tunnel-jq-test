@@ -64,13 +64,14 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
      */
     @Override
     public void queryDeviceData(SdDevices sdDevices,String topicPrefix) {
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
         jsonObject.put("sn",externalDeviceId);
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", getActionId());
-        mqttGateway.sendToMqtt(topicPrefix+"{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt(topicPrefix+"{"+ctrlSn+"}",jsonObject.toJSONString());
     }
 
     /**

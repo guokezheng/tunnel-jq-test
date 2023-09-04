@@ -94,6 +94,7 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
 
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
@@ -103,7 +104,7 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/trafficLight/runStatus/{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/trafficLight/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -208,32 +209,32 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         //00：关闭，01：红灯，02：绿灯，03：黄灯，04：左转绿灯，FF：故障
         String status = "";
         switch(mappingStatus){
-            case "00":
+            case "trafficLight_00":
                 status = "4";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "01":
+            case "trafficLight_01":
                 status = "2";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "02":
+            case "trafficLight_02":
                 status = "1";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "03":
+            case "trafficLight_03":
                 status = "3";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "04":
+            case "trafficLight_04":
                 status = "5";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "FF":
+            case "trafficLight_FF":
                 //故障处理
                 String deviceId = sdDevices.getEqId();
                 sdDevicesService.updateFaultStatus(deviceId,false);
@@ -255,22 +256,22 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         //00：关闭，01：红灯，02：绿灯，03：黄灯，04：左转绿灯，FF：故障
         switch (status){
             case "1":
-                mappingStatus = "02";
+                mappingStatus = "trafficLight_02";
                 break;
             case "2":
-                mappingStatus = "01";
+                mappingStatus = "trafficLight_01";
                 break;
             case "3":
-                mappingStatus = "03";
+                mappingStatus = "trafficLight_03";
                 break;
             case "4":
-                mappingStatus = "00";
+                mappingStatus = "trafficLight_00";
                 break;
             case "5":
-                mappingStatus = "04";
+                mappingStatus = "trafficLight_04";
                 break;
             default:
-                mappingStatus = "FF";
+                mappingStatus = "trafficLight_FF";
                 break;
         }
         return mappingStatus;

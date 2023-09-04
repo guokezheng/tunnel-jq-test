@@ -429,6 +429,17 @@ sso:
   generalTokenUrl: ${sso.url}/auth/client/token?appId=${sso.appId}&clientSecret=${sso.clientSecret}
   #智慧大脑单点登录跳转高速云级平台时，如果没有对应的用户，仍然可以进入隧道平台，使用此默认账号登录隧道平台
   defaultUser: jlyadmin
+  # 零碳大屏
+  zeroUrl: http://10.166.154.213:30001
+  # 零碳大屏登录获取token
+  zeroToken: ${sso.zeroUrl}/auth/user/login
+  # 零碳大屏获取code
+  zeroCode: ${sso.zeroUrl}/sys/user/auth/code
+  # 零碳大屏用户名
+  zeroName: admin
+  # 零碳大屏密码
+  zeroPassword: Sdhs@123456a?
+
 
 device:
   hongmeng:

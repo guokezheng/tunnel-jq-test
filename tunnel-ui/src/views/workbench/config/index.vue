@@ -5002,6 +5002,7 @@ export default {
                   "39",
                   "48",
                   "41",
+                  "47"
                 ];
 
                 if (arr.includes(deviceData.eqType)) {

@@ -155,6 +155,10 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         JSONObject jsonObject = JSONObject.parseObject(payload);
         String mappingStatus = String.valueOf(jsonObject.get("rdRunStatus"));
         updateRunStatus(sdDevices,mappingStatus);
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

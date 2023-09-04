@@ -1,6 +1,8 @@
 package com.tunnel.platform.service.deviceControl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.strategy.factory.DeviceDataStrategyFactory;
@@ -44,6 +46,7 @@ public class HongMengMqttControl implements GeneralControlBean {
      */
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+        int controlState = Integer.valueOf(OperationLogEnum.STATE_ERROR.getCode());
         String eqType = String.valueOf(sdDevices.getEqType());
         boolean isopen = commonControlService.queryAnalogControlConfig();
         if (isopen) {
@@ -53,10 +56,16 @@ public class HongMengMqttControl implements GeneralControlBean {
             return ajaxResult;
         }
 
-        //实际控制设备
-        HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
-        AjaxResult ajaxResult = hongMengMqttService.deviceControl(map,sdDevices);
-        return ajaxResult;
+        String eqStatus = sdDevices.getEqStatus();
+        if(DevicesStatusEnum.DEVICE_ON_LINE.getCode().equals(eqStatus)){
+            //在线，可以控制设备
+            //实际控制设备
+            HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
+            AjaxResult ajaxResult = hongMengMqttService.deviceControl(map,sdDevices);
+            return ajaxResult;
+        }
+
+        return AjaxResult.success(controlState);
     }
 
     /**

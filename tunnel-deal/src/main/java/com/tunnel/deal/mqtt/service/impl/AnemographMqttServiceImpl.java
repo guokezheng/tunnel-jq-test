@@ -100,6 +100,10 @@ public class AnemographMqttServiceImpl implements HongMengMqttService {
         //修改设备实时状态
         sdDeviceDataService.updateDeviceData(sdDevices,windSpeed, (long) DevicesTypeItemEnum.FENG_SU.getCode());
         sdDeviceDataService.updateDeviceData(sdDevices,windDirection, (long) DevicesTypeItemEnum.FENG_XIANG.getCode());
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

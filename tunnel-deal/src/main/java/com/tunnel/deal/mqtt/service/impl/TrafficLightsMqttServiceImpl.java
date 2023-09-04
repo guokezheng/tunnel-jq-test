@@ -160,6 +160,10 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         JSONObject jsonObject = JSONObject.parseObject(payload);
         String mappingStatus = String.valueOf(jsonObject.get("tlRunStatus"));
         updateRunStatus(sdDevices,mappingStatus);
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

@@ -45,4 +45,11 @@ public interface HongMengMqttCommonService {
      */
     void updateDeviceStatus(String status);
 
+
+    /**
+     * 设备掉线检测数据缓存
+     * @param deviceId 设备ID
+     */
+    void setRedisCacheDeviceStatus(String deviceId);
+
 }

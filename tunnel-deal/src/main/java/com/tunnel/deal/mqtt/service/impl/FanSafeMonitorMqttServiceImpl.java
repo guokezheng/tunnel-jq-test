@@ -119,6 +119,11 @@ public class FanSafeMonitorMqttServiceImpl implements HongMengMqttService {
         sdDeviceDataService.updateDeviceData(sdDevices,slope, (long) DevicesTypeItemEnum.QING_XIE_ZHI.getCode());
         sdDeviceDataService.updateDeviceData(sdDevices,shakeAlaramSystem, (long) DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode());
         sdDeviceDataService.updateDeviceData(sdDevices,subsideSlopeAlaramSystem, (long) DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode());
+
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

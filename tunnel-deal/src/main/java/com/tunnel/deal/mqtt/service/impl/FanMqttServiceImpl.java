@@ -163,6 +163,10 @@ public class FanMqttServiceImpl implements HongMengMqttService
         JSONObject jsonObject = JSONObject.parseObject(payload);
         String mappingStatus = String.valueOf(jsonObject.get("fanRunStatus"));
         updateRunStatus(sdDevices,mappingStatus);
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

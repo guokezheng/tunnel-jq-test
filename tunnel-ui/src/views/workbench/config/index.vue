@@ -5136,9 +5136,9 @@ export default {
       // 3. get到currentTunnel对象 this.currentTunnel.name为空 是刷新 get管理站id 并赋值
       // 4. get到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
       if (!this.$cache.local.get("currentTunnel")) {
-        if (this.currentTunnel.name) {
+        //if (this.currentTunnel.name) {
           this.$cache.local.set("currentTunnel", JSON.stringify(obj));
-        }
+        //}
         this.$refs.deawerRef.init(item.tunnelId, item.lane);
         this.$refs.footerRef.init(item.tunnelId);
         this.currentTunnel.id = item.tunnelId;

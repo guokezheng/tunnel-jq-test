@@ -92,3 +92,12 @@ export function getrealTimeData(params) {
     params: params
   })
 }
+
+//获取零碳大屏url
+export function getZeroUrl(params){
+  return request({
+    url: '/zeroCarBon/getZeroUrl',
+    method: 'get',
+    params: params
+  })
+}

@@ -13,14 +13,27 @@
     </div>
 </template>
 <script>
+import {getZeroUrl} from "@/api/energy/api";
 export default {
     data() {
         return {
-            url:'http://10.166.132.26/carbon-ui/#/login?code=410282511eb5a65e2a956a31c616c881&&asideCollapse=false&&route=tunnel/home?pointId=000000s001637000001'
+            url:'',
+            currentTunnel: this.$cache.local.get("currentTunnel"),
         }
     },
     created() {
-        console.log("零碳大屏")
+        console.log("零碳大屏");
+        console.log(this.currentTunnel,"manageStationSelectmanageStationSelectmanageStationSelect");
+        
+        let param = {
+          tunnelId: JSON.parse(this.currentTunnel).tunnelId
+        }
+        console.log(param,"paramparamparam")
+        getZeroUrl(param).then((res) => {
+          if (res.code == "200") {
+            this.url = res.data;
+          }
+        })
     },
 }
 </script>

@@ -91,6 +91,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
 //        }
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
@@ -100,7 +101,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/laneIndicator/runStatus/{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/laneIndicator/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -199,32 +200,32 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //00：关闭，01：正绿反红，02：正红反绿，03：正红反红，04：转向，05：正绿反绿 FF：故障
         String status = "";
         switch(mappingStatus){
-            case "00":
+            case "laneIndicator_00":
                 status = "4";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "01":
+            case "laneIndicator_01":
                 status = "1";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "02":
+            case "laneIndicator_02":
                 status = "2";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "03":
+            case "laneIndicator_03":
                 status = "3";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "04":
+            case "laneIndicator_04":
                 status = "5";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "FF":
+            case "laneIndicator_FF":
                 //故障处理
                 String deviceId = sdDevices.getEqId();
                 sdDevicesService.updateFaultStatus(deviceId,false);
@@ -247,22 +248,22 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //00：关闭，01：正绿反红，02：正红反绿，03：正红反红，04：转向，05：正绿反绿 FF：故障
         switch (status){
             case "1":
-                mappingStatus = "01";
+                mappingStatus = "laneIndicator_01";
                 break;
             case "2":
-                mappingStatus = "02";
+                mappingStatus = "laneIndicator_02";
                 break;
             case "3":
-                mappingStatus = "03";
+                mappingStatus = "laneIndicator_03";
                 break;
             case "4":
-                mappingStatus = "00";
+                mappingStatus = "laneIndicator_00";
                 break;
             case "5":
-                mappingStatus = "04";
+                mappingStatus = "laneIndicator_04";
                 break;
             default:
-                mappingStatus = "FF";
+                mappingStatus = "laneIndicator_FF";
                 break;
         }
         return mappingStatus;

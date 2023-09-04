@@ -1,5 +1,6 @@
 package com.tunnel.deal.mqtt.config;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.mqtt.service.HongMengMqttService;
@@ -89,12 +90,23 @@ public class MqttInboundConfiguration {
             String payload = String.valueOf(message.getPayload());
 //            System.out.println("topic:"+topic);
             if(topic != null){
-                int start = topic.indexOf("{");
-                int end = topic.indexOf("}");
-                String externalId = topic.substring(start+1,end);
-                if("null".equals(externalId)){
-                    return;
-                }
+//                if(topic.contains("clientConnectedStatus")){
+//                    System.err.println("监听到啦："+topic);
+//                }
+//                if(topic.contains("disconnected") || topic.contains("connected")){
+//                    System.out.println("监听到啦："+topic);
+//                }
+//                if(!topic.contains("{")){
+//                    return;
+//                }
+//                int start = topic.indexOf("{");
+//                int end = topic.indexOf("}");
+//                String externalId = topic.substring(start+1,end);
+//                if("null".equals(externalId)){
+//                    return;
+//                }
+                JSONObject jsonObject = JSONObject.parseObject(payload);
+                String externalId = String.valueOf(jsonObject.get("sn"));
                 SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
                 if(sdDevices != null){
 //                    String eqId = sdDevices.getEqId();
@@ -103,7 +115,7 @@ public class MqttInboundConfiguration {
                     //解析数据
                     hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
                 }else{
-                    log.error("入站监听数据异常：监听到的数据没有匹配到设备");
+                    log.error("入站监听数据异常：监听到的数据没有匹配到设备：externalId="+externalId);
                 }
 
             }

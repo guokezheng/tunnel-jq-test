@@ -93,6 +93,7 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
 
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
@@ -102,7 +103,7 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/rollDoor/runStatus/{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/rollDoor/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -199,22 +200,22 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         //FF：故障
         String status = "";
         switch(mappingStatus){
-            case "00":
-                status = "2";
-                //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
-                break;
-            case "01":
-                status = "1";
-                //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
-                break;
-            case "02":
+            case "rollDoor_00":
                 status = "3";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "FF":
+            case "rollDoor_01":
+                status = "1";
+                //修改设备实时状态
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                break;
+            case "rollDoor_02":
+                status = "2";
+                //修改设备实时状态
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                break;
+            case "rollDoor_FF":
                 //故障处理
                 String deviceId = sdDevices.getEqId();
                 sdDevicesService.updateFaultStatus(deviceId,false);
@@ -238,13 +239,13 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         //02：卷帘门停止
         switch (status){
             case "1":
-                mappingStatus = "01";
+                mappingStatus = "rollDoor_01";
                 break;
             case "2":
-                mappingStatus = "02";
+                mappingStatus = "rollDoor_02";
                 break;
             case "3":
-                mappingStatus = "00";
+                mappingStatus = "rollDoor_00";
                 break;
             default:
 //                mappingStatus = "FF";

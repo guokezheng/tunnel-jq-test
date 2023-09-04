@@ -114,7 +114,7 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
         String ratio = Optional.ofNullable(map.get("ratio")).orElse("").toString();
 
         String[] array = {color,lightness,frequency,ratio};
-
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
@@ -124,7 +124,7 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/warnLightStrip/runStatus/{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/warnLightStrip/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
         return AjaxResult.success();
     }
 

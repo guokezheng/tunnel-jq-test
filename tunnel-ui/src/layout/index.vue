@@ -336,7 +336,7 @@ export default {
         "/map/deviceMonitor",
         "/map/trackPlayback",
         "/map/analyse",
-        "/energy/zeroCarbon",
+        "/zeroCarbon",
       ];
       if (arr.includes(path)) {
         return "none";

@@ -548,12 +548,29 @@ public class RobotController {
         return  AjaxResult.success(zhuoShiCorniceTunnelRobot.InitializeRobot(deviceId,list.get(0).getSystemUrl()));
     }
 
+    /**
+     * 工作台机器人
+     * @param deviceId
+     * @return
+     */
+    @GetMapping("/getWorkRobot")
+    public AjaxResult getWorkRobot(String deviceId){
+        ExternalSystem system = new ExternalSystem();
+        system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
+        List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
 
+        if(list.size() == 0){
+            return  AjaxResult.success("","");
+        }
 
+        StatusDto statusDto = zhuoShiCorniceTunnelRobot.GetStatus(deviceId,list.get(0).getSystemUrl());
 
+        if(statusDto != null){
+            return  AjaxResult.success(statusDto);
+        }
 
-
-
+        return  AjaxResult.success("","");
+    }
 
 
 

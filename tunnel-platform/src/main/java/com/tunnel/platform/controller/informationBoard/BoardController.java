@@ -1227,7 +1227,7 @@ public class BoardController extends BaseController {
             if(Integer.valueOf(ajaxResult.get("code").toString()) == 200){
                 return AjaxResult.success();
             }else {
-                return AjaxResult.error();
+                return AjaxResult.error(ajaxResult.get("msg").toString());
             }
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);

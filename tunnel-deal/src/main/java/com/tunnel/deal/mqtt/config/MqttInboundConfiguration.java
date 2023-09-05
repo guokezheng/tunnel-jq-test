@@ -1,6 +1,8 @@
 package com.tunnel.deal.mqtt.config;
 
+import cn.hutool.json.JSONObject;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.mqtt.service.HongMengMqttService;
 import com.tunnel.deal.mqtt.strategy.HongMengMqttStrategyFactory;
@@ -45,7 +47,8 @@ public class MqttInboundConfiguration {
     @Autowired
     private HongMengMqttStrategyFactory hongMengMqttStrategyFactory;
 
-
+    @Autowired
+    private SdDevicesMapper devicesMapper;
     /**
      * 配置client,监听的topic
      * @return
@@ -79,35 +82,49 @@ public class MqttInboundConfiguration {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
-//				System.out.println("message:"+message);
-//            System.out.println("----------------------");
-//            System.out.println("message:"+message.getPayload());
-//            System.out.println("PacketId:"+message.getHeaders().getId());
-//            System.out.println("Qos:"+message.getHeaders().get(MqttHeaders.QOS));
 
             String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+            String sd = "------------"+topic;
+            log.info(sd);
             String payload = String.valueOf(message.getPayload());
-//            System.out.println("topic:"+topic);
+
+            //判断topic 不等于null
             if(topic != null){
-                int start = topic.indexOf("{");
-                int end = topic.indexOf("}");
-                String externalId = topic.substring(start+1,end);
-                if("null".equals(externalId)){
-                    return;
-                }
-                SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
-                if(sdDevices != null){
+                // 非系统topic处理逻辑
+                if(!topic.contains("$SYS/brokers")){
+                    int start = topic.indexOf("{");
+                    int end = topic.indexOf("}");
+                    String externalId = topic.substring(start+1,end);
+                    if("null".equals(externalId)){
+                        return;
+                    }
+                    SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
+                    if(sdDevices != null){
 //                    String eqId = sdDevices.getEqId();
-                    String eqType = String.valueOf(sdDevices.getEqType());
-                    HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
-                    //解析数据
-                    hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
-                }else{
-                    log.error("入站监听数据异常：监听到的数据没有匹配到设备");
+                        String eqType = String.valueOf(sdDevices.getEqType());
+                        HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
+                        //解析数据
+                        hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
+                    }else{
+                        log.error("入站监听数据异常：监听到的数据没有匹配到设备");
+                    }
                 }
+//                上线下线 占时先注释
+//                else{//系统topic判断设备上线下线
+//                    // 将字符串转换为JSONObject
+//                    JSONObject json = new JSONObject(payload);
+//                    String clientid = json.get("clientid").toString();
+//                    //设备上线
+//                    if(topic.contains("connected")){
+//                        devicesMapper.updateSdDevicesBatch(clientid, "1");
+//                    }
+//                    //设备下线
+//                    if(topic.contains("disconnected")){
+//                        devicesMapper.updateSdDevicesBatch(clientid, "2");
+//                    }
+//                }
 
             }
-
         };
     }
 

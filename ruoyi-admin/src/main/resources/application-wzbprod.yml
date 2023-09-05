@@ -68,7 +68,7 @@ spring:
 
 
 mqtt:
-  #emqx地址+ MQTT协议端⼝ 1883 映射外网地址
+  #emqx地址+ MQTT协议端⼝ 1883 映射外网地址$SYS/brokers/+/clients/#
   url: tcp://10.7.179.15:1883
   clientInId: mqtt_hs_client_in
   clientOutId: mqtt_hs_client_out

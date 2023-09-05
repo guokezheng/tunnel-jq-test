@@ -375,8 +375,8 @@ export default {
   color: #ffdb82 !important;
   // text-shadow: 1px 1px white;
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
-  background-repeat: no-repeat;
-  background-position: 70% 52%;
+  background-repeat: no-repeat !important;
+  background-position: 70% 52% !important;
 }
 .theme-dark #app .topNav_head .workbenchNavbar .router-link-active {
   color: #ffdb82 !important;

@@ -105,18 +105,35 @@ public class MqttInboundConfiguration {
 //                if("null".equals(externalId)){
 //                    return;
 //                }
-                JSONObject jsonObject = JSONObject.parseObject(payload);
-                String externalId = String.valueOf(jsonObject.get("sn"));
-                SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
-                if(sdDevices != null){
+                if(!topic.contains("$SYS/brokers")){
+                    JSONObject jsonObject = JSONObject.parseObject(payload);
+                    String externalId = String.valueOf(jsonObject.get("sn"));
+                    SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
+                    if(sdDevices != null){
 //                    String eqId = sdDevices.getEqId();
-                    String eqType = String.valueOf(sdDevices.getEqType());
-                    HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
-                    //解析数据
-                    hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
-                }else{
-                    log.error("入站监听数据异常：监听到的数据没有匹配到设备：externalId="+externalId);
+                        String eqType = String.valueOf(sdDevices.getEqType());
+                        HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
+                        //解析数据
+                        hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
+                    }else{
+                        log.error("入站监听数据异常：监听到的数据没有匹配到设备：externalId="+externalId);
+                    }
                 }
+                //                上线下线 占时先注释
+//                else{//系统topic判断设备上线下线
+//                    // 将字符串转换为JSONObject
+//                    JSONObject json = new JSONObject(payload);
+//                    String clientid = json.get("clientid").toString();
+//                    //设备上线
+//                    if(topic.contains("connected")){
+//                        devicesMapper.updateSdDevicesBatch(clientid, "1");
+//                    }
+//                    //设备下线
+//                    if(topic.contains("disconnected")){
+//                        devicesMapper.updateSdDevicesBatch(clientid, "2");
+//                    }
+//                }
+
 
             }
 

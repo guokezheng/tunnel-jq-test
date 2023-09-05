@@ -100,6 +100,11 @@ public class CoViMqttServiceImpl implements HongMengMqttService {
         //修改设备实时状态
         sdDeviceDataService.updateDeviceData(sdDevices,co, (long) DevicesTypeItemEnum.CO.getCode());
         sdDeviceDataService.updateDeviceData(sdDevices,vi, (long) DevicesTypeItemEnum.VI.getCode());
+
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

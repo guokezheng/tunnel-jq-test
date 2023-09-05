@@ -130,7 +130,7 @@ public class HongMengControllerMqttServiceImpl implements HongMengMqttService{
 //                "tickCount": "50",
 //                "cpuTemp": "60"
 //        }
-
+        String deviceId = sdDevices.getEqId();
 
         JSONObject jsonObject = JSONObject.parseObject(payload);
 //        cpuUsage	CPU使用率	String 		单位：%
@@ -144,8 +144,8 @@ public class HongMengControllerMqttServiceImpl implements HongMengMqttService{
         //        cpuTemp	cpu核心工作温度	String 		单位：°C
         String cpuTemp = String.valueOf(jsonObject.get("cpuTemp"));
 
-        //修改设备实时状态
-        // todo
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

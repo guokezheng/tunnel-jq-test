@@ -1,18 +1,22 @@
 package com.tunnel.deal.mqtt.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
+import com.zc.common.constant.RedisKeyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +37,11 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
 
     @Autowired
     private TcpClientGeneralService tcpClientGeneralService;
+
+    /**
+     * Redis缓存工具类
+     **/
+    private RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
 
     private static final Logger log = LoggerFactory.getLogger(HongMengMqttCommonServiceImpl.class);
 
@@ -55,13 +64,14 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
      */
     @Override
     public void queryDeviceData(SdDevices sdDevices,String topicPrefix) {
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
         jsonObject.put("sn",externalDeviceId);
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", getActionId());
-        mqttGateway.sendToMqtt(topicPrefix+"{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt(topicPrefix+"{"+ctrlSn+"}",jsonObject.toJSONString());
     }
 
     /**
@@ -146,6 +156,18 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         List<SdDevices> list = tcpClientGeneralService.getDevicesList(protocolCode, null);
         List<String> idList = list.stream().map(SdDevices::getEqId).collect(Collectors.toList());
         sdDevicesService.updateDeviceStatusBatch(idList,status);
+    }
+
+
+    /**
+     * 设备掉线检测数据缓存
+     * @param deviceId 设备ID
+     */
+    @Override
+    public void setRedisCacheDeviceStatus(String deviceId){
+        //定时任务5秒钟请求一次状态，如果获取返回信息，判定设备离线
+        Integer expireTime = 5;
+        redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }
 
 }

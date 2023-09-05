@@ -1679,7 +1679,7 @@
       .submenu-title-noDropdown.el-menu-item,
       .nest-menu .el-submenu__title {
         &:hover {
-          background-color: rgba(0, 0, 0, 0.06) !important;
+          background-color: rgba(0, 0, 0, 0) !important;
           border-radius: 8px;
           -webkit-border-radius: 8px;
           -moz-border-radius: 8px;
@@ -1936,7 +1936,15 @@
       border: solid 1px white;
 
     }
-    }
+  }
+  .topNav_head_center{
+    background-image:url(../images/head_bg_center.png);
+    background-size: 100% 100%;
+    height:0.385rem;
+    // background-color: #010913;
+    position: relative;
+    // z-index: 1;
+  }
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
       background: linear-gradient(177deg, #00ACED, #0079DB);

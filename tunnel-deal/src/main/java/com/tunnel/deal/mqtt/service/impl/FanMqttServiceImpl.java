@@ -93,6 +93,7 @@ public class FanMqttServiceImpl implements HongMengMqttService
         //}
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        String ctrlSn = sdDevices.getFEqId();
         String externalDeviceId = sdDevices.getExternalDeviceId();
         JSONObject jsonObject = new JSONObject();
         //映射设备Id
@@ -102,7 +103,7 @@ public class FanMqttServiceImpl implements HongMengMqttService
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/fan/alterRunStatus/{"+externalDeviceId+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/fan/alterRunStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -119,13 +120,7 @@ public class FanMqttServiceImpl implements HongMengMqttService
 //        }
 
         hongMengMqttCommonService.queryDeviceData(sdDevices,"rhy/iot/control/fan/getRunStatus/");
-//        String externalDeviceId = sdDevices.getExternalDeviceId();
-//        JSONObject jsonObject = new JSONObject();
-//        //映射设备Id
-//        jsonObject.put("sn",externalDeviceId);
-//        //与回复指令对应，使用时间戳
-//        jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
-//        mqttGateway.sendToMqtt("rhy/iot/control/fan/getRunStatus/{"+externalDeviceId+"}",jsonObject.toJSONString());
+
 
     }
 
@@ -163,6 +158,10 @@ public class FanMqttServiceImpl implements HongMengMqttService
         JSONObject jsonObject = JSONObject.parseObject(payload);
         String mappingStatus = String.valueOf(jsonObject.get("fanRunStatus"));
         updateRunStatus(sdDevices,mappingStatus);
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**
@@ -188,7 +187,6 @@ public class FanMqttServiceImpl implements HongMengMqttService
 
     /**
      * 获得运行状态映射的状态
-     *  todo 后期改为从配置表中读取
      * @param status
      * @return
      */
@@ -197,16 +195,16 @@ public class FanMqttServiceImpl implements HongMengMqttService
         //00：停止，01：正转，02：反转，FF：故障
         switch (status){
             case "1":
-                mappingStatus = "01";
+                mappingStatus = "fan_01";
                 break;
             case "2":
-                mappingStatus = "02";
+                mappingStatus = "fan_02";
                 break;
             case "3":
-                mappingStatus = "00";
+                mappingStatus = "fan_00";
                 break;
             default:
-                mappingStatus = "FF";
+                mappingStatus = "fan_FF";
                 break;
         }
         return mappingStatus;
@@ -226,22 +224,22 @@ public class FanMqttServiceImpl implements HongMengMqttService
 
         String status = "";
         switch(mappingStatus){
-            case "01":
+            case "fan_01":
                 status = "1";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "02":
+            case "fan_02":
                 status = "2";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "00":
+            case "fan_00":
                 status = "3";
                 //修改设备实时状态
                 sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
                 break;
-            case "FF":
+            case "fan_FF":
                 //故障处理
                 String deviceId = sdDevices.getEqId();
                 sdDevicesService.updateFaultStatus(deviceId,false);

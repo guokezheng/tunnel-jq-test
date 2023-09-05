@@ -41,6 +41,13 @@ public class RedisKeyConstants
      */
     public static final String IOT_GROUP = "iot:group";
 
+
+    /**
+     * 隧道鸿蒙控制器状态缓存Key
+     */
+    public static String HONG_MENG_MQTT_STATUS = "sd:hongMengMqttDeviceStatus";
+
+
     /**
      * 获取设备功能值 key
      */

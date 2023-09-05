@@ -347,31 +347,34 @@
                     }"
                   ></div>
                   <!-- 测控执行器 -->
-                    <div class="actuatorCK" 
-                      v-show="selectBigType.index == 0 && selectedIconList.length>0"
-                      @click="openStateSwitch(actuatorCKItem)" 
-                      @mousemove="openTooltip2()"
-                      @mouseleave="closeTooltip2()">
-                      <img src="../../../assets/logo/equipment_log/测控执行器-离线.png"/>
-                    </div>
-                    <div
-                      class="actuatorCKTooltipBox"
-                      v-if="actuatorTooltip"
-                    >
-                      <span>名称：{{ actuatorCKItem.eqName }}</span
-                      ><br />
-                      <span>方向：{{ actuatorCKItem.eqDirection }}</span>
-                    </div>
+                  <div
+                    class="actuatorCK"
+                    v-show="
+                      selectBigType.index == 0 && selectedIconList.length > 0
+                    "
+                    @click="openStateSwitch(actuatorCKItem)"
+                    @mousemove="openTooltip2()"
+                    @mouseleave="closeTooltip2()"
+                  >
+                    <img
+                      src="../../../assets/logo/equipment_log/测控执行器-离线.png"
+                    />
+                  </div>
+                  <div class="actuatorCKTooltipBox" v-if="actuatorTooltip">
+                    <span>名称：{{ actuatorCKItem.eqName }}</span
+                    ><br />
+                    <span>方向：{{ actuatorCKItem.eqDirection }}</span>
+                  </div>
 
-                  <template>
+                  <!-- <template>
                     <div
                       style="
-                        width: 80%;
+                        width: 1950px;
                         height: 15px;
                         border-bottom: 4px #ccc solid;
                         position: relative;
                         top: 242px;
-                        left: 166px;
+                        left: 214px;
                       "
                       v-show="robotShow"
                       @click="clickRobot"
@@ -380,11 +383,14 @@
                         src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
                       />
-                      
                     </div>
-                  </template>
+                  </template> -->
                   <!--      爆炸效果图       :style="{ top:10 +'px',left:value[key].left+ +'px',right:value[key].right+ +'px',width: 48+'px',height:48+'px' }"   -->
-                  <div class="accident" v-for="itme in carActionExplodeList">
+                  <div
+                    class="accident"
+                    v-for="(itme, index) in carActionExplodeList"
+                    :key="index"
+                  >
                     <!--                  <svg :style="{-->
                     <!--                      right: itme.right,-->
                     <!--                      left: itme.left,-->
@@ -538,8 +544,21 @@
                             item.eqType || item.eqType == 0 ? 'pointer' : '',
                           border: item.click == true ? 'solid 2px #09C3FC' : '',
                           transform:
-                            item.eqType == 23 && item.eqDirection == 2
+                            (item.eqType == 23 &&
+                              item.eqDirection == 2 &&
+                              item.eqTunnelId == 'JQ-JiNan-WenZuBei-JLY') ||
+                            (item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              item.eqDirection == 1 &&
+                              item.associated_device_id == 2)
                               ? 'scale(-1,1)'
+                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                                item.eqDirection == 2 &&
+                                item.associated_device_id == 2
+                              ? 'scale(1,-1)'
+                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                                item.eqDirection == 2 &&
+                                item.associated_device_id == 1
+                              ? 'scale(-1,-1)'
                               : '',
                         }"
                         :width="item.iconWidth"
@@ -736,11 +755,15 @@
                         class="labelClass labelClass7"
                         v-if="item.eqType == 7"
                       >
-                        <span v-if="selectBigType.index == 0 || selectBigType.index == 6">
+                        <span
+                          v-if="
+                            selectBigType.index == 0 || selectBigType.index == 6
+                          "
+                        >
                           {{ item.num }}
                         </span>
                         <span v-if="selectBigType.index == 4">
-                          {{item.electricity}}
+                          {{ item.electricity }}
                         </span>
                       </label>
                       <label
@@ -748,11 +771,15 @@
                         class="labelClass labelClass9"
                         v-if="item.eqType == 9"
                       >
-                        <span v-if="selectBigType.index == 0 || selectBigType.index == 6">
+                        <span
+                          v-if="
+                            selectBigType.index == 0 || selectBigType.index == 6
+                          "
+                        >
                           {{ item.num }}
                         </span>
                         <span v-if="selectBigType.index == 4">
-                          {{item.electricity}}
+                          {{ item.electricity }}
                         </span>
                       </label>
                       <label
@@ -1922,7 +1949,7 @@ import {
   hasListByBigType,
   loadPicture,
 } from "@/api/equipment/type/api.js";
-import {getCategoryTree, manualControlInfo} from "@/api/event/strategy";
+import { getCategoryTree, manualControlInfo } from "@/api/event/strategy";
 import { getTemplateInfo } from "@/api/board/template.js";
 import {
   listTunnels,
@@ -1940,6 +1967,7 @@ import {
   getJlyTunnel,
   energyConsumptionDetection,
   getBoardContent,
+  getWorkRobot,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -2085,21 +2113,22 @@ export default {
     comDeawer, //抽屉
     comFooter, //底部echarts
     comXfp,
-    jointControlStrategy
+    jointControlStrategy,
   },
 
   data() {
     return {
-      refresh:0,
-      showScreenEqName:false,
-      actuatorTooltip:false,
-      actuatorCKItem:{
-        eqType:47,
-        eqId:"JQ-JiNan-WenZuBei-MJY-HMC-083",
-        eqName:"测控执行器-83",
-        eqDirection:'济南方向'
+      robotId: "", //机器人ID
+      refresh: 0,
+      showScreenEqName: false,
+      actuatorTooltip: false,
+      actuatorCKItem: {
+        eqType: 47,
+        eqId: "JQ-JiNan-WenZuBei-MJY-HMC-048",
+        eqName: "鸿蒙控制器-48",
+        eqDirection: "济南方向",
       },
-      parentScreenLeft:0,
+      parentScreenLeft: 0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -2924,7 +2953,7 @@ export default {
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
     window.addEventListener("scroll", this.mouseSrollAuto, true);
-    
+
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
@@ -2963,17 +2992,17 @@ export default {
     //   this.openStateSwitch(this.actuatorCKItem)
     // },
     // 关闭级联选择器时 把打开的二级菜单折叠
-    elCascaderOnClick(f){
-      if(!f){
-        ++this.refresh
+    elCascaderOnClick(f) {
+      if (!f) {
+        ++this.refresh;
       }
     },
-    mouseSrollAuto(e){
+    mouseSrollAuto(e) {
       // console.log(e.target.scrollLeft,"e.target.scrollLeft")
-      if(e.target.scrollLeft > 0){
-        this.resetCanvasFlag = true
-      }else{
-        this.resetCanvasFlag = false
+      if (e.target.scrollLeft > 0) {
+        this.resetCanvasFlag = true;
+      } else {
+        this.resetCanvasFlag = false;
       }
     },
     // 管理站级联回显选中效果
@@ -3118,7 +3147,7 @@ export default {
       );
     },
     // beforeDestroy() {
-      
+
     // },
     bodyCloseMenus(e) {
       let self = this;
@@ -3183,15 +3212,14 @@ export default {
     },
     otherClose(e) {
       if (this.treeShow == true) {
-        if (!this.$refs.treeBox.contains(e.target)){
+        if (!this.$refs.treeBox.contains(e.target)) {
           this.treeShow = false;
-            // 点击输入框 折叠之前打开的树形菜单
+          // 点击输入框 折叠之前打开的树形菜单
           const nodes = this.$refs.tree.store._getAllNodes();
           nodes.forEach((item) => {
             item.expanded = false;
           });
-      }
-
+        }
       }
     },
     treeClear() {
@@ -3242,11 +3270,11 @@ export default {
     async richangUpdate(row) {
       let params = row;
       const loading = this.$loading({
-          lock: true,
-          text: "Loading",
-          spinner: "el-icon-loading",
-          background: "rgba(0, 0, 0, 0.7)",
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
         params.manualControl = response.rows;
@@ -3254,7 +3282,11 @@ export default {
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
-          this.$set(params.manualControl[i], "value", params.manualControl[i].equipments.split(","));
+          this.$set(
+            params.manualControl[i],
+            "value",
+            params.manualControl[i].equipments.split(",")
+          );
           // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
@@ -3277,14 +3309,16 @@ export default {
           }
         }
       });
-      await manualControlInfo(params).then((res) => {
-        loading.close();
-        if (res.code == 200) {
-          this.$modal.msgSuccess("执行成功");
-        }
-      }).catch(()=>{
-        loading.close();
-      });
+      await manualControlInfo(params)
+        .then((res) => {
+          loading.close();
+          if (res.code == 200) {
+            this.$modal.msgSuccess("执行成功");
+          }
+        })
+        .catch(() => {
+          loading.close();
+        });
     },
     richanghandleUpdate(row) {
       let that = this;
@@ -3293,9 +3327,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-        
         that.richangUpdate(row);
-        
       });
     },
     directionFormat(row, column) {
@@ -3396,11 +3428,11 @@ export default {
         } else if (type == "content") {
           return "山东高速欢迎您";
         } else if (type == "array") {
-            let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
-            return array;
-        }else if (type == "content") {
-            return "山东高速欢迎您";
-      }
+          let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
+          return array;
+        } else if (type == "content") {
+          return "山东高速欢迎您";
+        }
       }
     },
     formatNum(num, length) {
@@ -3621,67 +3653,69 @@ export default {
       if (this.screenEqName) {
         let bigType = "";
         let param = document.getElementsByClassName("vehicleLane");
-        for (var i=0;i< this.selectedIconList.length;i++) {
-          let item = this.selectedIconList[i]
-            if (item.eqName == this.screenEqName) {
-              // console.log(item.eqName,"item.eqName")
-              bigType = item.bigType;
-              this.showTooltipIndex = i
-              this.showScreenEqName = true
-              setTimeout(() => {
-                this.showTooltipIndex = 9999
-                this.showScreenEqName = false
-              }, 2000);
-              if (
-                this.currentTunnel.lane.width - item.position.left > 864 &&
-                item.position.left > 864
-              ) {
+        for (var i = 0; i < this.selectedIconList.length; i++) {
+          let item = this.selectedIconList[i];
+          if (item.eqName == this.screenEqName) {
+            // console.log(item.eqName,"item.eqName")
+            bigType = item.bigType;
+            this.showTooltipIndex = i;
+            this.showScreenEqName = true;
+            setTimeout(() => {
+              this.showTooltipIndex = 9999;
+              this.showScreenEqName = false;
+            }, 2000);
+            if (
+              this.currentTunnel.lane.width - item.position.left > 864 &&
+              item.position.left > 864
+            ) {
               // 中间
-                param[0].scrollLeft = (item.position.left - 864) / 100 * this.zoom;
-              
-              } else if (item.position.left < 864) {
-                param[0].scrollLeft = 0;
-              } else if (
-                this.currentTunnel.lane.width - item.position.left <
-                864
-              ) {
+              param[0].scrollLeft =
+                ((item.position.left - 864) / 100) * this.zoom;
+            } else if (item.position.left < 864) {
+              param[0].scrollLeft = 0;
+            } else if (
+              this.currentTunnel.lane.width - item.position.left <
+              864
+            ) {
               // 右边
-              param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) * ((this.zoom / 100 ) * 2) ;
+              param[0].scrollLeft =
+                (this.currentTunnel.lane.width - 1728) *
+                ((this.zoom / 100) * 2);
               // console.log(param[0].scrollLeft,"param[0].scrollLeft")
-              }
-              if(this.zoom != 100){
-                if(item.position.top <300){
-                  param[0].scrollTop = 0
-                }else{
-                  param[0].scrollTop = 580
-                }
-              }
-              if (
-                item.position.left <= this.currentTunnel.lane.width - 100 &&
-                item.position.top <= 450
-              ) {
-                item.tooltipType = 1;
-              } else if (
-                item.position.left > this.currentTunnel.lane.width - 100 &&
-                item.position.top <= 450
-              ) {
-                item.tooltipType = 2;
-              } else if (
-                item.position.left <= this.currentTunnel.lane.width - 100 &&
-                item.position.top > 450
-              ) {
-                item.tooltipType = 3;
-              } else {
-                item.tooltipType = 4;
-              }
-              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-              item.click = true;
-            } else {
-              item.click = false;
             }
-          if (param[0].scrollLeft != 0) {
-                this.resetCanvasFlag = true;
+            if (this.zoom != 100) {
+              if (item.position.top < 300) {
+                param[0].scrollTop = 0;
+              } else {
+                param[0].scrollTop = 580;
               }
+            }
+            if (
+              item.position.left <= this.currentTunnel.lane.width - 100 &&
+              item.position.top <= 450
+            ) {
+              item.tooltipType = 1;
+            } else if (
+              item.position.left > this.currentTunnel.lane.width - 100 &&
+              item.position.top <= 450
+            ) {
+              item.tooltipType = 2;
+            } else if (
+              item.position.left <= this.currentTunnel.lane.width - 100 &&
+              item.position.top > 450
+            ) {
+              item.tooltipType = 3;
+            } else {
+              item.tooltipType = 4;
+            }
+            // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+            item.click = true;
+          } else {
+            item.click = false;
+          }
+          if (param[0].scrollLeft != 0) {
+            this.resetCanvasFlag = true;
+          }
         }
         if (bigType.includes("0")) {
           this.displayControl(0, "全部设备");
@@ -3700,21 +3734,21 @@ export default {
       this.$forceUpdate();
     },
     filterNode(value, data) {
-      if (!value){
-          // 点击输入框 折叠之前打开的树形菜单
+      if (!value) {
+        // 点击输入框 折叠之前打开的树形菜单
         const nodes = this.$refs.tree.store._getAllNodes();
         nodes.forEach((item) => {
           item.expanded = false;
         });
         return true;
       }
-      if(data.children && data.children.length>0){
-        for(let item of data.children){
-          if(item.label.indexOf(value) !== -1){
+      if (data.children && data.children.length > 0) {
+        for (let item of data.children) {
+          if (item.label.indexOf(value) !== -1) {
             return true;
           }
         }
-      }else{
+      } else {
         return data.label.indexOf(value) !== -1;
       }
       // if(data.label.indexOf(value) !== -1){
@@ -3840,8 +3874,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.eqTypeData = []
-      this.getEqType()
+      this.eqTypeData = [];
+      this.getEqType();
       this.dateRange = this.getPastTime();
       this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
@@ -3889,21 +3923,21 @@ export default {
         }
       });
       this.$forceUpdate();
-      if(!this.showScreenEqName){
+      if (!this.showScreenEqName) {
         this.showTooltipIndex = index;
       }
       // this.sensorDisabled(item);
     },
     closeTooltip(item) {
-      if(!this.showScreenEqName){
+      if (!this.showScreenEqName) {
         this.showTooltipIndex = 9999;
       }
     },
     openTooltip2(item, index) {
-      this.actuatorTooltip = true
+      this.actuatorTooltip = true;
     },
     closeTooltip2(item) {
-      this.actuatorTooltip = false
+      this.actuatorTooltip = false;
     },
     getDeptList() {
       var userDeptId = this.userDeptId;
@@ -3941,7 +3975,7 @@ export default {
     },
 
     checkData(obj, arr) {
-      console.log(arr, "arr");
+      // console.log(arr, "arr");
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.id);
         this.checkData(obj.children[0], arr);
@@ -3955,7 +3989,7 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(index,"index")
+      console.log(index, "index");
       if (index) {
         // 判断是否有缓存的管理站id
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
@@ -4296,31 +4330,33 @@ export default {
       let scrollContainer = document.querySelector(".vehicleLane");
       let dragContainer = document.querySelector(".content");
       let mouseDownScrollPosition = {
-            scrollLeft: scrollContainer.scrollLeft,
-            scrollTop: scrollContainer.scrollTop
+        scrollLeft: scrollContainer.scrollLeft,
+        scrollTop: scrollContainer.scrollTop,
+      };
+      //鼠标按下的位置坐标
+      let mouseDownPoint = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+      dragContainer.onmousemove = (e) => {
+        //鼠标滑动的实时距离
+        let dragMoveDiff = {
+          x: mouseDownPoint.x - e.clientX,
+          y: mouseDownPoint.y - e.clientY,
         };
-        //鼠标按下的位置坐标
-        let mouseDownPoint = {
-            x: e.clientX,
-            y: e.clientY
-        };
-        dragContainer.onmousemove = e => {
-            //鼠标滑动的实时距离
-            let dragMoveDiff = {
-                x: mouseDownPoint.x - e.clientX,
-                y: mouseDownPoint.y - e.clientY
-            };
-            
-            scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
-            scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
-            if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollLeft > 0){
-              this.resetCanvasFlag = true;
-            }
-        };
-        document.onmouseup = e => {
-            dragContainer.onmousemove = null;
-            document.onmouseup = null;
-        };
+
+        scrollContainer.scrollLeft =
+          mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
+        scrollContainer.scrollTop =
+          mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+        if (scrollContainer.scrollLeft > 0 || scrollContainer.scrollLeft > 0) {
+          this.resetCanvasFlag = true;
+        }
+      };
+      document.onmouseup = (e) => {
+        dragContainer.onmousemove = null;
+        document.onmouseup = null;
+      };
     },
     lightSwitchFunc() {
       this.getConfigKey("lightSwitch").then((response) => {
@@ -4774,9 +4810,9 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                // if(res.eqList[i].eqType == 23){
-                //   console.log(res.eqList[i],"0000000000000000000")
-                // }
+                if (res.eqList[i].eqType == 29) {
+                  this.robotId = res.eqList[i].eqId;
+                }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -4789,6 +4825,9 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              // setInterval(() => {
+              //   this.getRobot();
+              // }, 2000);
               // 匹配设备方向
               listDevices().then((data) => {
                 // console.log(data, "设备表");
@@ -4818,10 +4857,7 @@ export default {
                 "所有设备图标selectedIconList"
               );
               for (var item of that.selectedIconList) {
-                if (
-                  this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" &&
-                  item.eqType == 29
-                ) {
+                if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
                   this.robotShow = true;
                 } else {
                   this.robotShow = false;
@@ -4884,6 +4920,14 @@ export default {
     //   }
     //   return lane;
     // },
+    async getRobot() {
+      const param = {
+        deviceId: this.robotId,
+      };
+      await getWorkRobot(param).then((res) => {
+        // console.log(res, "机器人");
+      });
+    },
     /* 获取照明设备数据*/
     getLiPowerDevice() {
       getLiPowerDevices().then((response) => {
@@ -4938,10 +4982,29 @@ export default {
                 //   console.log(deviceData,"deviceData")
                 // }
                 let arr = [
-                  '5', '14', '17', '18', '19', '20', '21', '23', '24', '25', '28', '29', '32', '33', '35', '22',
-                  '40', '39', '48', '41',
+                  "5",
+                  "14",
+                  "17",
+                  "18",
+                  "19",
+                  "20",
+                  "21",
+                  "23",
+                  "24",
+                  "25",
+                  "28",
+                  "29",
+                  "32",
+                  "33",
+                  "35",
+                  "22",
+                  "40",
+                  "39",
+                  "48",
+                  "41",
+                  "47"
                 ];
-                
+
                 if (arr.includes(deviceData.eqType)) {
                   if (
                     // 摄像机之类的只有在线 离线 故障图标
@@ -4987,22 +5050,23 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
-                  
+
                   if (deviceData.eqStatus == "1") {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
-                      
                       if (this.eqTypeStateList[k].state == deviceData.state) {
                         // 照明图标后加数据
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {
                           // console.log(deviceData, "deviceData");
                           this.selectedIconList[j].num = deviceData.brightness;
-                          this.selectedIconList[j].electricity = deviceData.electricity;
-                        }else if(deviceData.eqType == 10){
-                          this.selectedIconList[j].electricity = deviceData.electricity;
+                          this.selectedIconList[j].electricity =
+                            deviceData.electricity;
+                        } else if (deviceData.eqType == 10) {
+                          this.selectedIconList[j].electricity =
+                            deviceData.electricity;
                         }
                         //取设备运行状态图标
                         let url = this.eqTypeStateList[k].url;
@@ -5049,7 +5113,7 @@ export default {
     /* 选择隧道*/
     setTunnel(item, index) {
       this.dialogClose();
-      this.$refs.footerRef.changeActive()
+      this.$refs.footerRef.changeActive();
       this.resetCanvas();
       const loading = this.$loading({
         lock: true,
@@ -5072,9 +5136,9 @@ export default {
       // 3. get到currentTunnel对象 this.currentTunnel.name为空 是刷新 get管理站id 并赋值
       // 4. get到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
       if (!this.$cache.local.get("currentTunnel")) {
-        if (this.currentTunnel.name) {
+        //if (this.currentTunnel.name) {
           this.$cache.local.set("currentTunnel", JSON.stringify(obj));
-        }
+        //}
         this.$refs.deawerRef.init(item.tunnelId, item.lane);
         this.$refs.footerRef.init(item.tunnelId);
         this.currentTunnel.id = item.tunnelId;
@@ -5114,15 +5178,10 @@ export default {
     displayControl(value, lable) {
       // console.log(value, lable,"value, lable")
       // carShow
-      for (var item of this.selectedIconList) {
-        if (
-          this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" &&
-          item.eqType == 29
-        ) {
-          this.robotShow = true;
-        } else {
-          this.robotShow = false;
-        }
+      if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
+        this.robotShow = true;
+      } else {
+        this.robotShow = false;
       }
       $(".leftButtonS")
         .eq(value)
@@ -5535,12 +5594,12 @@ export default {
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
     },
-    strategyPage1(){
+    strategyPage1() {
       // this.timingTaskShow = !this.timingTaskShow
       // this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
     },
-    strategyPage2(){
-      this.jointControlShow = !this.jointControlShow
+    strategyPage2() {
+      this.jointControlShow = !this.jointControlShow;
       // this.$refs.jointControlStrategy.getEchartsData(this.tunnelList,this.tunnelItem,true)
     },
     handleClick(tab, event) {
@@ -5953,7 +6012,7 @@ export default {
   },
   beforeRouteLeave(to, form, next) {
     // 离开路由移除滚动事件
-    window.removeEventListener('scroll',this.mouseSrollAuto, true);
+    window.removeEventListener("scroll", this.mouseSrollAuto, true);
     next();
   },
 };
@@ -7440,10 +7499,10 @@ input {
   background: slategrey;
   color: #fff;
 }
-.actuatorCKTooltipBox{
+.actuatorCKTooltipBox {
   position: absolute;
-  top:135px;
-  left:50px;
+  top: 135px;
+  left: 50px;
   padding: 10px 20px;
   white-space: nowrap;
   border-radius: 4px;
@@ -7495,7 +7554,7 @@ input {
   width: 20px;
   height: 20px;
   transform: translateY(-12px);
-  animation: mymove 60s infinite linear;
+  // animation: mymove 60s infinite linear;
   float: left;
   z-index: 10;
   cursor: pointer;
@@ -7693,14 +7752,14 @@ input {
     background-color: red;
   }
 }
-.actuatorCK{
+.actuatorCK {
   position: absolute;
-  top:100px;
-  left:50px;
+  top: 100px;
+  left: 50px;
   cursor: pointer;
-  img{
-    width:20px;
-    height:20px;
+  img {
+    width: 20px;
+    height: 20px;
   }
 }
 </style>

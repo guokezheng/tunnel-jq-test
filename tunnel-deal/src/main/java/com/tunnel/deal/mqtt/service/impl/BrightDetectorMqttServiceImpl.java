@@ -94,6 +94,11 @@ public class BrightDetectorMqttServiceImpl implements HongMengMqttService {
         String collectTime = String.valueOf(jsonObject.get("collectTime"));
         //修改设备实时状态
         sdDeviceDataService.updateDeviceData(sdDevices,brightness, (long) DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
+
+
+        String deviceId = sdDevices.getEqId();
+        //设备掉线监测
+        hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
 
     /**

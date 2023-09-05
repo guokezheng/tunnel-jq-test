@@ -210,3 +210,12 @@ export function getBoardContent(query) {
 
   })
 }
+
+// 机器人实时状态
+export function getWorkRobot(query) {
+  return request({
+    url: '/robot/getWorkRobot',
+    method: 'get',
+    params: query
+  })
+}

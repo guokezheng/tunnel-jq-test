@@ -135,7 +135,7 @@
             class="content"
             ref="divRoller"
             @wheel.prevent="handleTableWheel"
-            @mousewheel="mouseSrollAuto"
+            @mousewheel.prevent="mouseSrollAuto"
             @contextmenu.prevent
             @mousedown="dragImg"
           >
@@ -1043,7 +1043,7 @@ export default {
     
    // 添加滚动监听，该滚动监听了拖拽滚动条
    // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-      window.addEventListener("scroll", this.mouseSrollAuto, true);
+      window.addEventListener("scroll", this.mouseSrollAuto);
   },
   //实例销毁前清除定时器
   beforeDestroy() {

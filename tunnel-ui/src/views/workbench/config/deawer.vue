@@ -187,12 +187,28 @@
             placeholder="请选择播放文件"
             clearable
             size="mini"
+            v-show="brandId == '10011'"
           >
             <el-option
               v-for="item in radioFileList"
               :key="item.dictValue"
               :label="item.dictLabel"
               :value="item.dictLabel"
+            />
+          </el-select>
+          <el-select
+            v-model="phoneForm1.fileNames"
+            placeholder="请选择播放文件"
+            clearable
+            size="small"
+            @click.native="clickFileNames(directionList[0].dictValue)"
+            v-show="brandId == '0060'"
+          >
+            <el-option
+              v-for="item in fileNamesList"
+              :key="item.name"
+              :label="item.name"
+              :value="item.fileName"
             />
           </el-select>
           <el-button
@@ -248,19 +264,35 @@
                 </el-option>
               </el-select>
         </div>
-        <div class="phoneBox1">
+        <div class="phoneBox1" >
           <div class="chezhiName">播放文件:</div>
           <el-select
             v-model="phoneForm2.fileNames"
             placeholder="请选择播放文件"
             clearable
             size="mini"
+            v-show="brandId == '10011'"
           >
             <el-option
               v-for="item in radioFileList"
               :key="item.dictValue"
               :label="item.dictLabel"
               :value="item.dictLabel"
+            />
+          </el-select>
+          <el-select
+            v-model="phoneForm2.fileNames"
+            placeholder="请选择播放文件"
+            clearable
+            size="small"
+            @click.native="clickFileNames(directionList[1].dictValue)"
+            v-show="brandId == '0060'"
+          >
+            <el-option
+              v-for="item in fileNamesList"
+              :key="item.name"
+              :label="item.name"
+              :value="item.fileName"
             />
           </el-select>
           <el-button
@@ -501,6 +533,7 @@ export default {
           return time.getTime() < Date.now() - 86400000; // 可选历史天、可选当前天、不可选未来天
         },
       },
+      fileNamesList:[],
       chezhiLaneOptionList: [
         {
           laneId: 1,
@@ -817,16 +850,16 @@ export default {
     // 广播播放控制次数
     handleChangePhone(num) {},
     // 点击侧边栏文件列表下拉框
-    // clickFileNames(direction) {
-    //   const params = {
-    //     tunnelId: this.tunnelId,
-    //     direction: direction,
-    //   };
-    //   getAudioFileList(params).then((res) => {
-    //     // console.log(res, "广播一键文件列表");
-    //     this.fileNamesList = res.data;
-    //   });
-    // },
+    clickFileNames(direction) {
+      const params = {
+        tunnelId: this.tunnelId,
+        direction: direction,
+      };
+      getAudioFileList(params).then((res) => {
+        // console.log(res, "广播一键文件列表");
+        this.fileNamesList = res.data;
+      });
+    },
     // 任务状态修改
     handleStatusChange(row) {
       let text = row.status === "0" ? "启用" : "停用";

@@ -134,11 +134,18 @@ public class TcpClientGeneralImpl implements TcpClientGeneralService {
         List<SdDevices> list = sdDevicesService.selectDevicesByProtocol(sdDevices);
         for(SdDevices device : list){
             String deviceId = device.getEqId();
-            Map map = new HashMap();
-            map.put("deviceId",deviceId);
-            map.put("ip",device.getIp());
-            map.put("port",device.getPort());
-            deviceMap.put(deviceId,map);
+            if(deviceMap.get(deviceId) == null){
+                Map map = new HashMap();
+                map.put("deviceId",deviceId);
+                map.put("ip",device.getIp());
+                map.put("port",device.getPort());
+                deviceMap.put(deviceId,map);
+            }else{
+                Map map = deviceMap.get(deviceId);
+                map.put("ip",device.getIp());
+                map.put("port",device.getPort());
+            }
+
         }
     }
 

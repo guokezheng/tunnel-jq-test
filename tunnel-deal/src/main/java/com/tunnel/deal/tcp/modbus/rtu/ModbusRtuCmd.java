@@ -1,7 +1,7 @@
 package com.tunnel.deal.tcp.modbus.rtu;
 
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.deal.tcp.modbus.ModbusCmd;
+import com.tunnel.deal.tcp.client.netty.NettyCmd;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class ModbusRtuCmd {
     private static final Logger log = LoggerFactory.getLogger(ModbusRtuCmd.class);
 
     @Autowired
-    private ModbusCmd modbusCmd;
+    private NettyCmd nettyCmd;
 
 
     /**
@@ -44,7 +44,7 @@ public class ModbusRtuCmd {
         String ip = map.get("ip") == null ? "" : map.get("ip").toString();
         String port = map.get("port") == null ? "" : map.get("port").toString();
         //发送指令
-        return modbusCmd.executeCommand(deviceId,ip,port,command);
+        return nettyCmd.executeCommand(deviceId,ip,port,command);
     }
 
     /**
@@ -60,7 +60,7 @@ public class ModbusRtuCmd {
         String ip = map.get("ip") == null ? "" : map.get("ip").toString();
         String port = map.get("port") == null ? "" : map.get("port").toString();
         //发送指令
-        return modbusCmd.executeCommand(deviceId,ip,port,command);
+        return nettyCmd.executeCommand(deviceId,ip,port,command);
     }
 
 

@@ -114,7 +114,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectPointMapByFEqId" resultType="java.util.Map">
-        SELECT d.f_eq_id fEqId,p.eq_id,p.function_code functionCode,p.data_length dataLength,p.address
+        SELECT d.f_eq_id fEqId,p.eq_id,p.function_code functionCode,p.data_length dataLength,p.address,
+        p.point_config pointConfig,p.item_id itemId
         FROM sd_device_point p
         left join sd_devices  d on p.eq_id = d.eq_id
         where p.is_reserved = #{pointType}

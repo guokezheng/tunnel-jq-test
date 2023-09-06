@@ -15,7 +15,8 @@ import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaServic
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.guidancelamp.protocol.JavaCrc16;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
-import com.tunnel.deal.tcp.client.netty.MCASocketClient;
+import com.tunnel.deal.tcp.client.netty.NettyCmd;
+import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class WarningLightStripTask {
     private TcpClientGeneralService tcpClientGeneralService;
 
     @Autowired
-    private ModbusCmd modbusCmd;
+    private NettyCmd nettyCmd;
 
     /**
      * 存储设备数据，key为deviceId,value为设备数据【ip,port】
@@ -60,7 +61,7 @@ public class WarningLightStripTask {
      */
     public void connect(){
         deviceInfoCache();
-        MCASocketClient.getInstance().deviceConnect(deviceMap);
+        TcpNettySocketClient.getInstance().deviceConnect(deviceMap);
     }
 
     /**
@@ -87,7 +88,7 @@ public class WarningLightStripTask {
             String ip = map.get("ip") == null ? "" : map.get("ip").toString();
             String port = map.get("port") == null ? "" : map.get("port").toString();
             if(!"".equals(ip) && !"".equals(port)){
-                modbusCmd.executeCommand(deviceId,ip,port,command);
+                nettyCmd.executeCommand(deviceId,ip,port,command);
             }
         });
 

@@ -15,19 +15,20 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- *  MCA netty 启动类
+ *   netty 启动类
  * @author zs
  */
 
-public class MCASocketClient
+public class TcpNettySocketClient
 {
 
-    private static final Logger log = LoggerFactory.getLogger(MCASocketClient.class);
+    private static final Logger log = LoggerFactory.getLogger(TcpNettySocketClient.class);
 
     private ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
 
@@ -60,15 +61,15 @@ public class MCASocketClient
         /**
          * 静态初始化器，由JVM来保证线程安全
          */
-        private static MCASocketClient instance = new MCASocketClient();
+        private static TcpNettySocketClient instance = new TcpNettySocketClient();
     }
     /**
      * 私有化构造方法
      */
-    private MCASocketClient(){
+    private TcpNettySocketClient(){
 //        this.init();
     }
-    public static MCASocketClient getInstance(){
+    public static TcpNettySocketClient getInstance(){
         return SocketClientHolder.instance;
     }
 
@@ -94,6 +95,10 @@ public class MCASocketClient
 //        deviceConnect();
 
 //        connect("192.168.1.131",502);
+    }
+
+    public void deviceSingleConnect(String ip,int port){
+        connect(ip,port);
     }
 
     /**
@@ -125,7 +130,7 @@ public class MCASocketClient
         }
         //连接服务
         ChannelFuture channelFuture = bootstrap.connect(ip, port);
-        log.info("MCASocketClient 连接:访问地址="+ip+":"+port);
+        log.info("TcpNettySocketClient 连接:访问地址="+ip+":"+port);
         channelFuture.addListener(new FutureListener(ip,port,reconnectTimes));
     }
 
@@ -141,12 +146,41 @@ public class MCASocketClient
         }
         //连接服务
         ChannelFuture channelFuture = bootstrap.connect(ip, port);
-        log.info("MCASocketClient 连接:访问地址="+ip+":"+port);
+        log.info("TcpNettySocketClient 连接:访问地址="+ip+":"+port);
         channelFuture.addListener(new FutureListener(ip,port,reconnectTimes));
     }
 
+    /**
+     * 关闭通道
+     * @param ip ip
+     * @param port 端口号
+     */
+    public void disconnect(String ip,int port){
+        Channel channel = channels.get(ChannelKey.getChannelKey(ip,port));
+        channel.close();
+    }
+
+    /**
+     * 关闭通道
+     * @param channel 通道
+     */
+    public void disconnect(Channel channel){
+        channel.close();
+    }
+
+    /**
+     * 程序退出时释放资源
+     */
+    @PreDestroy
+    public void closeNetty() {
+        log.info("程序退出时释放资源!");
+        //释放线程资源
+        eventLoopGroup.shutdownGracefully();
+        System.out.println("程序退出时释放资源");
+    }
+
     public static void sendMsg(String ip,String port,String msg) throws Exception {
-        Channel channel = MCASocketClient.channels.get(ChannelKey.getChannelKey(ip,Integer.valueOf(port)));
+        Channel channel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,Integer.valueOf(port)));
         if (channel != null) {
             channel.writeAndFlush(msg).sync();
         } else {

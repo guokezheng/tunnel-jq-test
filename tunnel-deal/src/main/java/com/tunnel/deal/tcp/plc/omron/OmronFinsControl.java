@@ -20,6 +20,7 @@ import com.tunnel.deal.tcp.plc.omron.fins.FinsCmdResolver;
 import com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -53,6 +54,9 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
     @Resource(name = "scheduledExecutorService")
     private ScheduledExecutorService executor;
 
+    @Value("${plc.server}")
+    private String plcServer;
+
 
     /**
      * 设备控制--工作台单个设备控制
@@ -79,6 +83,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
 
         //控制设备之前获取设备状态
         String beforeState = commonControlService.selectBeforeState(sdDevices);
+
 
 
         AjaxResult ajaxResult = control(sdDevices,state);
@@ -211,10 +216,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         if(controlState == null){
             return AjaxResult.error("设备点位配置不完整");
         }
-        //源地址
-        String sourceAddress = jsonConfig.getString("sourceAddress");
-        //目的地址
-        String destinationAddress = jsonConfig.getString("destinationAddress");
+
         //存储分区代码
         String area = jsonConfig.getString("area");
         //写入地址
@@ -240,6 +242,12 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         String ip = fDevice.getIp();
         String port = fDevice.getPort();
         Integer portNum = Integer.valueOf(port);
+
+        //源地址
+        String sourceAddress = plcServer;
+        //目的地址
+        String destinationAddress = ip;
+
         //获取连接通道
         TcpNettySocketClient.getInstance().connect(ip,portNum);
 

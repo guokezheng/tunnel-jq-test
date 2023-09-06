@@ -477,3 +477,7 @@ mqtt:
   #20s
   keepalive: 20
 
+#欧姆龙PLC通信的服务IP
+plc:
+  server: 127.0.0.239
+

@@ -160,7 +160,7 @@ public class OmronTask {
      * 初始化欧姆龙配置信息  (当前为测试数据  后期整理为线上链接)
      * @return
      */
-    public OmronConnectProperties getOmronConnectProperties(String serviceIp,Integer serviceProt){
+    public static OmronConnectProperties getOmronConnectProperties(String serviceIp,Integer serviceProt){
         OmronConnectProperties conf = new OmronConnectProperties();
         log.info("Linux 本机地址为: " + getHostAddress());
         //SA1地址：电脑 ip

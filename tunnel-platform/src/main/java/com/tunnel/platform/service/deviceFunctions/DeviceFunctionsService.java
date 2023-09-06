@@ -19,18 +19,26 @@ import com.tunnel.business.service.protocol.ISdDevicePointService;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.plc.omron.finsTCP.OmronTcpClient;
 import com.tunnel.deal.plc.omron.util.ByteUtil;
+import io.netty.channel.ChannelFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.ruoyi.quartz.task.OmronTask.getOmronConnectProperties;
 
 @Service
 public class DeviceFunctionsService {
 
-
+    private static final Logger log = LoggerFactory.getLogger(DeviceFunctionsService.class);
+    public static Map<String ,OmronTcpClient> omronTcpMapClient = new HashMap<>();
 //    @Value("${omron.service.ip}")
 //    private String serviceIp;
 //    @Value("${omron.service.prot}")
@@ -96,6 +104,41 @@ public class DeviceFunctionsService {
                     sdDevicePoint.setIsReserved(2L);
                     List<SdDevicePoint> sdDevicePointList =  devicePointService.selectSdDevicePointList(sdDevicePoint);
                     resultData = getDataByDataStatusAndEqType(data,sdDevicePointList,omronTcpClient);
+                }
+                break;
+            case "omronPlc":
+                String keyMap = "";
+                try {
+                    //plc获取ip协议比较特殊。 通过 sd_devices 表中获取 plc ip  端口号
+                    //欧姆龙服务器链接信息  通过当前设备上级ip获取
+                    SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqId);
+                    //获取当前父级  用户信息 获取ip  port
+                    SdDevices fSdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
+                    //初始化 omronTcpClientPlc
+                    OmronTcpClient omronTcpClientPlc = new OmronTcpClient(OmronTask.getOmronConnectProperties("10.7.206.89",Integer.parseInt("9600")));
+                    //初始化链接     服务器地址
+//                    log.info("账号"+fSdDevices.getIp());
+//                    log.info("密码"+fSdDevices.getPort());
+//                    log.info("密码"+Integer.parseInt(fSdDevices.getPort()));
+                    omronTcpClientPlc.initGeneral("10.7.206.89",Integer.parseInt("9600"));
+                    //获取ChannelFuture
+                    ChannelFuture channelFuture = omronTcpClientPlc.channelFuture;
+                    //推送握手协议
+                    omronTcpClientPlc.send(omronTcpClientPlc.successCallback(channelFuture).array());
+//                    keyMap = fSdDevices.getIp()+fSdDevices.getPort();
+                    keyMap = "10.7.206.89"+"9600";
+                    omronTcpMapClient.put(keyMap,omronTcpClientPlc);
+                } catch (Exception e) {
+                    log.error("omron链接异常。请联系管理员");
+                    omronTcpClient = null;
+                }
+                OmronTcpClient omronTcpClient1 = omronTcpMapClient.get(keyMap);
+                if(omronTcpClient1!=null){
+                    SdDevicePoint sdDevicePoint = new SdDevicePoint();
+                    sdDevicePoint.setEqId(eqId);
+                    sdDevicePoint.setIsReserved(2L);
+                    List<SdDevicePoint> sdDevicePointList =  devicePointService.selectSdDevicePointList(sdDevicePoint);
+                    resultData = getDataByDataStatusAndEqType(data,sdDevicePointList,omronTcpClient1);
                 }
                 break;
         }

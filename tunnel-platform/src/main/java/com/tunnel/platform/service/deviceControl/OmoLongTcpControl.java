@@ -22,7 +22,8 @@ public class OmoLongTcpControl implements GeneralControlBean {
 
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
-        return null;
+        boolean  b = deviceFunctionsService.deviceControlByParam( "omronPlc", map.get("devId").toString(), map.get("state").toString());
+        return AjaxResult.success();
     }
 
     @Override

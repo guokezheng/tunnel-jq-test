@@ -43,7 +43,7 @@ public class FutureListener implements ChannelFutureListener {
         Integer reconnectCount = ReconnectManager.countMap.get(key);
         if(channelFuture.isSuccess()){
             Channel channel = channelFuture.channel();
-            MCASocketClient.channels.put(ChannelKey.getChannelKey(ip,port),channel);
+            TcpNettySocketClient.channels.put(ChannelKey.getChannelKey(ip,port),channel);
             log.info("FutureListener：连接成功，访问地址="+ip+":"+port);
             if(reconnectCount != null && reconnectCount != -1){
 //                reconnectCount = -1;
@@ -70,7 +70,7 @@ public class FutureListener implements ChannelFutureListener {
             channelFuture.channel().close();
             log.info("FutureListener：连接失败，访问地址="+ip+":"+port+",重新连接");
             //连接失败，重新连接
-            MCASocketClient.getInstance().connect(ip,port);
+            TcpNettySocketClient.getInstance().connect(ip,port);
         }
 
 

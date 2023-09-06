@@ -5,7 +5,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
-import com.tunnel.deal.tcp.client.netty.MCASocketClient;
+import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class McaTask {
      */
     public void connect(){
         deviceInfoCache();
-        MCASocketClient.getInstance().deviceConnect(deviceMap);
+        TcpNettySocketClient.getInstance().deviceConnect(deviceMap);
     }
 
     /**
@@ -113,7 +113,7 @@ public class McaTask {
             //计算读取指令的地址长度, 最大 + 地址长度 - 最小
             //比如：最大0026，地址长度=2，最小=0024，实际读取指令长度= （0026 + 2 - 1） - （0024 - 1） = 4
             Integer cmdLength = Integer.valueOf(maxAddress) + Integer.valueOf(dataLength) - Integer.valueOf(minAddress);
-//            log.info("读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength);
+//            System.out.println("sendMultiplePointCmd 读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength+",时间："+System.currentTimeMillis());
 
             mcaCmd.sleep(2);
             mcaCmd.sendQueryCommand(deviceMap,fEqId,functionCode,minAddress,String.valueOf(cmdLength));
@@ -146,7 +146,7 @@ public class McaTask {
             String address = map.get("address") == null ? "" : map.get("address").toString();
             //地址长度
             String dataLength = map.get("dataLength") == null ? "" : map.get("dataLength").toString();
-
+//            System.out.println("sendSinglePointCmd 读取数据：设备ID="+fEqId+",功能码="+functionCode+",点位地址="+address+",读取长度="+dataLength+",时间："+System.currentTimeMillis());
             //2毫秒间隔，如果定时任务执行周期是2秒钟，支持1000个指令循环下发，大概可以支持1000个设备的查询指令
             //最长的盘顶山隧道按照200个设备计算，3个隧道，600个设备
             mcaCmd.sleep(2);

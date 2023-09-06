@@ -8,12 +8,10 @@ import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
-import com.tunnel.business.service.protocol.ISdDevicePointStateService;
+import com.tunnel.deal.mca.service.McaService;
 import com.tunnel.deal.mca.task.McaTask;
 import com.tunnel.deal.tcp.modbus.ModbusCmd;
-import com.tunnel.deal.mca.service.McaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +33,6 @@ public class McaServiceImpl implements McaService {
     private ISdDevicePointService devicePointService;
 
     @Autowired
-    private ISdEquipmentStateService equipmentStateService;
-
-
-    @Autowired
-    private ISdDevicePointStateService devicePointStateService;
-
-    @Autowired
     private ModbusCmd mcaCmd;
 
     /**
@@ -60,16 +51,6 @@ public class McaServiceImpl implements McaService {
         //设备信息
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
 
-//        //查询设备状态
-//        SdEquipmentState sdEquipmentState = new SdEquipmentState();
-//        sdEquipmentState.setStateTypeId(sdDevices.getEqType());
-//        sdEquipmentState.setStateType(runState);
-//        sdEquipmentState.setDeviceState(state);
-//        List<SdEquipmentState> stateList = equipmentStateService.selectSdEquipmentStateList(sdEquipmentState);
-//        if(stateList == null || stateList.size() == 0){
-//           return AjaxResult.error("未配置设备状态");
-//        }
-//        sdEquipmentState = stateList.get(0);
 
         //查询设备点位
         SdDevicePoint devicePoint = new SdDevicePoint();
@@ -93,18 +74,6 @@ public class McaServiceImpl implements McaService {
            }
         }
 
-//        //查询对应的设备控制状态
-//        SdDevicePointState sdDevicePointState = new SdDevicePointState();
-//        sdDevicePointState.setDevicePointId(devicePoint.getId());
-//        sdDevicePointState.setDeviceStateId(sdEquipmentState.getId());
-//        List<SdDevicePointState> pointStateList = devicePointStateService.selectSdDevicePointStateList(sdDevicePointState);
-//        if(pointStateList == null || pointStateList.size() == 0){
-//            return AjaxResult.error("未配置设备点位");
-//        }
-
-//        sdDevicePointState = pointStateList.get(0);
-//        //下发状态
-//        String controlState = sdDevicePointState.getControlState();
         String controlState = jsonConfig.getString("pointValue");
         if(controlState == null){
             return AjaxResult.error("设备点位配置不完整");

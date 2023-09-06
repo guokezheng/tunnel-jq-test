@@ -1,10 +1,8 @@
 package com.tunnel.deal.tcp.client.netty;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralBean;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
@@ -130,7 +128,8 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
         sdDevicesService.updateOfflineStatus(deviceId,true);
         log.error("channelInactive:访问地址="+ip+":"+port);
         //连接失败，重新连接
-        MCASocketClient.getInstance().connect(ip,port);
+        TcpNettySocketClient.getInstance().connect(ip,port);
+        channel.close();
     }
 
     /**
@@ -147,6 +146,7 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
         String ip = ipSocket.getAddress().getHostAddress();
         int port = ipSocket.getPort();
         log.error("exceptionCaught:访问地址="+ip+":"+port, cause.getMessage());
+        channel.close();
     }
 
 }

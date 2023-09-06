@@ -1,4 +1,7 @@
 .theme-dark {
+  .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
+    color: #fff !important;
+  }
   // 表格内按钮 红色
   .tableDelButtton{
     // width: 50px;
@@ -1939,10 +1942,11 @@
   }
   .topNav_head_center{
     background-image:url(../images/head_bg_center.png);
-    background-size: 100% 100%;
-    height:0.385rem;
+    background-size: 84% 100%;
+    height:7.6vh;
     // background-color: #010913;
     position: relative;
+    background-position: center;
     // z-index: 1;
   }
   // 工作台下拉框

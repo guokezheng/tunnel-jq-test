@@ -350,7 +350,7 @@
                   <div
                     class="actuatorCK"
                     v-show="
-                      selectBigType.index == 0 && selectedIconList.length > 0
+                      selectBigType.index == 0 && selectedIconList.length > 0 && currentTunnel.id == 'JQ-JiNan-WenZuBei-MJY'
                     "
                     @click="openStateSwitch(actuatorCKItem)"
                     @mousemove="openTooltip2()"

@@ -113,8 +113,7 @@
             >
           </el-col>
         </el-row>
-
-        <el-row>
+        <el-row v-if="brandOne">
           <el-col>
             <el-form-item label="播放文件:">
               <el-select
@@ -125,9 +124,28 @@
               >
                 <el-option
                   v-for="item in fileNamesList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.fileName"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="brandTwo">
+          <el-col>
+            <el-form-item label="播放文件:">
+              <el-select
+                v-model="stateForm2.fileNames"
+                placeholder="请选择播放文件"
+                clearable
+                size="mini"
+              >
+                <el-option
+                  v-for="item in radioFileList"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
                 />
               </el-select>
             </el-form-item>
@@ -144,11 +162,10 @@
                 style="display: flex; flex-direction: column"
               >
                 <el-radio
-                  :label="item.label"
+                  :label="item.value"
                   class="el-radio flex-row"
                   style="align-items: center"
-                 
-                ></el-radio>
+                >{{ item.label }}</el-radio>
               </el-radio-group>
               <!-- <el-select 
                 v-model="stateForm2.loopStatus" 
@@ -217,6 +234,7 @@ export default {
       directionList: [],
       brandOne: false,
       brandTwo: false,
+      radioFileList:[]
     };
   },
   created() {},
@@ -238,6 +256,10 @@ export default {
         console.log(res, "文件列表");
         this.fileNamesList = res.data;
       });
+      this.getDicts("ld_speak_list").then((data) => {
+        this.radioFileList = data.data;
+        console.log(this.radioFileList,"this.radioFileList")
+      });
     },
     // 查设备详情
     async getMessage() {
@@ -253,6 +275,7 @@ export default {
             this.brandTwo = false;
           }
           this.stateForm2.loopStatus = "";
+          this.stateForm2.fileNames = [];
           this.stateForm = res.data;
           this.device = res.data.externalDeviceId;
           this.title = this.stateForm.eqName;
@@ -269,6 +292,7 @@ export default {
     handleClosee() {
       this.visible = false;
       this.stateForm2.loopStatus = "";
+      this.stateForm2.fileNames = [];
     },
     handleOK() {
       const loading = this.$loading({

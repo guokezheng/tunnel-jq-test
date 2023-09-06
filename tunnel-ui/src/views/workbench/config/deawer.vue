@@ -187,13 +187,12 @@
             placeholder="请选择播放文件"
             clearable
             size="mini"
-            @click.native="clickFileNames(directionList[1].dictValue)"
           >
             <el-option
-              v-for="item in fileNamesList"
-              :key="item.name"
-              :label="item.name"
-              :value="item.fileName"
+              v-for="item in radioFileList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
             />
           </el-select>
           <el-button
@@ -256,13 +255,12 @@
             placeholder="请选择播放文件"
             clearable
             size="mini"
-            @click.native="clickFileNames(directionList[1].dictValue)"
           >
             <el-option
-              v-for="item in fileNamesList"
-              :key="item.name"
-              :label="item.name"
-              :value="item.fileName"
+              v-for="item in radioFileList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
             />
           </el-select>
           <el-button
@@ -496,7 +494,7 @@ export default {
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
-      fileNamesList: [],
+      radioFileList: [],
       isDrawerCList: [],
       setDisabled: {
         disabledDate(time) {
@@ -560,6 +558,13 @@ export default {
       this.tunnelLane = lane;
       this.getTunnelData();
       this.getTunnelState();
+      this.getAudioFile()
+    },
+    getAudioFile() {
+      this.getDicts("radio_file_list").then((data) => {
+        this.radioFileList = data.data;
+        console.log(this.radioFileList,"this.radioFileList")
+      });
     },
     /* 获取隧道配置信息*/
     getTunnelData(){
@@ -812,16 +817,16 @@ export default {
     // 广播播放控制次数
     handleChangePhone(num) {},
     // 点击侧边栏文件列表下拉框
-    clickFileNames(direction) {
-      const params = {
-        tunnelId: this.tunnelId,
-        direction: direction,
-      };
-      getAudioFileList(params).then((res) => {
-        // console.log(res, "广播一键文件列表");
-        this.fileNamesList = res.data;
-      });
-    },
+    // clickFileNames(direction) {
+    //   const params = {
+    //     tunnelId: this.tunnelId,
+    //     direction: direction,
+    //   };
+    //   getAudioFileList(params).then((res) => {
+    //     // console.log(res, "广播一键文件列表");
+    //     this.fileNamesList = res.data;
+    //   });
+    // },
     // 任务状态修改
     handleStatusChange(row) {
       let text = row.status === "0" ? "启用" : "停用";

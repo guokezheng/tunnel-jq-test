@@ -3149,9 +3149,6 @@ export default {
         index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
       );
     },
-    // beforeDestroy() {
-
-    // },
     bodyCloseMenus(e) {
       let self = this;
       if (self.syxt_boxShow == true) {

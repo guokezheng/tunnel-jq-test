@@ -29,6 +29,7 @@ import javax.annotation.PostConstruct;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -66,21 +67,30 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
          */
         // 1.定义服务器的地址、端口号、数据
         try {
-            InetAddress address = InetAddress.getByName("localhost");
+            List<String> devices = (List<String>) map.get("spkDeviceIds");
+            SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(devices.get(0));
+            String eqDirection = sdDevices1.getEqDirection();
+            InetAddress address = InetAddress.getByName("10.7.179.4");
             int port = 6117;//定义端口类型
             //主机地址
-            String spkAddr = map.get("spkAddr").toString();
+            String spkAddr = "1";
             //组号
-            String groupNumber = map.get("groupNumber").toString();
+            String groupNumber = null;
+            if("1".equals(eqDirection)){
+                groupNumber = "2";
+            }else {
+                groupNumber = "1";
+            }
             //文件名称
-            String fileName = map.get("fileName").toString();
+            List<String> fileNames = (List<String>) map.get("fileNames");
             //状态
-            String status = map.get("status").toString();
-            byte[] data= ("@"+spkAddr+"@"+groupNumber+"@"+fileName+status).getBytes();
+            String status = map.get("loopStatus").toString();
+            String file = fileNames.get(0);
+            byte[] data= ("@"+spkAddr+"@"+groupNumber+"@"+file+status).getBytes(StandardCharsets.US_ASCII);
             //2.创建数据报，包含发送的数据信息
             DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
             //3.创建DatagramSocket对象
-            DatagramSocket socket = new DatagramSocket(6116);
+            DatagramSocket socket = new DatagramSocket(port);
             //4.向服务器端发送数据报
             socket.send(packet);
             //5.关闭资源
@@ -102,7 +112,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         //查询隧道信息
         SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(tunnelId);
         //查询方向信息
-        String direction = dictMapper.selectDictLabel("sd_direction",sdDevices.getDirection());
+        String direction = dictMapper.selectDictLabel("sd_direction",sdDevices.getEqDirection());
         //事件类型信息
         SdEventType sdEventType = eventTypeMapper.selectSdEventTypeById(21L);
         //事件信息
@@ -116,7 +126,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         sdEvent.setEventTitle(sdTunnels.getTunnelName().concat(",").concat(direction).concat(" ").concat(sdEventType.getEventType()));
         sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
-        sdEvent.setDirection(sdDevices.getDirection());
+        sdEvent.setDirection(sdDevices.getEqDirection());
         sdEvent.setStakeNum(sdDevices.getPile());
         sdEventMapper.insertSdEvent(sdEvent);
         eventSendWeb(sdEvent);
@@ -132,20 +142,15 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
         sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
-        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
-        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
-        if(collect.size() > 0){
-            JSONObject object = new JSONObject();
-            object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
-        }
-
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 
-//    @PostConstruct
-//    public void init() {
-//        runThread();
-//    }
+    @PostConstruct
+    public void init() {
+        runThread();
+    }
 
     public void runThread() {
         new Thread() {
@@ -171,13 +176,10 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
                         String insturct = list.get(2);
                         String offOrOn = list.get(3);
                         String pile = list.get(1);
-                        boolean piltBool = pile.contains("Z");
-                        if(!piltBool){
-                            pile = "Y" + pile;
-                        }
                         SdDevices device = new SdDevices();
                         device.setPile(pile);
                         device.setEqType(DevicesTypeEnum.ET.getCode());
+                        //device.setExternalDeviceId(list.get(0));
                         SdDevices etDeviceData = sdDevicesMapper.getEtDeviceData(device);
                         //新增事件
                         if(PhoneSpkEnum.INSTRUCT.getCode().equals(insturct) && PhoneSpkEnum.INSTRUCT_OFF.getCode().equals(offOrOn)){

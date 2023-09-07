@@ -295,7 +295,7 @@
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
-          @mousewheel="mouseSrollAuto"
+          @mousewheel.prevent ="mouseSrollAuto"
           @contextmenu.prevent
           @mousedown="dragImg"
         >
@@ -350,7 +350,7 @@
                   <div
                     class="actuatorCK"
                     v-show="
-                      selectBigType.index == 0 && selectedIconList.length > 0
+                      selectBigType.index == 0 && selectedIconList.length > 0 && currentTunnel.id == 'JQ-JiNan-WenZuBei-MJY'
                     "
                     @click="openStateSwitch(actuatorCKItem)"
                     @mousemove="openTooltip2()"
@@ -2813,6 +2813,9 @@ export default {
   },
 
   watch: {
+    'resetCanvasFlag':function(newVal,oldVal){
+      console.log(newVal,"resetCanvasFlag")
+    },
     screenEqName(val) {
       this.$refs.tree.filter(val);
     },
@@ -2952,7 +2955,7 @@ export default {
     // const scrollview = this.$refs['divRoller']
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-    window.addEventListener("scroll", this.mouseSrollAuto, true);
+    window.addEventListener("scroll", this.mouseSrollAuto);
 
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
@@ -2998,7 +3001,7 @@ export default {
       }
     },
     mouseSrollAuto(e) {
-      // console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      console.log(e.target.scrollLeft,"e.target.scrollLeft")
       if (e.target.scrollLeft > 0) {
         this.resetCanvasFlag = true;
       } else {
@@ -3232,6 +3235,7 @@ export default {
     },
     // 模糊查询
     treeClick() {
+      console.log("模糊查询")
       // // 点击输入框 折叠之前打开的树形菜单
       // const nodes = this.$refs.tree.store._getAllNodes();
       // nodes.forEach((item) => {
@@ -3649,6 +3653,7 @@ export default {
     },
     // 筛选设备名称
     screenEqNameButton(treeNodeClick) {
+      console.log("筛选设备名称")
       let that = this;
       if (this.screenEqName) {
         let bigType = "";
@@ -4317,6 +4322,7 @@ export default {
     },
     //地图复位
     resetCanvas() {
+      console.log("地图复位")
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
@@ -4327,6 +4333,7 @@ export default {
     },
     //右键拖动
     dragImg(e) {
+      console.log("右键拖动")
       let scrollContainer = document.querySelector(".vehicleLane");
       let dragContainer = document.querySelector(".content");
       let mouseDownScrollPosition = {

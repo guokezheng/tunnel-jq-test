@@ -46,18 +46,18 @@
       </el-select>
     </div>
     <template v-if="topNav">
-      <el-tooltip
+      <!-- <el-tooltip
         class="item"
         effect="dark"
-<!--        content="点击展示更多导航"-->
+       content="点击展示更多导航"
         placement="left"
-      >
+      > -->
         <i
           class="el-icon-arrow-left"
           @click="moveMethod('left')"
           :style="{ visibility: leftIcon ? 'visible' : 'hidden' }"
         ></i>
-      </el-tooltip>
+      <!-- </el-tooltip> -->
     </template>
       <el-scrollbar
         :class="settings.sideTheme"
@@ -95,18 +95,18 @@
       </el-scrollbar>
 
     <template v-if="topNav">
-      <el-tooltip
+      <!-- <el-tooltip
         class="item"
         effect="dark"
-<!--        content="点击展示更多导航"-->
+       content="点击展示更多导航"
         placement="right"
-      >
+      > -->
         <i
           class="el-icon-arrow-right"
           @click="moveMethod('right')"
           :style="{ visibility: rightIcon ? 'visible' : 'hidden' }"
         ></i>
-      </el-tooltip>
+      <!-- </el-tooltip> -->
     </template>
   </div>
 </template>
@@ -248,7 +248,7 @@ export default {
     moveMethod(flag){
     // console.log(this.wrapWith,"总长度")
       let wrap = this.$refs.scroll.$refs.wrap;
-      // console.log(wrap.offsetWidth,"可视区域")
+      console.log(wrap.scrollLeft,"可视区域")
       if(flag == 'left'){
         wrap.scrollLeft = wrap.scrollLeft - 147.77;
       }else if(flag == 'right'){

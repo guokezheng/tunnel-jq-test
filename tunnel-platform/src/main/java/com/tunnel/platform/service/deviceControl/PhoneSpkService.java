@@ -601,13 +601,23 @@ public class PhoneSpkService {
         map.put("items", items);
 
         PhoneSpeak phoneSpeak = null;
+        LdPhoneSpeak ldPhoneSpeak = null;
         for (SdDevices devices : spkList) {
             phoneSpeak = getBeanOfDeviceProtocol(devices.getEqId());
             if (null != phoneSpeak) {
                 break;
+            }else {
+                ldPhoneSpeak = getLdBeanOfDeviceProtocol(devices.getEqId());
             }
         }
-        int resultStatus = phoneSpeak.playVoice(systemUrl, map);
+        //int resultStatus = phoneSpeak.playVoice(systemUrl, map);
+
+        int resultStatus = 0;
+        if(phoneSpeak == null){
+            resultStatus = ldPhoneSpeak.playVoice(map,new SdDevices());
+        }else {
+            resultStatus = phoneSpeak.playVoice(systemUrl, map);
+        }
 
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -622,7 +632,12 @@ public class PhoneSpkService {
                 .collect(Collectors.joining(","));
         String eqIds = tunnelId + "-" + DevicesTypeEnum.LS.name() + "-" + string;
         sdOperationLog.setEqId(eqIds);
-        sdOperationLog.setOperationState("playVoice");
+        if(fileList.size() > 0){
+            List<String> list1 = Arrays.asList(fileList.get(0).toString().split("\\\\"));
+            sdOperationLog.setOperationState(list1.get(list1.size()-1));
+        }else {
+            sdOperationLog.setOperationState("无播放文件");
+        }
         sdOperationLog.setControlType(controlType);
         sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperIp(operIp);

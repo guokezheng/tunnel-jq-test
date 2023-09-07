@@ -187,7 +187,22 @@
             placeholder="请选择播放文件"
             clearable
             size="mini"
-            @click.native="clickFileNames(directionList[1].dictValue)"
+            v-show="brandId == '10011'"
+          >
+            <el-option
+              v-for="item in radioFileList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
+            />
+          </el-select>
+          <el-select
+            v-model="phoneForm1.fileNames"
+            placeholder="请选择播放文件"
+            clearable
+            size="small"
+            @click.native="clickFileNames(directionList[0].dictValue)"
+            v-show="brandId == '0060'"
           >
             <el-option
               v-for="item in fileNamesList"
@@ -249,14 +264,29 @@
                 </el-option>
               </el-select>
         </div>
-        <div class="phoneBox1">
+        <div class="phoneBox1" >
           <div class="chezhiName">播放文件:</div>
           <el-select
             v-model="phoneForm2.fileNames"
             placeholder="请选择播放文件"
             clearable
             size="mini"
+            v-show="brandId == '10011'"
+          >
+            <el-option
+              v-for="item in radioFileList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
+            />
+          </el-select>
+          <el-select
+            v-model="phoneForm2.fileNames"
+            placeholder="请选择播放文件"
+            clearable
+            size="small"
             @click.native="clickFileNames(directionList[1].dictValue)"
+            v-show="brandId == '0060'"
           >
             <el-option
               v-for="item in fileNamesList"
@@ -496,13 +526,14 @@ export default {
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
-      fileNamesList: [],
+      radioFileList: [],
       isDrawerCList: [],
       setDisabled: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 86400000; // 可选历史天、可选当前天、不可选未来天
         },
       },
+      fileNamesList:[],
       chezhiLaneOptionList: [
         {
           laneId: 1,
@@ -560,6 +591,13 @@ export default {
       this.tunnelLane = lane;
       this.getTunnelData();
       this.getTunnelState();
+      this.getAudioFile()
+    },
+    getAudioFile() {
+      this.getDicts("radio_file_list").then((data) => {
+        this.radioFileList = data.data;
+        console.log(this.radioFileList,"this.radioFileList")
+      });
     },
     /* 获取隧道配置信息*/
     getTunnelData(){

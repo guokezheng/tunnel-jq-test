@@ -1771,7 +1771,7 @@ public class KafkaReadListenToHuaWeiTopic {
         temporaryMapper.insertSdRadarDetectData(sdRadarDetectDataTemporary);*/
         if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
             //将数据推送至物联
-            //sendKafka(sdRadarDetectData);
+            sendKafka(sdRadarDetectData);
             return setCarsnapRedis(sdRadarDetectData);
         }
         return null;

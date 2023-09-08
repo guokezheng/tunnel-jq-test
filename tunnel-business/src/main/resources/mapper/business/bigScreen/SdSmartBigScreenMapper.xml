@@ -641,4 +641,41 @@
         GROUP BY
             rss.tunnel_id
     </select>
+
+    <select id="getEventInfo" resultType="hashmap">
+        SELECT
+            e.id,
+            IFNULL(e.longitude,"") AS longitude,
+            IFNULL(e.latitude,"") AS latitude,
+            sdd1.dict_label AS direction,
+            e.stake_num AS stakeNum,
+            et.event_type AS eventType,
+            DATE_FORMAT( e.event_time, '%Y-%m-%d' ) AS eventTime,
+            sdd.dict_label AS eventSource,
+            e.end_time AS endTime,
+            e.start_time AS startTime,
+            e.event_state AS eventState,
+            DATE_FORMAT( e.update_time, '%Y-%m-%d' ) AS updateTime
+        FROM
+            sd_event e
+                LEFT JOIN sd_event_type et ON e.event_type_id = et.id
+                LEFT JOIN sys_dict_data sdd ON e.event_source = sdd.dict_value
+                LEFT JOIN sd_traffic_image ti ON e.id = ti.business_id
+                LEFT JOIN sys_dict_data sdd1 ON e.direction = sdd1.dict_value
+        WHERE
+            1 = 1
+          AND e.tunnel_id = #{tunnelId}
+          AND sdd.dict_type = 'sd_event_source'
+          AND sdd1.dict_type = 'sd_direction'
+          <if test="modelType == 0">
+              AND  DATE_FORMAT(e.event_time,'%Y-%m-%d') <![CDATA[ = ]]> DATE_FORMAT( NOW(), '%Y-%m-%d' )
+          </if>
+          <if test="modelType == 1">
+              AND DATE_FORMAT( e.event_time, '%Y-%m-%d' ) <![CDATA[ >= ]]>  DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
+              AND DATE_FORMAT( e.event_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
+          </if>
+          <if test="modelType == 2">
+              AND DATE_FORMAT(e.event_time,'%Y-%m') <![CDATA[ = ]]> DATE_FORMAT(NOW(),'%Y-%m')
+          </if>
+    </select>
 </mapper>

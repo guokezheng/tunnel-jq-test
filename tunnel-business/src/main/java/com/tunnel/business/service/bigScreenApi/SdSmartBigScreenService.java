@@ -2,6 +2,7 @@ package com.tunnel.business.service.bigScreenApi;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -169,4 +170,13 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getTunnelStatis();
+
+    /**
+     * 预警统计
+     * @param baseTime
+     * @param type
+     * @param deptId
+     * @return
+     */
+    AjaxResult getWarningStatistics(String type,String deptId);
 }

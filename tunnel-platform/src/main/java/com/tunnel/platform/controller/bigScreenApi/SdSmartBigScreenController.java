@@ -6,12 +6,10 @@ import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 大屏
@@ -314,4 +312,18 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getTunnelStatis(){
         return sdSmartBigScreenService.getTunnelStatis();
     }
+
+    /**
+     * 预警统计
+     * @param type
+     * @param deptId
+     * @return
+     */
+    @GetMapping("/getWarningStatistics")
+    public AjaxResult getWarningStatistics(@RequestParam String type,
+                                           @RequestParam String deptId){
+        return sdSmartBigScreenService.getWarningStatistics(type,deptId);
+    }
+
+
 }

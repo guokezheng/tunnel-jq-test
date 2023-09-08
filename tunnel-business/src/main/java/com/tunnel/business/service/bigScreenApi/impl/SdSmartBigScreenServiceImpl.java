@@ -2,15 +2,19 @@ package com.tunnel.business.service.bigScreenApi.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
 import com.tunnel.business.datacenter.domain.enumeration.FaultStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,6 +41,9 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Autowired
     private SdTunnelsMapper tunnelsMapper;
+
+    @Autowired
+    private SdTrafficImageMapper imageMapper;
 
     @Override
     public Map<String, Object> getEventWarning(String tunnelId) {
@@ -393,6 +400,58 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
                 item.put("speed",0);
                 item.put("cars",0);
             });
+        }
+        return AjaxResult.success(mapList);
+    }
+
+    @Override
+    public AjaxResult getWarningStatistics(String type, String deptId) {
+        int modelType = 0;
+        if("day".equals(type)){
+            modelType = 0;
+        }else if("week".equals(type)){
+            modelType = 1;
+        }else {
+            modelType = 2;
+        }
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        //查询隧道
+        List<SdTunnels> sdTunnelsList = tunnelsMapper.selectTunnelsDeptIdList(deptId);
+        for(SdTunnels item : sdTunnelsList){
+            Map<String, Object> map = new HashMap<>();
+            map.put("tunnelName",item.getTunnelName());
+            map.put("longitude",item.getLongitude());
+            map.put("latitude",item.getLatitude());
+            List<Map<String, Object>> eventInfo = sdSmartBigScreenMapper.getEventInfo(item.getTunnelId(), modelType);
+            eventInfo.stream().forEach(temp -> {
+                StringBuffer imageData = new StringBuffer();
+                SdTrafficImage image = new SdTrafficImage();
+                image.setBusinessId(temp.get("id").toString());
+                image.setImgType("0");
+                //查询图片
+                List<SdTrafficImage> imageList = imageMapper.selectSdTrafficImageList(image);
+                if(imageList.size() > 0){
+                    imageData.append(imageList.get(0).getImgUrl());
+                }
+                image.setImgType("1");
+                //查询视频
+                List<SdTrafficImage> vedioList = imageMapper.selectSdTrafficImageList(image);
+                if(vedioList.size() > 0){
+                    imageData.append(";").append(vedioList.get(0).getImgUrl().split(";")[0]);
+                }
+                temp.put("eventImage",imageData);
+                String datePoor = null;
+                if("3".equals(temp.get("eventState").toString())){
+                    datePoor = DateUtils.getDatePoor(DateUtils.getNowDate(), DateUtils.parseDate(temp.get("eventTime")));
+                }else {
+                    datePoor = DateUtils.getDatePoor(DateUtils.parseDate(temp.get("updateTime")), DateUtils.parseDate(temp.get("eventTime")));
+                }
+                temp.put("sustainTime",datePoor);
+            });
+            map.put("eventNum",eventInfo.size());
+            map.put("eventDetails",eventInfo);
+            map.put("startPile", item.getStartPile());
+            mapList.add(map);
         }
         return AjaxResult.success(mapList);
     }

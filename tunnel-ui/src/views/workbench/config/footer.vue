@@ -7,7 +7,7 @@
             <img
               :src="carIcon"
               style="width: 0.9vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>车辆监测</p>
             <p>Vehicle detection</p>
@@ -22,7 +22,7 @@
             <img
               :src="energyIcon"
               style="width: 1vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>能耗监测</p>
             <p>Energy monitoring</p>
@@ -36,7 +36,7 @@
             <img
               :src="keyVehiclesIcon"
               style="width: 0.8vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>洞内外速度监测</p>
             <p>Opening speed</p>
@@ -55,7 +55,7 @@
             <img
               :src="keyVehiclesIcon"
               style="width: 0.8vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>设备健康监测</p>
             <p>Equipment monitoring</p>
@@ -86,7 +86,7 @@
             <img
               :src="warningIcon"
               style="width: 0.8vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>预警事件</p>
             <p>Alert event</p>
@@ -327,7 +327,7 @@
             <img
               :src="warningIcon"
               style="width: 16px; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>{{ videoTitle1 }}</p>
             <p>real-time video</p>
@@ -365,7 +365,7 @@
             <img
               :src="warningIcon"
               style="width: 16px; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>{{ videoTitle2 }}</p>
             <p>real-time video</p>
@@ -409,7 +409,7 @@
             <img
               :src="warningIcon"
               style="width: 16px; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>{{ videoTitle5 }}</p>
             <p>inspection robot</p>
@@ -437,7 +437,7 @@
             <img
               :src="warningIcon"
               style="width: 16px; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>{{ videoTitle3 }}</p>
             <p>real-time video</p>
@@ -479,7 +479,7 @@
             <img
               :src="warningIcon"
               style="width: 16px; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
+              v-show="sideTheme != 'theme-light'"
             />
             <p>{{ videoTitle4 }}</p>
             <p>real-time video</p>
@@ -1105,7 +1105,7 @@ export default {
             axisLabel: {
               show: true,
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
               formatter: function (value, index) {
@@ -1123,7 +1123,7 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               },
             },
             axisTick: {
@@ -1133,7 +1133,7 @@ export default {
           yAxis: {
             name: "km/h",
             nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
@@ -1146,7 +1146,7 @@ export default {
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
@@ -1391,7 +1391,7 @@ export default {
           xAxis: {
             name: "时",
             nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
@@ -1399,14 +1399,14 @@ export default {
             data: timeArr,
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               },
             },
             axisTick: {
@@ -1416,7 +1416,7 @@ export default {
           yAxis: {
             name: "辆",
             nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
@@ -1428,7 +1428,7 @@ export default {
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
@@ -1696,7 +1696,7 @@ export default {
           data: ["年", "月", "日"],
           textStyle: {
             //图例文字的样式
-            color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+            color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
             fontSize: 10,
           },
         },
@@ -1723,7 +1723,7 @@ export default {
             boundaryGap: false,
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
                 fontFamily: "PingFang",
               },
@@ -1731,7 +1731,7 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               },
             },
             data: xData,
@@ -1741,7 +1741,7 @@ export default {
           {
             name: "kwh",
             nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
@@ -1769,7 +1769,7 @@ export default {
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
@@ -1887,14 +1887,14 @@ export default {
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               },
             },
           },
@@ -1909,7 +1909,7 @@ export default {
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },

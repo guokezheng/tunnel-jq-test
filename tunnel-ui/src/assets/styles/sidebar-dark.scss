@@ -1,4 +1,12 @@
 .theme-dark {
+  .searchTable{
+    background-image: url(../../assets/icons/searchTable.png) !important;
+  }
+  .el-button--small{
+      background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
+      border: 1px solid #65BFFF !important;
+      color: #fff !important;
+    }
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
     color: #fff !important;
   }
@@ -1094,7 +1102,20 @@
       border-bottom: transparent;
     }
   }
+  .searchBox{
+    background-color: #00335a;
+    .el-checkbox{
+      color: #fff;
+    }
+  }
   #app {
+    .buttonsDeawer,.indicatorLight,.brightnessControl,.triggerControl{
+      background: linear-gradient(
+        90deg,
+        rgba(0, 172, 237, 0.8),
+        rgba(0, 121, 219, 0.8)
+      );
+    }
     .el-table__body tr .hover-row > td .el-table__cell{
       background-color: #0064B0 !important;
     }

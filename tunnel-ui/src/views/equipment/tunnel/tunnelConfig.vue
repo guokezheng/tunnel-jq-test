@@ -255,7 +255,7 @@ import {
   addEqTypeState,
   updateEqTypeState,
 } from "@/api/equipment/eqTypeState/api";
-import { defaultIcon, laneImage } from "../../../utils/configData.js";
+import { defaultIcon, laneImage,laneImage2 } from "../../../utils/configData.js";
 
 var selectedIconIndex = ""; //删除索引
 var img = [];
@@ -270,7 +270,7 @@ export default {
       visible: true,
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       displayNumb: true, //显示编号
-      laneUrlList: laneImage, // 逆向车道
+      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2, // 逆向车道
       activeTab: "direction0",
       //逆向预览列表
       previewLaneUrlList: [

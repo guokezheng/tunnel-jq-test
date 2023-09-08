@@ -582,7 +582,7 @@
 <script>
 import { mapState } from "vuex";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
-import { laneImage } from "../../../utils/configData.js";
+import { laneImage,laneImage2 } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 import { getEventCamera, getEntranceExitVideo} from "@/api/eventDialog/api.js";
@@ -661,7 +661,7 @@ export default {
       directionList: [],
       eventForm: {},
       timer: null,
-      laneUrlList: laneImage,
+      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
       eqTypeStateList: null,
       selectedIconList: [],
       backImg: "",

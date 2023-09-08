@@ -295,7 +295,7 @@
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
-          @mousewheel.prevent ="mouseSrollAuto"
+          @mousewheel.prevent="mouseSrollAuto"
           @contextmenu.prevent
           @mousedown="dragImg"
         >
@@ -350,7 +350,9 @@
                   <div
                     class="actuatorCK"
                     v-show="
-                      selectBigType.index == 0 && selectedIconList.length > 0 && currentTunnel.id == 'JQ-JiNan-WenZuBei-MJY'
+                      selectBigType.index == 0 &&
+                      selectedIconList.length > 0 &&
+                      currentTunnel.id == 'JQ-JiNan-WenZuBei-MJY'
                     "
                     @click="openStateSwitch(actuatorCKItem)"
                     @mousemove="openTooltip2()"
@@ -1980,6 +1982,7 @@ import {
   icon,
   // eqTypeStateIcon,
   laneImage,
+  laneImage2
 } from "../../../utils/configData.js";
 import {
   listStrategy,
@@ -2485,7 +2488,7 @@ export default {
       },
       lightSwitch: 0,
       //车道列表
-      laneUrlList: laneImage,
+      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
       //画布上下的传感器数据集合
       upList: [],
       downList: [],
@@ -2813,7 +2816,7 @@ export default {
   },
 
   watch: {
-    'resetCanvasFlag':function(newVal,oldVal){
+    "resetCanvasFlag":function(newVal,oldVal){
       console.log(newVal,"resetCanvasFlag")
     },
     screenEqName(val) {
@@ -3001,7 +3004,7 @@ export default {
       }
     },
     mouseSrollAuto(e) {
-      console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      console.log(e.target.scrollLeft, "e.target.scrollLeft");
       if (e.target.scrollLeft > 0) {
         this.resetCanvasFlag = true;
       } else {
@@ -3232,7 +3235,7 @@ export default {
     },
     // 模糊查询
     treeClick() {
-      console.log("模糊查询")
+      console.log("模糊查询");
       // // 点击输入框 折叠之前打开的树形菜单
       // const nodes = this.$refs.tree.store._getAllNodes();
       // nodes.forEach((item) => {
@@ -3650,7 +3653,7 @@ export default {
     },
     // 筛选设备名称
     screenEqNameButton(treeNodeClick) {
-      console.log("筛选设备名称")
+      console.log("筛选设备名称");
       let that = this;
       if (this.screenEqName) {
         let bigType = "";
@@ -4319,7 +4322,7 @@ export default {
     },
     //地图复位
     resetCanvas() {
-      console.log("地图复位")
+      console.log("地图复位");
       setTimeout(() => {
         this.resetCanvasFlag = false;
       }, 50);
@@ -4330,7 +4333,7 @@ export default {
     },
     //右键拖动
     dragImg(e) {
-      console.log("右键拖动")
+      console.log("右键拖动");
       let scrollContainer = document.querySelector(".vehicleLane");
       let dragContainer = document.querySelector(".content");
       let mouseDownScrollPosition = {
@@ -5006,7 +5009,7 @@ export default {
                   "39",
                   "48",
                   "41",
-                  "47"
+                  "47",
                 ];
 
                 if (arr.includes(deviceData.eqType)) {
@@ -5023,17 +5026,21 @@ export default {
 
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
-                        this.selectedIconList[j].num =
-                          "CO:" +
-                          parseFloat(deviceData.CO).toFixed(2) +
-                          "/PPM  VI:" +
-                          parseFloat(deviceData.VI).toFixed(2) +
-                          "M";
+                        if (deviceData.CO && deviceData.VI) {
+                          this.selectedIconList[j].num =
+                            "CO:" +
+                            parseFloat(deviceData.CO).toFixed(2) +
+                            "/PPM  VI:" +
+                            parseFloat(deviceData.VI).toFixed(2) +
+                            "M";
+                        }
                       } else if (deviceData.eqType == 17) {
-                        this.selectedIconList[j].num =
-                          parseFloat(deviceData.FS).toFixed(2) +
-                          "m/s " +
-                          deviceData.FX;
+                        if (deviceData.FS && deviceData.FX) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.FS).toFixed(2) +
+                            "m/s " +
+                            deviceData.FX;
+                        }
                       } else if (deviceData.eqType == 5) {
                         if (deviceData.DWLD) {
                           this.selectedIconList[j].num =
@@ -5141,7 +5148,7 @@ export default {
       // 4. get到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
       if (!this.$cache.local.get("currentTunnel")) {
         //if (this.currentTunnel.name) {
-          this.$cache.local.set("currentTunnel", JSON.stringify(obj));
+        this.$cache.local.set("currentTunnel", JSON.stringify(obj));
         //}
         this.$refs.deawerRef.init(item.tunnelId, item.lane);
         this.$refs.footerRef.init(item.tunnelId);
@@ -6046,11 +6053,11 @@ export default {
 .buttonsDeawer {
   width: 1.6vw;
   height: 4.2vh;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 172, 237, 0.8),
-    rgba(0, 121, 219, 0.8)
-  );
+  // background: linear-gradient(
+  //   90deg,
+  //   rgba(0, 172, 237, 0.8),
+  //   rgba(0, 121, 219, 0.8)
+  // );
   transform: translateY(-1px);
   display: flex;
   justify-content: center;
@@ -6219,11 +6226,11 @@ export default {
 .indicatorLight {
   width: 100%;
   height: 33%;
-  background: linear-gradient(
-    90deg,
-    rgba($color: #00aced, $alpha: 0.8),
-    rgba($color: #0079db, $alpha: 0.8)
-  );
+  // background: linear-gradient(
+  //   90deg,
+  //   rgba($color: #00aced, $alpha: 0.8),
+  //   rgba($color: #0079db, $alpha: 0.8)
+  // );
   color: white;
   writing-mode: vertical-lr;
   letter-spacing: 5px;
@@ -6238,11 +6245,11 @@ export default {
 .brightnessControl {
   width: 100%;
   height: 33%;
-  background: linear-gradient(
-    90deg,
-    rgba($color: #00aced, $alpha: 0.8),
-    rgba($color: #0079db, $alpha: 0.8)
-  );
+  // background: linear-gradient(
+  //   90deg,
+  //   rgba($color: #00aced, $alpha: 0.8),
+  //   rgba($color: #0079db, $alpha: 0.8)
+  // );
   color: white;
   //垂直向下
   writing-mode: vertical-lr;
@@ -6264,11 +6271,11 @@ export default {
 .triggerControl {
   width: 100%;
   height: 33%;
-  background: linear-gradient(
-    90deg,
-    rgba($color: #00aced, $alpha: 0.8),
-    rgba($color: #0079db, $alpha: 0.8)
-  );
+  // background: linear-gradient(
+  //   90deg,
+  //   rgba($color: #00aced, $alpha: 0.8),
+  //   rgba($color: #0079db, $alpha: 0.8)
+  // );
   color: white;
   //垂直向下
   writing-mode: vertical-lr;

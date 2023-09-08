@@ -2,6 +2,7 @@
   <div>
     <svg-icon :icon-class="isFullscreen?'exit-fullscreen':'fullscreen'" 
     @click.native="click" :name="isFullscreen?'exit-fullscreen':'fullscreen'"
+    :style="{height: titleHeader == '1'?'1.8vh':'2vh'}"
     />
   </div>
 </template>
@@ -13,7 +14,8 @@ export default {
   name: 'Screenfull',
   data() {
     return {
-      isFullscreen: false
+      isFullscreen: false,
+      titleHeader:this.$cache.local.get("navigationBar"), 
     }
   },
   mounted() {
@@ -99,8 +101,8 @@ export default {
   vertical-align: 10px;
 }
 ::v-deep .svg-icon{
-  width: 2vw !important;
+  /* width: 2vw !important;
   height: 2vh !important;
-  vertical-align: -2px !important;
+  vertical-align: -2px !important; */
 }
 </style>

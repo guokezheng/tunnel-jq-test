@@ -118,7 +118,89 @@ let laneImage = [
   // 大于2600小于2900的隧道 用1300*2+214*2 等于3028
   // 大于3900的隧道 用1300*2.5+214*2 等于3678
 ]
-
+/* 紫色平台地图 */
+let laneImage2 = [
+  {
+    id: "4",
+    name: "马甲峪-胡山隧道",
+    url: require('@/assets/image/lane/马甲峪-胡山隧道.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "6",
+    name: "杭山东隧道",
+    url: require('@/assets/image/lane/杭山东.png'),
+    width: 1728,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "7",
+    name: "金家楼隧道",
+    url: require('@/assets/image/lane/金家楼.png'),
+    width: 1728,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "8",
+    name: "马鞍山隧道",
+    url: require('@/assets/image/lane/马鞍山.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "9",
+    name: "北家峪-泰和山隧道",
+    url: require('@/assets/image/lane/北家峪-泰和山.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "10",
+    name: "盘顶山隧道",
+    url: require('@/assets/image/lane/盘顶山.png'),
+    width: 3678,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "11",
+    name: "青风岭隧道",
+    url: require('@/assets/image/lane/清风岭.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "12",
+    name: "双子山隧道",
+    url: require('@/assets/image/lane/双子山.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "13",
+    name: "万昌溜-天赐山隧道",
+    url: require('@/assets/image/lane/万昌溜-天赐山.png'),
+    width: 3028,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "14",
+    name: "仰天山隧道",
+    url: require('@/assets/image/lane/仰天山.png'),
+    width: 1728,
+    num: 3,
+    direction: 0
+  },
+]
 export {
-  laneImage
+  laneImage,laneImage2
 }

@@ -6,7 +6,6 @@
 @import "./sidebar-light.scss";
 @import "./sidebar-blue.scss";
 @import "./btn.scss";
-
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -327,7 +326,7 @@ p {
 .searchTable{
   width: 30px !important;
   height: 30px !important;
-  background-image: url(../../assets/icons/searchTable.png) !important;
+  // background-image: url(../../assets/icons/searchTable.png) !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
@@ -369,12 +368,12 @@ p {
 .el-button:hover{
   background-color: none;
 }
-// 所有页面small按钮样式统一 且不带鼠标移入效果
-.el-button--small{
-  background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
-  border: 1px solid #65BFFF !important;
-  color: #fff !important;
-}
+// // 所有页面small按钮样式统一 且不带鼠标移入效果
+// .el-button--small{
+//   background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
+//   border: 1px solid #65BFFF !important;
+//   color: #fff !important;
+// }
 .el-tooltip__popper{
   max-width: 400px;
   word-wrap: break-word;

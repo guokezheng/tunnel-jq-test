@@ -141,7 +141,7 @@
       </el-form>
     </div>
     <div class="tableTopHr"></div>
-    <div class="contentListBox container" v-loading="isLoading">
+    <div class="contentListBox container">
       <div
         class="contentBox"
         :style="topNav ? 'width:24.6%' : 'width:24.5%'"
@@ -150,16 +150,18 @@
       >
         <div class="top" style="">
           <div class="video">
-            <img
-              :src="item.eventImgUrl"
-              v-show="item.eventImgUrl"
-              style="width: 100%"
-              @click="openPicDialog(item)"
-            />
-            <img
-              src="../../../assets/cloudControl/nullImg.png"
-              v-show="!item.eventImgUrl || item.eventImgUrl == null"
-            />
+            <div class="videoBox">
+              <img
+                :src="item.eventImgUrl"
+                v-show="item.eventImgUrl"
+                style="width: 100%"
+                @click="openPicDialog(item)"
+              />
+              <img
+                src="../../../assets/cloudControl/nullImg.png"
+                v-show="!item.eventImgUrl || item.eventImgUrl == null"
+              />
+            </div>
           </div>
           <div class="contentText">
             <div>
@@ -436,7 +438,11 @@
                 >
                 </el-date-picker> -->
                 <el-input
-                  v-model="!!eventFormDetail.continuedTime?eventFormDetail.continuedTime.split('-').join('') :eventFormDetail.continuedTime"
+                  v-model="
+                    !!eventFormDetail.continuedTime
+                      ? eventFormDetail.continuedTime.split('-').join('')
+                      : eventFormDetail.continuedTime
+                  "
                   readonly
                   style="width: calc(100% - 10px)"
                 ></el-input>
@@ -721,13 +727,15 @@
                   eventFormDetail.prevControlType == 0
                 "
               >
-                <el-form-item prop="currencyId"
+                <el-form-item
+                  prop="currencyId"
                   :rules="
                     eventFormDetail.eventState == 0 &&
                     eventFormDetail.prevControlType == 0
                       ? rules.currencyId
                       : []
-                  ">
+                  "
+                >
                   <el-select
                     v-model="eventFormDetail.currencyId"
                     placeholder="请选择预案"
@@ -772,7 +780,7 @@
                     placeholder="请选择预案"
                   >
                     <el-option
-                    v-for="item in ReservePlanList"
+                      v-for="item in ReservePlanList"
                       :key="item.id"
                       :label="item.planName"
                       :value="item.id"
@@ -1020,11 +1028,14 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="影响方向">
-                    <el-input v-model="manualReview.direction" readonly></el-input>
+                    <el-input
+                      v-model="manualReview.direction"
+                      readonly
+                    ></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                 <el-form-item label="影响车道">
+                  <el-form-item label="影响车道">
                     <el-input v-model="manualReview.laneNo" readonly></el-input>
                   </el-form-item>
                 </el-col>
@@ -1036,7 +1047,7 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              
+
                 <el-col :span="8">
                   <el-form-item label="复核人">
                     <el-input
@@ -1053,7 +1064,7 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              
+
                 <el-col :span="24">
                   <el-form-item label="复核描述">
                     <el-input
@@ -1209,9 +1220,14 @@
                   height="250"
                   style="width: 100%"
                 >
-                  <el-table-column prop="eqName" label="设备名称" align="center">
+                  <el-table-column
+                    prop="eqName"
+                    label="设备名称"
+                    align="center"
+                  >
                   </el-table-column>
-                  <el-table-column prop="pile" label="桩号" align="center"> </el-table-column>
+                  <el-table-column prop="pile" label="桩号" align="center">
+                  </el-table-column>
                   <el-table-column prop="stateName" label="状态" align="center">
                   </el-table-column>
                 </el-table>
@@ -1332,12 +1348,13 @@
           ></el-tab-pane>
         </el-tabs>
       </div>
-      <div
-        v-for="(item, index) in DeviceDetail"
-        :key="index"
-        
-      >
-        <el-table :data="item.devicesList" style="width: 100%" height="600" v-if="deviceIndexShow == index"> 
+      <div v-for="(item, index) in DeviceDetail" :key="index">
+        <el-table
+          :data="item.devicesList"
+          style="width: 100%"
+          height="600"
+          v-if="deviceIndexShow == index"
+        >
           <el-table-column prop="eqName" label="设备名称" align="center">
           </el-table-column>
           <el-table-column prop="pile" label="桩号" align="center">
@@ -1437,7 +1454,7 @@ export default {
   },
   data() {
     return {
-      evtWebsoktList:[],
+      evtWebsoktList: [],
       strategyList: [], //策略列表
       controlTypeOptions: [], //防控类型
       pickerOptionsStart: {
@@ -1490,7 +1507,7 @@ export default {
       eventDiscovery: {}, //发现数据
       vedioData: {}, //视频录像数据
       tacticsList: {}, //表单数据
-      isAuto:"0", //是否自动执行
+      isAuto: "0", //是否自动执行
       dialogTableVisible: false,
       radioList: [
         { label: "确认(已确认)", value: "4" },
@@ -1800,7 +1817,7 @@ export default {
           },
         ],
       },
-      isLoading: false,
+      // isLoading: false,
       loadingText: "加载中...",
       vedioPlayer: false,
     };
@@ -1825,9 +1842,9 @@ export default {
       this.getTunnelLane();
     },
     sdEventList(event) {
-      console.log(event,"websockt推送一件事")
-      this.evtWebsoktList = event
-    }
+      console.log(event, "websockt推送一件事");
+      this.evtWebsoktList = event;
+    },
   },
   mounted() {},
   async created() {
@@ -1959,7 +1976,7 @@ export default {
       getStrategyData(param).then((res) => {
         console.log(res.data, "策略列表");
         //debugger
-        this.strategyList = []
+        this.strategyList = [];
         this.strategyList = res.data;
         this.eventFormDetail.currencyId = res.data[0].id;
       });
@@ -2002,7 +2019,7 @@ export default {
       examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
-        this.activeName = res.data[0].tableName
+        this.activeName = res.data[0].tableName;
         this.dialogVisibleDevice = true;
       });
     },
@@ -2160,11 +2177,11 @@ export default {
     eventStateChange() {
       if (this.eventFormDetail.eventState != 0) {
         this.eventFormDetail.currencyId = "";
-      }else{
-        if(this.ReservePlanList.length>0){
-          this.eventFormDetail.currencyId = this.ReservePlanList[0].id
-        }else{
-          this.eventFormDetail.currencyId = ''
+      } else {
+        if (this.ReservePlanList.length > 0) {
+          this.eventFormDetail.currencyId = this.ReservePlanList[0].id;
+        } else {
+          this.eventFormDetail.currencyId = "";
         }
       }
       this.eventFormDetail.reviewRemark = [];
@@ -2311,11 +2328,14 @@ export default {
             this.closeProcessDialog = false;
             this.processType = false;
             this.details = false;
-            this.cameraPlayer = false
+            this.cameraPlayer = false;
             if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
-              if(this.evtWebsoktList.length > 0 && this.evtWebsoktList[0].ids == this.eventFormDetail.id){
-                console.log("点复核提交 关弹窗")
+              if (
+                this.evtWebsoktList.length > 0 &&
+                this.evtWebsoktList[0].ids == this.eventFormDetail.id
+              ) {
+                console.log("点复核提交 关弹窗");
                 bus.$emit("closeDialog");
               }
             }
@@ -2337,11 +2357,8 @@ export default {
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            if (
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
-            this.$router.push({
+            if (currencyId && this.eventFormDetail.eventState == 0) {
+              this.$router.push({
                 path: "/emergency/administration/dispatch",
                 query: { id: this.eventFormDetail.id },
               });
@@ -2457,7 +2474,7 @@ export default {
       this.getReservePlanData();
 
       this.$nextTick(() => {
-        if(this.$refs.swiperTop){
+        if (this.$refs.swiperTop) {
           const swiperTop = this.$refs.swiperTop.$el.swiper;
           const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
           swiperTop.controller.control = swiperThumbs;
@@ -2712,7 +2729,13 @@ export default {
     getList() {
       this.eventForm.currencyId = "";
       this.ReservePlanList = [];
-      this.isLoading = true;
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      // this.isLoading = true;
       // let options ={}
       // let loadingInstances = Loading.service(options);
       this.eventList = [];
@@ -2747,10 +2770,11 @@ export default {
           }
         }
         this.eventList = response.rows;
-        this.isLoading = false;
+        // this.isLoading = false;
         console.log(this.eventList, "this.eventListthis.eventList");
         this.total = response.total;
         this.loading = false;
+        loading.close();
       });
     },
     /** 删除按钮操作 */
@@ -3011,7 +3035,7 @@ export default {
     cancel() {
       this.open = false;
       this.details = false;
-      this.cameraPlayer = false
+      this.cameraPlayer = false;
       this.processDialog = false;
       this.processType = false;
       this.reset();
@@ -3029,9 +3053,7 @@ export default {
   display: unset !important;
   width: unset !important;
 }
-::v-deep .el-timeline-item__content {
-  background-color: #022443;
-}
+
 .scrollbar_li {
   width: 145px;
   margin-right: 15px;
@@ -3868,11 +3890,11 @@ hr {
   }
 }
 </style>
-<style lang="scss">
+<!-- <style lang="scss">
 .evtInfo .el-timeline-item__node {
   background: #39adff !important;
 }
 .evtInfo .el-timeline-item__tail {
   border-left: 1px dashed #39adff !important;
 }
-</style>
+</style> -->

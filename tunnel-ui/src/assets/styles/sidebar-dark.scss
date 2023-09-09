@@ -511,6 +511,19 @@
       max-height: 88vh;
       overflow: hidden;
 
+      .left-content {
+        background: #05213E;
+      }
+
+      .content {
+        background: #05213E;
+      }
+
+      .content-centre {
+        background-color: #042d5f;
+        border: 1px solid #042d5f;
+      }
+
       // 智慧调光
       .handControl-container {
         .grid-content {
@@ -1520,6 +1533,22 @@
 
     // 工作台底部切换视频 图表按钮
     .footer {
+      .tabButton {
+        .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+          background: linear-gradient(180deg,
+              rgba($color: #00aced, $alpha: 0.8),
+              rgba($color: #0079db, $alpha: 0.8));
+          border: solid 0.1px #0067b2;
+          box-shadow: none;
+        }
+
+        .el-radio-button__inner {
+          background: transparent;
+          border: solid 0.1px #0067b2;
+          color: #fff;
+        }
+      }
+
       .footChangeButton {
         .el-radio-button__inner {
           color: #fff;
@@ -3626,6 +3655,24 @@
     .ledLighting .el-switch__core:after {
       background: #3F88B5;
     }
+
+    ::-webkit-scrollbar-track-piece {
+      background-color: #100A43;
+      border-left: 1px solid rgba(0, 0, 0, 0);
+      width: 1000px;
+      border-width: 50px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba($color: #00c2ff, $alpha: 0.6);
+      background-clip: padding-box;
+
+      min-height: 28px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #00c2ff;
+    }
   }
 
   .drawerActive {
@@ -3888,7 +3935,17 @@
       background: #165484 !important;
     }
   }
-
+  .evtInfo{
+    .el-timeline-item__node {
+      background: #39adff !important;
+    }
+    .el-timeline-item__tail {
+      border-left: 1px dashed #39adff !important;
+    }
+    .el-timeline-item__content {
+      background-color: #182053;
+    }
+  }
   .rightBottom {
     .evtManagement {
       background: #012e51;
@@ -3950,6 +4007,9 @@
 
     .contentBox {
       background: #023668;
+    }
+    .videoBox{
+      background: #1B4077 !important;
     }
   }
 

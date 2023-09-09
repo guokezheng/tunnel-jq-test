@@ -46,9 +46,10 @@
 }
 .el-input--small {
   .el-input__inner{
-    height: 4vh;
-    line-height: 4vh;
+    // height: 4vh;
+    // line-height: 4vh;
     font-size: 0.7vw;
+    padding: 9px 15px;
   }
   .el-input__icon{
     line-height: 4vh;

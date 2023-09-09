@@ -2395,20 +2395,20 @@ export default {
   ::v-deep .el-radio-button--medium .el-radio-button__inner {
     font-size: 0.6vw !important;
   }
-  ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-    background: linear-gradient(
-      180deg,
-      rgba($color: #00aced, $alpha: 0.8),
-      rgba($color: #0079db, $alpha: 0.8)
-    );
-    border: solid 0.1px #0067b2;
-    box-shadow: none;
-  }
-  ::v-deep .el-radio-button__inner {
-    background: #010913;
-    border: solid 0.1px #0067b2;
-    color: #fff;
-  }
+  // ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+  //   background: linear-gradient(
+  //     180deg,
+  //     rgba($color: #00aced, $alpha: 0.8),
+  //     rgba($color: #0079db, $alpha: 0.8)
+  //   );
+  //   border: solid 0.1px #0067b2;
+  //   box-shadow: none;
+  // }
+  // ::v-deep .el-radio-button__inner {
+  //   background: transparent;
+  //   border: solid 0.1px #0067b2;
+  //   color: #fff;
+  // }
 }
 
 // .anim {

@@ -548,16 +548,16 @@
                           transform:
                             (item.eqType == 23 &&
                               item.eqDirection == 2 &&
-                              item.eqTunnelId == 'JQ-JiNan-WenZuBei-JLY') ||
-                            (item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              item.eqTunnelId == 'JQ-JiNan-WenZuBei-HSD') ||
+                            (item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                               item.eqDirection == 1 &&
                               item.associated_device_id == 2)
                               ? 'scale(-1,1)'
-                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                                 item.eqDirection == 2 &&
                                 item.associated_device_id == 2
                               ? 'scale(1,-1)'
-                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                                 item.eqDirection == 2 &&
                                 item.associated_device_id == 1
                               ? 'scale(-1,-1)'
@@ -6114,9 +6114,10 @@ export default {
   margin: 0 0 10px !important;
 }
 .searchTable {
+  padding: 15px;
   margin: 0px;
   width: 100% !important;
-  height: 4vh !important;
+  height: 30px !important;
 }
 .robotHtmlBox {
   width: 770px;
@@ -7221,13 +7222,13 @@ input {
   }
   .chezhiControlButton {
     width: 50px;
-    height: 32px;
+    height: 27px;
     padding: 0;
     // border:solid 1px #A3B7CF;
     border-radius: 2px;
     margin-left: 8px;
     text-align: center;
-    line-height: 31px;
+    line-height: 27px;
     cursor: pointer;
     color: white;
   }
@@ -7323,9 +7324,9 @@ input {
 
 /* 设备含义中的table*/
 .explain-table {
-  .el-table .el-table__header-wrapper th {
-    background-color: #304156;
-  }
+  // .el-table .el-table__header-wrapper th {
+  //   background-color: #304156;
+  // }
 
   .el-table::before {
     height: 0;
@@ -7340,7 +7341,7 @@ input {
   }
 
   .el-table__body-wrapper {
-    background-color: #304156;
+    // background-color: #304156;
   }
 
   /*table滚动条的宽度 */

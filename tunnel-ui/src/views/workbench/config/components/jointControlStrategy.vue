@@ -1188,10 +1188,10 @@ export default {
 .left-content {
   width: 15%;
   height: 100%;
-  background: #05213E;
+  // background: #05213E;
 }
 .content {
-  background: #05213E;
+  // background: #05213E;
   width: 85%;
   margin-left: 10px;
 }
@@ -1217,8 +1217,8 @@ export default {
   width: 30%;
   position: relative;
   float: left;
-  background-color: #042d5f;
-  border: 1px solid #042d5f;
+  // background-color: #042d5f;
+  // border: 1px solid #042d5f;
   margin-left: 30px;
   margin-top: 20px;
 }
@@ -1312,9 +1312,10 @@ export default {
   width: 29.4% !important;
 }
 .searchTable {
+  padding: 15px;
   margin: 0px;
   width: 100% !important;
-  height: 4vh !important;
+  height: 30px !important;
 }
 .timedControl {
   .el-dialog__body .handControl-container .el-input-group__append .el-button{

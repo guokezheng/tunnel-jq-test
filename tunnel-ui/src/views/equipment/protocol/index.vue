@@ -89,7 +89,7 @@
             />
           </el-select>
         </el-form-item>
-          
+
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
@@ -549,6 +549,9 @@ export default {
     // 数据项change
     itemChange(){
       console.log("this.form",this.form);
+      // 不显示默认模版
+      return;
+
       // 修改操作不显示
       if(this.form.id && this.form.id != 0){
         return;
@@ -573,9 +576,12 @@ export default {
                      "text": item.stateName,
                      "state": item.deviceState,
                      "stateConfig": {
-                       "RO1": true,
+                       "RO1": false,
+                       "RO2": false,
+                       "RO3": false,
+                       "RO4": false,
                      },
-                     "resConfig": ["SI1"]
+                     "resConfig": ["SI1","SI2","SI3","SI4"]
                    };
                   // 客户端 默认点位JSON
                   clientJSON.push(clientObj);

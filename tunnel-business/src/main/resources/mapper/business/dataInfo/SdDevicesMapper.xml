@@ -1421,7 +1421,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                         A.item_id = D.item_id
                     and A.eq_id = D.item_id
         WHERE
-            A.eq_id = #{devId} -- and  A.is_reserved = 1
+            A.eq_id = #{devId} and A.function_json is not null and A.function_json != '' and A.function_json !='{}'
     </select>
 
     <select id="getXfpDevicesInfo" parameterType="java.lang.String" resultMap="SdDevicesResult">

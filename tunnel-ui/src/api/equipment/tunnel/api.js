@@ -19,13 +19,13 @@ export function listTunnels(query) {
   })
 }
 // 查询隧道列表
-export function listDepId(query) {
-  return request({
-    url: '/tunnels/listDepId',
-    method: 'get',
-    params: query
-  })
-}
+// export function listDepId(query) {
+//   return request({
+//     url: '/tunnels/listDepId',
+//     method: 'get',
+//     params: query
+//   })
+// }
 export function listAllTunnels(query) {
   return request({
     url: '/tunnels/listAll',

@@ -2,9 +2,9 @@ import defaultSettings from "@/settings"
 
 const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dynamicTitle,weatherView } = defaultSettings
 
-// const storageSetting = JSON.parse(localStorage.getItem("layout-setting")) || "";
-var txt = localStorage.getItem("layout-setting")
-const storageSetting = eval ("(" + txt + ")"); 
+const storageSetting = JSON.parse(localStorage.getItem("layout-setting")) || "";
+// var txt = localStorage.getItem("layout-setting")
+// const storageSetting = eval ("(" + txt + ")");
 
 const state = {
   title: "",

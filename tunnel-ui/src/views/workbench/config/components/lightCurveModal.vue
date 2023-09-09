@@ -236,7 +236,7 @@
                     <el-select
                       clearable
                       v-model="item.lightParagraph"
-                      placeholder="请选择选择设备"
+                      placeholder="请选择设备"
                       style="width: 30%"
                     >
                       <el-option
@@ -277,7 +277,7 @@
 import * as echarts from "echarts";
 import {addConfig, listConfig, updateConfig} from "@/api/business/wisdomLight/app";
 import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
-import {listTunnels} from "@/api/equipment/tunnel/api";
+import {listDepId, listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "lightCurveModal",
@@ -777,6 +777,8 @@ export default {
         this.lightChangeEvent()
         this.lightChangeEventWei()
       }
+      this.lightFilesModel.direction ="2"
+      this.lightFilesModelWei.direction ="1"
       //根据隧道id获取相应外部测光设备
       dataDevicesLogInfoList(this.addDateRange(querysParamsTab)).then(
         (response) => {
@@ -1055,7 +1057,7 @@ export default {
       if (this.$cache.local.get("manageStation") == "1") {
         this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       }
-      await listTunnels(this.paramsData).then((response) => {
+      await listDepId(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, "隧道列表");
       });

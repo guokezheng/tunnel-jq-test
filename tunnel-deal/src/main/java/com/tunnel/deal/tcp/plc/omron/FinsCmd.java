@@ -4,6 +4,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.tcp.client.config.ChannelKey;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.plc.omron.fins.FinsCmdGenerator;
 import com.tunnel.deal.tcp.util.ByteBufUtil;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -27,6 +30,7 @@ public class FinsCmd {
     private static final Logger log = LoggerFactory.getLogger(FinsCmd.class);
 
     private static final ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
+    private TcpClientGeneralService tcpClientGeneralService = SpringUtils.getBean(TcpClientGeneralService.class);
 
     /**
      * 发送查询指令
@@ -89,6 +93,16 @@ public class FinsCmd {
         return executeCommand(deviceId,ip,port,command);
     }
 
+    public static void main(String[] args) {
+        long timestamp1 = 1694166600552L;
+        long timestamp2 = 1694166600464L;
+
+        Instant instant1 = Instant.ofEpochMilli(timestamp1);
+        Instant instant2 = Instant.ofEpochMilli(timestamp2);
+
+        Duration duration = Duration.between(instant2, instant1);
+        System.out.println("差异（毫秒）: " + duration.toMillis());
+    }
 
     /**
      * 发送指令
@@ -105,7 +119,9 @@ public class FinsCmd {
             if (channel != null && channel.isActive()) {
                 try {
                     channel.writeAndFlush(ByteBufUtil.convertStringToByteBuf(command.replace(" ","")));
+                    String deviceId1 = tcpClientGeneralService.getDeviceIdByIp(ip);
                     System.out.println("发送命令：ip="+ip+",cmd="+command+",时间："+System.currentTimeMillis());
+                    System.out.println("发送命令：ip="+ip+",设备,"+"设备id"+deviceId+",时间："+System.currentTimeMillis());
                     log.info("向设备["+ip+":"+port+"],发送指令："+command);
                 } catch (DecoderException e) {
                     e.printStackTrace();

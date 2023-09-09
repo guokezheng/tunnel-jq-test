@@ -302,6 +302,12 @@ public class OmronFinsTask {
                     log.error("状态配置打印：pointConfig="+pointConfig);
                 }
             }
+
+            //26代表车指
+            String fEqType = itemMap.get("fEqType").toString();
+            if(fEqType.equals("26")&&"0000".equals(data)){
+                data = "1";
+            }
             //存储实时数据
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqId(eqId);

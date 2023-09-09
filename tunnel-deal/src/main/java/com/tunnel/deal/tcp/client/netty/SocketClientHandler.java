@@ -44,6 +44,7 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
 
 
            String deviceId = tcpClientGeneralService.getDeviceIdByIp(ip);
+            System.out.println("响应命令：ip="+ip+",设备,"+"设备id"+deviceId+",时间："+System.currentTimeMillis());
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
             //设备解析类
             TcpClientGeneralBean tcpClientGeneralBean = tcpClientGeneralService.getProtocolBean(sdDevices);

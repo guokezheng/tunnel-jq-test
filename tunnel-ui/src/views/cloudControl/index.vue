@@ -1150,6 +1150,7 @@ import {
   icon,
   // eqTypeStateIcon,
   laneImage,
+  laneImage2
 } from "../../utils/configData.js";
 import {
   listStrategy,
@@ -1367,7 +1368,7 @@ export default {
     timer:null,
 
       //车道列表
-      laneUrlList: laneImage,
+      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
       //画布上下的传感器数据集合
       upList: [],
       downList: [],

@@ -146,9 +146,9 @@ export default {
             .el-icon-arrow-left{left:47%;z-index: 999;}
             .is-horizontal{display:none;}
         }
-        .el-menu{background-color:unset;}
+        // .el-menu{background-color:unset;}
         // .el-menu-item:hover, .el-menu-item:focus{background-color:unset!important;}
-        .el-menu-item:hover, .el-menu-item:focus{background-color:#00588f!important;}
+        // .el-menu-item:hover, .el-menu-item:focus{background-color:#00588f!important;}
         .sidebar-logo-container{background-color:unset!important;background:unset;}
         .el-scrollbar{
             .el-scrollbar__view{
@@ -186,7 +186,7 @@ export default {
             .nest-menu{
                 a{
                     .is-active{
-                        span{color: #fff!important;}
+                        // span{color: #fff!important;}
                     }
                 }
             }

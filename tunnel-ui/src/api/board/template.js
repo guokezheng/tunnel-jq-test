@@ -120,7 +120,15 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   })
 }
 
+//情报板发布
+export function splicingBoard(data) {
+  return request({
+    url: '/parser/board/splicingBoard',
+    method: 'get',
+    params: data
 
+  })
+}
 
 //情报板管理右侧查询接口
 export function getAllVmsTemplate(data) {

@@ -269,6 +269,9 @@ export default {
           },
         };
         this.myChart.setOption(option);
+        window.addEventListener("resize", function () {
+          this.mychart.resize();
+        });
       });
     },
   },

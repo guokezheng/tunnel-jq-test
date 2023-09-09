@@ -306,7 +306,7 @@ import {
 } from "@/api/event/reserveProcess";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
-import { icon, laneImage } from "../../../utils/configData.js";
+import { icon, laneImage, laneImage2} from "../../../utils/configData.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 import {
   getLiPowerDevices,
@@ -325,7 +325,7 @@ export default {
       screenEqName: "", //筛选设备名称
       currentTunnel: {},
       //车道列表
-      laneUrlList: laneImage,
+      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
       tunnelId: "", //隧道id
       id: "", //预案id
       workbenchOpen: false,

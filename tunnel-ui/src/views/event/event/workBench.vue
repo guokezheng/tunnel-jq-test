@@ -748,7 +748,7 @@
   </div>
 </template>
 <script>
-import { laneImage } from "../../../utils/configData.js";
+import { laneImage,laneImage2 } from "../../../utils/configData.js";
 import {
   listTunnels,
   getTunnels,
@@ -906,7 +906,7 @@ export default {
       handleTableWheelSwithch: false,
       moveTop: 0.11,
       move: false,
-      laneUrlList: laneImage,
+      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
       showTooltipIndex: 9999,
       eqInfo: {},
       brandList: [],

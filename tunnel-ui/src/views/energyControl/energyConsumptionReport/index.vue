@@ -743,7 +743,7 @@ export default {
             appendToBody: true,
             enterable: true, // 防止tooltip浮层在折线或柱体等上时，触发mouseover事件
             formatter: function(p){
-              console.log(p)
+              // console.log(p)
               let content = p[0].name
               content += "<div style='max-height:200px;overflow-x:auto'>"
 
@@ -753,6 +753,7 @@ export default {
                 content += "</div>"
               }
               content += "</div>"
+
               return content
             }
           },
@@ -795,6 +796,9 @@ export default {
         };
 
         this.myChart.setOption(option);
+        window.addEventListener("resize", function () {
+          this.mychart.resize();
+        });
       });
     },
     //导出excel

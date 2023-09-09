@@ -120,7 +120,6 @@ export default {
       // 注册开关
       register: false,
       redirect: undefined,
-
     };
   },
   watch: {
@@ -144,7 +143,7 @@ export default {
       });
     },
     // 验证码
-    capctchaCheckSuccess(params) { 
+    capctchaCheckSuccess(params) {
       this.loginForm.code = params.captchaVerification;
       this.loading = true;
       if (this.loginForm.rememberMe) {
@@ -198,10 +197,39 @@ export default {
       }
     },
     getManageStation() {
-       getConfigKey("sd.moduleSwitch").then((res) => {
-          console.log(res,"管理站01");
-          this.$cache.local.set("manageStation",res.msg)
+      getConfigKey("sd.moduleSwitch").then((res) => {
+        console.log(res, "管理站01");
+        this.$cache.local.set("manageStation", res.msg);
+      });
+      getConfigKey("sd.navigationBar").then((res) => {
+        let sideTheme = "theme-blue";
+        if (res.msg == "0") {
+          sideTheme = "theme-dark";
+        } else {
+          sideTheme = "theme-blue";
+        }
+        // console.log(res, "是否胡山隧道，胡山单独导航栏样式");
+        this.$cache.local.set("navigationBar", res.msg);
+        this.$store.dispatch("settings/changeSetting", {
+          key: "sideTheme",
+          value: sideTheme,
         });
+        // this.sideTheme = val;
+        this.$cache.local.set(
+          "layout-setting",
+          `{
+            "topNav":${this.$store.state.settings.topNav},
+            "tagsView":${this.$store.state.settings.tagsView},
+            "weatherView":${this.$store.state.settings.weatherView},
+            "fixedHeader":${this.$store.state.settings.fixedHeader},
+            "sidebarLogo":${this.$store.state.settings.sidebarLogo},
+            "dynamicTitle":${this.$store.state.settings.dynamicTitle},
+            "sideTheme":"${sideTheme}",
+            "theme":"${this.$store.state.settings.theme}"
+          }`
+        );
+        // console.log(this.$store.state.settings.sideTheme)
+      });
     },
   },
 };

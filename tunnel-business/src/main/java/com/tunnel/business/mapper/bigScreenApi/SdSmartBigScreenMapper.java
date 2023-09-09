@@ -218,4 +218,11 @@ public interface SdSmartBigScreenMapper {
      * @return
      */
     List<Map<String, Object>> getTunnelDataStatis();
+
+    /**
+     * 获取事件信息
+     * @return
+     */
+    List<Map<String, Object>> getEventInfo(@Param("tunnelId") String tunnelId,
+                                           @Param("modelType") int modelType);
 }

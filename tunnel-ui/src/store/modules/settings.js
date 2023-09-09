@@ -1,12 +1,14 @@
-import defaultSettings from '@/settings'
+import defaultSettings from "@/settings"
 
 const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dynamicTitle,weatherView } = defaultSettings
 
-const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || '';
-// const storageSetting = '';
+// const storageSetting = JSON.parse(localStorage.getItem("layout-setting")) || "";
+var txt = localStorage.getItem("layout-setting")
+const storageSetting = eval ("(" + txt + ")"); 
+
 const state = {
-  title: '',
-  theme: storageSetting.theme || '#409EFF',
+  title: "",
+  theme: storageSetting.theme || "#409EFF",
   sideTheme: storageSetting.sideTheme || sideTheme,
   showSettings: showSettings,
   topNav:  storageSetting.topNav === undefined ? topNav : storageSetting.topNav,
@@ -27,7 +29,7 @@ const mutations = {
 const actions = {
   // 修改布局设置
   changeSetting({ commit }, data) {
-    commit('CHANGE_SETTING', data)
+    commit("CHANGE_SETTING", data)
   },
   // 设置网页标题
   setTitle({ commit }, title) {

@@ -7,13 +7,13 @@
         sideTheme == 'theme-blue'
       "
     >
-      <!-- 左右结构 -->
       <div :class="classObj" class="app-wrapper">
         <div
           v-if="device === 'mobile' && sidebar.opened"
           class="drawer-bg mapBox"
           @click="handleClickOutside"
         />
+        <!-- 左右结构 -->
         <template v-if="topNav == false">
           <sidebar class="sidebar-container" />
           <div
@@ -51,6 +51,7 @@
           <div
             :class="{ 'fixed-header': fixedHeader }"
             :style="fixedHeader ? 'width:100%;' : ''"
+            v-if="titleHeader == '0'"
           >
             <div
               :class="
@@ -90,6 +91,45 @@
                     : 'width: 25%;justify-content:right;display:flex'
                 "
               />
+            </div>
+          </div>
+          <!-- 标题放中间 -->
+          <div
+            :class="{ 'fixed-header': fixedHeader }"
+            :style="fixedHeader ? 'width:100%;' : ''"
+            v-if="titleHeader == '1'"
+          >
+            <div
+              :class="
+                $route.path == ('/map/map3d/index' || '/energy')
+                  ? 'topNav_head_center mapBox'
+                  : 'topNav_head_center'
+              "
+              :style="{
+                backgroundColor:sideTheme == 'theme-dark'?($route.path == '/index' ? '#010913' : '#004375'):'#100A43'
+              }"
+
+            >
+              <centerbar
+                style="
+                  width: 100% !important;
+                  height: 7.6vh;
+                  position: relative;
+                  box-shadow: unset;
+                  display: flex;
+                "
+              ></centerbar>
+              <!-- <sidebar
+                class="sidebar-container index_menu blue_index_menu"
+                style="
+                  width: 75% !important;
+                  position: relative;
+                  box-shadow: unset;
+                  float: left;
+                  display: flex;
+                  align-items: center;
+                "
+              /> -->
             </div>
           </div>
           <div
@@ -189,6 +229,8 @@
 import Breadcrumb from "@/components/Breadcrumb";
 import RightPanel from "@/components/RightPanel";
 import TopNav from "@/components/TopNav";
+import centerbar from "@/components/centerbar";
+
 import {
   AppMain,
   Navbar,
@@ -216,10 +258,13 @@ export default {
     Sidebar,
     TagsView,
     TopNav,
+    centerbar,
     // reproductionImage
   },
   data() {
     return {
+      // this.$cache.local.get("navigationBar")
+      titleHeader: this.$cache.local.get("navigationBar"),
       evtDialogOneThing: false,
       badgeHidden: true,
       eventValue: 0,
@@ -300,8 +345,8 @@ export default {
     },
   },
   created() {
-    // console.log(this.topNav,"this.topNav");
-    // console.log(this.$route.path, "路由");
+    console.log(this.titleHeader,"this.titleHeader");
+    console.log(this.$route.path, "路由");
     if (this.$route.path == "/tunnel") {
       if (
         this.sideTheme == "theme-blue" ||
@@ -424,7 +469,7 @@ export default {
     });
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
-      console.log("关闭一件事弹窗")
+      console.log("关闭一件事弹窗");
       this.eventDialogTable = false;
       this.evtDialogOneThing = false;
     });

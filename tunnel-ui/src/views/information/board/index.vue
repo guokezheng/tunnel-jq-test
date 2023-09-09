@@ -358,6 +358,7 @@ import {
   addTemplateContent,
   getBoardContent,
   deleteTemplate,
+  splicingBoard
 } from "@/api/board/template";
 
 // 对象深拷贝
@@ -839,52 +840,76 @@ export default {
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });
-          console.log(this.contentList, "发布信息");
-          var content = "";
-          var playList = "[Playlist]<r><n>";
-          var Item_Start = "ITEM_NO=";
-          var Item_Content = "ITEM";
-          content += playList;
-          var length = parseInt(this.contentList.length);
-          var Item_No = Item_Start + length + "<r><n>";
-          var value = "";
-          content += Item_No;
-          for (var i = 0; i < this.contentList.length; i++) {
-            value = ("000" + i).slice(-3);
-            content += Item_Content + value + "=";
-            content += this.contentList[i].STAY + ",";
-            content += this.contentList[i].ACTION + ",";
-            content += this.contentList[i].SPEED + "," + "\\";
-            content +=
-              "C" + this.contentList[i].COORDINATE.replace("-", "0") + "\\";
-            content += "S00\\";
-            content +=
-              "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
-            content += "f" + this.getFontValue(this.contentList[i].FONT);
-            content +=
-              this.contentList[i].FONT_SIZE.substring(0, 2) +
-              this.contentList[i].FONT_SIZE.substring(0, 2);
-            content += this.contentList[i].CONTENT.replace(
-              /\n|\r\n/g,
-              "<r><n>"
-            );
+        const objAll = {};
+          objAll.deviceIds = this.eqInfo.equipmentId;
+          let that  = this
+          let newArr = this.contentList.map(function(item){
+            let obj = {}
+            obj.STAY = item.STAY;
+            obj.ACTION = item.ACTION;
+            obj.SPEED = item.SPEED;
+            obj.COORDINATE = item.COORDINATE.replace("-", "0");
+            obj.COLOR = that.getColorValue(item.COLOR);
+            obj.FONT = that.getFontValue(item.FONT);
 
-            if (i + 1 != this.contentList.length) {
-              content += "<r><n>";
-            }
-          }
-          console.log(content, "content");
-
-          let protocolType = "GUANGDIAN_V33";
-          let deviceld = this.checkedCities.toString();
-          uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
-              console.log(response, "返回结果");
-              loading.close();
-              this.$modal.msgSuccess("发布成功");
-
-          }).catch(() => {
-              loading.close();
+            obj.FONT_SIZE = item.FONT_SIZE.substring(0, 2);
+            obj.CONTENT = item.CONTENT.replace(/\n|\r\n/g, "<r><n>");
+              return obj
           })
+          objAll.parameters = newArr
+          const param = {
+            objectData:JSON.stringify(objAll)
+          }
+          console.log(param,"param")
+          splicingBoard(param).then((res)=>{
+            console.log(res)
+          })
+          // console.log(this.contentList, "发布信息");
+          // var content = "";
+          // var playList = "[Playlist]<r><n>";
+          // var Item_Start = "ITEM_NO=";
+          // var Item_Content = "ITEM";
+          // content += playList;
+          // var length = parseInt(this.contentList.length);
+          // var Item_No = Item_Start + length + "<r><n>";
+          // var value = "";
+          // content += Item_No;
+          // for (var i = 0; i < this.contentList.length; i++) {
+          //   value = ("000" + i).slice(-3);
+          //   content += Item_Content + value + "=";
+          //   content += this.contentList[i].STAY + ",";
+          //   content += this.contentList[i].ACTION + ",";
+          //   content += this.contentList[i].SPEED + "," + "\\";
+          //   content +=
+          //     "C" + this.contentList[i].COORDINATE.replace("-", "0") + "\\";
+          //   content += "S00\\";
+          //   content +=
+          //     "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
+          //   content += "f" + this.getFontValue(this.contentList[i].FONT);
+          //   content +=
+          //     this.contentList[i].FONT_SIZE.substring(0, 2) +
+          //     this.contentList[i].FONT_SIZE.substring(0, 2);
+          //   content += this.contentList[i].CONTENT.replace(
+          //     /\n|\r\n/g,
+          //     "<r><n>"
+          //   );
+
+          //   if (i + 1 != this.contentList.length) {
+          //     content += "<r><n>";
+          //   }
+          // }
+          // console.log(content, "content");
+
+          // let protocolType = "GUANGDIAN_V33";
+          // let deviceld = this.checkedCities.toString();
+          // uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
+          //     console.log(response, "返回结果");
+          //     loading.close();
+          //     this.$modal.msgSuccess("发布成功");
+
+          // }).catch(() => {
+          //     loading.close();
+          // })
         }).catch(() => {
           this.$message({
             type: "info",

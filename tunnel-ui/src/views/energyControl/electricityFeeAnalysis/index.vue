@@ -1,6 +1,6 @@
 <!-- 电费分析 -->
 <template>
-  <div class="app-container" >
+  <div class="app-container">
     <el-row :gutter="20">
       <!-- 左侧下拉 -->
       <el-col :span="4" class="leftCard">
@@ -120,7 +120,7 @@
   <script>
 import * as echarts from "echarts";
 import SiteTree from "@/views/components/siteTree";
-import { getElectricityBillByDept } from '@/api/energy/api'
+import { getElectricityBillByDept } from "@/api/energy/api";
 import { mapState } from "vuex";
 
 export default {
@@ -188,6 +188,8 @@ export default {
       },
     },
   },
+
+  created() {},
   methods: {
     /******站点******/
     //默认选中回路回调
@@ -229,14 +231,14 @@ export default {
       this.queryParams.type = this.tabType;
 
       // 接口请求
-      const res = await getElectricityBillByDept(this.queryParams)
+      const res = await getElectricityBillByDept(this.queryParams);
       if (res.code === 200) {
         // console.log(res)
-        this.list = res.data
+        this.list = res.data;
         this.$nextTick(function () {
           //清除选中行
-          this.$refs.multipleTable.doLayout()
-        })
+          this.$refs.multipleTable.doLayout();
+        });
       }
 
       // 拆分成单条数据
@@ -288,7 +290,7 @@ export default {
           showAllSymbol: true,
           symbolSize: 8,
           data: n.value,
-          color:"#0090D8"
+          color: "#0090D8",
         });
         this.xData = n.rt;
       }
@@ -377,9 +379,9 @@ export default {
             data: this.xData,
           },
           yAxis: {
-            name:"元",
-            nameTextStyle:{
-              color:"#fff"
+            name: "元",
+            nameTextStyle: {
+              color: "#fff",
             },
             type: "value",
             splitLine: {
@@ -396,6 +398,9 @@ export default {
           series: this.seriesData,
         };
         this.myChart.setOption(option);
+        window.addEventListener("resize", function () {
+          this.mychart.resize();
+        });
       });
     },
     //导出excel
@@ -406,8 +411,7 @@ export default {
         let fix = document.querySelector(".el-table__fixed");
         let tableDom0 = tableDom.firstElementChild.removeChild(fix);
         tableDom.firstElementChild.appendChild(fix);
-        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g,"border='1'")
-
+        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g, "border='1'");
 
         var excelBlob = new Blob([tableDom0], {
           type: "application/vnd.ms-excel",
@@ -553,17 +557,18 @@ export default {
   ::v-deep th.el-table__cell {
     background: #004f8b;
   }
-  &::before{
+  &::before {
     height: 0px;
   }
-  .el-table--border::after, .el-table--group::after{
+  .el-table--border::after,
+  .el-table--group::after {
     width: 0px;
     height: 0px;
   }
 }
 .el-table {
   overflow-y: auto !important;
-  ::v-deep .el-table__fixed-body-wrapper{
+  ::v-deep .el-table__fixed-body-wrapper {
     top: 39px !important;
   }
 }
@@ -616,8 +621,8 @@ export default {
   border: none !important;
   border-radius: 2px;
 }
-.leftCard{
-  border-right: solid 2px #054D83;
+.leftCard {
+  border-right: solid 2px #054d83;
 }
 </style>
   

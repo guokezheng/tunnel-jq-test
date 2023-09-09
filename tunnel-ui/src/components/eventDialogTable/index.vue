@@ -6,6 +6,7 @@
       :visible.sync="eventTableDialog"
       :modal-append-to-body="false"
       :close-on-click-modal="false"
+      :modal="false"
     >
       <div class="title">
         事件预警

@@ -283,6 +283,7 @@ import {
   getAllVmsTemplate,
   uploadBoardEditInfo,
   getBoardContent,
+  splicingBoard
 } from "@/api/board/template";
 import boardData from "@/views/information/board/boardData.json";
 import editInfo from "@/views/information/board/editInfo";
@@ -360,10 +361,11 @@ export default {
   mounted() {},
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      console.log(eqInfo, "eqInfo");
       console.log("进来了");
       this.contentList = [];
-      this.videoActive = "information", // tab页
-      this.msgModeShow = true;
+      (this.videoActive = "information"), // tab页
+        (this.msgModeShow = true);
       this.openMesMode();
       this.eqInfo = eqInfo;
       this.brandList = brandList;
@@ -397,57 +399,87 @@ export default {
         type: "warning",
       })
         .then(() => {
-          console.log("确定发布情报板");
-          var content = "";
-          var playList = "[Playlist]<r><n>";
-          var Item_Start = "ITEM_NO=";
-          var Item_Content = "ITEM";
-          content += playList;
-          var length = parseInt(this.contentList.length);
-          var Item_No = Item_Start + length + "<r><n>";
-          var value = "";
-          content += Item_No;
-          console.log("确定发布情报板111111");
-          for (var i = 0; i < this.contentList.length; i++) {
-            value = ("000" + i).slice(-3);
-            content += Item_Content + value + "=";
-            content += this.contentList[i].STAY + ",";
-            content += this.contentList[i].ACTION + ",";
-            content += this.contentList[i].SPEED + "," + "\\";
-            content +=
-              "C" + this.contentList[i].COORDINATE.replace("-", "0") + "\\";
-            content += "S00\\";
-            content +=
-              "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
-            content += "f" + this.getFontValue(this.contentList[i].FONT);
+          const objAll = {};
+          objAll.deviceIds = this.eqInfo.equipmentId;
+          let that  = this
+          let newArr = this.contentList.map(function(item){
+            let obj = {}
+            obj.STAY = item.STAY;
+            obj.ACTION = item.ACTION;
+            obj.SPEED = item.SPEED;
+            obj.COORDINATE = item.COORDINATE.replace("-", "0");
+            obj.COLOR = that.getColorValue(item.COLOR);
+            obj.FONT = that.getFontValue(item.FONT);
 
-            content +=
-              this.contentList[i].FONT_SIZE.substring(0, 2) +
-              this.contentList[i].FONT_SIZE.substring(0, 2);
-            content += this.contentList[i].CONTENT.replace(
-              /\n|\r\n/g,
-              "<r><n>"
-            );
-
-            if (i + 1 != this.contentList.length) {
-              content += "<r><n>";
-            }
-            console.log(content, "content");
+            obj.FONT_SIZE = item.FONT_SIZE.substring(0, 2);
+            obj.CONTENT = item.CONTENT.replace(/\n|\r\n/g, "<r><n>");
+              return obj
+          })
+          objAll.parameters = newArr
+          const param = {
+            objectData:JSON.stringify(objAll)
           }
-          console.log("确定发布情报板22222222");
-          let protocolType = "GUANGDIAN_V33";
-          let deviceld = this.associatedDeviceId.toString();
-          uploadBoardEditInfo(deviceld, protocolType, content)
-            .then((response) => {
-              this.$modal.msgSuccess("发布成功");
-              console.log(response, "返回结果");
-            })
-            // .catch(() => {
-            //   this.$message({
-            //     type: "info",
-            //     message: "发布失败，请联系管理员",
-            //   });
-            // });
+          console.log(param,"param")
+          splicingBoard(param).then((res)=>{
+            console.log(res)
+          })
+          // let parameters = []
+          // parameters.push(obj)
+
+          // console.log(arr,"确定发布情报板arr");
+          // console.log(parameters,"确定发布情报板parameters");
+
+          // var content = "";
+          // var playList = "[Playlist]<r><n>";
+          // var Item_Start = "ITEM_NO=";
+          // var Item_Content = "ITEM";
+          // content += playList;
+          // var length = parseInt(this.contentList.length);
+          // var Item_No = Item_Start + length + "<r><n>";
+          // var value = "";
+          // content += Item_No;
+          // console.log("确定发布情报板111111");
+          // for (var i = 0; i < this.contentList.length; i++) {
+          //   value = ("000" + i).slice(-3);
+          //   content += Item_Content + value + "=";
+          //   content += this.contentList[i].STAY + ",";
+          //   content += this.contentList[i].ACTION + ",";
+          //   content += this.contentList[i].SPEED + "," + "\\";
+          //   content +=
+          //     "C" + this.contentList[i].COORDINATE.replace("-", "0") + "\\";
+          //   content += "S00\\";
+          //   content +=
+          //     "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
+          //   content += "f" + this.getFontValue(this.contentList[i].FONT);
+
+          //   content +=
+          //     this.contentList[i].FONT_SIZE.substring(0, 2) +
+          //     this.contentList[i].FONT_SIZE.substring(0, 2);
+          //   content += this.contentList[i].CONTENT.replace(
+          //     /\n|\r\n/g,
+          //     "<r><n>"
+          //   );
+
+          //   if (i + 1 != this.contentList.length) {
+          //     content += "<r><n>";
+          //   }
+          //   console.log(content, "content");
+          // }
+          // console.log("确定发布情报板22222222");
+          // let protocolType = "GUANGDIAN_V33";
+          // let deviceld = this.associatedDeviceId.toString();
+          // uploadBoardEditInfo(deviceld, protocolType, content).then(
+          //   (response) => {
+          //     this.$modal.msgSuccess("发布成功");
+          //     console.log(response, "返回结果");
+          //   }
+          // );
+          // .catch(() => {
+          //   this.$message({
+          //     type: "info",
+          //     message: "发布失败，请联系管理员",
+          //   });
+          // });
         })
         .catch(() => {
           this.$message({
@@ -713,7 +745,7 @@ export default {
         return "yellow";
       } else if (font == "红色") {
         return "red";
-      } else if (font == "绿色" || font == 'GreenYellow') {
+      } else if (font == "绿色" || font == "GreenYellow") {
         return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
@@ -742,7 +774,7 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           this.associatedDeviceId = res.data.associatedDeviceId;
-          if(this.associatedDeviceId){
+          if (this.associatedDeviceId) {
             this.onSubmit();
           } else {
             this.$modal.msgWarning("没有设备Id");
@@ -753,7 +785,7 @@ export default {
             };
             listDevice(param).then((response) => {
               console.log(response, "查询设备信息");
-              if(response.rows.length>0){
+              if (response.rows.length > 0) {
                 this.addForm = response.rows[0];
               }
               this.allVmsTemplate();
@@ -808,9 +840,9 @@ export default {
 </script>
 
   <style lang="scss" scoped>
-  ::v-deep .el-table--medium .el-table__cell{
-    padding: 10px 0 !important;
-  }
+::v-deep .el-table--medium .el-table__cell {
+  padding: 10px 0 !important;
+}
 .el-row {
   margin-bottom: -10px;
   display: flex;

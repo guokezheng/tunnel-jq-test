@@ -96,31 +96,7 @@ public class OmronTcpClient{
         log.info("连接服务端结束--------------"+channelFuture.channel());
         log.info("连接服务端结束--------------"+omronConnectProperties.toString());
     }
-    public void initGeneral(String ip, int port) throws InterruptedException {
-        eventExecutors = new NioEventLoopGroup();
-        //创建bootstrap对象，配置参数
-        Bootstrap bootstrap = new Bootstrap();
-        //设置线程组
-        bootstrap.group(eventExecutors)
-                //设置客户端的通道实现类型
-                .channel(NioSocketChannel.class)
-                //使用匿名内部类初始化通道
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        //添加客户端通道的处理器
-                        ch.pipeline().addLast(new ObjectEncoder());
-                        ch.pipeline().addLast(new OmronClientHandler());
-                    }
-                });
-        log.info("连接服务端开始--------------");
-        //连接服务端
-        channelFuture = bootstrap.connect(ip, port).sync();
-        log.info("连接服务端结束--------------");
-        channelsGroup.put(channelFuture.channel(),omronConnectProperties);
-        log.info("连接服务端结束--------------"+channelFuture.channel());
-        log.info("连接服务端结束--------------"+omronConnectProperties.toString());
-    }
+
     /**
      * 获取关闭监听
      * @throws InterruptedException

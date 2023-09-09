@@ -106,41 +106,6 @@ public class DeviceFunctionsService {
                     resultData = getDataByDataStatusAndEqType(data,sdDevicePointList,omronTcpClient);
                 }
                 break;
-            case "omronPlc":
-                String keyMap = "";
-                try {
-                    //plc获取ip协议比较特殊。 通过 sd_devices 表中获取 plc ip  端口号
-                    //欧姆龙服务器链接信息  通过当前设备上级ip获取
-                    SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqId);
-                    //获取当前父级  用户信息 获取ip  port
-                    SdDevices fSdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
-                    //初始化 omronTcpClientPlc
-                    OmronTcpClient omronTcpClientPlc = new OmronTcpClient(OmronTask.getOmronConnectProperties("10.7.206.89",Integer.parseInt("9600")));
-                    //初始化链接     服务器地址
-//                    log.info("账号"+fSdDevices.getIp());
-//                    log.info("密码"+fSdDevices.getPort());
-//                    log.info("密码"+Integer.parseInt(fSdDevices.getPort()));
-                    omronTcpClientPlc.initGeneral("10.7.206.89",Integer.parseInt("9600"));
-                    //获取ChannelFuture
-                    ChannelFuture channelFuture = omronTcpClientPlc.channelFuture;
-                    //推送握手协议
-                    omronTcpClientPlc.send(omronTcpClientPlc.successCallback(channelFuture).array());
-//                    keyMap = fSdDevices.getIp()+fSdDevices.getPort();
-                    keyMap = "10.7.206.89"+"9600";
-                    omronTcpMapClient.put(keyMap,omronTcpClientPlc);
-                } catch (Exception e) {
-                    log.error("omron链接异常。请联系管理员");
-                    omronTcpClient = null;
-                }
-                OmronTcpClient omronTcpClient1 = omronTcpMapClient.get(keyMap);
-                if(omronTcpClient1!=null){
-                    SdDevicePoint sdDevicePoint = new SdDevicePoint();
-                    sdDevicePoint.setEqId(eqId);
-                    sdDevicePoint.setIsReserved(2L);
-                    List<SdDevicePoint> sdDevicePointList =  devicePointService.selectSdDevicePointList(sdDevicePoint);
-                    resultData = getDataByDataStatusAndEqType(data,sdDevicePointList,omronTcpClient1);
-                }
-                break;
         }
         if(resultData){
             SdDevices device = sdDevicesService.selectSdDevicesById(eqId);

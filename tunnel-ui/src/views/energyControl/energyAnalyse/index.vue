@@ -370,7 +370,7 @@ export default {
       queryParams.statisticsType = 0
       queryParams.tunnelId = this.tunnelIdStr
       console.log(this.getCurrentDateTime())
-      debugger
+      // debugger
       // dateRange.push("2023-08-16 00:00:00")
       // dateRange.push("2023-08-16 23:59:59")
       dateRange.push(this.getCurrentDateTime().endTime)
@@ -422,6 +422,14 @@ export default {
       });
       //然后异步执行echarts的初始化函数
       newPromise.then(() => {
+        if (
+          this.LoginMychart != null &&
+          this.LoginMychart != "" &&
+          this.LoginMychart != undefined
+        ) {
+          // 销毁
+          this.LoginMychart.dispose();
+        }
         this.LoginMychart = echarts.init(document.getElementById("energyAnalyse"));
         var option = {
           tooltip: {

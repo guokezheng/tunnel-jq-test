@@ -1,8 +1,6 @@
 <!-- 分时段用能 -->
 <template>
-  <div
-    class="app-container"
-  >
+  <div class="app-container">
     <!-- 顶部 -->
     <el-row class="top_tabs">
       <el-tabs
@@ -355,7 +353,7 @@
 import * as echarts from "echarts";
 import SiteTree from "@/views/components/siteTree";
 import CircuitTree from "@/views/components/circuitTree";
-import { getSplitTimeByDept } from '@/api/energy/api'
+import { getSplitTimeByDept } from "@/api/energy/api";
 import { mapState } from "vuex";
 import departmentSelect from "@/views/components/department/index2.vue";
 
@@ -407,6 +405,8 @@ export default {
     ...mapState({
       sideTheme: (state) => state.settings.sideTheme,
     }),
+  },
+  created() {
   },
   methods: {
     /******站点******/
@@ -501,29 +501,43 @@ export default {
         this.queryParams.type = this.tabType;
 
         // 回路接口请求
-          await getSplitTimeByDept(this.queryParams)
-            .then(res => {
-              if (res.code === 200) {
-                this.list = res.data
-                this.$nextTick(function () {
-                  //清除选中行
-                  this.$refs.multipleTable.doLayout()
-                })
+        await getSplitTimeByDept(this.queryParams)
+          .then((res) => {
+            if (res.code === 200) {
+              this.list = res.data;
+              this.$nextTick(function () {
+                //清除选中行
+                this.$refs.multipleTable.doLayout();
+              });
 
-                // 计算金额
-                let that = this
-                this.list.forEach(item => {
-                  item.f_EpiJAmount = item.jValue == null || item.jPrice == null ? null : that.numberMul(item.jValue, item.jPrice).toFixed(2)
-                  item.f_EpiFAmount = item.fValue == null || item.fPrice == null ? null : that.numberMul(item.fValue, item.fPrice).toFixed(2)
-                  item.f_EpiPAmount = item.pValue == null || item.pPrice == null ? null : that.numberMul(item.pValue, item.pPrice).toFixed(2)
-                  item.f_EpiGAmount = item.gValue == null || item.gPrice == null ? null : that.numberMul(item.gValue, item.gPrice).toFixed(2)
-                  item.f_EpiSAmount = item.sValue == null || item.sPrice == null ? null : that.numberMul(item.sValue, item.sPrice).toFixed(2)
-                })
-                this.openChart()
-              }
-            })
-            .catch(err => {
-            })
+              // 计算金额
+              let that = this;
+              this.list.forEach((item) => {
+                item.f_EpiJAmount =
+                  item.jValue == null || item.jPrice == null
+                    ? null
+                    : that.numberMul(item.jValue, item.jPrice).toFixed(2);
+                item.f_EpiFAmount =
+                  item.fValue == null || item.fPrice == null
+                    ? null
+                    : that.numberMul(item.fValue, item.fPrice).toFixed(2);
+                item.f_EpiPAmount =
+                  item.pValue == null || item.pPrice == null
+                    ? null
+                    : that.numberMul(item.pValue, item.pPrice).toFixed(2);
+                item.f_EpiGAmount =
+                  item.gValue == null || item.gPrice == null
+                    ? null
+                    : that.numberMul(item.gValue, item.gPrice).toFixed(2);
+                item.f_EpiSAmount =
+                  item.sValue == null || item.sPrice == null
+                    ? null
+                    : that.numberMul(item.sValue, item.sPrice).toFixed(2);
+              });
+              this.openChart();
+            }
+          })
+          .catch((err) => {});
         this.loading = false;
       }
       // else if (this.activeName === "first") {
@@ -601,8 +615,8 @@ export default {
         let tableDom0 = tableDom.firstElementChild.removeChild(fix);
         tableDom.firstElementChild.appendChild(fix);
 
-        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g,"border='1'")
-        console.log(tableDom0,"tableDom0")
+        tableDom0 = tableDom0.innerHTML.replace(/border="0"/g, "border='1'");
+        console.log(tableDom0, "tableDom0");
 
         var excelBlob = new Blob([tableDom0], {
           type: "application/vnd.ms-excel",
@@ -795,9 +809,9 @@ export default {
           ],
           yAxis: [
             {
-              name:"元",
-              nameTextStyle:{
-                color:"#fff"
+              name: "元",
+              nameTextStyle: {
+                color: "#fff",
               },
               type: "value",
               splitLine: {
@@ -815,6 +829,9 @@ export default {
           series: yLables,
         };
         this.myChart.setOption(option);
+        window.addEventListener("resize", function () {
+          this.mychart.resize();
+        });
       });
     },
     // 返回按钮
@@ -960,13 +977,13 @@ export default {
   right: 0;
   overflow: visible;
   height: 79vh;
-  .el-tab-pane{
+  .el-tab-pane {
     height: 100%;
     position: relative;
     left: 0;
     top: 0px;
     width: 17%;
-    border-right: solid 2px #054D83;
+    border-right: solid 2px #054d83;
     padding-right: 6px;
   }
   .left_tree {

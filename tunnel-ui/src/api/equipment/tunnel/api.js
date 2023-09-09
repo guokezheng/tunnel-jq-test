@@ -204,6 +204,14 @@ export function getBoardContent(query) {
   })
 }
 
+// 查询隧道列表
+export function listDepId(query) {
+  return request({
+    url: '/tunnels/listDepId',
+    method: 'get',
+    params: query
+  })
+}
 // 机器人实时状态
 export function getWorkRobot(query) {
   return request({

@@ -63,17 +63,17 @@
 
   // 级联
   .el-cascader__dropdown {
-    background-color: #003D6C;
+    background-color: #100A43;
     border: solid 1px #093566;
 
     .el-cascader-menu {
       color: #fff;
-      border-right: solid 1px #004F8B;
+      border-right: solid 1px #1A3579;
     }
 
     .el-cascader-node:not(.is-disabled):hover,
     .el-cascader-node:not(.is-disabled):focus {
-      background-color: #004F8B;
+      background-color: #1A3579;
     }
 
     ::-webkit-scrollbar {
@@ -93,7 +93,7 @@
 
   // 下拉框
   .el-select-dropdown {
-    background-color: #003D6C;
+    background-color: #100A43;
     border: solid 1px #093566;
 
     .el-select-dropdown__list {
@@ -103,11 +103,11 @@
 
       .el-select-dropdown__item.hover,
       .el-select-dropdown__item:hover {
-        background-color: #004F8B;
+        background-color: #1A3579;
       }
 
       .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-        background: #004F8B !important;
+        background: #1A3579 !important;
       }
     }
 
@@ -652,10 +652,10 @@
   }
 
   .dialongBox {
-    background: #05213E;
+    background: #182053;
 
     .dialogButton {
-      background: #034A77;
+      background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%) !important;
       padding: 0 10px;
       color: #fff;
       border: none;
@@ -664,12 +664,12 @@
     }
 
     .myTable {
-      background: #034A77;
+      background: #2C3E91;
     }
 
     .sort {
       // width:50px !important;
-      background: #034A77;
+      background: #2C3E91;
       // margin-left: 6px;
     }
 
@@ -850,7 +850,14 @@
         border: solid 1px #0198FF !important;
         color: #fff;
       }
-
+      .el-input-group--prepend{
+        .el-input-group__prepend{
+          border-right: transparent !important;
+        }
+        .el-input__inner{
+          border-left: transparent !important;
+        }
+      }
       .el-input__inner::placeholder {
         color: #9f9f9f;
       }
@@ -886,22 +893,22 @@
 
       .el-input-group__append,
       .el-input-group__prepend {
-        background: #052C4D;
+        background: transparent;
         color: white;
-        border: 1px solid transparent;
+        border: 1px solid #0198FF;
       }
 
       .vue-treeselect__control {
-        background: #052C4D !important;
+        background: transparent !important;
         color: white !important;
-        border: none !important;
+        border: solid 1px #0198FF !important;
       }
 
       .el-input-number__increase,
       .el-input-number__decrease {
-        background: #012E51 !important;
+        background: transparent !important;
         color: white !important;
-        border-left: 1px solid #00152B;
+        border-left: 1px solid #0198FF;
 
       }
 
@@ -926,7 +933,7 @@
 
       .show-left,
       .show-right {
-        background-color: #05213E;
+        background-color: #182053;
         border: 1px solid none;
 
       }
@@ -978,7 +985,7 @@
       }
 
       .card {
-        background: #0D203C !important;
+        background: #182053 !important;
 
         .cardName {
           color: #05AAFD;
@@ -1222,12 +1229,12 @@
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar-track {
-    background-color: #00598f;
+    background-color: #100A43;
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar {
     width: 10px;
-    background-color: #00598f;
+    background-color: #100A43;
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar-thumb {
@@ -1258,7 +1265,7 @@
 
       // background: #00152B !important;
       .el-card {
-        background: #0D203C !important;
+        background: #182053 !important;
 
         .topTxt {
           background-image: url(../../assets/cloudControl/cardTitle.png);
@@ -1271,6 +1278,9 @@
   .xjDialog {
     .topTxt {
       background-image: url(../../assets/cloudControl/cardTitle.png);
+    }
+    .taskCard{
+       background: #182053 !important;
     }
   }
 
@@ -1464,16 +1474,16 @@
     // 隧道配置页面下拉框
     .tunnelNameSelect {
       .el-input--small .el-input__inner {
-        background: linear-gradient(177deg, #00aced, #0079db);
+        background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%) !important;
         opacity: 0.8;
         color: #fff !important;
-        height: 26px;
-        line-height: 26px;
+        height: 32px;
+        line-height: 32px;
         font-size: 12px;
       }
 
       .el-input--small .el-input__icon {
-        line-height: 26px;
+        line-height: 32px;
       }
     }
 
@@ -1575,7 +1585,7 @@
     .cl_searchBox,
     .searchBoxTab,
     .searchBox {
-      background-color: #00335a;
+      background-color: #182053;
 
       .el-checkbox {
         color: #fff;
@@ -1777,26 +1787,30 @@
     // }
     // 输入框背景色
     .el-input--small .el-input__inner {
-      background-color: #004F8B;
-      border: solid 1px #00C8FF;
+      background-color: #263486;
+      border: solid 1px #006BF4;
       color: #fff;
     }
 
     .el-input--mini .el-input__inner {
-      background-color: #004F8B;
-      border: solid 1px #00C8FF;
+      background-color: #263486;
+      border: solid 1px #006BF4;
       color: #fff;
     }
 
     // 下拉框背景色
     .el-input--medium .el-input__inner {
-      background-color: #004F8B;
-      border: solid 1px #05AFE3;
+      background-color: #263486;
+      border: solid 1px #006BF4;
       color: #fff;
     }
 
     // 右上角搜索框
     .bg-purple {
+      .formNoIcon{
+        border-right: #165FC3 solid 1px !important;
+        border-radius: 3px;
+      }
       .el-input--small .el-input__inner {
         background: linear-gradient(180deg, rgba(132, 142, 245, 0.2) 0%, rgba(0, 97, 241, 0.5) 100%);
         border: solid 1px #165FC3;
@@ -1826,9 +1840,9 @@
     }
 
     .vue-treeselect__control {
-      background: #004F8B !important;
+      background: #263486 !important;
       color: white !important;
-      border: 1px solid #00C8FF !important;
+      border: 1px solid #006BF4 !important;
     }
 
     .vue-treeselect__single-value {
@@ -1837,8 +1851,8 @@
 
     // 时间框背景色
     .el-range-editor.el-input__inner {
-      background-color: #004F8B;
-      border: solid 1px #00C8FF;
+      background-color: #263486;
+      border: solid 1px #006BF4;
       color: #fff;
     }
 
@@ -1911,7 +1925,7 @@
     }
 
     .el-table tr {
-      background: #004375;
+      background: #182053;
     }
 
     // 表单label
@@ -2483,7 +2497,7 @@
 
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover>td {
-      background-color: #0064B0 !important;
+      background-color: #182053 !important;
       color: white;
       /* color: #f19944; */
       /* 设置文字颜色，可以选择不设置 */
@@ -2507,9 +2521,9 @@
   }
 
   .el-time-panel {
-    background: #003D6C !important;
+    background: #182053 !important;
     color: #fff !important;
-    border: 1px solid #003D6C !important;
+    border: 1px solid #182053 !important;
     border-radius: 3px !important;
     transform: translateX(-25px) !important;
 
@@ -2537,9 +2551,9 @@
 
   //  时间日期选择器
   .el-picker-panel {
-    background: #022A54 !important;
+    background: #100A43 !important;
     color: #C0C4CC;
-    border: solid 1px #022A54 !important;
+    border: solid 1px #100A43 !important;
     border-radius: 1px !important;
     transform: translateX(-25px) !important;
 
@@ -2670,7 +2684,7 @@
     }
 
     .el-picker-panel__footer {
-      background: #022A54 !important;
+      background: #100A43 !important;
       border-top: 1px solid #004375 !important;
     }
 
@@ -3046,7 +3060,7 @@
 
     .el-table__header-wrapper th,
     .el-table__fixed-header-wrapper th {
-      background: #03659E !important;
+      background: #2C3E91 !important;
     }
 
   }
@@ -3124,7 +3138,7 @@
 
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover>td {
-      background-color: #0064B0;
+      background-color: #182053;
     }
   }
 
@@ -3352,7 +3366,7 @@
     }
 
     .el-table--enable-row-hover .el-table__body tr:hover>td {
-      background: #0064B0 !important;
+      background: #182053 !important;
       color: #fff;
     }
 
@@ -3403,7 +3417,7 @@
 
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover>td {
-      background-color: #0064B0;
+      background-color: #182053;
     }
   }
 
@@ -3950,6 +3964,14 @@
     }
     .el-timeline-item__content {
       background-color: #182053;
+    }
+    .disposalRecordBox{
+      .el-card {
+        background: #100A43 !important;
+      }
+    }
+    .incHandContent .contentList{
+      background: #100A43;
     }
   }
   .rightBottom {

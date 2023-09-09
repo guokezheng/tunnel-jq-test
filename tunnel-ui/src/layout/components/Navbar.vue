@@ -171,7 +171,7 @@
         <img src="../../assets/image/evtNum.png" style="height:3vh;transform: translateY(0.7vh);" @click="bell()"/>
       </el-badge>
       <!-- </div> -->
-      <el-dropdown class="right-menu-item bell">
+      <!-- <el-dropdown class="right-menu-item bell">
         <el-dropdown-menu style="display: none"></el-dropdown-menu>
         <el-tooltip content="监控一体化大屏" effect="dark" placement="bottom">
           <i
@@ -187,7 +187,7 @@
             title="监控一体化大屏"
           ></i>
         </el-tooltip>
-      </el-dropdown>
+      </el-dropdown> -->
       <!--  个人中心  -->
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"

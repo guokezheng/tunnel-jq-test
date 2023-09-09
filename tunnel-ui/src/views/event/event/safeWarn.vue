@@ -3635,7 +3635,7 @@ export default {
     margin-top: 4px;
     line-height: 40px;
     padding: 0 20px;
-    background: #052c4d;
+    // background: #052c4d;
     color: #fff;
     // border: solid 1px #39adff;
     border-radius: 3px;
@@ -3878,7 +3878,7 @@ hr {
   height: 420px;
   padding: 20px 10px 20px 25px;
   .el-card {
-    background: #052c4d !important;
+    // background: #052c4d !important;
   }
 }
 ::v-deep .inputNumStyle {

@@ -28,10 +28,7 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-            style="
-              border-right: #00c8ff solid 1px !important;
-              border-radius: 3px;
-            "
+            class="formNoIcon"
           >
             <!--            <el-button
               slot="append"
@@ -167,7 +164,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="班组名称" prop="deptName">
-              <el-input v-model="form.deptName" plac eholder="请输入班组名称" />
+              <el-input v-model="form.deptName" placeholder="请输入班组名称" />
             </el-form-item>
           </el-col>
           <!--          <el-col :span="12">

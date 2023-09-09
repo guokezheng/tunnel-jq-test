@@ -1268,6 +1268,9 @@
     .topTxt {
       background-image: url(../../assets/cloudControl/cardTitle.png);
     }
+    .taskCard{
+      background: #0d203c !important;
+   }
   }
 
   // 表格上方虚线
@@ -1805,6 +1808,10 @@
 
     // 右上角搜索框
     .bg-purple {
+      .formNoIcon{
+        border-right: #00c8ff solid 1px !important;
+        border-radius: 3px;
+      }
       .el-input--small .el-input__inner {
         background-color: #004F8B;
         border: solid 1px #00C8FF;
@@ -3944,6 +3951,14 @@
     }
     .el-timeline-item__content {
       background-color: #182053;
+    }
+    .disposalRecordBox{
+      .el-card {
+        background: #052c4d !important;
+      }
+    }
+    .incHandContent .contentList{
+      background: #052c4d;
     }
   }
   .rightBottom {

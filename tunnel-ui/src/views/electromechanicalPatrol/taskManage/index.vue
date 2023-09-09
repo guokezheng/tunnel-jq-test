@@ -305,7 +305,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <!--      <h1>新增巡检任务</h1>-->
-      <el-card>
+      <el-card class="taskCard">
         <div class="task">
           <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
           <div class="tableTopHr" style="display: none"></div>
@@ -438,7 +438,7 @@
           </el-form>
         </div>
       </el-card>
-      <el-card>
+      <el-card class="taskCard">
         <div class="patrol">
           <div class="topTxt">巡查点信息</div>
           <div class="tableTopHr" style="display: none"></div>
@@ -573,7 +573,7 @@
             ></el-cascader>
           </el-col>
           <el-col :span="8">
-            <div class="grid-content bg-purple" ref="main1">
+            <div class="grid-content" ref="main1">
               <el-input
                 v-model="searchValue"
                 placeholder="请输入设备名称，回车搜索"
@@ -2580,7 +2580,7 @@ img {
 }
 ::v-deep .el-card {
   margin-bottom: 10px !important;
-  background: #0d203c !important;
+  // background: #0d203c !important;
 }
 .task {
   //margin-bottom: 30px;

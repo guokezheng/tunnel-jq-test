@@ -510,7 +510,10 @@
     .el-dialog__body {
       max-height: 88vh;
       overflow: hidden;
-
+      .content-centre-one{
+        background-color: #042d5f;
+        border: 1px solid #042d5f;
+      }
       .left-content {
         background: #05213E;
       }
@@ -1411,7 +1414,9 @@
       color: #fff;
     }
   }
-
+  .syxt_searchBox{
+      background-color: #00335a;
+  }
   #app {
 
     .buttonsDeawer,
@@ -1625,7 +1630,12 @@
 
     .infoBoardBox {
       background: #004375;
-
+      .bigTitle{
+        border-bottom: 1px solid #05afe3;
+      }
+      .verticalBoxBorderLeft{
+        border-left: 1px solid #05afe3;
+      }
       .el-checkbox {
         color: #fff;
       }
@@ -1675,7 +1685,14 @@
       .contentBox .menuBox i:hover {
         color: #05afe3;
       }
-
+      .contentBox .con,.contentBox .menuBox{
+        border: 1px solid #05afe3;
+      }
+      .templateBox{
+        .templateTitle,.menuBox{
+          border: 1px solid #05afe3;
+        }
+      }
       .el-table__body-wrapper .el-table__cell {
         border: transparent !important;
       }
@@ -1693,11 +1710,11 @@
       }
     }
 
-    //  .infoBoardButton .el-button{
-    //   border: solid 1px #65bfff;
-    //   background: #65bfff;
-    //   color: #fff;
-    //  }
+     .infoBoardButton .el-button{
+      border: solid 1px #39ADFF;
+      background: #39ADFF;
+      color: #fff;
+     }
 
     .bigTitle {
       color: #fff !important;

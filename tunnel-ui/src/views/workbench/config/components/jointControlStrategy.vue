@@ -1227,8 +1227,8 @@ export default {
   width: 30%;
   position: relative;
   float: left;
-  background-color: #042d5f;
-  border: 1px solid #042d5f;
+  // background-color: #042d5f;
+  // border: 1px solid #042d5f;
   margin-left: 30px;
   margin-top: 20px;
 }

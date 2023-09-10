@@ -52,10 +52,7 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-            style="
-              border-right: #00c8ff solid 1px !important;
-              border-radius: 3px;
-            "
+            class="formNoIcon"
           >
             <!-- <el-button
               slot="append"
@@ -89,7 +86,7 @@
             />
           </el-select>
         </el-form-item>
-
+          
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button

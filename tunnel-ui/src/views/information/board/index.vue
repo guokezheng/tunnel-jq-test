@@ -112,8 +112,8 @@
         </el-form>
       </div>
       <div
-        style="border-left: 1px solid #05afe3; width: 37.8%"
-        class="verticalBox"
+        style="width: 37.8%"
+        class="verticalBox verticalBoxBorderLeft"
       >
         <div class="bigTitle">
           <div>
@@ -203,8 +203,8 @@
         </div>
       </div>
       <div
-        style="border-left: 1px solid #05afe3; width: 42.2%"
-        class="verticalBox"
+        style=" width: 42.2%"
+        class="verticalBox verticalBoxBorderLeft"
       >
         <div class="bigTitle">
           <div>
@@ -1232,7 +1232,7 @@ export default {
     padding: 10px;
     .bigTitle {
       padding: 15px 0;
-      border-bottom: 1px solid #05afe3;
+      // border-bottom: 1px solid #05afe3;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -1244,7 +1244,7 @@ export default {
       // overflow: auto;
 
       .con {
-        border: 1px solid #05afe3;
+        // border: 1px solid #05afe3;
         height: 75px;
         position: relative;
         width: 540px;
@@ -1257,7 +1257,7 @@ export default {
         display: flex;
         align-items: center;
         // margin-left: 10px;
-        border: solid 1px #05afe3;
+        // border: solid 1px #05afe3;
         height: 75px;
         justify-content: space-around;
         align-items: center;
@@ -1314,7 +1314,7 @@ export default {
 
         .templateTitle {
           height: 75px;
-          border: 1px solid #05afe3;
+          // border: 1px solid #05afe3;
           position: relative;
           width: 540px;
           float: left;
@@ -1327,7 +1327,7 @@ export default {
           display: flex;
           float: right;
           margin-left: 10px;
-          border: solid 1px #05afe3;
+          // border: solid 1px #05afe3;
           width: calc(100% - 550px);
           display: flex;
           justify-content: space-around;

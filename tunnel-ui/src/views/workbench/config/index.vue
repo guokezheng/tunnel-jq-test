@@ -7716,7 +7716,7 @@ input {
   right: 14px;
   width: 41%;
   z-index: 1996;
-  background-color: #00335a;
+  // background-color: #00335a;
   padding: 20px;
   box-sizing: border-box;
   ::v-deep .el-form-item {

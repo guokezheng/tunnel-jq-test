@@ -16,10 +16,7 @@
             placeholder="请输入用户昵称、手机号码"
             v-model="queryParams.userName"
             @keyup.enter.native="handleQuery"
-            style="
-              border-right: #00c8ff solid 1px !important;
-              border-radius: 3px;
-            "
+            class="formNoIcon"
           >
             <!--            <el-button
                           slot="append"

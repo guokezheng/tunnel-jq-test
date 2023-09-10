@@ -1545,7 +1545,7 @@ export default {
 
 <style scoped lang="scss">
 ::v-deep .dialogForm .el-checkbox-button {
-  background: #052c4d;
+  // background: #052c4d;
 }
 .theme-dark .el-dialog .el-dialog__body .dialogForm .checkBox {
   display: unset !important;

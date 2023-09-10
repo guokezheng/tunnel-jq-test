@@ -84,10 +84,7 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-            style="
-              border-right: solid 1px #00c8ff !important;
-              border-radius: 3px;
-            "
+            class="formNoIcon"
           >
           </el-input>
         </div>

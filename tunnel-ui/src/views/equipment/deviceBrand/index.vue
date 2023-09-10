@@ -39,10 +39,7 @@
             placeholder="请输入设备厂商名称、简称,回车搜索"
             clearable
             size="small"
-            style="
-              border-right: #00c8ff solid 1px !important;
-              border-radius: 3px;
-            "
+            class="formNoIcon"
             @keyup.enter.native="handleQuery"
           >
             <!--              <el-button

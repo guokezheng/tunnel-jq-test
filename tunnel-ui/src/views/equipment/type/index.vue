@@ -38,7 +38,7 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-            style="border-right: solid 1px #00c8ff; border-radius: 3px"
+            class="formNoIcon"
           >
             <!-- <el-button
               slot="append"

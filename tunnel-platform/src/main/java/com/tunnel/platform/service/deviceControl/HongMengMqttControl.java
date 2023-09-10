@@ -56,16 +56,17 @@ public class HongMengMqttControl implements GeneralControlBean {
             return ajaxResult;
         }
 
-        String eqStatus = sdDevices.getEqStatus();
-        if(DevicesStatusEnum.DEVICE_ON_LINE.getCode().equals(eqStatus)){
-            //在线，可以控制设备
+//        String eqStatus = sdDevices.getEqStatus();
+        //2023-09-10应要求修改为不控制下发，离线也可下发
+//        if(DevicesStatusEnum.DEVICE_ON_LINE.getCode().equals(eqStatus)){
+            //在线，可以控制设备(2023-09-04应要求修改为在线才可控制设备)
             //实际控制设备
             HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
             AjaxResult ajaxResult = hongMengMqttService.deviceControl(map,sdDevices);
             return ajaxResult;
-        }
+//        }
 
-        return AjaxResult.success(controlState);
+//        return AjaxResult.success(controlState);
     }
 
     /**

@@ -8,6 +8,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
+import com.tunnel.deal.mqtt.task.HongMengMqttTask;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import com.zc.common.constant.RedisKeyConstants;
 import org.slf4j.Logger;
@@ -168,7 +169,13 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
     @Override
     public void setRedisCacheDeviceStatus(String deviceId){
         //定时任务5秒钟请求一次状态，如果获取返回信息，判定设备离线
-        Integer expireTime = 5;
+
+        //在线时间检测控制时间，定时任务传入方便修改
+        Integer expireTime = HongMengMqttTask.onlineSecondInterval;
+        if(expireTime == null){
+            //默认60秒
+            expireTime = 60;
+        }
         redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }
 

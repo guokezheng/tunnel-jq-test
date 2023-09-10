@@ -71,7 +71,7 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         jsonObject.put("sn",externalDeviceId);
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", getActionId());
-        mqttGateway.sendToMqtt(topicPrefix+"{"+ctrlSn+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt(topicPrefix+ctrlSn,jsonObject.toJSONString());
     }
 
     /**
@@ -122,7 +122,7 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
      * @param payload   消息
      */
     @Override
-    public void handleExecStateReceiveData(SdDevices sdDevices, String payload) {
+    public void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic) {
         String deviceId = sdDevices.getEqId();
 
 //        {
@@ -143,6 +143,8 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         //todo 如何处理
         if(!"00".equals(error)){
             log.error("鸿蒙MQTT指令上报，设备ID="+deviceId+",设备故障码="+error);
+        }else{
+           queryDeviceData(sdDevices,topic);
         }
     }
 

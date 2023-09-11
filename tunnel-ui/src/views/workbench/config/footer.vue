@@ -525,7 +525,7 @@ import * as echarts from "echarts";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { videoStreaming, getDeviceById } from "@/api/equipment/eqlist/api";
-import { getEntranceExitVideo } from "@/api/eventDialog/api.js";
+import { getEntranceExitVideo,getVideoUrl } from "@/api/eventDialog/api.js";
 import {
   vehicleMonitoringInRecent24Hours,
   getHoursTrafficVolume,
@@ -990,6 +990,10 @@ export default {
           }
         }
       );
+      console.log(111111)
+      getVideoUrl().then((res)=>{
+        console.log(res,"机器人视频")
+      })
       this.videoNoPic3 = true;
     },
     initNoDecelerationChart(oneList, twoList, threeList) {

@@ -1062,16 +1062,16 @@
       <div class="card">
         <el-row style="margin-left: 2em">
           <el-col :span="4">
-            <span style="color: #05aafd">序号</span>
+            <span class="cardTableHeader">序号</span>
           </el-col>
           <el-col :span="4">
-            <span style="color: #05aafd">操作类型</span>
+            <span class="cardTableHeader">操作类型</span>
           </el-col>
           <el-col :span="8">
-            <span style="color: #05aafd"> 操作记录</span>
+            <span class="cardTableHeader"> 操作记录</span>
           </el-col>
           <el-col :span="8">
-            <span style="color: #05aafd"> 操作时间</span>
+            <span class="cardTableHeader"> 操作时间</span>
           </el-col>
         </el-row>
         <el-row

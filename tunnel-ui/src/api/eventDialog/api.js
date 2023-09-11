@@ -42,3 +42,11 @@ export function getEntranceExitVideo(tunnelId,direction) {
     method: 'get',
   })
 }
+
+// 机器人摄像机
+export function getVideoUrl() {
+  return request({
+    url: "/robot/getVideoUrl",
+    method: 'get',
+  })
+}

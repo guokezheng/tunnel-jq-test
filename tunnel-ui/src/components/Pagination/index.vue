@@ -99,13 +99,13 @@ export default {
 <style scoped>
 .pagination-container {
   /* background: #fff; */
-  padding: 32px 16px;
+  /* padding: 32px 16px;
   display: flex;
   justify-content: center;
   position: fixed;
   left: 50%;
   right: 50%;
-  bottom: 40px;
+  bottom: 40px; */
 }
 .pagination-container.hidden {
   display: none;

@@ -220,9 +220,9 @@ export function listDepId(query) {
   })
 }
 // 机器人实时状态
-export function getWorkRobot(query) {
+export function getWorkStagingRobot(query) {
   return request({
-    url: '/robot/getWorkRobot',
+    url: '/robot/getWorkStagingRobot',
     method: 'get',
     params: query
   })

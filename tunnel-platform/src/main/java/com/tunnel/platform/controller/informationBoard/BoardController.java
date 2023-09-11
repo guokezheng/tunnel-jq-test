@@ -4,6 +4,7 @@ package com.tunnel.platform.controller.informationBoard;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.lumen.ledcenter3.protocol.*;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -34,6 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * 情报板操作Controller
@@ -138,9 +140,9 @@ public class BoardController extends BaseController {
         if(device == null){
             return AjaxResult.error("设备不存在");
         }
-        if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+        /*if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
             return AjaxResult.error("设备离线");
-        }
+        }*/
         List<String> paramsList = new ArrayList<String>();
         AjaxResult ajaxResult;
         try {
@@ -178,6 +180,9 @@ public class BoardController extends BaseController {
             paramsList.add(items.toString());
             nowContentMap.put(deviceId.toString(), items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
+            device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
         } catch (Exception e) {
 //        	return AjaxResult.error(-1, e.getMessage());
             device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
@@ -221,7 +226,7 @@ public class BoardController extends BaseController {
     public AjaxResult getBoardEditInfo(Long deviceId) {
         AjaxResult ajaxResult = new AjaxResult();
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
-        if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+        /*if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
             Object object = nowContentMap.get(deviceId.toString());
             List<String> paramsList = new ArrayList<String>();
             if(object != null && !"".equals(object)){
@@ -236,7 +241,7 @@ public class BoardController extends BaseController {
                 }
             }
             return null;
-        }
+        }*/
         List<String> paramsList = new ArrayList<String>();
         try {
             // 1.获取设备状态
@@ -347,6 +352,7 @@ public class BoardController extends BaseController {
             List<String> paramsList = new ArrayList<String>();
             try {
                 parameters = URLDecoder.decode(parameters, "UTF-8");
+                //parameters = "[PLAYLIST]<r><n>ITEM_NO=001<r><n>ITEM000=30,0,0,0,0,\\C000000\\Fh2424\\T255255000000\\W注意安全\\A谨慎驾驶";
                 if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
                     parameters = parameters.replaceAll("—", "-");
                     parameters = parameters.replaceAll("\\\\n", "\\\\A");
@@ -359,7 +365,7 @@ public class BoardController extends BaseController {
                 parameters = parameters.replaceAll("<r><n>","\r\n");
                 parameters = parameters.replaceAll("<br>","\\\\n");
                 String newContent = parameters;
-                if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                /*if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
                     flag = true;
                     newContent = newContent.replaceAll("\n", "<n>");
                     newContent = newContent.replaceAll("\r", "<r>");
@@ -369,7 +375,7 @@ public class BoardController extends BaseController {
                     //储存失败设备名称
                     failDevList.add(device.getEqName());
                     continue;
-                }
+                }*/
                 for (int g = 0;g < iotBoardVocabularies.size();g++) {
                     String word = iotBoardVocabularies.get(g).getWord();
                     if (parameters.contains(word)) {
@@ -1233,6 +1239,102 @@ public class BoardController extends BaseController {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 拼接报文
+     * @param mapData
+     * @return
+     */
+    @GetMapping("/splicingBoard")
+    public AjaxResult splicingBoard(@RequestParam Map<String, Object> mapData){
+        Object objectData = mapData.get("objectData");
+        JSONObject jsonObject = JSONObject.parseObject(objectData.toString());
+        try {
+            JSONArray parameters = jsonObject.getJSONArray("parameters");
+            if(parameters.size() == 0){
+                return null;
+            }
+            String[] deviceIds = jsonObject.getString("deviceIds").split(",");
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceIds[0]);
+            SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(sdDevices.getAssociatedDeviceId());
+            String protocolType = sdIotDevice.getProtocolName();
+            List<String> deviceIdList = new ArrayList<>();
+            for(int i = 0; i < deviceIds.length; i++){
+                deviceIdList.add(sdDevicesService.selectSdDevicesById(deviceIds[i]).getAssociatedDeviceId().toString());
+            }
+            //拼接内容
+            StringBuffer content = new StringBuffer();
+            /*if(protocolType.startsWith(IDeviceProtocol.IB_DINGEN_V10)){
+                dengEnBoard(deviceIds[0]);
+                return AjaxResult.success();
+            }else */
+            if(protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)){
+                content.append("[PLAYLIST]<r><n>ITEM_NO=").append(String.format("%03d",parameters.size()));
+                for(int i = 0; i < parameters.size(); i++){
+                    Map<String, Object> map = (Map<String, Object>) parameters.get(i);
+                    content.append("<r><n>ITEM").append(String.format("%03d",i)).append("=");
+                    content.append(map.get("STAY")).append(",").append("0,0,0,0,");
+                    content.append("\\").append("C").append(map.get("COORDINATE"));
+                    content.append("\\").append("F").append(map.get("FONT")).append(map.get("FONT_SIZE")).append(map.get("FONT_SIZE"));
+                    content.append("\\").append("T").append(map.get("COLOR"));
+                    String boardContent = map.get("CONTENT").toString();
+                    content.append("\\").append("W").append(boardContent.replaceAll("<r><n>","\\\\A"));
+                }
+            }else {
+                content.append("[Playlist]<r><n>ITEM_NO=").append(parameters.size());
+                for(int i = 0; i < parameters.size(); i++){
+                    Map<String, Object> map = (Map<String, Object>) parameters.get(i);
+                    content.append("<r><n>ITEM").append(String.format("%03d",i)).append("=");
+                    content.append(map.get("STAY")).append(",").append(map.get("ACTION")).append(",");
+                    content.append(map.get("SPEED")).append(",").append("\\").append("C");
+                    content.append(map.get("COORDINATE")).append("\\").append("S00\\").append("c");
+                    content.append(map.get("COLOR")).append("\\").append("f").append(map.get("FONT"));
+                    content.append(map.get("FONT_SIZE")).append(map.get("FONT_SIZE")).append(map.get("CONTENT"));
+                }
+            }
+            String encode = URLEncoder.encode(String.valueOf(content), "UTF-8");
+            AjaxResult ajaxResult = uploadBoardEditInfo(deviceIdList.stream().collect(Collectors.joining(",")), "", encode);
+            if(ajaxResult.get("code").toString().equals("200")){
+                deviceIdList.stream().forEach(item ->{
+                    SdDevices sdDevices1 = new SdDevices();
+                    sdDevices1.setEqId(item);
+                    sdDevices1.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                    sdDevices1.setEqStatusTime(new Date());
+                    sdDevicesService.updateSdDevices(sdDevices1);
+                });
+            }
+            return ajaxResult;
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+    }
+
+    /*public AjaxResult dengEnBoard(String eqId){
+        ProgramCreator programCreator = new ProgramCreator(144,48, ProtocolConstant.COLOR_TYPE_FULL_COLOR);
+        int winNo = programCreator.addWindow(0,0,144,48);
+        programCreator.addTextItem(winNo,"山东高速欢迎你",0x57899C,ProtocolConstant.FONTSIZE_16,100,5, ShowEffect.Instant.getEffect(),1,1,1);
+        programCreator.createLpbFile("D:\\qingbaoban\\" + eqId+"\\111","111");
+        FileUploadProtocol uploadProtocol = new FileUploadProtocol();
+        List<String> files = new ArrayList<>();
+        files.add("D:\\qingbaoban\\" + eqId + "\\111\\" + "111.lpb");
+        uploadProtocol.setListener(new FileUploadProtocol.OnUploadListener(){
+
+            @Override
+            public void onStatus(int i, int i1) {
+
+            }
+
+            @Override
+            public void onProcess(int i, int i1, int i2) {
+
+            }
+        });
+        uploadProtocol.uploadFile("D:\\qingbaoban\\JQ-ZiBo-TaiHe-QFL-TCMS-001\\111",
+                files,144,48,ProtocolConstant.COLOR_TYPE_FULL_COLOR,
+                "10.7.183.165",5200,1);
+
+        return AjaxResult.success();
+    }*/
 
 //    public void setDeviceData(String deviceId, Long typeId, String content, List<SdDeviceData> sdDeviceDataList){
 //        if(sdDeviceDataList.size() > 0){

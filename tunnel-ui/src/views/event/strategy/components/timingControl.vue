@@ -225,7 +225,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-input-number v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="items.limitMin" :max="100" ></el-input-number>
+              <el-input-number v-if="items.state == 1" v-model="items.stateNum" style="width: 53%;margin-left: 5px;"   :min="items.limitMin" :max="100" ></el-input-number>
             </el-col>
             <el-col :span="2" class="buttonBox">
               <el-button

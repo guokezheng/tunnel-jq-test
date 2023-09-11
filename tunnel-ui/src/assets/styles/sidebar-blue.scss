@@ -63,7 +63,7 @@
 
   // 级联
   .el-cascader__dropdown {
-    background-color: #100A43;
+    background-color: #2C3E91;
     border: solid 1px #093566;
 
     .el-cascader-menu {
@@ -73,7 +73,7 @@
 
     .el-cascader-node:not(.is-disabled):hover,
     .el-cascader-node:not(.is-disabled):focus {
-      background-color: #1A3579;
+      background-color: #4659B4;
     }
 
     ::-webkit-scrollbar {
@@ -93,7 +93,7 @@
 
   // 下拉框
   .el-select-dropdown {
-    background-color: #100A43;
+    background-color: #2C3E91;
     border: solid 1px #093566;
 
     .el-select-dropdown__list {
@@ -103,11 +103,11 @@
 
       .el-select-dropdown__item.hover,
       .el-select-dropdown__item:hover {
-        background-color: #1A3579;
+        background-color: #4659B4;
       }
 
       .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-        background: #1A3579 !important;
+        background: #4659B4 !important;
       }
     }
 
@@ -1241,12 +1241,12 @@
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar-track {
-    background-color: #100A43;
+    background-color: #2C3E91;
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar {
     width: 10px;
-    background-color: #100A43;
+    background-color: #2C3E91;
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar-thumb {
@@ -1261,14 +1261,17 @@
     border-left: transparent;
   }
 
-  .el-input-number__increase,
-  .el-input-number__decrease {
+  .el-input-number__increase {
     background: #012E51 !important;
     color: white !important;
     border-left: 1px solid #00152B !important;
-  }
+    border-bottom: 1px solid #00152B !important;
 
-  .el-input-number__increase {
+  }
+  .el-input-number__decrease {
+    background: #012E51 !important;
+    color: white !important;
+    border-right: 1px solid #00152B !important;
     border-bottom: 1px solid #00152B !important;
   }
 
@@ -3326,12 +3329,12 @@
     }
 
     .el-range-editor--small.el-input__inner {
-      background: #052C4D;
+      background: #2B346D;
       border: none;
     }
 
     .el-date-editor .el-range-input {
-      background: #052C4D;
+      background: #2B346D;
       color: #fff;
     }
 

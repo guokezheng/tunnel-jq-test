@@ -123,7 +123,7 @@
                   style="width:25%;margin-left: 5px"
                 ></el-time-picker>
                 <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 15%;margin-left: 5px"  v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
+                <el-input style="width: 15%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
                 <div class="buttonBox" style="width: 15% ;float: right;" >
                   <el-button
                     class="delete"
@@ -347,13 +347,13 @@ export default {
       this.visibleSync = !this.visibleSync
     },
     beforeLuminanceEvent(e){
-      debugger
+      // // debugger
       console.log(e)
       this.catFilesModel.beforeLuminance  = e
       this.$forceUpdate()
     },
     beforeLuminanceEventWei(e){
-      debugger
+      // debugger
       console.log(e)
       this.catFilesModelWei.beforeLuminance  = e
       this.$forceUpdate()
@@ -389,10 +389,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.formItems.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdate(index){
-      debugger
+      // debugger
       let form={
         label: '',
         startTime: '',
@@ -405,10 +405,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.formItemsWei.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdateWei(index){
-      debugger
+      // debugger
       let form={
         label: '',
         startTime: '',
@@ -481,7 +481,7 @@ export default {
       this.formItems =  formItemsOne
       console.log(this.formItems)
       console.log(this.catFilesModel)
-      debugger
+      // debugger
       //模式1 车辆 0光强
       this.catFilesModel.modeType = 1
       if (!!this.catFilesModel.id) {
@@ -490,7 +490,7 @@ export default {
         });
       } else {
         addConfig(this.catFilesModel).then((response) => {
-          debugger
+          // debugger
           this.catFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
         });
@@ -561,7 +561,7 @@ export default {
       this.formItemsWei =  formItemsOne
       console.log(this.formItemsWei)
       console.log(this.catFilesModelWei)
-      debugger
+      // debugger
       //模式1 车辆 0光强
       this.catFilesModelWei.modeType = 1
       if (!!this.catFilesModelWei.id) {
@@ -570,7 +570,7 @@ export default {
         });
       } else {
         addConfig(this.catFilesModelWei).then((response) => {
-          debugger
+          // debugger
           this.catFilesModelWei.id =response.data.id
           this.$modal.msgSuccess("新增成功");
         });
@@ -613,14 +613,14 @@ export default {
       let ds2 = this.getCatdate(threeDaysAgo)//昨天
 
 
-      debugger
+      // debugger
       if(!!row){//首次
         // 济南方向
         this.catFilesModel.tunnelId= row.tunnelId
         this.catFilesModel.direction= "2"
         let  tunnel = this.tunnelData.find(tunnelItem => row.tunnelId ==  this.catFilesModel.tunnelId)
         console.log(tunnel)
-        debugger
+        // debugger
         //车辆
         let queryParams = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction: this.catFilesModel.direction,modeType:1}
         this.catListConfig(queryParams)
@@ -630,7 +630,7 @@ export default {
         this.catFilesModelWei.direction= "1"
         let  tunnelWei = this.tunnelData.find(tunnelItem => row.tunnelId ==  this.catFilesModelWei.tunnelId)
         console.log(tunnelWei)
-        debugger
+        // debugger
         //车辆
         let queryParamsWei = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction: this.catFilesModelWei.direction,modeType:1}
         this.catListConfigWei(queryParamsWei)
@@ -1021,7 +1021,7 @@ export default {
       if(!!this.catFilesModel.tunnelId&&!!this.catFilesModel.direction){
         let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
         console.log(tunnel)
-        debugger
+        // debugger
         let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
         this.catListConfig(queryParams)
       }
@@ -1032,7 +1032,7 @@ export default {
       if(!!this.catFilesModelWei.tunnelId&&!!this.catFilesModelWei.direction) {
         let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.catFilesModelWei.tunnelId)
         console.log(tunnel)
-        debugger
+        // debugger
         let queryParams = {
           tunnelName: tunnel.tunnelName,
           pageSize: 1,
@@ -1162,7 +1162,7 @@ export default {
   watch:{
     show:{
       async handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
         // //查询主策略
         // this.selectListStrategy()
@@ -1228,7 +1228,7 @@ export default {
 .el-form-item-direction-Item {
 
 .el-form-item__content {
-  width: 80%;
+  width: 89%;
 }
 
 }

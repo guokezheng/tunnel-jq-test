@@ -308,10 +308,10 @@ export default {
         cursor: pointer;
         > div {
           transform: skew(126deg);
-          font-size: 0.8vw;
+          font-size: 0.75vw;
           text-align: center;
-          font-family: GLJ-GBT, GLJ;
-          font-weight: bold;
+          font-family: '光良酒-干杯体';
+          // font-weight: bold;
           // text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
           background-image: -webkit-linear-gradient(
             -90deg,
@@ -333,9 +333,9 @@ export default {
           > span {
             display: block;
             transform: skew(-54deg) !important;
-            font-family: GLJ-GBT, GLJ;
-            font-weight: bold;
-            font-size: 0.8vw;
+            font-family: '光良酒-干杯体';
+            // font-weight: bold;
+            font-size: 0.75vw;
             background-image: none !important;
             -webkit-text-fill-color: snow;
             text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
@@ -374,9 +374,9 @@ export default {
             display: none;
           }
           span {
-            font-size: 0.8vw;
-            font-family: GLJ-GBT, GLJ;
-            font-weight: bold;
+            font-size: 0.75vw;
+            font-family: '光良酒-干杯体';
+            // font-weight: bold;
             background-image: -webkit-linear-gradient(
               -90deg,
               #e8f7ff 0%,
@@ -440,9 +440,9 @@ export default {
             display: none;
           }
           span {
-            font-family: GLJ-GBT, GLJ;
-            font-weight: bold;
-            font-size: 0.8vw;
+            font-family: '光良酒-干杯体';
+            // font-weight: bold;
+            font-size: 0.75vw;
 
             // text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
             background-image: -webkit-linear-gradient(

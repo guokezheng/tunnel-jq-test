@@ -654,7 +654,7 @@ export default {
     },
     //主定时任务列表
     selectListStrategy(data) {
-      // debugger
+      // // // debugger
       // const loading = this.$loading({
       //   lock: true,
       //   text: 'Loading',
@@ -707,7 +707,7 @@ export default {
       //查询出原有配置并且显示
       this.lightStrategyList = [];
       listConfig(queryParams).then((response) => {
-        // debugger
+        // // // debugger
         if (response.rows.length > 0) {
           this.lightStrategyList = [];
           for (let i = 0; i < response.rows.length; i++) {
@@ -754,7 +754,7 @@ export default {
       //查询出原有配置并且显示
       this.catStrategyList = [];
       listConfig(queryParams).then((response) => {
-        // debugger
+        // // // debugger
         if (response.rows.length > 0) {
           this.catStrategyList = [];
           for (let i = 0; i < response.rows.length; i++) {
@@ -810,7 +810,7 @@ export default {
       });
     },
     closeLogin() {
-      // debugger
+      // // // debugger
       this.visibleSync = false;
     },
     handleNodeClick(data) {
@@ -873,7 +873,7 @@ export default {
     //车辆状态
     changeCattate(e) {
       console.log(e);
-      // debugger
+      // // // debugger
     },
 
     //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
@@ -882,7 +882,7 @@ export default {
         (tunnelItem) => tunnelItem.tunnelId == this.catFilesModel.tunnelId
       );
       console.log(tunnel);
-      // debugger
+      // // // debugger
       let queryParams = {
         tunnelName: tunnel.tunnelName,
         pageSize: 1,
@@ -893,7 +893,7 @@ export default {
       this.catListConfig(queryParams);
     },
     beforeLuminanceEvent(e) {
-      // debugger
+      // // // debugger
       console.log(e);
       this.catFilesModel.beforeLuminance = e;
       this.$forceUpdate();
@@ -909,10 +909,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.formItems.splice(index, 1);
-      // debugger
+      // // // debugger
     },
     addHandleUpdate(index) {
-      // debugger
+      // // // debugger
       let form = {
         label: "",
         startTime: "",
@@ -956,7 +956,7 @@ export default {
     //编辑策略
     handleUpdate(row) {
       this.title = "策略编辑";
-      // debugger
+      // // // debugger
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
 
@@ -977,7 +977,7 @@ export default {
     },
     //删除策略
     handleDelete(row) {
-      // debugger
+      // // // debugger
       const ids = row.id;
       const rlIds = row.id;
       const jobRelationId = row.jobRelationId;
@@ -1003,7 +1003,7 @@ export default {
     },
     //删除照明策略
     lightStrategyDelete(row) {
-      // debugger
+      // // // debugger
       const ids = [];
       ids.push(row.id);
       ids.push(row.idWei);
@@ -1013,7 +1013,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          // debugger
+          // // // debugger
           delConfig(ids).then((res) => {
             if (res.code == 200) {
               //查询照明策略
@@ -1039,7 +1039,7 @@ export default {
             break;
 
           case "1":
-            // debugger
+            // // // debugger
             console.log(this.insertStrategyTypeOptions);
             this.insertStrategyTypeOptionsCopy = [];
             let dictLabelStrategy = this.insertStrategyTypeOptions.find(
@@ -1101,7 +1101,7 @@ export default {
       });
     },
     changeSdWisdomIsStatus(row, type) {
-      // debugger
+      // // // debugger
       //type==true 说明是另一个
       let data = {};
       if (type) {
@@ -1138,7 +1138,7 @@ export default {
   watch: {
     checkDefault: {
       handler(newVal, oldVal) {
-        // debugger
+        // // // debugger
         if (newVal) {
           this.$nextTick(() => {
             document.querySelector(".el-tree-node__content").click();
@@ -1153,7 +1153,7 @@ export default {
     },
     show: {
       async handler(newValue, oldValue) {
-        // debugger
+        // // // debugger
         this.treeModel = "0";
         this.visibleSync = !this.visibleSync;
         //查询主策略
@@ -1163,7 +1163,7 @@ export default {
         //查询方向
         await this.getDirection();
         this.$nextTick(() => {
-          // debugger
+          // // // debugger
           document.querySelector(".el-tree-node__content").click();
           //默认选中第一层级的第一个节点
           document
@@ -1237,8 +1237,8 @@ export default {
   width: 30%;
   position: relative;
   float: left;
-  background-color: #042d5f;
-  border: 1px solid #042d5f;
+  // background-color: #042d5f;
+  // border: 1px solid #042d5f;
   margin-left: 30px;
   margin-top: 20px;
 }

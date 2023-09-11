@@ -317,7 +317,7 @@
 
     .el-input-number__decrease,
     .el-input-number__increase {
-      background: #2B346D  !important;
+      background: #2B346D !important;
       // border: solid 1px #00152B;
       color: #fff;
     }
@@ -511,10 +511,13 @@
     .el-dialog__body {
       max-height: 88vh;
       overflow: hidden;
-      .content-centre-one{
+
+      .content-centre-one,
+      .content-centre-tree {
         background-color: #100A43;
         border: 1px solid #100A43;
       }
+
       .left-content {
         background: #182053;
       }
@@ -1040,7 +1043,7 @@
       }
 
       .el-form-item__label {
-        color: #05AAFD;
+        color: #fff;
       }
 
       .el-radio {
@@ -1268,6 +1271,7 @@
     border-bottom: 1px solid #00152B !important;
 
   }
+
   .el-input-number__decrease {
     background: #012E51 !important;
     color: white !important;
@@ -1310,6 +1314,7 @@
         transparent 50%);
     background-size: 8px 2px; //第一个值（20px）越大线条越长间隙越大
     background-repeat: repeat-x;
+    display: none;
   }
 
   // 所有弹窗横杠和 右上角样式
@@ -1430,18 +1435,21 @@
       border-bottom: transparent;
     }
   }
+
   .cl_searchBox,
   .searchBoxTab,
   .searchBox {
-    background-color: #182053;
+    background-color: #111846;
 
     .el-checkbox {
       color: #fff;
     }
   }
-  .syxt_searchBox{
-    background-color: #182053;
+
+  .syxt_searchBox {
+    background-color: #111846;
   }
+
   #app {
 
     .buttonsDeawer,
@@ -1655,7 +1663,8 @@
           background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%) !important;
           border: 1px solid #65BFFF !important;
         }
-        .el-button--primary.is-disabled{
+
+        .el-button--primary.is-disabled {
           background: #00B0FF linear-gradient(90deg, #92A3C0 0%, #5679B7 100%) !important;
           border: 1px solid #65BFFF !important;
         }
@@ -1710,14 +1719,21 @@
       .contentBox .menuBox i:hover {
         color: #006BF4;
       }
-      .contentBox .con,.contentBox .menuBox,.templateTitle{
+
+      .contentBox .con,
+      .contentBox .menuBox,
+      .templateTitle {
         border: 1px solid #006BF4;
       }
-      .templateBox{
-        .templateTitle,.menuBox{
+
+      .templateBox {
+
+        .templateTitle,
+        .menuBox {
           border: 1px solid #006BF4;
         }
       }
+
       .el-table__body-wrapper .el-table__cell {
         border: transparent !important;
       }
@@ -1725,7 +1741,8 @@
       .el-table tr {
         background: #182053 !important;
       }
-      .el-table--enable-row-hover .el-table__body tr:hover > td{
+
+      .el-table--enable-row-hover .el-table__body tr:hover>td {
         background: #100A43 !important;
       }
 
@@ -1738,11 +1755,11 @@
       }
     }
 
-     .infoBoardButton .el-button{
+    .infoBoardButton .el-button {
       border: solid 1px #65BFFF;
       background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%) !important;
       color: #fff;
-     }
+    }
 
     .bigTitle {
       color: #fff !important;
@@ -1763,7 +1780,7 @@
     }
 
     .app-container {
-      background: #182053;
+      background: rgba($color: #313A8D, $alpha: 0.3);
     }
 
     .dispatchAss {
@@ -1915,14 +1932,16 @@
     .el-table .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {
       background-color: #2C3E91;
-      border-bottom: solid 1px rgba(225, 228, 230, .16);
-      border-left: solid 1px rgba(225, 228, 230, .16);
+      // border-bottom: solid 1px rgba(225, 228, 230, .16);
+      border-bottom: none;
+
+      border-left: solid 1px rgba(225, 228, 230, .08);
       border-right: transparent;
       color: white;
     }
 
     .el-table .el-table__header-wrapper th:last-of-type {
-      border-right: 1px solid rgba(225, 228, 230, .16);
+      border-right: 1px solid rgba(225, 228, 230, .08);
     }
 
     .el-table__fixed-footer-wrapper tbody td.el-table__cell {
@@ -1956,11 +1975,13 @@
 
     //  表格下边框
     .el-table td.el-table__cell {
-      border: 1px solid rgba(225, 228, 230, .16) !important;
+      // border: 1px solid rgba(225, 228, 230, .16) !important;
+      border-bottom: none !important;
+      border-left: solid 1px rgba(225, 228, 230, 0.08);
     }
 
     .el-table td:last-of-type {
-      border-right: 1px solid rgba(225, 228, 230, .16) !important;
+      border-right: 1px solid rgba(225, 228, 230, .08) !important;
     }
 
     .el-table .el-table__expand-icon {
@@ -1977,12 +1998,12 @@
 
     // 表单label
     .el-form-item__label {
-      color: #05AAFD;
+      color: #fff;
     }
 
     // 弹窗表单label
     .el-dialog .el-form-item__label {
-      color: #05AAFD;
+      color: #fff;
     }
 
     // 设备预警、事件预警表单
@@ -2031,7 +2052,7 @@
 
     // 面包屑
     .app-breadcrumb.el-breadcrumb {
-      background: #182053;
+      background: rgba($color: #313A8D, $alpha: 0.3);
 
       .no-redirect {
         color: white;
@@ -2886,7 +2907,7 @@
     .dialogLine {}
 
     .el-form-item__label {
-      color: #05AAFD !important;
+      color: #fff !important;
     }
 
     .el-dialog__header {
@@ -3277,7 +3298,7 @@
 
       // padding: 0 15px;
       .el-loading-mask {
-        background: #00152B !important;
+        background: transparent !important;
       }
 
       .el-table__body {
@@ -3316,7 +3337,7 @@
     //   background-color: #0064B0;
     // }
     .el-pagination.is-background .el-pager li:not(.disabled).active {
-      background: #39ADFF linear-gradient(90deg, rgba(132,142,245,0.49) 0%, #0061F1 100%) !important;
+      background: #39ADFF linear-gradient(90deg, rgba(132, 142, 245, 0.49) 0%, #0061F1 100%) !important;
       color: white !important;
     }
 
@@ -3399,7 +3420,7 @@
       }
 
       tr:nth-of-type(even) {
-        background: #1A3579 !important;
+        background: rgba(44, 62, 145, 0.3) !important;
         color: #fff !important;
       }
 
@@ -3430,7 +3451,7 @@
     }
 
     .el-table {
-      background: #2C3E91 !important;
+      background: transparent !important;
       padding: 0 !important;
 
       tr {
@@ -3779,7 +3800,7 @@
     }
 
     .el-form-item__label {
-      color: #05AAFD;
+      color: #fff;
     }
 
     .el-radio {

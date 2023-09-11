@@ -1,5 +1,6 @@
 package com.tunnel.deal.mqtt.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -8,6 +9,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.strategy.service.CommonControlService;
@@ -18,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.MessageHandlingException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -156,6 +160,10 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         String deviceId = sdDevices.getEqId();
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
+
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
+
     }
 
     /**

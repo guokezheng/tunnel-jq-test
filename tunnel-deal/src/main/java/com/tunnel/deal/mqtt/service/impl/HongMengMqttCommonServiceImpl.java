@@ -1,10 +1,13 @@
 package com.tunnel.deal.mqtt.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
@@ -13,8 +16,11 @@ import com.zc.common.constant.RedisKeyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -37,6 +43,13 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
 
     @Autowired
     private TcpClientGeneralService tcpClientGeneralService;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
     /**
      * Redis缓存工具类
@@ -172,4 +185,15 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }
 
+    /**
+     * 向万集推送机电设备实时数据
+     * @param sdDevices
+     */
+    @Override
+    public void sendWanjiBaseDeviceStatus(SdDevices sdDevices) {
+//        List<SdDevices> sdDevicesList =  new ArrayList<>();
+//        sdDevicesList.add(sdDevices);
+//        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
+//        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
+    }
 }

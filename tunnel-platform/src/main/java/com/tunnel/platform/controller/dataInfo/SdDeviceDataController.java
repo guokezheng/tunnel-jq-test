@@ -199,9 +199,9 @@ public class SdDeviceDataController extends BaseController
         }
 
         //向万集推送机电设备实时数据，使用线程池实现功能，避免影响工作台数据加载
-        threadPoolTaskExecutor.execute(()->{
+        /*threadPoolTaskExecutor.execute(()->{
             setDeviceDataList(tunnelId);
-        });
+        });*/
 
         return Result.success(map);
     }

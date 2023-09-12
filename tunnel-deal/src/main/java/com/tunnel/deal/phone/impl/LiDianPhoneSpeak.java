@@ -177,9 +177,9 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
                         String offOrOn = list.get(3);
                         String pile = list.get(1);
                         SdDevices device = new SdDevices();
-                        device.setPile(pile);
+                        //device.setPile(pile);
                         device.setEqType(DevicesTypeEnum.ET.getCode());
-                        //device.setExternalDeviceId(list.get(0));
+                        device.setExternalDeviceId(list.get(0));
                         SdDevices etDeviceData = sdDevicesMapper.getEtDeviceData(device);
                         //新增事件
                         if(PhoneSpkEnum.INSTRUCT.getCode().equals(insturct) && PhoneSpkEnum.INSTRUCT_OFF.getCode().equals(offOrOn)){

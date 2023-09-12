@@ -198,9 +198,9 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
      */
     @Override
     public void sendWanjiBaseDeviceStatus(SdDevices sdDevices) {
-//        List<SdDevices> sdDevicesList =  new ArrayList<>();
-//        sdDevicesList.add(sdDevices);
-//        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
-//        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
+        List<SdDevices> sdDevicesList =  new ArrayList<>();
+        sdDevicesList.add(sdDevices);
+        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
+        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
     }
 }

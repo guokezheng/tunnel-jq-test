@@ -16,7 +16,10 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
@@ -24,10 +27,14 @@ import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventHandleMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.impl.SdEventServiceImpl;
+import com.tunnel.deal.corniceTunnelRobot.CorniceTunnelRobot;
+import com.tunnel.deal.corniceTunnelRobot.domain.StatusDto;
+import com.tunnel.platform.controller.deviceControl.RobotController;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.zc.common.core.websocket.WebSocketService;
@@ -36,16 +43,20 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +87,17 @@ public class SdEventController extends BaseController
 
     @Autowired
     private ISdTunnelsService tunnelsService;
+
+    @Autowired
+    private IExternalSystemService externalSystemService;
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    public static Integer roBotNum = 0;
 
     /**
      * 查询事件管理列表
@@ -346,8 +368,49 @@ public class SdEventController extends BaseController
      */
     @GetMapping("/getHandle")
     public AjaxResult getHandle(SdEvent sdEvent){
-        return sdEventService.getHandle(sdEvent);
+        List<SdEventHandle> handle = sdEventService.getHandle(sdEvent);
+        SdEvent sdEvent1 = sdEventService.selectSdEventById(sdEvent.getId());
+        threadPoolTaskExecutor.execute(()->{
+            rodro(handle,sdEvent1);
+        });
+        return AjaxResult.success(handle);
     }
+
+    public void rodro(List<SdEventHandle> handle,SdEvent sdEvent1){
+        for(SdEventHandle item : handle){
+            if(DevicesTypeEnum.ROBOT.getCode() == item.getEqTypeId() && TunnelEnum.HU_SHAN.getCode().equals(sdEvent1.getTunnelId())){
+                CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
+                SdTunnels sdTunnels = tunnelsService.selectSdTunnelsById(TunnelEnum.HU_SHAN.getCode());
+                //事件桩号
+                Integer eventPile = Integer.valueOf(sdEvent1.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
+                //隧道起点桩号
+                Integer tunnelPile = Integer.valueOf(sdTunnels.getStartPileNum());
+                //计算距离
+                Integer distance = eventPile - tunnelPile;
+                //查询地址
+                ExternalSystem system = new ExternalSystem();
+                system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
+                List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
+                int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), distance + 10 + "", null, null, list.get(0).getSystemUrl());
+                if(count == 1){
+                    //getRobotNum(sdEvent1);
+                    roBotNum = eventPile;
+                }
+
+            }
+        }
+    }
+
+    /*public void getRobotNum(SdEvent sdEvent){
+        RobotController robotController = new RobotController();
+        //事件桩号
+        Integer eventPile = Integer.valueOf(sdEvent.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
+        StatusDto statusDto = (StatusDto)robotController.getWorkStagingRobot(null).get("data");
+        Integer position = Integer.valueOf(statusDto.getPosition());
+        do {
+
+        }while (position-3)
+    }*/
 
     /**
      * 更新事件处置
@@ -541,8 +604,8 @@ public class SdEventController extends BaseController
         SdEvent sdEvent = new SdEvent();
         sdEvent.setTunnelId("JQ-JiNan-WenZuBei-MJY");//隧道
         sdEvent.setEventSource("2");//事件来源  消防炮
-        sdEvent.setEventTypeId((long) 20);//事件类型
-        sdEvent.setEventTitle("胡山隧道潍坊方向智能消防炮YK16+678发生火警");//事件标题  隧道+方向+桩号+发生火警
+        sdEvent.setEventTypeId((long) 4);//事件类型
+        sdEvent.setEventTitle("胡山隧道潍坊方向桩号YK16+678发生异常停车事件");//事件标题  隧道+方向+桩号+发生火警
         sdEvent.setEventTime(DateUtils.getNowDate());//时间
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));//开始时间
         sdEvent.setEventState("3");//状态  待确认

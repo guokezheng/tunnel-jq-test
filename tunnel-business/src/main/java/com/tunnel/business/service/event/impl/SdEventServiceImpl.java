@@ -914,14 +914,14 @@ public class SdEventServiceImpl implements ISdEventService {
     }*/
 
     @Override
-    public AjaxResult getHandle(SdEvent sdEvent) {
+    public List<SdEventHandle> getHandle(SdEvent sdEvent) {
         sdEvent.setCurrencyId(sdEventMapper.selectSdEventById(sdEvent.getId()).getCurrencyId());
         //交通事件-添加流程树
         updateHandle(sdEvent,"add");
         SdEventHandle sdEventHandle = new SdEventHandle();
         sdEventHandle.setEventId(sdEvent.getId());
         List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle);
-        return AjaxResult.success(sdEventHandles);
+        return sdEventHandles;
     }
 
     @Override
@@ -1657,7 +1657,7 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     public Map<String, Object> setPlanDataMap(SdEvent sdEventData){
         //查询事件详情-预案处置
-        List<SdEventHandle> planDisposal = (List<SdEventHandle>) getHandle(sdEventData).get("data");
+        List<SdEventHandle> planDisposal = getHandle(sdEventData);
         Map<String, Object> planMap = new HashMap<>();
         if(sdEventData.getCurrencyId() != null && sdEventData.getCurrencyId() != ""){
             planMap.put("planName",sdEventMapper.getEventInif(sdEventData).get("planName"));

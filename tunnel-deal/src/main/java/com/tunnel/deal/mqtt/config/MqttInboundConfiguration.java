@@ -91,8 +91,11 @@ public class MqttInboundConfiguration {
 
             String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
             String payload = String.valueOf(message.getPayload());
+            log.info("入站监听数据：message="+message);
+            try {
+
 //            System.out.println("topic:"+topic);
-            if(topic != null){
+                if(topic != null){
 //                if(topic.contains("clientConnectedStatus")){
 //                    System.err.println("监听到啦："+topic);
 //                }
@@ -108,35 +111,44 @@ public class MqttInboundConfiguration {
 //                if("null".equals(externalId)){
 //                    return;
 //                }
-                if(!topic.contains("$SYS/brokers")){
-                    JSONObject jsonObject = JSONObject.parseObject(payload);
-                    String externalId = String.valueOf(jsonObject.get("sn"));
-                    SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
-                    if(sdDevices != null){
+                    if(!topic.contains("$SYS/brokers")){
+                        JSONObject jsonObject ;
+                        try {
+                            jsonObject = JSONObject.parseObject(payload);
+                        } catch (Exception e) {
+                            log.error("入站监听数据异常：监听到的数据JSON格式异常：payload="+payload);
+                            return;
+                        }
+
+                        String externalId = String.valueOf(jsonObject.get("sn"));
+                        SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
+                        if(sdDevices != null){
 //                    String eqId = sdDevices.getEqId();
-                        String eqType = String.valueOf(sdDevices.getEqType());
-                        HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
-                        //解析数据
-                        hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
-                    }else{
-                        log.error("入站监听数据异常：监听到的数据没有匹配到设备：externalId="+externalId);
+                            String eqType = String.valueOf(sdDevices.getEqType());
+                            HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
+                            //解析数据
+                            hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
+                        }else{
+                            log.error("入站监听数据异常：监听到的数据没有匹配到设备：externalId="+externalId);
+                        }
                     }
-                }
-                else{//系统topic判断设备上线下线
-                    // 将字符串转换为JSONObject
-                    JSONObject json = JSONObject.parseObject(payload);
-                    String clientId = json.get("clientid").toString();
-                    //设备上线
-                    if(topic.contains("connected")){
-                        devicesService.updateOnlineStatus(clientId,false);
+                    else{//系统topic判断设备上线下线
+                        // 将字符串转换为JSONObject
+                        JSONObject json = JSONObject.parseObject(payload);
+                        String clientId = json.get("clientid").toString();
+                        //设备上线
+                        if(topic.contains("connected")){
+                            devicesService.updateOnlineStatus(clientId,false);
+                        }
+                        //设备下线
+                        if(topic.contains("disconnected")){
+                            devicesService.updateOfflineStatus(clientId,false);
+                        }
                     }
-                    //设备下线
-                    if(topic.contains("disconnected")){
-                        devicesService.updateOfflineStatus(clientId,false);
-                    }
-                }
 
-
+                }
+            }catch (Exception e){
+                log.error("JSON Format Parsing Exception for MqttInboundConfiguration: {}", topic);
             }
 
         };

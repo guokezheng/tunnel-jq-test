@@ -32,6 +32,8 @@ public class MqttOutboundConfiguration {
         String[] array = mqttProperties.getUrl().split(",");
         MqttConnectOptions mqttConnectOptions=new MqttConnectOptions();
         mqttConnectOptions.setCleanSession(false);
+        //空中消息条数
+        mqttConnectOptions.setMaxInflight(1000000);
 
         //qoslevel todo
         mqttConnectOptions.setConnectionTimeout(Integer.valueOf(mqttProperties.getTimeout()));

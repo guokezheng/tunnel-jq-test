@@ -64,8 +64,10 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
                             }
                         }
                     }
-                    tunnelName = tunnelName.substring(0,tunnelName.length()-1);
-                    externalSystemList.get(i).setTunnelId(tunnelName);
+                    if(!"".equals(tunnelName)){
+                        tunnelName = tunnelName.substring(0,tunnelName.length()-1);
+                        externalSystemList.get(i).setTunnelId(tunnelName);
+                    }
                 }
 
             }

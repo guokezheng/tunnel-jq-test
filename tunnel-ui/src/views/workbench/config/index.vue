@@ -4835,9 +4835,9 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               if (tunnelId == "JQ-JiNan-WenZuBei-MJY") {
-                // setInterval(() => {
-                //   this.getRobot();
-                // }, 2000);
+                setInterval(() => {
+                  this.getRobot();
+                }, 2000);
               }
 
               // 匹配设备方向

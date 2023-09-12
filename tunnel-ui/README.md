@@ -61,4 +61,12 @@ npm install gis-map-admin@0.9.2
 
 # 新增 vue-resource 数据请求
 npm install vue-resource --save
+
+# 新增 视频 rtmp转码 
+npm install vue-video-player -S
+# 因为是播放rtmp格式流，需要安装 videojs-flash 插件，必须用npm安装！！！！！！
+npm install video-flash --save
+# 使用file-saver导出文件，下载Excel文件、下载图片、下载文本
+npm install file-saver --save
+
 ```

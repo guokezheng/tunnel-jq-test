@@ -371,11 +371,11 @@
                   <template>
                     <div
                       style="
-                        width: 1950px;
+                        width: 1955px;
                         height: 15px;
                         position: relative;
-                        top: 460px;
-                        left: 211px;
+                        top: 548px;
+                        left: 209px;
                       "
                       v-show="robotShow"
                     >
@@ -383,10 +383,9 @@
                         src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
                         :style="{
-                          left:robotPositon + '%'
+                          left: robotPositon + '%',
                         }"
                         @click="clickRobot()"
-
                       />
                     </div>
                   </template>
@@ -1985,7 +1984,7 @@ import {
   icon,
   // eqTypeStateIcon,
   laneImage,
-  laneImage2
+  laneImage2,
 } from "../../../utils/configData.js";
 import {
   listStrategy,
@@ -2124,9 +2123,9 @@ export default {
 
   data() {
     return {
-      tunnelLang:0,
-      robotPositon:null,
-      robotId: "", //机器人ID
+      tunnelLang: 0,
+      robotPositon: 99,
+      robotId: "7", //机器人ID
       refresh: 0,
       showScreenEqName: false,
       actuatorTooltip: false,
@@ -2493,7 +2492,8 @@ export default {
       },
       lightSwitch: 0,
       //车道列表
-      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
+      laneUrlList:
+        this.$cache.local.get("navigationBar") == "0" ? laneImage : laneImage2,
       //画布上下的传感器数据集合
       upList: [],
       downList: [],
@@ -2821,8 +2821,8 @@ export default {
   },
 
   watch: {
-    "resetCanvasFlag":function(newVal,oldVal){
-      console.log(newVal,"resetCanvasFlag")
+    resetCanvasFlag: function (newVal, oldVal) {
+      console.log(newVal, "resetCanvasFlag");
     },
     screenEqName(val) {
       this.$refs.tree.filter(val);
@@ -4822,10 +4822,6 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                if (res.eqList[i].eqType == 29) {
-                  // console.log(res.eqList[i],"robotIdrobotIdrobotIdrobotId")
-                  this.robotId = res.eqList[i].eqId;
-                }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -4838,9 +4834,12 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              setInterval(() => {
-                this.getRobot();
-              }, 2000);
+              if (tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+                // setInterval(() => {
+                //   this.getRobot();
+                // }, 2000);
+              }
+
               // 匹配设备方向
               listDevices().then((data) => {
                 // console.log(data, "设备表");
@@ -4938,10 +4937,13 @@ export default {
         deviceId: this.robotId,
       };
       await getWorkStagingRobot(param).then((res) => {
-        // console.log(res, "机器人");
-        this.robotPositon = (Number(res.data.position) / this.tunnelLang * 100).toFixed(2)
-        console.log(this.robotPositon,"this.robotPositon")
-        this.$forceUpdate()
+        console.log(res, "机器人");
+        this.robotPositon = (
+          (Number(res.data.position) / this.tunnelLang) *
+          100
+        ).toFixed(2) - 1;
+        console.log(this.robotPositon, "this.robotPositon");
+        this.$forceUpdate();
       });
     },
     /* 获取照明设备数据*/
@@ -5133,7 +5135,8 @@ export default {
     /* 选择隧道*/
     setTunnel(item, index) {
       // console.log(item,"选择隧道")
-      this.tunnelLang = Number(item.endPileNum) - Number(item.startPileNum) + 10
+      this.tunnelLang =
+        Number(item.endPileNum) - Number(item.startPileNum) + 10;
       // console.log(Number(item.endPileNum),Number(item.startPileNum),"隧道长度111")
       this.dialogClose();
       this.$refs.footerRef.changeActive();
@@ -5199,9 +5202,9 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
-      // console.log(value, lable,"value, lable")
+      console.log(value, lable,"value, lable")
       // carShow
-      if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
+      if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" && (value == 9 || value == 0)) {
         this.robotShow = true;
       } else {
         this.robotShow = false;
@@ -5276,9 +5279,9 @@ export default {
     clickRobot() {
       this.eqInfo.clickEqType = 29;
       const param = {
-        eqType:29
-      }
-      this.openStateSwitch(param)
+        eqType: 29,
+      };
+      this.openStateSwitch(param);
     },
     //================================================单个配置开始==================================
     /* 打开配置界面*/
@@ -7574,8 +7577,8 @@ input {
 }
 
 .robotAnimation {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   // transform: translateY(-12px);
   // animation: mymove 60s infinite linear;
   float: left;

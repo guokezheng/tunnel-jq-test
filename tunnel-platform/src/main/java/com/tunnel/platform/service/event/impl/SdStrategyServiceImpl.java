@@ -1479,7 +1479,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             ExternalSystem system = new ExternalSystem();
             system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
             List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
-            corniceTunnelRobot.OneClickArrival(joinReserveHandle.getEquipments(),distance + "",null,null,list.get(0).getSystemUrl());
+            corniceTunnelRobot.OneClickArrival(joinReserveHandle.getEquipments(),distance - 10 + "",null,null,list.get(0).getSystemUrl());
         }
         int issueResult = issuedDevice(rl,eventId,"4");
         String deviceExecutionState = getDeviceExecutionState(processId);

@@ -3065,9 +3065,9 @@ export default {
   z-index: 96659;
   // background: #071727;
   pointer-events: auto !important;
-  border-left: 1px solid rgba(1, 152, 255, 0.8);
-  border-right: 1px solid rgba(1, 152, 255, 0.8);
-  border-bottom: 2px solid rgba(1, 152, 255, 0.8);
+  // border-left: 1px solid rgba(1, 152, 255, 0.8);
+  // border-right: 1px solid rgba(1, 152, 255, 0.8);
+  // border-bottom: 2px solid rgba(1, 152, 255, 0.8);
 }
 .comClass {
   position: absolute;

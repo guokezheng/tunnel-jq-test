@@ -1,5 +1,6 @@
 package com.tunnel.deal.mqtt.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -8,6 +9,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.strategy.service.CommonControlService;
@@ -18,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.MessageHandlingException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -101,7 +105,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/laneIndicator/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/laneIndicator/runStatus/"+ctrlSn,1,jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -135,7 +139,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         }
         if(topic.contains("rhy/iot/receive/laneIndicator/execStatus/")){
             //指令执行情况上报
-            handleExecStateReceiveData(sdDevices,payload);
+            handleExecStateReceiveData(sdDevices,payload,"rhy/iot/control/laneIndicator/getRunStatus/");
         }
     }
 
@@ -156,6 +160,10 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         String deviceId = sdDevices.getEqId();
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
+
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
+
     }
 
     /**
@@ -173,9 +181,9 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
      * @param sdDevices 设备信息
      * @param payload    消息
      */
-    private void handleExecStateReceiveData(SdDevices sdDevices, String payload){
+    private void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic){
 
-        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload);
+        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
     }
 
     /**

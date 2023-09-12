@@ -9,6 +9,8 @@ import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.mqtt.service.HongMengMqttService;
 import com.tunnel.deal.mqtt.strategy.HongMengMqttStrategyFactory;
 import com.zc.common.constant.RedisKeyConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ import java.util.List;
  */
 @Component("HongMengMqttTask")
 public class HongMengMqttTask {
+
+    private static final Logger log = LoggerFactory.getLogger(HongMengMqttTask.class);
 
     @Autowired
     private ISdDevicesService sdDevicesService;
@@ -42,11 +46,20 @@ public class HongMengMqttTask {
     @Autowired
     private ISdDevicesService devicesService;
 
+    /**
+     * 在线时间检测控制时间，定时任务传入方便修改
+     */
+    public static Integer onlineSecondInterval;
+
 
     /**
      * 鸿蒙控制器连接状态监测
      */
-    public void connectStatus(){
+    public void connectStatus(Integer second){
+        onlineSecondInterval = second;
+
+        int onlineCount = 0;
+
         final String onlineFlag = "online";
         List<SdDevices> devicesList = getHongMengDeviceList();
         for(SdDevices sdDevices : devicesList){
@@ -54,12 +67,15 @@ public class HongMengMqttTask {
             String key = RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId;
             String status = redisCache.getCacheObject(key);
             if(!onlineFlag.equals(status)){
-                //鸿蒙控制器10秒内没有信息返回，设备以及子设备设置为离线
-                devicesService.updateOfflineStatus(deviceId,true);
+                //鸿蒙控制器10秒内没有信息返回，设备设置为离线
+                //2023-9-10修改：鸿蒙控制器长时间不上报数据，将子设备离线去掉
+                devicesService.updateOfflineStatus(deviceId,false);
             }else{
                 devicesService.updateOnlineStatus(deviceId,false);
+                onlineCount++;
             }
         }
+        log.error("鸿蒙控制器以及子设备（根据鸿蒙控制器以及子设备推送的数据）计算，在线数=："+ onlineCount);
     }
 
     /**

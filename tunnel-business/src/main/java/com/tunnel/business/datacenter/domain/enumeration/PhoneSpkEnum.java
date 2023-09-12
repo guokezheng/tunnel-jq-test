@@ -18,8 +18,8 @@ public enum PhoneSpkEnum {
 
     //摘机挂机指令码(力电)
     INSTRUCT("01","摘机挂机指令"),
-    INSTRUCT_OFF("01","摘机"),
-    INSTRUCT_ON("00","挂机"),
+    INSTRUCT_OFF("02","摘机"),
+    INSTRUCT_ON("01","挂机"),
     //运行状态指令码(力电)
     RUNSTART("02","运行状态指令"),
     RUNSTART_SUCCESS("00","正常"),

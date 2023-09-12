@@ -104,7 +104,7 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/trafficLight/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/trafficLight/runStatus/"+ctrlSn,1,jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -144,7 +144,7 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         }
         if(topic.contains("rhy/iot/receive/trafficLight/execStatus/")){
             //指令执行情况上报
-            handleExecStateReceiveData(sdDevices,payload);
+            handleExecStateReceiveData(sdDevices,payload,"rhy/iot/control/trafficLight/getRunStatus/");
         }
     }
 
@@ -165,6 +165,8 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         String deviceId = sdDevices.getEqId();
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**
@@ -182,9 +184,9 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
      * @param sdDevices 设备信息
      * @param payload    消息
      */
-    private void handleExecStateReceiveData(SdDevices sdDevices, String payload){
+    private void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic){
 
-        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload);
+        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
     }
 
     /**

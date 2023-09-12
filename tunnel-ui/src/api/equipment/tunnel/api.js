@@ -19,13 +19,13 @@ export function listTunnels(query) {
   })
 }
 // 查询隧道列表
-export function listDepId(query) {
-  return request({
-    url: '/tunnels/listDepId',
-    method: 'get',
-    params: query
-  })
-}
+// export function listDepId(query) {
+//   return request({
+//     url: '/tunnels/listDepId',
+//     method: 'get',
+//     params: query
+//   })
+// }
 export function listAllTunnels(query) {
   return request({
     url: '/tunnels/listAll',
@@ -220,9 +220,9 @@ export function listDepId(query) {
   })
 }
 // 机器人实时状态
-export function getWorkRobot(query) {
+export function getWorkStagingRobot(query) {
   return request({
-    url: '/robot/getWorkRobot',
+    url: '/robot/getWorkStagingRobot',
     method: 'get',
     params: query
   })

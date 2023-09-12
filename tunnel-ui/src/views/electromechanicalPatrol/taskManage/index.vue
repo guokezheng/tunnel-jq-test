@@ -305,7 +305,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <!--      <h1>新增巡检任务</h1>-->
-      <el-card>
+      <el-card class="taskCard">
         <div class="task">
           <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
           <div class="tableTopHr" style="display: none"></div>
@@ -438,7 +438,7 @@
           </el-form>
         </div>
       </el-card>
-      <el-card>
+      <el-card class="taskCard">
         <div class="patrol">
           <div class="topTxt">巡查点信息</div>
           <div class="tableTopHr" style="display: none"></div>
@@ -573,7 +573,7 @@
             ></el-cascader>
           </el-col>
           <el-col :span="8">
-            <div class="grid-content bg-purple" ref="main1">
+            <div class="grid-content" ref="main1">
               <el-input
                 v-model="searchValue"
                 placeholder="请输入设备名称，回车搜索"
@@ -1062,16 +1062,16 @@
       <div class="card">
         <el-row style="margin-left: 2em">
           <el-col :span="4">
-            <span style="color: #05aafd">序号</span>
+            <span class="cardTableHeader">序号</span>
           </el-col>
           <el-col :span="4">
-            <span style="color: #05aafd">操作类型</span>
+            <span class="cardTableHeader">操作类型</span>
           </el-col>
           <el-col :span="8">
-            <span style="color: #05aafd"> 操作记录</span>
+            <span class="cardTableHeader"> 操作记录</span>
           </el-col>
           <el-col :span="8">
-            <span style="color: #05aafd"> 操作时间</span>
+            <span class="cardTableHeader"> 操作时间</span>
           </el-col>
         </el-row>
         <el-row
@@ -2580,7 +2580,7 @@ img {
 }
 ::v-deep .el-card {
   margin-bottom: 10px !important;
-  background: #0d203c !important;
+  // background: #0d203c !important;
 }
 .task {
   //margin-bottom: 30px;

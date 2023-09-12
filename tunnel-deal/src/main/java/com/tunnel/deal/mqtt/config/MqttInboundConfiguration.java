@@ -46,6 +46,9 @@ public class MqttInboundConfiguration {
     @Autowired
     private HongMengMqttStrategyFactory hongMengMqttStrategyFactory;
 
+    @Autowired
+    private ISdDevicesService devicesService;
+
 
     /**
      * 配置client,监听的topic
@@ -119,20 +122,19 @@ public class MqttInboundConfiguration {
                         log.error("入站监听数据异常：监听到的数据没有匹配到设备：externalId="+externalId);
                     }
                 }
-                //                上线下线 占时先注释
-//                else{//系统topic判断设备上线下线
-//                    // 将字符串转换为JSONObject
-//                    JSONObject json = new JSONObject(payload);
-//                    String clientid = json.get("clientid").toString();
-//                    //设备上线
-//                    if(topic.contains("connected")){
-//                        devicesMapper.updateSdDevicesBatch(clientid, "1");
-//                    }
-//                    //设备下线
-//                    if(topic.contains("disconnected")){
-//                        devicesMapper.updateSdDevicesBatch(clientid, "2");
-//                    }
-//                }
+                else{//系统topic判断设备上线下线
+                    // 将字符串转换为JSONObject
+                    JSONObject json = JSONObject.parseObject(payload);
+                    String clientId = json.get("clientid").toString();
+                    //设备上线
+                    if(topic.contains("connected")){
+                        devicesService.updateOnlineStatus(clientId,false);
+                    }
+                    //设备下线
+                    if(topic.contains("disconnected")){
+                        devicesService.updateOfflineStatus(clientId,false);
+                    }
+                }
 
 
             }

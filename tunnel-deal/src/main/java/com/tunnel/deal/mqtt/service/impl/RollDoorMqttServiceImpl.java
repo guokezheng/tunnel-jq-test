@@ -103,7 +103,7 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
-        mqttGateway.sendToMqtt("rhy/iot/control/rollDoor/runStatus/{"+ctrlSn+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt("rhy/iot/control/rollDoor/runStatus/"+ctrlSn,1,jsonObject.toJSONString());
         return AjaxResult.success();
     }
 
@@ -115,7 +115,7 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
     @Override
     public void queryDeviceData(SdDevices sdDevices) {
 
-        hongMengMqttCommonService.queryDeviceData(sdDevices," rhy/iot/control/rollDoor/getRunStatus/");
+        hongMengMqttCommonService.queryDeviceData(sdDevices,"rhy/iot/control/rollDoor/getRunStatus/");
     }
 
     /**
@@ -137,7 +137,7 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         }
         if(topic.contains("rhy/iot/receive/rollDoor/execStatus/")){
             //指令执行情况上报
-            handleExecStateReceiveData(sdDevices,payload);
+            handleExecStateReceiveData(sdDevices,payload,"rhy/iot/control/rollDoor/getRunStatus/");
         }
     }
 
@@ -160,6 +160,8 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         String deviceId = sdDevices.getEqId();
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**
@@ -177,9 +179,9 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
      * @param sdDevices 设备信息
      * @param payload    消息
      */
-    private void handleExecStateReceiveData(SdDevices sdDevices, String payload){
+    private void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic){
 
-        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload);
+        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
     }
 
 

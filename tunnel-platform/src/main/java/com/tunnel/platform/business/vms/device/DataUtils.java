@@ -527,6 +527,38 @@ public class DataUtils {
                 checkCode.insert(2, " ");
                 reback = "02 " + reback + " " + checkCode.toString() + " 03";
                 return reback;
+            }else if(IDeviceProtocol.IB_DINGEN_V10.equals(protocolType)){
+                /*String reback = RadixUtil.wordToGb2312("山东高速欢迎你").toUpperCase();
+                String str1 = new String();
+                String str2 = new String();
+                String str3 = new String();
+                String str4 = new String();
+                String str5 = new String();
+                str1 = "FF FF FF FF ";//changdu
+                str2 = " 00 00 00";
+                str3 = " 68 32 FF 7B 01 ";//数据包长度
+                str4 = " 00 00 00";
+                str5 = " 85 00 00 00 01 01 01 30 00 05 01 12 01 00 05 00 ";
+                reback = reback + " 00";
+
+                String str = str5 + reback;
+                str = str.replaceAll(" ","");
+                int strNum = str.length() / 2;
+                //数据包长度
+                String s2 = Integer.toHexString(strNum);
+                str3 = str3 + s2;
+                //计算十六进制
+                String s = JinZhi16Util.makeChecksum(str3 + str4 + str5 + reback);
+                reback = reback + " " + s.substring(2,s.length());
+                reback = reback + " " + s.substring(0,2);
+
+                //总数
+                String z = str3 + str4 + str5 + reback;
+                z = z.replaceAll(" ", "");
+                int num = z.length() / 2;
+                String s1 = Integer.toHexString(num);
+                str1 = str1 + s1;
+                return str1 + str2 + str3 + str4 + str5 + reback;*/
             }
         } catch (Exception e) {
             e.printStackTrace();

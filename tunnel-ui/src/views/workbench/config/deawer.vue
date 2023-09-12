@@ -74,6 +74,7 @@
           </el-select>
           <el-button
             class="chezhiControlButton"
+            size="mini"
             @click="chezhiControl(1)"
             :disabled="chezhiDisabled"
             v-hasPermi="['workbench:dialog:save']"
@@ -128,6 +129,7 @@
           </el-select>
           <el-button
             class="chezhiControlButton"
+            size="mini"
             @click="chezhiControl(2)"
             :disabled="chezhiDisabled"
             v-hasPermi="['workbench:dialog:save']"
@@ -200,7 +202,7 @@
             v-model="phoneForm1.fileNames"
             placeholder="请选择播放文件"
             clearable
-            size="small"
+            size="mini"
             @click.native="clickFileNames(directionList[0].dictValue)"
             v-show="brandId == '0060'"
           >
@@ -284,7 +286,7 @@
             v-model="phoneForm2.fileNames"
             placeholder="请选择播放文件"
             clearable
-            size="small"
+            size="mini"
             @click.native="clickFileNames(directionList[1].dictValue)"
             v-show="brandId == '0060'"
           >
@@ -993,28 +995,28 @@ export default {
   width: 23% !important;
   font-size: 0.7vw;
 
-  ::-webkit-scrollbar-track-piece {
-    background-color: rgba($color: #00c2ff, $alpha: 0.1);
-    border-left: 1px solid rgba(0, 0, 0, 0);
-    width: 1000px;
-    border-width: 50px;
-  }
+  // ::-webkit-scrollbar-track-piece {
+  //   background-color: #100A43;
+  //   border-left: 1px solid rgba(0, 0, 0, 0);
+  //   width: 1000px;
+  //   border-width: 50px;
+  // }
 
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
 
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba($color: #00c2ff, $alpha: 0.6);
-    background-clip: padding-box;
+  // ::-webkit-scrollbar-thumb {
+  //   background-color: rgba($color: #00c2ff, $alpha: 0.6);
+  //   background-clip: padding-box;
 
-    min-height: 28px;
-  }
+  //   min-height: 28px;
+  // }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #00c2ff;
-  }
+  // ::-webkit-scrollbar-thumb:hover {
+  //   background-color: #00c2ff;
+  // }
 }
 ::v-deep .el-drawer__header {
   font-size: 14px;

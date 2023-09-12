@@ -368,25 +368,28 @@
                     <span>方向：{{ actuatorCKItem.eqDirection }}</span>
                   </div>
 
-                  <!-- <template>
+                  <template>
                     <div
                       style="
                         width: 1950px;
                         height: 15px;
-                        border-bottom: 4px #ccc solid;
                         position: relative;
-                        top: 242px;
-                        left: 214px;
+                        top: 460px;
+                        left: 211px;
                       "
                       v-show="robotShow"
-                      @click="clickRobot"
                     >
                       <img
                         src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
+                        :style="{
+                          left:robotPositon + '%'
+                        }"
+                        @click="clickRobot()"
+
                       />
                     </div>
-                  </template> -->
+                  </template>
                   <!--      爆炸效果图       :style="{ top:10 +'px',left:value[key].left+ +'px',right:value[key].right+ +'px',width: 48+'px',height:48+'px' }"   -->
                   <div
                     class="accident"
@@ -548,16 +551,16 @@
                           transform:
                             (item.eqType == 23 &&
                               item.eqDirection == 2 &&
-                              item.eqTunnelId == 'JQ-JiNan-WenZuBei-JLY') ||
-                            (item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              item.eqTunnelId == 'JQ-JiNan-WenZuBei-HSD') ||
+                            (item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                               item.eqDirection == 1 &&
                               item.associated_device_id == 2)
                               ? 'scale(-1,1)'
-                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                                 item.eqDirection == 2 &&
                                 item.associated_device_id == 2
                               ? 'scale(1,-1)'
-                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-JLY' &&
+                              : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                                 item.eqDirection == 2 &&
                                 item.associated_device_id == 1
                               ? 'scale(-1,-1)'
@@ -1969,7 +1972,7 @@ import {
   getJlyTunnel,
   energyConsumptionDetection,
   getBoardContent,
-  getWorkRobot,
+  getWorkStagingRobot,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -2121,6 +2124,8 @@ export default {
 
   data() {
     return {
+      tunnelLang:0,
+      robotPositon:null,
       robotId: "", //机器人ID
       refresh: 0,
       showScreenEqName: false,
@@ -2251,7 +2256,7 @@ export default {
       directionList: [{}, {}], //设备方向字典
       dictList: [],
       leftButtonS: "leftButtonS",
-      robotShow: false,
+      robotShow: true,
       drawerLineList: [
         {
           value: 1,
@@ -2981,7 +2986,7 @@ export default {
     // 隧道调取数据两秒一次
     this.timer = setInterval(() => {
       setTimeout(this.getRealTimeData, 0);
-    }, 1000 * 5);
+    }, 1000 * 2);
     document.addEventListener("click", this.bodyCloseMenus);
     document.addEventListener("click", this.bodyCloseMenus1);
     document.addEventListener("click", this.bodyCloseMenus2);
@@ -4818,6 +4823,7 @@ export default {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 if (res.eqList[i].eqType == 29) {
+                  // console.log(res.eqList[i],"robotIdrobotIdrobotIdrobotId")
                   this.robotId = res.eqList[i].eqId;
                 }
                 for (let j = 0; j < response.rows.length; j++) {
@@ -4832,9 +4838,9 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              // setInterval(() => {
-              //   this.getRobot();
-              // }, 2000);
+              setInterval(() => {
+                this.getRobot();
+              }, 2000);
               // 匹配设备方向
               listDevices().then((data) => {
                 // console.log(data, "设备表");
@@ -4931,8 +4937,11 @@ export default {
       const param = {
         deviceId: this.robotId,
       };
-      await getWorkRobot(param).then((res) => {
+      await getWorkStagingRobot(param).then((res) => {
         // console.log(res, "机器人");
+        this.robotPositon = (Number(res.data.position) / this.tunnelLang * 100).toFixed(2)
+        console.log(this.robotPositon,"this.robotPositon")
+        this.$forceUpdate()
       });
     },
     /* 获取照明设备数据*/
@@ -5123,6 +5132,9 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      // console.log(item,"选择隧道")
+      this.tunnelLang = Number(item.endPileNum) - Number(item.startPileNum) + 10
+      // console.log(Number(item.endPileNum),Number(item.startPileNum),"隧道长度111")
       this.dialogClose();
       this.$refs.footerRef.changeActive();
       this.resetCanvas();
@@ -5263,11 +5275,10 @@ export default {
     },
     clickRobot() {
       this.eqInfo.clickEqType = 29;
-      for (var item of this.selectedIconList) {
-        if (item.eqType == 29) {
-          console.log(item, "机器人");
-        }
+      const param = {
+        eqType:29
       }
+      this.openStateSwitch(param)
     },
     //================================================单个配置开始==================================
     /* 打开配置界面*/
@@ -6114,9 +6125,10 @@ export default {
   margin: 0 0 10px !important;
 }
 .searchTable {
+  padding: 15px;
   margin: 0px;
   width: 100% !important;
-  height: 4vh !important;
+  height: 30px !important;
 }
 .robotHtmlBox {
   width: 770px;
@@ -7221,13 +7233,13 @@ input {
   }
   .chezhiControlButton {
     width: 50px;
-    height: 32px;
+    height: 27px;
     padding: 0;
     // border:solid 1px #A3B7CF;
     border-radius: 2px;
     margin-left: 8px;
     text-align: center;
-    line-height: 31px;
+    line-height: 27px;
     cursor: pointer;
     color: white;
   }
@@ -7323,9 +7335,9 @@ input {
 
 /* 设备含义中的table*/
 .explain-table {
-  .el-table .el-table__header-wrapper th {
-    background-color: #304156;
-  }
+  // .el-table .el-table__header-wrapper th {
+  //   background-color: #304156;
+  // }
 
   .el-table::before {
     height: 0;
@@ -7340,7 +7352,7 @@ input {
   }
 
   .el-table__body-wrapper {
-    background-color: #304156;
+    // background-color: #304156;
   }
 
   /*table滚动条的宽度 */
@@ -7556,19 +7568,20 @@ input {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 10px solid #999999;
+  // border-bottom: 10px solid #999999;
   top: -39px;
   left: 45%;
 }
 
 .robotAnimation {
-  width: 20px;
-  height: 20px;
-  transform: translateY(-12px);
+  width: 30px;
+  height: 30px;
+  // transform: translateY(-12px);
   // animation: mymove 60s infinite linear;
   float: left;
   z-index: 10;
   cursor: pointer;
+  position: absolute;
 }
 
 @keyframes mymove {
@@ -7715,7 +7728,7 @@ input {
   right: 14px;
   width: 41%;
   z-index: 1996;
-  background-color: #00335a;
+  // background-color: #00335a;
   padding: 20px;
   box-sizing: border-box;
   ::v-deep .el-form-item {

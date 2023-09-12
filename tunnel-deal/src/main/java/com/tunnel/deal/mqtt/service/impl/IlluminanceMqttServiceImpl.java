@@ -72,7 +72,7 @@ public class IlluminanceMqttServiceImpl implements HongMengMqttService {
         }
         if(topic.contains("rhy/iot/receive/illuminance/execStatus/")){
             //指令执行情况上报
-            handleExecStateReceiveData(sdDevices,payload);
+            handleExecStateReceiveData(sdDevices,payload,"rhy/iot/control/illuminance/getBizAttr/");
         }
     }
 
@@ -98,6 +98,8 @@ public class IlluminanceMqttServiceImpl implements HongMengMqttService {
         String deviceId = sdDevices.getEqId();
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**
@@ -115,8 +117,8 @@ public class IlluminanceMqttServiceImpl implements HongMengMqttService {
      * @param sdDevices 设备信息
      * @param payload    消息
      */
-    private void handleExecStateReceiveData(SdDevices sdDevices, String payload){
+    private void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic){
 
-        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload);
+        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
     }
 }

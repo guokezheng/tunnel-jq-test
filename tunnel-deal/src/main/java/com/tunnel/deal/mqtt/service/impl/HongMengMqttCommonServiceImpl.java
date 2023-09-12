@@ -1,20 +1,27 @@
 package com.tunnel.deal.mqtt.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
+import com.tunnel.deal.mqtt.task.HongMengMqttTask;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import com.zc.common.constant.RedisKeyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -37,6 +44,13 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
 
     @Autowired
     private TcpClientGeneralService tcpClientGeneralService;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
     /**
      * Redis缓存工具类
@@ -71,7 +85,7 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         jsonObject.put("sn",externalDeviceId);
         //与回复指令对应，使用时间戳
         jsonObject.put("actionId", getActionId());
-        mqttGateway.sendToMqtt(topicPrefix+"{"+ctrlSn+"}",jsonObject.toJSONString());
+        mqttGateway.sendToMqtt(topicPrefix+ctrlSn,jsonObject.toJSONString());
     }
 
     /**
@@ -122,7 +136,7 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
      * @param payload   消息
      */
     @Override
-    public void handleExecStateReceiveData(SdDevices sdDevices, String payload) {
+    public void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic) {
         String deviceId = sdDevices.getEqId();
 
 //        {
@@ -143,6 +157,8 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         //todo 如何处理
         if(!"00".equals(error)){
             log.error("鸿蒙MQTT指令上报，设备ID="+deviceId+",设备故障码="+error);
+        }else{
+           queryDeviceData(sdDevices,topic);
         }
     }
 
@@ -166,8 +182,25 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
     @Override
     public void setRedisCacheDeviceStatus(String deviceId){
         //定时任务5秒钟请求一次状态，如果获取返回信息，判定设备离线
-        Integer expireTime = 5;
+
+        //在线时间检测控制时间，定时任务传入方便修改
+        Integer expireTime = HongMengMqttTask.onlineSecondInterval;
+        if(expireTime == null){
+            //默认60秒
+            expireTime = 60;
+        }
         redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }
 
+    /**
+     * 向万集推送机电设备实时数据
+     * @param sdDevices
+     */
+    @Override
+    public void sendWanjiBaseDeviceStatus(SdDevices sdDevices) {
+//        List<SdDevices> sdDevicesList =  new ArrayList<>();
+//        sdDevicesList.add(sdDevices);
+//        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
+//        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
+    }
 }

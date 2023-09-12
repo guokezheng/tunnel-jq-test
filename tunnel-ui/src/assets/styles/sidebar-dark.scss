@@ -511,6 +511,25 @@
       max-height: 88vh;
       overflow: hidden;
 
+      .content-centre-one,
+      .content-centre-tree {
+        background-color: #042d5f;
+        border: 1px solid #042d5f;
+      }
+
+      .left-content {
+        background: #05213E;
+      }
+
+      .content {
+        background: #05213E;
+      }
+
+      .content-centre {
+        background-color: #042d5f;
+        border: 1px solid #042d5f;
+      }
+
       // 智慧调光
       .handControl-container {
         .grid-content {
@@ -963,6 +982,10 @@
       .card {
         background: #0D203C !important;
 
+        .cardTableHeader {
+          color: #05aafd;
+        }
+
         .cardName {
           color: #05AAFD;
         }
@@ -1151,7 +1174,10 @@
   }
 
   .specialPagination {
-
+    position:fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
     .el-pager li {
       background: transparent;
       border: solid 1px #25678D;
@@ -1254,6 +1280,10 @@
   .xjDialog {
     .topTxt {
       background-image: url(../../assets/cloudControl/cardTitle.png);
+    }
+
+    .taskCard {
+      background: #0d203c !important;
     }
   }
 
@@ -1396,6 +1426,10 @@
     }
   }
 
+  .syxt_searchBox {
+    background-color: #00335a;
+  }
+
   #app {
 
     .buttonsDeawer,
@@ -1520,6 +1554,22 @@
 
     // 工作台底部切换视频 图表按钮
     .footer {
+      .tabButton {
+        .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+          background: linear-gradient(180deg,
+              rgba($color: #00aced, $alpha: 0.8),
+              rgba($color: #0079db, $alpha: 0.8));
+          border: solid 0.1px #0067b2;
+          box-shadow: none;
+        }
+
+        .el-radio-button__inner {
+          background: transparent;
+          border: solid 0.1px #0067b2;
+          color: #fff;
+        }
+      }
+
       .footChangeButton {
         .el-radio-button__inner {
           color: #fff;
@@ -1594,6 +1644,14 @@
     .infoBoardBox {
       background: #004375;
 
+      .bigTitle {
+        border-bottom: 1px solid #05afe3;
+      }
+
+      .verticalBoxBorderLeft {
+        border-left: 1px solid #05afe3;
+      }
+
       .el-checkbox {
         color: #fff;
       }
@@ -1644,6 +1702,19 @@
         color: #05afe3;
       }
 
+      .contentBox .con,
+      .contentBox .menuBox {
+        border: 1px solid #05afe3;
+      }
+
+      .templateBox {
+
+        .templateTitle,
+        .menuBox {
+          border: 1px solid #05afe3;
+        }
+      }
+
       .el-table__body-wrapper .el-table__cell {
         border: transparent !important;
       }
@@ -1661,11 +1732,11 @@
       }
     }
 
-    //  .infoBoardButton .el-button{
-    //   border: solid 1px #65bfff;
-    //   background: #65bfff;
-    //   color: #fff;
-    //  }
+    .infoBoardButton .el-button {
+      border: solid 1px #39ADFF;
+      background: #39ADFF;
+      color: #fff;
+    }
 
     .bigTitle {
       color: #fff !important;
@@ -1776,6 +1847,11 @@
 
     // 右上角搜索框
     .bg-purple {
+      .formNoIcon {
+        border-right: #00c8ff solid 1px !important;
+        border-radius: 3px;
+      }
+
       .el-input--small .el-input__inner {
         background-color: #004F8B;
         border: solid 1px #00C8FF;
@@ -1915,6 +1991,14 @@
     // 翻页组件
     .pagination-container {
       background-color: transparent;
+      /* background: #fff; */
+      padding: 32px 16px;
+      display: flex;
+      justify-content: center;
+      position: fixed;
+      left: 50%;
+      right: 50%;
+      bottom: 40px;
 
       .el-input__inner {
         background-color: transparent;
@@ -3626,6 +3710,24 @@
     .ledLighting .el-switch__core:after {
       background: #3F88B5;
     }
+
+    ::-webkit-scrollbar-track-piece {
+      background-color: #100A43;
+      border-left: 1px solid rgba(0, 0, 0, 0);
+      width: 1000px;
+      border-width: 50px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba($color: #00c2ff, $alpha: 0.6);
+      background-clip: padding-box;
+
+      min-height: 28px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #00c2ff;
+    }
   }
 
   .drawerActive {
@@ -3889,6 +3991,30 @@
     }
   }
 
+  .evtInfo {
+    .el-timeline-item__node {
+      background: #39adff !important;
+    }
+
+    .el-timeline-item__tail {
+      border-left: 1px dashed #39adff !important;
+    }
+
+    .el-timeline-item__content {
+      background-color: #182053;
+    }
+
+    .disposalRecordBox {
+      .el-card {
+        background: #052c4d !important;
+      }
+    }
+
+    .incHandContent .contentList {
+      background: #052c4d;
+    }
+  }
+
   .rightBottom {
     .evtManagement {
       background: #012e51;
@@ -3950,6 +4076,10 @@
 
     .contentBox {
       background: #023668;
+    }
+
+    .videoBox {
+      background: #1B4077 !important;
     }
   }
 

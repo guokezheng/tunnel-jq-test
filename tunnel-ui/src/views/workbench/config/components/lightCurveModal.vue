@@ -654,9 +654,9 @@ export default {
     },
     //光强照明配置查询
     lightListConfig(queryParams){
-      debugger
+      // debugger
       listConfig(queryParams).then((response) => {
-        debugger
+        // debugger
         if( response.rows.length>0){
           let rows = response.rows[0];
           this.lightFilesModel.id = rows.id
@@ -697,9 +697,9 @@ export default {
     },
     //潍坊光强照明配置查询
     lightListConfigWei(queryParams){
-      debugger
+      // debugger
       listConfig(queryParams).then((response) => {
-        debugger
+        // debugger
         if( response.rows.length>0){
           let rows = response.rows[0];
           this.lightFilesModelWei.id = rows.id
@@ -740,7 +740,7 @@ export default {
     },
     //获取光亮的数据
     getEchartsData(row,type) {
-      debugger
+      // debugger
       //清空上次数据
       this.XDataLight = []
       this.yDataLight = []
@@ -832,7 +832,7 @@ export default {
             let ds = this.getdate(currentDate)//当前
             let ds1 = this.getdate(twoDaysAgo)//前天
             let ds2 = this.getdate(threeDaysAgo)//昨天
-            debugger
+            // debugger
             let todayDate = ds[0].split(" ")[0]
             this.XDataLight = this.generateTimeList(todayDate)
             this.XDataLightOne =  this.XDataLight
@@ -850,7 +850,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds2)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               list1 = this.lightDatafiler(list1)
               //昨天光强
@@ -861,7 +861,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               list1 = this.lightDatafiler(list1)
               //今天
@@ -918,7 +918,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight1, ds2)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               list1 = this.lightDatafiler(list1)
               //昨天光强
@@ -929,7 +929,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight1, ds)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               list1 = this.lightDatafiler(list1)
               //今天
@@ -937,7 +937,7 @@ export default {
                 // this.XDataLightOne.push(list1[i].createTime)
                 this.yDataLightOne2.push(list1[i].data)
               }
-              debugger
+              // debugger
               setTimeout(() => {
                 this.$nextTick(() => {
                   let mathList = []
@@ -978,7 +978,7 @@ export default {
     },
     generateTimeList(today) {
       let timeList = [];
-      debugger
+      // debugger
       let date = new Date();
       date.setHours(0, 0, 0, 0); // 设置时间为凌晨00:00
       while (date.getHours() < 24 ) {
@@ -1020,7 +1020,7 @@ export default {
     lightChangeEvent(indextabs) {
       if(!!this.lightFilesModel.tunnelId&&!!this.lightFilesModel.direction) {
         let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModel.tunnelId)
-        debugger
+        // debugger
         let queryParams = {
           tunnelName: tunnel.tunnelName,
           pageSize: 1,
@@ -1039,7 +1039,7 @@ export default {
       if(!!this.lightFilesModelWei.tunnelId&&!!this.lightFilesModelWei.direction) {
         let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModelWei.tunnelId)
 
-        debugger
+        // debugger
         let queryParams = {
           tunnelName: tunnel.tunnelName,
           pageSize: 1,
@@ -1070,7 +1070,7 @@ export default {
     },
     //济南光照下修比例保存
     submitlightForm(){
-      debugger
+      // debugger
       console.log(this.lightFilesModel)
       //模式1 车辆 0光强
       this.lightFilesModel.modeType = 0
@@ -1083,7 +1083,7 @@ export default {
         });
       } else {
         addConfig(this.lightFilesModel).then((response) => {
-          debugger
+          // debugger
           this.lightFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
         });
@@ -1091,7 +1091,7 @@ export default {
     },
     //潍坊光照下修比例保存
     submitlightFormWei(){
-      debugger
+      // debugger
       console.log(this.lightFilesModelWei)
       //模式1 车辆 0光强
       this.lightFilesModelWei.modeType = 0
@@ -1102,7 +1102,7 @@ export default {
         });
       } else {
         addConfig(this.lightFilesModelWei).then((response) => {
-          debugger
+          // debugger
           this.lightFilesModelWei.id =response.data.id
           this.$modal.msgSuccess("新增成功");
         });
@@ -1148,10 +1148,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.lightFormItems.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdate(index){
-      debugger
+      // debugger
       let form=
       {
           lightParagraph: '',
@@ -1164,10 +1164,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.lightFormItemsWei.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdateWei(index){
-      debugger
+      // debugger
       let form=
         {
           lightParagraph: '',
@@ -1188,7 +1188,7 @@ export default {
   watch:{
     show:{
       async handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
         // //查询主策略
         // this.selectListStrategy()
@@ -1234,7 +1234,7 @@ export default {
 .el-form-item-direction-Item {
 
 .el-form-item__content {
-  width: 80%;
+  width: 82%;
 }
 
 }

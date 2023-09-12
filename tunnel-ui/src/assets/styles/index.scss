@@ -174,10 +174,10 @@ p {
   }
 }
 .specialPagination{
-  position:fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+  // position:fixed;
+  // bottom: 40px;
+  // left: 50%;
+  // transform: translateX(-50%);
   .el-pager li{
     margin: 0 2px;
     border-radius: 2px;
@@ -329,6 +329,9 @@ p {
   // background-image: url(../../assets/icons/searchTable.png) !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
+}
+.el-input--prefix .el-input__inner{
+  padding-left: 30px !important;
 }
 .el-table::before{
   height: 0px !important;

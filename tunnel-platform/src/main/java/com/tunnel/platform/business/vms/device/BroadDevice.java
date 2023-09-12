@@ -116,7 +116,10 @@ public class BroadDevice implements IDeviceMonitor {
                 result = true;
             }
         } else if (protocolType.startsWith(IDeviceProtocol.DINGEN)) {
-            if ("30".equals(CommonUtil.find(protocol, 2, " "))) {
+            /*if ("30".equals(CommonUtil.find(protocol, 2, " "))) {
+                result = true;
+            }*/
+            if ("00".equals(protocol.substring(36, 38))) {
                 result = true;
             }
         } else {

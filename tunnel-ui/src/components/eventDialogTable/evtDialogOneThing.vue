@@ -117,22 +117,25 @@ export default {
       immediate: true,
       handler: function (event) {
         console.log(event, "事件弹窗websockt推送");
-        debugger
+        // debugger
         // 存储集合
         let  key = this.$store.state.user.name+"suidao"
 
         // this.tunnelList = JSON.parse(sessionStorage.getItem(key));
         this.tunnelList = JSON.parse(this.$cache.local.get(key));
-        console.log(this.tunnelList);
+        console.log(this.tunnelList,"this.tunnelList11111");
 
         if(!!this.tunnelList  &&this.tunnelList.length>0){
           this.tunnelDataFind(event)
+          console.log(1)
         }else{
           this.getUserDept(event)
+          console.log(2)
+
         }
 
         // console.log(event, "事件弹窗websockt推送");
-        console.log(   this.tunnelList)
+        console.log(this.tunnelList,"this.tunnelList22222")
         // this.list = event;
         this.list = event;
       },
@@ -155,16 +158,20 @@ export default {
   },
   methods: {
     tunnelDataFind(event){
+      console.log(event,"event")
       let tunnelDataList = []
-      console.log(event)
+      // console.log(event)
       for (let i = 0; i < event.length; i++) {
-        event[i].tunnelId
+        // event[i].tunnelId
         let tunnelData = this.tunnelList.find(item => item ==event[i].tunnelId)
+        console.log(tunnelData,"tunnelData")
         if(!!tunnelData){
-          tunnelDataList.push(event[i])
+          tunnelDataList = tunnelDataList.push(event[i])
+          console.log(tunnelDataList,"tunnelDataList222")
         }
       }
       if(tunnelDataList.length>0){
+        console.log("tunnelDataList.length>0")
         this.evtShow = true
         this.list = tunnelDataList;
       }

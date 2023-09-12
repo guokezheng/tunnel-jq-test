@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import sun.misc.BASE64Encoder;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -76,23 +78,29 @@ public class SansiLightImpl implements Light , GeneralControlBean {
             byte[] textByte = password.getBytes("UTF-8");
             String encode = new BASE64Encoder().encode(textByte);
             String data = "{\"username\":\"" + username + "\",\"password\":\"" + encode + "\"}";
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            OkHttpClient client = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    //强行返回true 即验证成功
+                    return true;
+                }
+            }).build();
             MediaType mediaType=MediaType.parse("application/json");
             RequestBody body=RequestBody.create(mediaType, data);
-            Request request=new Request.Builder().url(baseUrl+"/api/core/users/login").method("POST",body).addHeader("Content-Type","application/json")
-                    .addHeader("Accept","application/json").build();
+            Request request=new Request.Builder().url(baseUrl+"api/core/users/login").post(body).build();
             response=client.newCall(request).execute();
-
+            JSONObject jo = JSONObject.parseObject(  response.body().string());
+            return  jo.getString("id");
         } catch (IOException e) {
             e.printStackTrace();
-            return "99";
+            return "";
         }finally{
             if(response != null){
                 response.close();
             }
         }
-        JSONObject jo = JSONObject.parseObject(  response.body().toString());
-        return  jo.getJSONObject("data").getString("id");
+
+
     }
 
     /**
@@ -197,10 +205,16 @@ public class SansiLightImpl implements Light , GeneralControlBean {
      */
     public int updateSwitch(String jessionId ,String baseUrl , String step , Integer openClose) {
         //灯开关
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("text/plain");
+        OkHttpClient client = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                //强行返回true 即验证成功
+                return true;
+            }
+        }).build();
+        MediaType mediaType = MediaType.parse("application/json");
         //传入的请求参数
-        String data = "{\"param\":\"" + openClose + "\"}";
+        String data = "{\"param\":" + openClose + "}";
         RequestBody body = RequestBody.create(mediaType, data);
 
         if (openClose == 2) {
@@ -241,10 +255,16 @@ public class SansiLightImpl implements Light , GeneralControlBean {
      */
     public int updateBrightness(String jessionId ,String baseUrl , String step , Integer bright) {
 
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("text/plain");
+        OkHttpClient client = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                //强行返回true 即验证成功
+                return true;
+            }
+        }).build();
+        MediaType mediaType = MediaType.parse("application/json");
         //传入的请求参数
-        String data = "{\"param\":\"" + bright + "\"}";
+        String data = "{\"param\":" + bright + "}";
         RequestBody body = RequestBody.create(mediaType, data);
         String url = baseUrl + "api/core/assetGroups/"+step+"/action/device-sensor:dim-level";
 

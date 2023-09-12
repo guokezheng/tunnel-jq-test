@@ -133,7 +133,7 @@ public interface ISdEventService {
      * @param sdEvent
      * @return
      */
-    AjaxResult getHandle(SdEvent sdEvent);
+    List<SdEventHandle> getHandle(SdEvent sdEvent);
 
     /**
      * 应急调度关联策略

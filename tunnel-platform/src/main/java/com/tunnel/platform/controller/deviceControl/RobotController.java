@@ -20,6 +20,9 @@ import com.tunnel.deal.corniceTunnelRobot.domain.StatusDto;
 import com.tunnel.deal.corniceTunnelRobot.domain.VideoDto;
 import com.tunnel.deal.corniceTunnelRobot.impl.ZhuoShiCorniceTunnelRobot;
 import com.tunnel.deal.light.impl.SanJingLight;
+import com.tunnel.platform.controller.event.SdEventController;
+import com.tunnel.platform.media.web.controller.media.MediaController;
+import com.tunnel.platform.media.web.domain.MediaStream;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.checkerframework.checker.units.qual.A;
@@ -27,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -118,17 +122,17 @@ public class RobotController {
         if(statusDto != null){
 
             // 同步机器人数据项
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getIsOnline(), DevicesTypeItemEnum.ROBOT_IS_ONLINE.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCurrentDuration(), DevicesTypeItemEnum.ROBOT_CURRENT_DURATION.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCurrentMileage(), DevicesTypeItemEnum.ROBOT_CURRENT_MILEAGE.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getElectricity(), DevicesTypeItemEnum.ROBOT_ELECTRICITY.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCharge(), DevicesTypeItemEnum.ROBOT_CHARGE.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getVoltage(), DevicesTypeItemEnum.ROBOT_VOLTAGE.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCurrent(), DevicesTypeItemEnum.ROBOT_CURRENT.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getBatteryTemp(), DevicesTypeItemEnum.ROBOT_BATTERYTEMP.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getPosition(), DevicesTypeItemEnum.ROBOT_POSITION.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getOxygenDensity(), DevicesTypeItemEnum.ROBOT_OXYGENDENSITY.getCode(),false);
-            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCarbonMonoxideDensity(), DevicesTypeItemEnum.ROBOT_CARBON_MONOXIDE_DENSITY.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getIsOnline(), DevicesTypeItemEnum.ROBOT_IS_ONLINE.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCurrentDuration(), DevicesTypeItemEnum.ROBOT_CURRENT_DURATION.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCurrentMileage(), DevicesTypeItemEnum.ROBOT_CURRENT_MILEAGE.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getElectricity(), DevicesTypeItemEnum.ROBOT_ELECTRICITY.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCharge(), DevicesTypeItemEnum.ROBOT_CHARGE.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getVoltage(), DevicesTypeItemEnum.ROBOT_VOLTAGE.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCurrent(), DevicesTypeItemEnum.ROBOT_CURRENT.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getBatteryTemp(), DevicesTypeItemEnum.ROBOT_BATTERYTEMP.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getPosition(), DevicesTypeItemEnum.ROBOT_POSITION.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getOxygenDensity(), DevicesTypeItemEnum.ROBOT_OXYGENDENSITY.getCode(),false);
+//            sdDeviceDataService.updateDeviceData(deviceId,statusDto.getCarbonMonoxideDensity(), DevicesTypeItemEnum.ROBOT_CARBON_MONOXIDE_DENSITY.getCode(),false);
            // sdDeviceDataService.updateDeviceData(deviceId,statusDto.getTemperature(), ,false);
            // sdDeviceDataService.updateDeviceData(deviceId,statusDto.getHumidity(), ,false);
            // sdDeviceDataService.updateDeviceData(deviceId,statusDto.getBrightness(), ,false);
@@ -166,7 +170,7 @@ public class RobotController {
             return  AjaxResult.error("未查询到外部配置，请核实后再操作");
         }
 
-        VideoDto repData = zhuoShiCorniceTunnelRobot.GetVideoUrl(deviceId,list.get(0).getSystemUrl());
+        VideoDto repData = zhuoShiCorniceTunnelRobot.GetVideoUrl(list.get(0).getParam(),list.get(0).getSystemUrl());
 
         if(repData != null){
 
@@ -436,13 +440,6 @@ public class RobotController {
     @GetMapping(value = "/controlWindscreen")
     @ApiOperation(value = "控制机器人雨刷", httpMethod = "GET")
     public AjaxResult ControlWindscreen(@RequestParam(name = "deviceId")String deviceId){
-
-        if(deviceId.equals("JQ-WeiFang-JiuLongYu-JJL-ROBOT-001")){
-            return  AjaxResult.success(1);
-        }else if(true){
-            return  AjaxResult.error("未查询到外部配置，请核实后再操作");
-        }
-
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
@@ -451,7 +448,7 @@ public class RobotController {
             return  AjaxResult.error("未查询到外部配置，请核实后再操作");
         }
 
-        return  AjaxResult.success(zhuoShiCorniceTunnelRobot.ControlWindscreen(deviceId,list.get(0).getSystemUrl()));
+        return  AjaxResult.success(zhuoShiCorniceTunnelRobot.ControlWindscreen(list.get(0).getParam(),list.get(0).getSystemUrl()));
     }
 
     /**
@@ -530,13 +527,6 @@ public class RobotController {
     @GetMapping(value = "/initializeRobot")
     @ApiOperation(value = "初始化机器人", httpMethod = "GET")
     public AjaxResult InitializeRobot(@RequestParam(name = "deviceId")String deviceId){
-
-        if(deviceId.equals("JQ-WeiFang-JiuLongYu-JJL-ROBOT-001")){
-            return  AjaxResult.success(1);
-        }else if(true){
-            return  AjaxResult.error("未查询到外部配置，请核实后再操作");
-        }
-
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
@@ -545,16 +535,16 @@ public class RobotController {
             return  AjaxResult.error("未查询到外部配置，请核实后再操作");
         }
 
-        return  AjaxResult.success(zhuoShiCorniceTunnelRobot.InitializeRobot(deviceId,list.get(0).getSystemUrl()));
+        return  AjaxResult.success(zhuoShiCorniceTunnelRobot.InitializeRobot(list.get(0).getParam(),list.get(0).getSystemUrl()));
     }
 
     /**
-     * 工作台机器人
+     * 机器人第三方接口
      * @param deviceId
      * @return
      */
     @GetMapping("/getWorkRobot")
-    public AjaxResult getWorkRobot(String deviceId){
+    public AjaxResult getWorkRobot(@RequestParam("deviceId") String deviceId){
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
@@ -563,7 +553,7 @@ public class RobotController {
             return  AjaxResult.success("","");
         }
 
-        StatusDto statusDto = zhuoShiCorniceTunnelRobot.GetStatus(deviceId,list.get(0).getSystemUrl());
+        StatusDto statusDto = zhuoShiCorniceTunnelRobot.GetStatus(list.get(0).getParam(),list.get(0).getSystemUrl());
 
         if(statusDto != null){
             return  AjaxResult.success(statusDto);
@@ -572,22 +562,47 @@ public class RobotController {
         return  AjaxResult.success("","");
     }
 
+    /**
+     * 工作台机器人
+     * @param deviceId
+     * @return
+     */
+    @GetMapping("/getWorkStagingRobot")
+    public AjaxResult getWorkStagingRobot(@RequestParam("deviceId") String deviceId){
+        ExternalSystem system = new ExternalSystem();
+        system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
+        List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
 
+        if(list.size() == 0){
+            return  AjaxResult.success("","");
+        }
 
+        StatusDto statusDto = zhuoShiCorniceTunnelRobot.GetStatus(list.get(0).getParam(),list.get(0).getSystemUrl());
 
+        if(statusDto != null){
+            BigDecimal position = new BigDecimal(statusDto.getPosition());
+            statusDto.setPosition(position.divide(new BigDecimal(1000),0,BigDecimal.ROUND_HALF_UP).toString());
+            Integer position1 = Integer.valueOf(statusDto.getPosition());
+            if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
+                zhuoShiCorniceTunnelRobot.SetLEDLight(list.get(0).getParam(),1,list.get(0).getSystemUrl());
+            }
+            return  AjaxResult.success(statusDto);
+        }
 
+        return  AjaxResult.success("","");
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public String getFlvAddress(String url){
+        MediaController mediaController = new MediaController();
+        String rtspStream = url;
+        MediaStream mediaStream=new MediaStream();
+        mediaStream.setRtspUrl(rtspStream);//rtmp视频流地址
+        mediaStream.setStreamId("1");//视频流的唯一标识
+        mediaController.add(mediaStream);
+        //获取flv地址
+        MediaStream mediaStream1=new MediaStream();
+        mediaStream1.setStreamId("1");
+        String flvStream = String.valueOf(mediaController.getStream(mediaStream1));
+        return flvStream;
+    }
 }

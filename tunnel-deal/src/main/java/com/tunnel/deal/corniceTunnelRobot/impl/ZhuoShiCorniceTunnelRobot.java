@@ -66,11 +66,11 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
         Map<String, Object> reqMap = new HashMap<>();
         reqMap.put("deviceId", deviceId);
 
-        JSONObject jsonObject = toSend(baseUrl + "/Robot/GetStatus", "GET", reqMap);
+        JSONObject jsonObject = toSend(baseUrl + "/Robot/GetStatus?deviceId="+deviceId, "GET", reqMap);
 
         try {
             if (jsonObject != null && jsonObject.getInteger("code") == 0) {
-                return (StatusDto) jsonObject.get("data");
+                return JSONObject.parseObject(jsonObject.get("data").toString(),StatusDto.class);
             }
         } catch (Exception e) {
             throw new RuntimeException("飞檐隧道机器人平台数据解析异常");
@@ -83,11 +83,11 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
         Map<String, Object> reqMap = new HashMap<>();
         reqMap.put("deviceId", deviceId);
 
-        JSONObject jsonObject = toSend(baseUrl + "/Robot/GetVideoUrl", "GET", reqMap);
+        JSONObject jsonObject = toSend(baseUrl + "/Robot/GetVideoUrl?deviceId="+deviceId, "GET", reqMap);
 
         try {
             if (jsonObject != null && jsonObject.getInteger("code") == 0) {
-                return (VideoDto) jsonObject.get("data");
+                return JSONObject.parseObject(jsonObject.get("data").toString(),VideoDto.class);
             }
         } catch (Exception e) {
             throw new RuntimeException("飞檐隧道机器人平台数据解析异常");
@@ -101,7 +101,7 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
         reqMap.put("deviceId", deviceId);
         reqMap.put("control", control);
 
-        JSONObject jsonObject = toSend(baseUrl + "/Robot/SetLEDLight", "GET", reqMap);
+        JSONObject jsonObject = toSend(baseUrl + "/Robot/SetLEDLight?deviceId=" + deviceId + "&control=" + control, "GET", reqMap);
 
         try {
             if (jsonObject != null && jsonObject.getInteger("code") == 0) {
@@ -321,7 +321,7 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
         map.put("posX",posX);
         map.put("posY",posY);
         map.put("angle",angle);
-        JSONObject jsonObject = toSend(baseUrl + "/Robot/OneclickArrival", "GET", map);
+        JSONObject jsonObject = toSend(baseUrl + "/Robot/OneclickArrival?deviceId=" + deviceId+"&posX="+posX+"&posY=" + posY + "&angle=" + angle, "GET", map);
         try {
             if (jsonObject != null && jsonObject.getInteger("code") == 0) {
                 return 1;
@@ -333,13 +333,18 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
     }
 
     public JSONObject toSend(String url, String post, Map<String, Object> reqMap) {
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+       /* OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
-        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(reqMap));
+       // okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(reqMap));
         Request request = new Request.Builder()
                 .url(url)
-                .method(post, requestBody)
-                .build();
+                .method(post,null)
+                .build();*/
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request
+                .Builder() //利用建造者模式创建Request对象
+                .url(url) //设置请求的URL
+                .build(); //生成Request对象
         Response response = null;
         try {
             response = client.newCall(request).execute();

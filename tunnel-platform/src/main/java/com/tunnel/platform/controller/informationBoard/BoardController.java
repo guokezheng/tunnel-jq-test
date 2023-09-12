@@ -1,21 +1,16 @@
 package com.tunnel.platform.controller.informationBoard;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.lumen.ledcenter3.protocol.*;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
-import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.*;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
@@ -25,12 +20,9 @@ import com.tunnel.business.utils.exception.BusinessException;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
-import org.bytedeco.librealsense.device;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
@@ -1330,10 +1322,49 @@ public class BoardController extends BaseController {
             }
         });
         uploadProtocol.uploadFile("D:\\qingbaoban\\JQ-ZiBo-TaiHe-QFL-TCMS-001\\111",
-                files,144,48,ProtocolConstant.COLOR_TYPE_FULL_COLOR,
+                files,144,48, ProtocolConstant.COLOR_TYPE_FULL_COLOR,
                 "10.7.183.165",5200,1);
 
         return AjaxResult.success();
+    }*/
+
+    /*public void setListener(){
+        ControlUtil controlUtil = new ControlUtil();
+        //设置监听
+        controlUtil.setOnControlListener(new ControlUtil.OnControlListener(){
+
+            @Override
+            public void onBackInfos(String s, int i) {
+                
+            }
+
+            @Override
+            public void onNetStatus(int i, int i1) {
+
+            }
+
+            @Override
+            public void breakSocket(int i) {
+
+            }
+
+            @Override
+            public void onProcess(int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onBackData(int[] ints, int i) {
+
+            }
+
+            @Override
+            public void onResultCode(int i, int i1) {
+
+            }
+        });
+        //回读内容
+        controlUtil.getCurrentPlayProgramContent("10.7.183,165",5200,1,5);
     }*/
 
 //    public void setDeviceData(String deviceId, Long typeId, String content, List<SdDeviceData> sdDeviceDataList){

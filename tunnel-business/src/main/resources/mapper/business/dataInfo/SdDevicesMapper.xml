@@ -502,6 +502,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where external_system_id = #{externalSystemId}
     </update>
 
+    <update id="updateSdDevicesByExternalDevIdAndDirection">
+        update sd_devices
+        set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}
+        where external_device_id = #{externalDeviceId} and eq_direction = #{eqDirection}
+    </update>
+
     <update id="updateSdDevicesByFEqId">
         update sd_devices
         set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}

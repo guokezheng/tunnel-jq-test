@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
@@ -45,6 +46,8 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
 
     private static final Logger log = LoggerFactory.getLogger(LaneIndicatorMqttServiceImpl.class);
 
+
+    public Logger mcaLogger = LoggerFactory.getLogger("mca");
     /**
      * 设备控制方法
      *
@@ -106,6 +109,8 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
 
         mqttGateway.sendToMqtt("rhy/iot/control/laneIndicator/runStatus/"+ctrlSn,1,jsonObject.toJSONString());
+
+        mcaLogger.info("鸿蒙测控执行器"+externalDeviceId+"[控制台下发指令] == > " + "发送指令：" + state +  ",设备sn：" + externalDeviceId + ",payload：" + jsonObject.toJSONString() + ",当前时间" + DateUtils.getTime());
         return AjaxResult.success();
     }
 
@@ -132,6 +137,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         if(topic.contains("rhy/iot/receive/laneIndicator/runStatus/")){
             //运行状态上报
             handleRunStateReceiveData(sdDevices,payload);
+            mcaLogger.info("鸿蒙测控执行器"+sdDevices.getExternalDeviceId()+"[读取指令] == > " + ",设备sn：" + sdDevices.getExternalDeviceId() + ",payload：" + payload + ",当前时间" + DateUtils.getTime());
         }
         if(topic.contains("rhy/iot/receive/laneIndicator/devStatus/")){
             //设备状态上报
@@ -140,6 +146,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         if(topic.contains("rhy/iot/receive/laneIndicator/execStatus/")){
             //指令执行情况上报
             handleExecStateReceiveData(sdDevices,payload,"rhy/iot/control/laneIndicator/getRunStatus/");
+            mcaLogger.info("鸿蒙测控执行器"+sdDevices.getExternalDeviceId()+"[下发返回指令] == > " + ",设备sn：" + sdDevices.getExternalDeviceId() + ",payload：" + payload + ",当前时间" + DateUtils.getTime());
         }
     }
 
@@ -163,6 +170,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
 
         //向万集推送机电设备实时数据
         hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
+        mcaLogger.info("鸿蒙测控执行器"+sdDevices.getExternalDeviceId()+"[万集推送] == > " + ",设备sn：" + sdDevices.getExternalDeviceId()  +",当前时间" + DateUtils.getTime());
 
     }
 

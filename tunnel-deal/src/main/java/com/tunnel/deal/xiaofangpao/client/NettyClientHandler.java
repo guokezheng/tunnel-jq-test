@@ -64,8 +64,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf>{
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 连接上 就给服务端发送数据 40 40 04 00 01 06 26 1D 0E 0D 06 17 01 00 00 00 00 00 00 00 00 00 00 00 24 00 02 3C 01 01 02 41 32 30 46 45 43 31 37 33 42 36 46 44 34 30 46 44 37 38 43 38 45 35 46 37 43 41 41 41 32 42 30 74 23 23
-        String quanXianjiaoYanMsg = SendMsgCodeEnum.XIAOFANGPAO_QUANXIANJIAOYAN_CODE.getCode();
-        // quanXianjiaoYanMsg ="";
+        //String quanXianjiaoYanMsg = SendMsgCodeEnum.XIAOFANGPAO_QUANXIANJIAOYAN_CODE.getCode();
+
+        String  quanXianjiaoYanMsg = FireMonitorDataParse.getValidCode();
         ctx.writeAndFlush(ByteBufUtil.convertStringToByteBuf(quanXianjiaoYanMsg.replace(" ","")));
 //        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Server", CharsetUtil.UTF_8));
         SocketAddress socketAddress = ctx.channel().remoteAddress();

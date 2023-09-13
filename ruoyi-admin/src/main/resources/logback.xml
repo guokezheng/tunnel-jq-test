@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 日志存放路径 -->
-	<property name="log.path" value="/opt/suidao/file/logs" />
+    <property name="log.path" value="/opt/suidao/file/logs" />
     <!-- 日志输出格式 -->
     <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
 
@@ -71,6 +71,21 @@
         </encoder>
     </appender>
 
+
+    <!-- 测控执行器日志输出  -->
+    <appender name="mca" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/mca.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <fileNamePattern>${log.path}/mca.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 日志最大的历史 60天 -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
     <!-- 系统模块日志级别控制  -->
     <logger name="com.ruoyi" level="ERROR" />
     <!-- Spring日志级别控制  -->
@@ -89,5 +104,10 @@
     <!--系统用户操作日志-->
     <logger name="sys-user" level="ERROR">
         <appender-ref ref="sys-user"/>
+    </logger>
+
+    <!--测控执行器日志-->
+    <logger name="mca" level="ERROR">
+        <appender-ref ref="mca"/>
     </logger>
 </configuration>

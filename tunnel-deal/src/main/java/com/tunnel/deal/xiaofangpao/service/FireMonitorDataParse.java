@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.Calendar;
 
 /**
  * describe: 测控执行器数据解析类
@@ -277,6 +278,93 @@ public class FireMonitorDataParse {
         }
         return binStr;
     }
+
+    public static String getValidCode(){
+
+        // 创建Calendar对象表示当前时间
+        Calendar calendar = Calendar.getInstance();
+
+        // 获取年份、月份、日期、小时、分钟、秒
+        String year = calendar.get(Calendar.YEAR) + "";
+        int month = calendar.get(Calendar.MONTH) + 1; // 月份从0开始，所以要加1
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        // 启动字符
+        String start = "40 40";
+
+        // 控制单元
+        String commend0 = " 08 00 01 06 " + toHex(second) + " " + toHex(minute) + " " + toHex(hour) + " " + toHex(day) + " " +  toHex(month) + " " + toHex(Integer.parseInt(year.substring(2)));
+        String commend1= " 00 00 00 00 00 00 00 00 00 00 00 00";
+        String commend2 = " 24 00 02" ;
+
+        // 应用单元
+        String content =  " 3C 01 01 02";
+        // 授权码
+        String code = getAscii("6E6017A7145935A0EFFE1714FBAA2848");
+        System.out.println(commend0 + commend1 + commend2);
+        String num = " " + makeChecksum((commend0 + commend1 + commend2).replaceAll(" ",""));
+        // 结束字符
+        String end = " 23 23";
+
+        return  start + commend0 + commend1 + commend2 + content + code + num + end;
+    }
+
+    /**
+     * 10进制转16进制 长度为自定义，满足不同的需求， 0填充
+     * @param num
+     * @return
+     * @author wyc
+     * @date 2022-11-25
+     */
+    public static String toHex(int num) {
+        // String.format("%016x"， 1) 将1专程16进制，不足的以0补上
+        String n = Integer.toHexString(num);
+        if(n.length() < 2){
+            n = "0" + n;
+        }
+        return n;
+    }
+
+    /**
+     *  效验码转Ascii
+     * @param str
+     * @return
+     */
+    public static String getAscii(String str){
+        StringBuffer sb = new StringBuffer();
+        char[] chars = str.toCharArray();
+
+        for (int i = 0; i < chars.length; i++) {
+            int asciiValue = (int) chars[i];
+            sb.append(" " + Integer.toHexString(asciiValue));
+        }
+        return  sb.toString();
+    }
+
+    public static void main(String[] args) {
+
+        //System.out.println(getCode());
+        // 16 转 10
+        //System.out.println(Integer.parseInt("40",16));
+        // 10 转 16
+        //System.out.println(Integer.toHexString(64));
+
+        // 创建Calendar对象表示当前时间
+//        Calendar calendar = Calendar.getInstance();
+//
+//        // 获取年份、月份、日期、小时、分钟、秒
+//        String year = calendar.get(Calendar.YEAR) + "";
+//
+//        String int64 = Integer.toHexString(Integer.parseInt(year.substring(2)));
+//
+//        System.out.println(int64);
+
+    }
+
+
+
 
 
 

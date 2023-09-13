@@ -190,6 +190,7 @@ public interface SdDevicesMapper {
 	public int updateSdDevicesByFEqId(SdDevices sdDevices);
 
 	public int updateSdDevicesByExternalSystemId(SdDevices sdDevices);
+	public int updateSdDevicesByExternalDevIdAndDirection(SdDevices sdDevices);
 
 	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
 

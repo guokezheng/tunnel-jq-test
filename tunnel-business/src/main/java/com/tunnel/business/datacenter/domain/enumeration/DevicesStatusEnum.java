@@ -8,7 +8,7 @@ package com.tunnel.business.datacenter.domain.enumeration;
  */
 public enum DevicesStatusEnum {
 
-    DEVICE_ON_LINE("1", "在线"), DEVICE_OFF_LINE("2", "离线"), DEVICE_ERROR("3", "故障");
+    DEVICE_ON_LINE("1", "在线"), DEVICE_OFF_LINE("2", "离线"), DEVICE_ERROR("3", "故障"), DEVICE_FIRE("3", "火警");
     private String code;
     private String name;
 

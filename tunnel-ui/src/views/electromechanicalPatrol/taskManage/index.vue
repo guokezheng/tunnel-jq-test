@@ -567,6 +567,7 @@
               @change="getTable()"
               style="width: 100%"
               size="small"
+              popper-class="cascaderClass"
               clearable
               placeholder="请选择设备类型"
               ref="myCascader"
@@ -2427,11 +2428,6 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.el-table tr {
-  background-color: transparent;
-}
-</style>
 <style lang="scss" scoped>
 .card {
   font-size: 15px;

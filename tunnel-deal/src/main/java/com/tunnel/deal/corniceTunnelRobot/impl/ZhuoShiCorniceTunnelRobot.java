@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 北京卓视智通科技 - 飞檐隧道机器人平台系统
@@ -73,7 +74,7 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
                 return JSONObject.parseObject(jsonObject.get("data").toString(),StatusDto.class);
             }
         } catch (Exception e) {
-            throw new RuntimeException("飞檐隧道机器人平台数据解析异常");
+            return null;
         }
         return null;
     }
@@ -341,6 +342,9 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
                 .method(post,null)
                 .build();*/
         OkHttpClient client = new OkHttpClient();
+        client.newBuilder().connectTimeout(3, TimeUnit.SECONDS)
+                .readTimeout(3,TimeUnit.SECONDS)
+                .writeTimeout(3,TimeUnit.SECONDS).build();
         Request request = new Request
                 .Builder() //利用建造者模式创建Request对象
                 .url(url) //设置请求的URL
@@ -353,7 +357,8 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
                 return JSONObject.parseObject(result);
             }
         } catch (IOException e) {
-            throw new RuntimeException("飞檐隧道机器人平台服务异常");
+            //throw new RuntimeException("飞檐隧道机器人平台服务异常");
+            return null;
         }finally{
             if(response != null){
                 response.close();

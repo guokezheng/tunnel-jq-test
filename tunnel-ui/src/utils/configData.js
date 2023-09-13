@@ -123,7 +123,7 @@ let laneImage2 = [
   {
     id: "4",
     name: "马甲峪-胡山隧道",
-    url: require('@/assets/image/lane/马甲峪-胡山隧道.png'),
+    url: require('@/assets/image/lane/mjy2.png'),
     width: 2378,
     num: 3,
     direction: 0
@@ -131,7 +131,7 @@ let laneImage2 = [
   {
     id: "6",
     name: "杭山东隧道",
-    url: require('@/assets/image/lane/杭山东.png'),
+    url: require('@/assets/image/lane/hsd2.png'),
     width: 1728,
     num: 3,
     direction: 0
@@ -139,7 +139,7 @@ let laneImage2 = [
   {
     id: "7",
     name: "金家楼隧道",
-    url: require('@/assets/image/lane/金家楼.png'),
+    url: require('@/assets/image/lane/jjl2.png'),
     width: 1728,
     num: 3,
     direction: 0
@@ -147,7 +147,7 @@ let laneImage2 = [
   {
     id: "8",
     name: "马鞍山隧道",
-    url: require('@/assets/image/lane/马鞍山.png'),
+    url: require('@/assets/image/lane/mas2.png'),
     width: 2378,
     num: 3,
     direction: 0
@@ -155,7 +155,7 @@ let laneImage2 = [
   {
     id: "9",
     name: "北家峪-泰和山隧道",
-    url: require('@/assets/image/lane/北家峪-泰和山.png'),
+    url: require('@/assets/image/lane/bjy2.png'),
     width: 2378,
     num: 3,
     direction: 0
@@ -163,7 +163,7 @@ let laneImage2 = [
   {
     id: "10",
     name: "盘顶山隧道",
-    url: require('@/assets/image/lane/盘顶山.png'),
+    url: require('@/assets/image/lane/pds2.png'),
     width: 3678,
     num: 3,
     direction: 0
@@ -171,7 +171,7 @@ let laneImage2 = [
   {
     id: "11",
     name: "青风岭隧道",
-    url: require('@/assets/image/lane/清风岭.png'),
+    url: require('@/assets/image/lane/qfl2.png'),
     width: 2378,
     num: 3,
     direction: 0
@@ -179,7 +179,7 @@ let laneImage2 = [
   {
     id: "12",
     name: "双子山隧道",
-    url: require('@/assets/image/lane/双子山.png'),
+    url: require('@/assets/image/lane/szs2.png'),
     width: 2378,
     num: 3,
     direction: 0
@@ -187,7 +187,7 @@ let laneImage2 = [
   {
     id: "13",
     name: "万昌溜-天赐山隧道",
-    url: require('@/assets/image/lane/万昌溜-天赐山.png'),
+    url: require('@/assets/image/lane/wcl2.png'),
     width: 3028,
     num: 3,
     direction: 0
@@ -195,7 +195,7 @@ let laneImage2 = [
   {
     id: "14",
     name: "仰天山隧道",
-    url: require('@/assets/image/lane/仰天山.png'),
+    url: require('@/assets/image/lane/yts2.png'),
     width: 1728,
     num: 3,
     direction: 0

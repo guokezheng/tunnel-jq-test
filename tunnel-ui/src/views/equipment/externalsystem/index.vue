@@ -137,9 +137,14 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column label="所属隧道" align="center" prop="tunnelId" style="white-space: pre-wrap;">
+      <el-table-column
+        label="所属隧道"
+        align="center"
+        prop="tunnelId"
+        style="white-space: pre-wrap"
+      >
         <template slot-scope="scope">
-          <div v-for="(item,index) in scope.row.tunnelId" :key="index">
+          <div v-for="(item, index) in scope.row.tunnelId" :key="index">
             {{ item }}
           </div>
         </template>
@@ -226,15 +231,25 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="所属隧道" class="checkboxFormDialog" prop="tunnelId">
-          <el-checkbox
-            v-for="dict in tunnelList"
-            :key="dict.tunnelId"
-            :label="dict.tunnelId"
-            v-model="result"
-          >{{ dict.tunnelName }}</el-checkbox
+        <el-form-item
+          label="所属隧道"
+          class="checkboxFormDialog"
+          prop="tunnelId"
+        >
+          <el-row
+            style="
+              display: flex;
+              flex-wrap: wrap;
+            "
           >
-<!--          <el-select
+            <el-col :span="12" v-for="dict in tunnelList" :key="dict.tunnelId">
+              <el-checkbox :label="dict.tunnelId" v-model="result">{{
+                dict.tunnelName
+              }}</el-checkbox>
+            </el-col>
+          </el-row>
+
+          <!--          <el-select
             v-model="form.tunnelId"
             placeholder="请选择所属隧道"
             style="width: 100%"
@@ -300,19 +315,17 @@
         </el-form-item>
 
         <el-form-item label="开启网络检测" prop="remark">
-        <el-switch
-          v-model="form.openCheck"
-          inactive-text="">
-        </el-switch>
+          <el-switch v-model="form.openCheck" inactive-text=""> </el-switch>
         </el-form-item>
         <el-form-item label="检测地址" prop="remark">
           <el-input v-model="form.checkAddr" placeholder="请输入检测地址" />
         </el-form-item>
         <el-form-item label="检测间隔" prop="remark">
-          <el-input v-model="form.checkTimes" placeholder="请输入检测间隔（秒）" />
+          <el-input
+            v-model="form.checkTimes"
+            placeholder="请输入检测间隔（秒）"
+          />
         </el-form-item>
-
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitForm">确 定</el-button>
@@ -474,15 +487,14 @@ export default {
             this.systemList[i].isDirection = "否";
           }
           var a = this.systemList[i].tunnelId;
-          if(a!=null){
-            this.systemList[i].tunnelId  = a.split(',');
+          if (a != null) {
+            this.systemList[i].tunnelId = a.split(",");
           }
 
           /*if(this.systemList[i].tunnelId!=null){
             let str = this.systemList[i].tunnelId.replace(/\,/g, '<br>');
             this.systemList[i].tunnelId = str;
           }*/
-
         }
         this.total = response.total;
         this.loading = false;
@@ -621,10 +633,9 @@ export default {
 ::v-deep .checkboxFormDialog .el-checkbox {
   width: 120px;
 }
- .el-table .cell {
-   white-space: pre-wrap;   /*这是重点。文本换行*/
- }
-
+.el-table .cell {
+  white-space: pre-wrap; /*这是重点。文本换行*/
+}
 </style>
 <style lang="scss">
 .eqTypeDialog {

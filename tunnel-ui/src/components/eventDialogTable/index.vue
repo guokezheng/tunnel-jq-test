@@ -121,7 +121,7 @@
             </div>
           </li>
           <p
-            v-if="noMore"
+            v-if="noMore && total>0"
             style="
               margin-top: 10px;
               font-size: 13px;
@@ -130,6 +130,17 @@
             "
           >
             没有更多了
+          </p>
+          <p
+            v-if="total == 0"
+            style="
+              margin-top: 10px;
+              font-size: 13px;
+              color: #ccc;
+              text-align: center;
+            "
+          >
+            暂无事件
           </p>
         </ul>
         <p v-if="loading" class="loading">
@@ -190,10 +201,13 @@ export default {
   },
   computed: {
     noMore() {
-      //当起始页数大于总页数时停止加载
+            //当起始页数大于总页数时停止加载
       if (this.total % 10 == 0) {
+        console.log(2222222)
         return this.pageNum >= parseInt(this.total / 10);
       } else {
+        console.log(33333333)
+
         return this.pageNum >= parseInt(this.total / 10) + 1;
       }
     },
@@ -231,6 +245,7 @@ export default {
       this.$forceUpdate();
     },
     getList(num) {
+      console.log(num,"num")
       let prevControlType = "";
       if (this.searchValue != 3) {
         prevControlType = this.searchValue;
@@ -241,7 +256,7 @@ export default {
         pageSize: this.pageSize,
       };
       eventPopData(params).then((res) => {
-        if (num) {
+                if (num) {
           this.list = this.list.concat(res.rows);
         } else {
           this.list = res.rows;

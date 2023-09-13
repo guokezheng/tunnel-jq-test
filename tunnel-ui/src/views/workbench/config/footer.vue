@@ -415,12 +415,13 @@
             <p>inspection robot</p>
           </div>
         </div>
-        <videoPlayer
+        <!-- <videoPlayer
           v-if="liveUrl5"
           :rtsp="liveUrl5"
           :open="cameraPlayer5"
-        ></videoPlayer>
-        <div class="noPicBox" v-show="videoNoPic3">
+        ></videoPlayer> -->
+        <videoRtmp v-if="liveUrl5" ref="playerObj"></videoRtmp>
+        <div class="noPicBox" v-else>
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
@@ -523,9 +524,11 @@ import bus from "@/utils/bus";
 import { mapState } from "vuex";
 import * as echarts from "echarts";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
+import videoRtmp from "@/views/event/vedioRecord/videoRtmp";
+
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { videoStreaming, getDeviceById } from "@/api/equipment/eqlist/api";
-import { getEntranceExitVideo,getVideoUrl } from "@/api/eventDialog/api.js";
+import { getEntranceExitVideo, getVideoUrl } from "@/api/eventDialog/api.js";
 import {
   vehicleMonitoringInRecent24Hours,
   getHoursTrafficVolume,
@@ -539,6 +542,7 @@ import { getWarnEvent } from "@/api/event/event";
 export default {
   components: {
     videoPlayer,
+    videoRtmp,
   },
   data() {
     return {
@@ -653,16 +657,16 @@ export default {
       this.getDeviceChart();
       this.getNoDecelerationChart();
     },
-    changeActive(){
-      this.footChangeRadio = '图表'
+    changeActive() {
+      this.footChangeRadio = "图表";
       this.cameraPlayer1 = false;
       this.cameraPlayer2 = false;
       this.cameraPlayer3 = false;
       this.cameraPlayer4 = false;
       this.cameraPlayer5 = false;
       window.addEventListener("resize", function () {
-          this.deviceChart.resize();
-        });
+        this.deviceChart.resize();
+      });
     },
     // 预警事件列表
     getWarnList() {
@@ -907,6 +911,10 @@ export default {
         this.cameraPlayer2 = false;
         this.cameraPlayer3 = false;
         this.cameraPlayer4 = false;
+        this.liveUrl5 = ''
+        // this.$nextTick(()=>{
+        //   this.$refs.playerObj.init(this.liveUrl5)
+        // })
       }
     },
     getFooterVideo() {
@@ -990,11 +998,19 @@ export default {
           }
         }
       );
-      console.log(111111)
-      getVideoUrl().then((res)=>{
-        console.log(res,"机器人视频")
-      })
-      this.videoNoPic3 = true;
+     
+      // getVideoUrl()
+      //   .then((res) => {
+      //     console.log(res, "机器人视频");
+      //     this.liveUrl5 = res.data.infrared
+          this.liveUrl5 = 'rtmp://192.168.50.123:1231/live/2'
+
+          this.$nextTick(()=>{
+            this.$refs.playerObj.init(this.liveUrl5)
+          })
+        // })
+        // .catch(() => {
+        // });
     },
     initNoDecelerationChart(oneList, twoList, threeList) {
       let newPromise = new Promise((resolve) => {

@@ -73,7 +73,7 @@ mqtt:
   clientInId: mqtt_hs_client_in
   clientOutId: mqtt_hs_client_out
   #rhy/iot/#通配符监听所有的鸿蒙控制器topic
-  topics: rhy/iot/#
+  topics: rhy/iot/receive/#
   qoslevel: 1
   #MQTT 认证
   username: admin

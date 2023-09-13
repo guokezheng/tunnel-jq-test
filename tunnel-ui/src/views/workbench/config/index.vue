@@ -4937,7 +4937,7 @@ export default {
         deviceId: this.robotId,
       };
       await getWorkStagingRobot(param).then((res) => {
-        console.log(res, "机器人");
+        // console.log(res, "机器人");
         this.robotPositon = (
           (Number(res.data.position) / this.tunnelLang) *
           100

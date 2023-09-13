@@ -164,6 +164,7 @@
       <el-badge
         :value="nodealNum"
         :hidden="nodealNum > 0 ? false : true"
+        :max="99"
         class="item bell_icon"
         style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;
               color: white !important;caret-color: rgba(0,0,0,0);user-select: none;"
@@ -607,7 +608,7 @@ export default {
       ],
       // 小弹层的数据 start
       alarmTitle: "您有0条未读消息",
-      nodealNum: '',
+      nodealNum: 0,
       warningInfoList: [],
       total: 0, // 总条数
       queryParams: {

@@ -2331,6 +2331,8 @@ export default {
             this.cameraPlayer = false;
             if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
+              console.log(this.evtWebsoktList,"this.evtWebsoktList")
+              console.log(this.eventFormDetail,"this.eventFormDetail")
               if (
                 this.evtWebsoktList.length > 0 &&
                 this.evtWebsoktList[0].ids == this.eventFormDetail.id

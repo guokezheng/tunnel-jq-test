@@ -572,7 +572,6 @@
                 <el-input
                   v-model="eventFormDetail.confidenceList"
                   placeholder=""
-                  :disabled="detailsDisabled"
                   style="width: calc(100% - 10px)"
                 />
               </el-form-item>
@@ -1435,6 +1434,7 @@ import {
   getDeviceById,
 } from "@/api/equipment/eqlist/api";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
+
 export default {
   name: "Event",
   dicts: [
@@ -1452,6 +1452,7 @@ export default {
     Treeselect,
     videoPlayer,
   },
+
   data() {
     return {
       evtWebsoktList: [],
@@ -1816,6 +1817,12 @@ export default {
             trigger: "change",
           },
         ],
+        confidenceList:[
+          {
+            validator: this.confidenceListRules, trigger: "blur" 
+          }
+        ],
+        
       },
       // isLoading: false,
       loadingText: "加载中...",
@@ -1909,6 +1916,16 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    confidenceListRules(rule, value, callback){
+      console.log(value,"value")
+      const plateNumber = /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/
+      if (plateNumber.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的车牌号，字母大写'))
+      }
+
+    },
     //下载录像
     // downloadVedio(){
     //   console.log(this.eventDiscovery,"22223333")
@@ -2331,8 +2348,6 @@ export default {
             this.cameraPlayer = false;
             if (response.code == "200") {
               this.$modal.msgSuccess("修改成功");
-              console.log(this.evtWebsoktList,"this.evtWebsoktList")
-              console.log(this.eventFormDetail,"this.eventFormDetail")
               if (
                 this.evtWebsoktList.length > 0 &&
                 this.evtWebsoktList[0].ids == this.eventFormDetail.id
@@ -3444,7 +3459,7 @@ export default {
     }
   }
   .el-form-item {
-    margin-bottom: 10px !important;
+    margin-bottom: 16px !important;
   }
   .evtCarStyle {
     width: calc(100% - 10px);
@@ -3868,7 +3883,7 @@ hr {
 }
 .detailsDialog {
   ::v-deep .el-dialog__body {
-    max-height: 88vh;
+    max-height: 90vh;
     overflow: auto;
   }
 }
@@ -3890,6 +3905,9 @@ hr {
   .el-input__inner {
     padding: 0 15px 0 10px;
   }
+}
+.el-dialog:not(.is-fullscreen) {
+  margin-top: 4vh !important;
 }
 </style>
 <!-- <style lang="scss">

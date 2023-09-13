@@ -11,36 +11,37 @@
     :lock-scroll="true"
     :before-close="closeLogin"
   >
-    <el-row :gutter="24" style="clear:both;">
-        <el-col :span="3" style="float: right">
-          <el-button
-            size="mini"
-            class="tableBlueButtton"
-            @click="submitCatForm"
+    <el-row :gutter="24" style="clear: both">
+      <el-col :span="3" style="float: right">
+        <el-button size="mini" class="tableBlueButtton" @click="submitCatForm"
           >保存</el-button
-          >
-          <el-button
-            size="mini"
-            class="tableBlueButtton"
-            @click="catHandleSave"
+        >
+        <el-button size="mini" class="tableBlueButtton" @click="catHandleSave"
           >刷新</el-button
-          >
-        </el-col>
+        >
+      </el-col>
     </el-row>
-    <el-row :gutter="24" style="clear:both; margin-top: 5px;">
+    <el-row :gutter="24" style="clear: both; margin-top: 5px">
       <el-col :span="13">
-
-        <el-row :gutter="24" style="clear:both;">
+        <el-row :gutter="24" style="clear: both">
           <el-col :span="24">
-            <div  id='trend' class="chartTow" ref="chart1" style="width: 100%; height: 400px; float: left"></div>
+            <div
+              id="trend"
+              class="chartTow"
+              ref="chart1"
+              style="width: 100%; height: 400px; float: left"
+            ></div>
           </el-col>
-
         </el-row>
-        <el-row :gutter="24" style="clear:both;">
+        <el-row :gutter="24" style="clear: both">
           <el-col :span="24">
-            <div  id='trend' class="chartTow" ref="chart2" style="width: 100%; height: 400px; float: left"></div>
+            <div
+              id="trend"
+              class="chartTow"
+              ref="chart2"
+              style="width: 100%; height: 400px; float: left"
+            ></div>
           </el-col>
-
         </el-row>
       </el-col>
       <el-col :span="11">
@@ -52,9 +53,14 @@
           label-width="70px"
           height="300px"
         >
-          <el-row :gutter="24" style="clear:both;">
+          <el-row :gutter="20" style="clear: both">
             <el-col :span="6">
-              <el-form-item label="状态" align="center" prop="schedulerTime"  class="el-form-item-data-type">
+              <el-form-item
+                label="状态"
+                align="center"
+                prop="schedulerTime"
+                class="el-form-item-data-type"
+              >
                 <template slot-scope="scope">
                   <el-switch
                     v-model="catFilesModel.isStatus"
@@ -68,7 +74,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="9">
-              <el-form-item label="隧道名称" prop="tunnelId"  class="el-form-item-data">
+              <el-form-item
+                label="隧道名称"
+                prop="tunnelId"
+                class="el-form-item-data"
+              >
                 <el-select
                   style="width: 100%"
                   :disabled="tunnelDisabled"
@@ -87,8 +97,19 @@
               </el-form-item>
             </el-col>
             <el-col :span="9">
-              <el-form-item label="方向" prop="direction"  class="el-form-item-data">
-                <el-select
+              <el-form-item
+                label="方向"
+                prop="direction"
+                class="el-form-item-data"
+              >
+                <el-input
+                  :disabled="tunnelDisabled"
+                  style="width: 100%"
+                  v-model="
+                    catFilesModel.direction == '1' ? '潍坊方向' : '济南方向'
+                  "
+                ></el-input>
+                <!-- <el-select
                   clearable
                   :disabled="tunnelDisabled"
                   v-model="catFilesModel.direction"
@@ -102,15 +123,22 @@
                     :label="dict.dictLabel"
                     :value="dict.dictValue"
                   />
-                </el-select>
+                </el-select> -->
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
+          <el-row
+            :gutter="24"
+            style="clear: both; overflow: auto; width: 100%; height: 250px"
+          >
             <el-col :span="24">
-              <el-form-item label="时间段"  v-for="(item, index) in formItems" :key="index"   class="el-form-item-direction-Item">
-
+              <el-form-item
+                label="时间段"
+                v-for="(item, index) in formItems"
+                :key="index"
+                class="el-form-item-direction-Item"
+              >
                 <el-time-picker
                   placeholder="选择开始时间"
                   v-model="item.startTime"
@@ -120,11 +148,19 @@
                 <el-time-picker
                   placeholder="选择结束时间"
                   v-model="item.endTime"
-                  style="width:25%;margin-left: 5px"
+                  style="width: 25%; margin-left: 5px"
                 ></el-time-picker>
-                <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 15%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
-                <div class="buttonBox" style="width: 15% ;float: right;" >
+                <span
+                  style="color: #05aafd; margin-left: 10px; font-weight: bold"
+                  >下修比例</span
+                >
+                <el-input
+                  style="width: 15%; margin-left: 5px"
+                  placeholder="请输入下修比例"
+                  v-model="item.beforeLuminance"
+                  @change="beforeLuminanceEventWei"
+                ></el-input>
+                <div class="buttonBox" style="width: 15%; float: right">
                   <el-button
                     class="delete"
                     @click="deleteHandleUpdate(index)"
@@ -141,19 +177,19 @@
       </el-col>
 
       <el-col :span="11">
-        <el-row :gutter="24" style="clear:both;">
+        <el-row :gutter="24" style="clear: both">
           <el-col :span="6" style="float: right">
             <el-button
               size="mini"
               class="tableBlueButtton"
               @click="submitCatFormWei"
-            >保存</el-button
+              >保存</el-button
             >
             <el-button
               size="mini"
               class="tableBlueButtton"
               @click="catHandleSave"
-            >刷新</el-button
+              >刷新</el-button
             >
           </el-col>
         </el-row>
@@ -166,9 +202,14 @@
           style="margin-top: 5px"
           height="300px"
         >
-          <el-row :gutter="24" style="clear:both;">
+          <el-row :gutter="24" style="clear: both">
             <el-col :span="6">
-              <el-form-item label="状态" align="center" prop="schedulerTime" class="el-form-item-data-type">
+              <el-form-item
+                label="状态"
+                align="center"
+                prop="schedulerTime"
+                class="el-form-item-data-type"
+              >
                 <template slot-scope="scope">
                   <el-switch
                     v-model="catFilesModelWei.isStatus"
@@ -182,7 +223,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="9">
-              <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
+              <el-form-item
+                label="隧道名称"
+                prop="tunnelId"
+                class="el-form-item-data"
+              >
                 <el-select
                   style="width: 100%"
                   :disabled="tunnelDisabled"
@@ -201,8 +246,20 @@
               </el-form-item>
             </el-col>
             <el-col :span="9">
-              <el-form-item label="方向" prop="direction" class="el-form-item-data">
-                <el-select
+              <el-form-item
+                label="方向"
+                prop="direction"
+                class="el-form-item-data"
+              >
+                <el-input
+                  :disabled="tunnelDisabled"
+                  style="width: 100%"
+                  v-model="
+                    catFilesModelWei.direction == '1' ? '潍坊方向' : '济南方向'
+                  "
+                ></el-input>
+
+                <!-- <el-select
                   clearable
                   :disabled="tunnelDisabled"
                   v-model="catFilesModelWei.direction"
@@ -216,15 +273,22 @@
                     :label="dict.dictLabel"
                     :value="dict.dictValue"
                   />
-                </el-select>
+                </el-select> -->
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
+          <el-row
+            :gutter="24"
+            style="clear: both; overflow: auto; width: 100%; height: 250px"
+          >
             <el-col :span="24">
-              <el-form-item label="时间段"  v-for="(item, index) in formItemsWei" :key="index" class="el-form-item-direction-Item">
-
+              <el-form-item
+                label="时间段"
+                v-for="(item, index) in formItemsWei"
+                :key="index"
+                class="el-form-item-direction-Item"
+              >
                 <el-time-picker
                   placeholder="选择开始时间"
                   v-model="item.startTime"
@@ -234,11 +298,19 @@
                 <el-time-picker
                   placeholder="选择结束时间"
                   v-model="item.endTime"
-                  style="width: 25%;margin-left: 5px"
+                  style="width: 25%; margin-left: 5px"
                 ></el-time-picker>
-                <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 15%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"    @change="beforeLuminanceEventWei"></el-input>
-                <div class="buttonBox" style="width: 15% ;float: right;" >
+                <span
+                  style="color: #05aafd; margin-left: 10px; font-weight: bold"
+                  >下修比例</span
+                >
+                <el-input
+                  style="width: 15%; margin-left: 5px"
+                  placeholder="请输入下修比例"
+                  v-model="item.beforeLuminance"
+                  @change="beforeLuminanceEventWei"
+                ></el-input>
+                <div class="buttonBox" style="width: 15%; float: right">
                   <el-button
                     class="delete"
                     @click="deleteHandleUpdateWei(index)"
@@ -250,174 +322,176 @@
                 </div>
               </el-form-item>
             </el-col>
-
           </el-row>
         </el-form>
       </el-col>
     </el-row>
-
-
   </el-dialog>
 </template>
 
 <script>
 import * as echarts from "echarts";
-import {addConfig, listConfig, updateConfig} from "@/api/business/wisdomLight/app";
-import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
-import {listDepId, listTunnels} from "@/api/equipment/tunnel/api";
-import {analysisDataByTime} from "@/api/system/trafficStatistics/api";
+import {
+  addConfig,
+  listConfig,
+  updateConfig,
+} from "@/api/business/wisdomLight/app";
+import {
+  dataDevicesLogInfoList,
+  dataLogInfoLineList,
+} from "@/api/equipment/eqTypeItem/item";
+import { listDepId, listTunnels } from "@/api/equipment/tunnel/api";
+import { analysisDataByTime } from "@/api/system/trafficStatistics/api";
 
 export default {
   name: "catCurveModal",
   data() {
     return {
-      visibleSync:false,
+      visibleSync: false,
       //车辆数配置文件
-      catFilesModel:{beforeLuminance:'',isStatus:''},
+      catFilesModel: { beforeLuminance: "", isStatus: "" },
       //车辆数配置文件
-      catFilesModelWei:{beforeLuminance:'',isStatus:''},
+      catFilesModelWei: { beforeLuminance: "", isStatus: "" },
       formItems: [
         {
-          label: '',
-          startTime: '',
-          endTime: '',
-          beforeLuminance:'',
-        }
+          label: "",
+          startTime: "",
+          endTime: "",
+          beforeLuminance: "",
+        },
       ],
       formItemsWei: [
         {
-          label: '',
-          startTime: '',
-          endTime: '',
-          beforeLuminance:'',
-        }
+          label: "",
+          startTime: "",
+          endTime: "",
+          beforeLuminance: "",
+        },
       ],
-      tunnelDisabled:true,
-      paramsData:{},
-      tunnelData:[],
+      tunnelDisabled: true,
+      paramsData: {},
+      tunnelData: [],
       //隧道方向
       lightDirectionOptions: [
-        {dictLabel:"济南方向",dictValue:"2"},
-        {dictLabel:"潍坊方向",dictValue:"1"}
-      ],//方向列表
+        { dictLabel: "济南方向", dictValue: "2" },
+        { dictLabel: "潍坊方向", dictValue: "1" },
+      ], //方向列表
       catDirectionOptions: [
-        {dictLabel:"潍坊方向",dictValue:"1"},
-        {dictLabel:"济南方向",dictValue:"2"}
+        { dictLabel: "潍坊方向", dictValue: "1" },
+        { dictLabel: "济南方向", dictValue: "2" },
       ],
-      directionOptions:[],
+      directionOptions: [],
       //车辆 x 时间
-      XData:[],
+      XData: [],
       //前天车辆数
-      yData1:[],
+      yData1: [],
       //昨天车辆数
-      yData2:[],
+      yData2: [],
       //今天车辆数
-      yData3:[],
+      yData3: [],
       //车辆 x 时间
-      XDataOne:[],
+      XDataOne: [],
       //前天车辆数
-      yDataOne1:[],
+      yDataOne1: [],
       //昨天车辆数
-      yDataOne2:[],
+      yDataOne2: [],
       //今天车辆数
-      yDataOne3:[],
-    }
+      yDataOne3: [],
+    };
   },
-  mounted() {
-  },
-  created(){
-  },
-  methods:{
-    closeLogin(){
-      this.catFilesModel = {}
-      this.formItems = [ {
-        label: '',
-        startTime: '',
-        endTime: '',
-        beforeLuminance:'',
-      }]
-      this.catFilesModelWei = {}
-      this.formItemsWei = [ {
-        label: '',
-        startTime: '',
-        endTime: '',
-        beforeLuminance:'',
-      }]
-      this.$emit("selectCatStrategyList")
-      this.visibleSync = !this.visibleSync
+  mounted() {},
+  created() {},
+  methods: {
+    closeLogin() {
+      this.catFilesModel = {};
+      this.formItems = [
+        {
+          label: "",
+          startTime: "",
+          endTime: "",
+          beforeLuminance: "",
+        },
+      ];
+      this.catFilesModelWei = {};
+      this.formItemsWei = [
+        {
+          label: "",
+          startTime: "",
+          endTime: "",
+          beforeLuminance: "",
+        },
+      ];
+      this.$emit("selectCatStrategyList");
+      this.visibleSync = !this.visibleSync;
     },
-    beforeLuminanceEvent(e){
+    beforeLuminanceEvent(e) {
       // // debugger
-      console.log(e)
-      this.catFilesModel.beforeLuminance  = e
-      this.$forceUpdate()
+      console.log(e);
+      this.catFilesModel.beforeLuminance = e;
+      this.$forceUpdate();
     },
-    beforeLuminanceEventWei(e){
+    beforeLuminanceEventWei(e) {
       // debugger
-      console.log(e)
-      this.catFilesModelWei.beforeLuminance  = e
-      this.$forceUpdate()
+      console.log(e);
+      this.catFilesModelWei.beforeLuminance = e;
+      this.$forceUpdate();
     },
     //生成日期
-    getdate(currentDate){
-
+    getdate(currentDate) {
       // 生成日期字符串
 
       let year = currentDate.getFullYear();
-      let month = String(currentDate.getMonth() + 1).padStart(2, '0');
-      let day = String(currentDate.getDate()).padStart(2, '0');
-      let formattedDate = year + '-' + month + '-' + day;
+      let month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      let day = String(currentDate.getDate()).padStart(2, "0");
+      let formattedDate = year + "-" + month + "-" + day;
 
-      return [formattedDate + ' 00:00:00', formattedDate + ' 23:59:59'];
-
+      return [formattedDate + " 00:00:00", formattedDate + " 23:59:59"];
     },
     //生成日期
-    getCatdate(currentDate){
-
+    getCatdate(currentDate) {
       // 生成日期字符串
 
       let year = currentDate.getFullYear();
-      let month = String(currentDate.getMonth() + 1).padStart(2, '0');
-      let day = String(currentDate.getDate()).padStart(2, '0');
-      let formattedDate = year + '-' + month + '-' + day;
+      let month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      let day = String(currentDate.getDate()).padStart(2, "0");
+      let formattedDate = year + "-" + month + "-" + day;
 
-      return [formattedDate + ' 00:00:00', formattedDate + ' 23:59:59'];
-
+      return [formattedDate + " 00:00:00", formattedDate + " 23:59:59"];
     },
-    deleteHandleUpdate(index){
+    deleteHandleUpdate(index) {
       if (this.formItems.length == 1) {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
-      this.formItems.splice(index,1)
+      this.formItems.splice(index, 1);
       // debugger
     },
-    addHandleUpdate(index){
+    addHandleUpdate(index) {
       // debugger
-      let form={
-        label: '',
-        startTime: '',
-        endTime: ''
-      }
-      this.formItems.push(form)
+      let form = {
+        label: "",
+        startTime: "",
+        endTime: "",
+      };
+      this.formItems.push(form);
     },
-    deleteHandleUpdateWei(index){
+    deleteHandleUpdateWei(index) {
       if (this.formItemsWei.length == 1) {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
-      this.formItemsWei.splice(index,1)
+      this.formItemsWei.splice(index, 1);
       // debugger
     },
-    addHandleUpdateWei(index){
+    addHandleUpdateWei(index) {
       // debugger
-      let form={
-        label: '',
-        startTime: '',
-        endTime: ''
-      }
-      this.formItemsWei.push(form)
+      let form = {
+        label: "",
+        startTime: "",
+        endTime: "",
+      };
+      this.formItemsWei.push(form);
     },
     //车来灯亮配置保存
-    submitCatForm(){
+    submitCatForm() {
       //formItems 校验
       for (let index = 0; index < this.formItems.length; index++) {
         const element = this.formItems[index];
@@ -427,7 +501,10 @@ export default {
         } else if (element.endTime == null || element.endTime == "") {
           this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
           return;
-        }else if (element.beforeLuminance == null || element.beforeLuminance == "") {
+        } else if (
+          element.beforeLuminance == null ||
+          element.beforeLuminance == ""
+        ) {
           this.$modal.msgError("下修比例不能为空");
           return;
         }
@@ -436,20 +513,26 @@ export default {
       //   this.$modal.msgError("下修比例不能为空");
       //   return;
       // }
-      if(this.catFilesModel.tunnelId== null || this.catFilesModel.tunnelId== ""){
+      if (
+        this.catFilesModel.tunnelId == null ||
+        this.catFilesModel.tunnelId == ""
+      ) {
         this.$modal.msgError("隧道名称不能为空");
         return;
       }
-      if(this.catFilesModel.direction== null || this.catFilesModel.direction== ""){
+      if (
+        this.catFilesModel.direction == null ||
+        this.catFilesModel.direction == ""
+      ) {
         this.$modal.msgError("隧道方向不能为空");
         return;
       }
       //处理时间转json
-      let formItemsOne = JSON.parse(JSON.stringify(this.formItems))
+      let formItemsOne = JSON.parse(JSON.stringify(this.formItems));
       for (let index = 0; index < this.formItems.length; index++) {
         const param = this.formItems[index];
-        param.direction = this.catFilesModel.direction
-        param.startTime = new Date( param.startTime);
+        param.direction = this.catFilesModel.direction;
+        param.startTime = new Date(param.startTime);
         param.startTime =
           (param.startTime.getHours() < 10
             ? "0" + param.startTime.getHours()
@@ -462,7 +545,7 @@ export default {
           (param.startTime.getSeconds() < 10
             ? "0" + param.startTime.getSeconds()
             : param.startTime.getSeconds());
-        param.endTime = new Date( param.endTime);
+        param.endTime = new Date(param.endTime);
         param.endTime =
           (param.endTime.getHours() < 10
             ? "0" + param.endTime.getHours()
@@ -478,12 +561,12 @@ export default {
       }
       this.catFilesModel.timeSlot = JSON.stringify(this.formItems);
 
-      this.formItems =  formItemsOne
-      console.log(this.formItems)
-      console.log(this.catFilesModel)
+      this.formItems = formItemsOne;
+      console.log(this.formItems);
+      console.log(this.catFilesModel);
       // debugger
       //模式1 车辆 0光强
-      this.catFilesModel.modeType = 1
+      this.catFilesModel.modeType = 1;
       if (!!this.catFilesModel.id) {
         updateConfig(this.catFilesModel).then((response) => {
           this.$modal.msgSuccess("修改成功");
@@ -491,13 +574,13 @@ export default {
       } else {
         addConfig(this.catFilesModel).then((response) => {
           // debugger
-          this.catFilesModel.id =response.data.id
+          this.catFilesModel.id = response.data.id;
           this.$modal.msgSuccess("新增成功");
         });
       }
     },
     //车来灯亮配置保存
-    submitCatFormWei(){
+    submitCatFormWei() {
       //formItems 校验
       for (let index = 0; index < this.formItemsWei.length; index++) {
         const element = this.formItemsWei[index];
@@ -507,7 +590,10 @@ export default {
         } else if (element.endTime == null || element.endTime == "") {
           this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
           return;
-        } else if (element.beforeLuminance == null || element.beforeLuminance == "") {
+        } else if (
+          element.beforeLuminance == null ||
+          element.beforeLuminance == ""
+        ) {
           this.$modal.msgError("下修比例不能为空");
           return;
         }
@@ -516,20 +602,26 @@ export default {
       //   this.$modal.msgError("下修比例不能为空");
       //   return;
       // }
-      if(this.catFilesModelWei.tunnelId== null || this.catFilesModelWei.tunnelId== ""){
+      if (
+        this.catFilesModelWei.tunnelId == null ||
+        this.catFilesModelWei.tunnelId == ""
+      ) {
         this.$modal.msgError("隧道名称不能为空");
         return;
       }
-      if(this.catFilesModelWei.direction== null || this.catFilesModelWei.direction== ""){
+      if (
+        this.catFilesModelWei.direction == null ||
+        this.catFilesModelWei.direction == ""
+      ) {
         this.$modal.msgError("隧道方向不能为空");
         return;
       }
       //处理时间转json
-      let formItemsOne = JSON.parse(JSON.stringify(this.formItemsWei))
+      let formItemsOne = JSON.parse(JSON.stringify(this.formItemsWei));
       for (let index = 0; index < this.formItemsWei.length; index++) {
         const param = this.formItemsWei[index];
-        param.direction = this.catFilesModelWei.direction
-        param.startTime = new Date( param.startTime);
+        param.direction = this.catFilesModelWei.direction;
+        param.startTime = new Date(param.startTime);
         param.startTime =
           (param.startTime.getHours() < 10
             ? "0" + param.startTime.getHours()
@@ -542,7 +634,7 @@ export default {
           (param.startTime.getSeconds() < 10
             ? "0" + param.startTime.getSeconds()
             : param.startTime.getSeconds());
-        param.endTime = new Date( param.endTime);
+        param.endTime = new Date(param.endTime);
         param.endTime =
           (param.endTime.getHours() < 10
             ? "0" + param.endTime.getHours()
@@ -558,12 +650,12 @@ export default {
       }
       this.catFilesModelWei.timeSlot = JSON.stringify(this.formItemsWei);
 
-      this.formItemsWei =  formItemsOne
-      console.log(this.formItemsWei)
-      console.log(this.catFilesModelWei)
+      this.formItemsWei = formItemsOne;
+      console.log(this.formItemsWei);
+      console.log(this.catFilesModelWei);
       // debugger
       //模式1 车辆 0光强
-      this.catFilesModelWei.modeType = 1
+      this.catFilesModelWei.modeType = 1;
       if (!!this.catFilesModelWei.id) {
         updateConfig(this.catFilesModelWei).then((response) => {
           this.$modal.msgSuccess("修改成功");
@@ -571,30 +663,30 @@ export default {
       } else {
         addConfig(this.catFilesModelWei).then((response) => {
           // debugger
-          this.catFilesModelWei.id =response.data.id
+          this.catFilesModelWei.id = response.data.id;
           this.$modal.msgSuccess("新增成功");
         });
       }
     },
     //刷新车辆
-    catHandleSave(){
+    catHandleSave() {
       //获取车辆数据
-      this.getEchartsTrend()
+      this.getEchartsTrend();
     },
 
     //获取车辆数据
-    async getEchartsTrend(row,type){
-      this.XData = []
-      this.yData3 = []
-      this.yData2 = []
-      this.yData1 = []
-      this.XDataOne = []
-      this.yDataOne3 = []
-      this.yDataOne2 = []
-      this.yDataOne1 = []
+    async getEchartsTrend(row, type) {
+      this.XData = [];
+      this.yData3 = [];
+      this.yData2 = [];
+      this.yData1 = [];
+      this.XDataOne = [];
+      this.yDataOne3 = [];
+      this.yDataOne2 = [];
+      this.yDataOne1 = [];
 
-      if(row==null && type ==null){
-        this.tunnelDisabled = false
+      if (row == null && type == null) {
+        this.tunnelDisabled = false;
         this.$nextTick(() => {
           this.initCatChart();
           this.initCatChart1();
@@ -608,74 +700,93 @@ export default {
       // 获取大前天日期
       let threeDaysAgo = new Date();
       threeDaysAgo.setDate(currentDate.getDate() - 1);
-      let ds = this.getCatdate(currentDate)//今天
-      let ds1 = this.getCatdate(twoDaysAgo)//历史
-      let ds2 = this.getCatdate(threeDaysAgo)//昨天
-
+      let ds = this.getCatdate(currentDate); //今天
+      let ds1 = this.getCatdate(twoDaysAgo); //历史
+      let ds2 = this.getCatdate(threeDaysAgo); //昨天
 
       // debugger
-      if(!!row){//首次
+      if (!!row) {
+        //首次
         // 济南方向
-        this.catFilesModel.tunnelId= row.tunnelId
-        this.catFilesModel.direction= "2"
-        let  tunnel = this.tunnelData.find(tunnelItem => row.tunnelId ==  this.catFilesModel.tunnelId)
-        console.log(tunnel)
+        this.catFilesModel.tunnelId = row.tunnelId;
+        this.catFilesModel.direction = "2";
+        let tunnel = this.tunnelData.find(
+          (tunnelItem) => row.tunnelId == this.catFilesModel.tunnelId
+        );
+        console.log(tunnel);
         // debugger
         //车辆
-        let queryParams = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction: this.catFilesModel.direction,modeType:1}
-        this.catListConfig(queryParams)
+        let queryParams = {
+          tunnelName: row.tunnelName,
+          pageSize: 1,
+          pageNum: 2,
+          direction: this.catFilesModel.direction,
+          modeType: 1,
+        };
+        this.catListConfig(queryParams);
 
         // 潍坊方向
-        this.catFilesModelWei.tunnelId= row.tunnelId
-        this.catFilesModelWei.direction= "1"
-        let  tunnelWei = this.tunnelData.find(tunnelItem => row.tunnelId ==  this.catFilesModelWei.tunnelId)
-        console.log(tunnelWei)
+        this.catFilesModelWei.tunnelId = row.tunnelId;
+        this.catFilesModelWei.direction = "1";
+        let tunnelWei = this.tunnelData.find(
+          (tunnelItem) => row.tunnelId == this.catFilesModelWei.tunnelId
+        );
+        console.log(tunnelWei);
         // debugger
         //车辆
-        let queryParamsWei = {tunnelName:row.tunnelName,pageSize:1,pageNum:2,direction: this.catFilesModelWei.direction,modeType:1}
-        this.catListConfigWei(queryParamsWei)
+        let queryParamsWei = {
+          tunnelName: row.tunnelName,
+          pageSize: 1,
+          pageNum: 2,
+          direction: this.catFilesModelWei.direction,
+          modeType: 1,
+        };
+        this.catListConfigWei(queryParamsWei);
       }
 
       //济南
       let json = {
-        eqDirection:"hour",
+        eqDirection: "hour",
         tunnelId: this.catFilesModel.tunnelId,
-        holes: 2
-      }
+        holes: 2,
+      };
       //今天
-      await analysisDataByTime(this.addDateRange(json, ds)).then(response => {
-        if(response.code == 200){
+      await analysisDataByTime(this.addDateRange(json, ds)).then((response) => {
+        if (response.code == 200) {
           for (let i = 0; i < response.data.length; i++) {
             const randomNumber = Math.floor(Math.random() * 70);
-            this.XData.push(response.data[i].date)
+            this.XData.push(response.data[i].date);
             // this.yData3.push(response.data[i].byVehicelNum)
-            this.yData3.push(response.data[i].byVehicelNum)
+            this.yData3.push(response.data[i].byVehicelNum);
           }
         }
       });
       //昨天
-      await analysisDataByTime(this.addDateRange(json, ds2)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            // this.XData.push(response.data[i].date)
-            const randomNumber = Math.floor(Math.random() * 70);
-            // this.yData2.push(response.data[i].byVehicelNum)
-            this.yData2.push(response.data[i].byVehicelNum)
+      await analysisDataByTime(this.addDateRange(json, ds2)).then(
+        (response) => {
+          if (response.code == 200) {
+            for (let i = 0; i < response.data.length; i++) {
+              // this.XData.push(response.data[i].date)
+              const randomNumber = Math.floor(Math.random() * 70);
+              // this.yData2.push(response.data[i].byVehicelNum)
+              this.yData2.push(response.data[i].byVehicelNum);
+            }
           }
         }
-      });
+      );
       //历史
-      await analysisDataByTime(this.addDateRange(json, ds1)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            // this.XData.push(response.data[i].date)
-            // this.yData1.push(response.data[i].byVehicelNum)
-            const randomNumber = Math.floor(Math.random() * 70);
-            this.yData1.push(response.data[i].byVehicelNum)
+      await analysisDataByTime(this.addDateRange(json, ds1)).then(
+        (response) => {
+          if (response.code == 200) {
+            for (let i = 0; i < response.data.length; i++) {
+              // this.XData.push(response.data[i].date)
+              // this.yData1.push(response.data[i].byVehicelNum)
+              const randomNumber = Math.floor(Math.random() * 70);
+              this.yData1.push(response.data[i].byVehicelNum);
+            }
           }
-
         }
-      });
+      );
       await setTimeout(() => {
         this.$nextTick(() => {
           //获取车辆数据
@@ -684,44 +795,49 @@ export default {
       }, 10);
       //潍坊方向
       let json1 = {
-        eqDirection:"hour",
+        eqDirection: "hour",
         tunnelId: this.catFilesModel.tunnelId,
-        holes: 1
-      }
+        holes: 1,
+      };
       //今天
-      await analysisDataByTime(this.addDateRange(json1, ds)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            const randomNumber = Math.floor(Math.random() * 70);
-            this.XDataOne.push(response.data[i].date)
-            // this.yData3.push(response.data[i].byVehicelNum)
-            this.yDataOne3.push(response.data[i].byVehicelNum)
+      await analysisDataByTime(this.addDateRange(json1, ds)).then(
+        (response) => {
+          if (response.code == 200) {
+            for (let i = 0; i < response.data.length; i++) {
+              const randomNumber = Math.floor(Math.random() * 70);
+              this.XDataOne.push(response.data[i].date);
+              // this.yData3.push(response.data[i].byVehicelNum)
+              this.yDataOne3.push(response.data[i].byVehicelNum);
+            }
           }
         }
-      });
+      );
       //昨天
-      await  analysisDataByTime(this.addDateRange(json1, ds2)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            const randomNumber = Math.floor(Math.random() * 70);
-            // this.yData2.push(response.data[i].byVehicelNum)
-            this.yDataOne2.push(response.data[i].byVehicelNum)
+      await analysisDataByTime(this.addDateRange(json1, ds2)).then(
+        (response) => {
+          if (response.code == 200) {
+            for (let i = 0; i < response.data.length; i++) {
+              const randomNumber = Math.floor(Math.random() * 70);
+              // this.yData2.push(response.data[i].byVehicelNum)
+              this.yDataOne2.push(response.data[i].byVehicelNum);
+            }
           }
         }
-      });
+      );
       //历史
-      await analysisDataByTime(this.addDateRange(json1, ds1)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            // this.XData.push(response.data[i].date)
-            // this.yData1.push(response.data[i].byVehicelNum)
-            const randomNumber = Math.floor(Math.random() * 70);
-            this.yDataOne1.push(response.data[i].byVehicelNum)
+      await analysisDataByTime(this.addDateRange(json1, ds1)).then(
+        (response) => {
+          if (response.code == 200) {
+            for (let i = 0; i < response.data.length; i++) {
+              // this.XData.push(response.data[i].date)
+              // this.yData1.push(response.data[i].byVehicelNum)
+              const randomNumber = Math.floor(Math.random() * 70);
+              this.yDataOne1.push(response.data[i].byVehicelNum);
+            }
           }
-
         }
-      });
-      await   setTimeout(() => {
+      );
+      await setTimeout(() => {
         this.$nextTick(() => {
           //获取车辆数据
           this.initCatChart1();
@@ -758,9 +874,9 @@ export default {
             trigger: "axis",
           },
           title: {
-            text: '济南方向历史车辆数',
+            text: "济南方向历史车辆数",
             textStyle: {
-              color: '#05AAFD', // 设置标题颜色
+              color: "#05AAFD", // 设置标题颜色
             },
           },
           legend: {
@@ -893,9 +1009,9 @@ export default {
             trigger: "axis",
           },
           title: {
-            text: '潍坊方向历史车辆数',
+            text: "潍坊方向历史车辆数",
             textStyle: {
-              color: '#05AAFD', // 设置标题颜色
+              color: "#05AAFD", // 设置标题颜色
             },
           },
           legend: {
@@ -1017,50 +1133,61 @@ export default {
       });
     },
     //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
-    catChangeEvent(){
-      if(!!this.catFilesModel.tunnelId&&!!this.catFilesModel.direction){
-        let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
-        console.log(tunnel)
+    catChangeEvent() {
+      if (!!this.catFilesModel.tunnelId && !!this.catFilesModel.direction) {
+        let tunnel = this.tunnelData.find(
+          (tunnelItem) => tunnelItem.tunnelId == this.catFilesModel.tunnelId
+        );
+        console.log(tunnel);
         // debugger
-        let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
-        this.catListConfig(queryParams)
+        let queryParams = {
+          tunnelName: tunnel.tunnelName,
+          pageSize: 1,
+          pageNum: 2,
+          direction: this.catFilesModel.direction,
+          modeType: 1,
+        };
+        this.catListConfig(queryParams);
       }
-
     },
     //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
-    catChangeEventWei(){
-      if(!!this.catFilesModelWei.tunnelId&&!!this.catFilesModelWei.direction) {
-        let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.catFilesModelWei.tunnelId)
-        console.log(tunnel)
+    catChangeEventWei() {
+      if (
+        !!this.catFilesModelWei.tunnelId &&
+        !!this.catFilesModelWei.direction
+      ) {
+        let tunnel = this.tunnelData.find(
+          (tunnelItem) => tunnelItem.tunnelId == this.catFilesModelWei.tunnelId
+        );
+        console.log(tunnel);
         // debugger
         let queryParams = {
           tunnelName: tunnel.tunnelName,
           pageSize: 1,
           pageNum: 2,
           direction: this.catFilesModelWei.direction,
-          modeType: 1
-        }
-        this.catListConfigWei(queryParams)
+          modeType: 1,
+        };
+        this.catListConfigWei(queryParams);
       }
     },
     //车辆照明配置查询
-    catListConfig(queryParams){
+    catListConfig(queryParams) {
       listConfig(queryParams).then((response) => {
-        if( response.rows.length>0){
+        if (response.rows.length > 0) {
           let rows = response.rows[0];
-          this.catFilesModel.id = rows.id
-          this.catFilesModel.isStatus =  rows.isStatus.toString()
-          if(!!rows.beforeLuminance){
-            this.catFilesModel.beforeLuminance =  rows.beforeLuminance
-          }else{
-            this.catFilesModel.beforeLuminance =''
+          this.catFilesModel.id = rows.id;
+          this.catFilesModel.isStatus = rows.isStatus.toString();
+          if (!!rows.beforeLuminance) {
+            this.catFilesModel.beforeLuminance = rows.beforeLuminance;
+          } else {
+            this.catFilesModel.beforeLuminance = "";
           }
 
-
           let jsonArray = JSON.parse(rows.timeSlot);
-          if(!!jsonArray){
-            this.formItems =JSON.parse(rows.timeSlot);
-            if(this.formItems){
+          if (!!jsonArray) {
+            this.formItems = JSON.parse(rows.timeSlot);
+            if (this.formItems) {
               for (let index = 0; index < this.formItems.length; index++) {
                 const param = this.formItems[index];
                 param.startTime = new Date(
@@ -1071,49 +1198,48 @@ export default {
                 );
               }
             }
-          }else{
-            this.formItems =[
+          } else {
+            this.formItems = [
               {
-                label: '',
-                startTime: '',
-                endTime: '',
-              }
-            ]
+                label: "",
+                startTime: "",
+                endTime: "",
+              },
+            ];
           }
-        }else{
-          this.catFilesModel.id = ''
-          this.catFilesModel.beforeLuminance =''
-          this.formItems =[
+        } else {
+          this.catFilesModel.id = "";
+          this.catFilesModel.beforeLuminance = "";
+          this.formItems = [
             {
-              label: '',
-              startTime: '',
-              endTime: '',
-            }
-          ]
+              label: "",
+              startTime: "",
+              endTime: "",
+            },
+          ];
         }
         this.$forceUpdate();
         // this.total = response.total;
         // this.loading = false;
-      })
+      });
     },
     //车辆照明配置查询
-    catListConfigWei(queryParams){
+    catListConfigWei(queryParams) {
       listConfig(queryParams).then((response) => {
-        if( response.rows.length>0){
+        if (response.rows.length > 0) {
           let rows = response.rows[0];
-          this.catFilesModelWei.id = rows.id
-          this.catFilesModelWei.isStatus =  rows.isStatus.toString()
-          if(!!rows.beforeLuminance){
-            this.catFilesModelWei.beforeLuminance =  rows.beforeLuminance
-          }else{
-            this.catFilesModelWei.beforeLuminance =''
+          this.catFilesModelWei.id = rows.id;
+          this.catFilesModelWei.isStatus = rows.isStatus.toString();
+          if (!!rows.beforeLuminance) {
+            this.catFilesModelWei.beforeLuminance = rows.beforeLuminance;
+          } else {
+            this.catFilesModelWei.beforeLuminance = "";
           }
 
-
           let jsonArray = JSON.parse(rows.timeSlot);
-          if(!!jsonArray){
-            this.formItemsWei =JSON.parse(rows.timeSlot);
-            if(this.formItemsWei){
+          if (!!jsonArray) {
+            this.formItemsWei = JSON.parse(rows.timeSlot);
+            if (this.formItemsWei) {
               for (let index = 0; index < this.formItemsWei.length; index++) {
                 const param = this.formItemsWei[index];
                 param.startTime = new Date(
@@ -1124,112 +1250,110 @@ export default {
                 );
               }
             }
-          }else{
-            this.formItemsWei =[
+          } else {
+            this.formItemsWei = [
               {
-                label: '',
-                startTime: '',
-                endTime: '',
-              }
-            ]
+                label: "",
+                startTime: "",
+                endTime: "",
+              },
+            ];
           }
-        }else{
-          this.catFilesModelWei.id = ''
-          this.catFilesModelWei.beforeLuminance =''
-          this.formItemsWei =[
+        } else {
+          this.catFilesModelWei.id = "";
+          this.catFilesModelWei.beforeLuminance = "";
+          this.formItemsWei = [
             {
-              label: '',
-              startTime: '',
-              endTime: '',
-            }
-          ]
+              label: "",
+              startTime: "",
+              endTime: "",
+            },
+          ];
         }
         this.$forceUpdate();
         // this.total = response.total;
         // this.loading = false;
-      })
+      });
     },
   },
-  props:{
-    show:Boolean,
+  props: {
+    show: Boolean,
     tunnelItem: {
-      type: Object
+      type: Object,
     },
     tunnelList: {
-      type: Array
-    }
+      type: Array,
+    },
   },
-  watch:{
-    show:{
-      async handler(newValue, oldValue){
+  watch: {
+    show: {
+      async handler(newValue, oldValue) {
         // debugger
-        this.visibleSync = !this.visibleSync
+        this.visibleSync = !this.visibleSync;
         // //查询主策略
         // this.selectListStrategy()
         //查询隧道列表
-        await this.getTunnels()
+        await this.getTunnels();
         //查询方向
-        await this.getDirection()
+        await this.getDirection();
         //
         // this.$nextTick(() => {
         //   this.getEchartsData(true)
         // });
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 .buttonBox {
   display: flex;
   justify-content: space-around;
   align-items: center;
   height: 36px;
-.delete,.add{
-  width:16px;
-  height: 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100%;
-  border:none;
-  background-color: transparent;
+  .delete,
+  .add {
+    width: 16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border: none;
+    background-color: transparent;
+  }
+  .delete {
+    background-image: url(../../../../assets/icons/delete.png);
+  }
+  .add {
+    background-image: url(../../../../assets/icons/add.png);
+  }
 }
-.delete{
-  background-image: url(../../../../assets/icons/delete.png);
-}
-.add{
-  background-image: url(../../../../assets/icons/add.png);
-}
-}
-.el-form-item-data{
-  .el-form-item__content{
-    width:85%;
+.el-form-item-data {
+  .el-form-item__content {
+    width: 85%;
   }
 }
 
-.el-form-item-data-type{
-.el-form-item__content{
-  width:30%;
+.el-form-item-data-type {
+  .el-form-item__content {
+    width: 30%;
+  }
+  .el-form-item__label {
+    width: 70px !important;
+  }
 }
-.el-form-item__label{
-  width:70px !important;
-}
-}
-.el-form-item-data{
-.el-form-item__content{
-  width:60%;
-}
-.el-form-item__label{
-  width:70px !important;
-}
+.el-form-item-data {
+  .el-form-item__content {
+    width: 60%;
+  }
+  .el-form-item__label {
+    width: 70px !important;
+  }
 }
 .el-form-item-direction-Item {
-
-.el-form-item__content {
-  width: 89%;
-}
-
+  .el-form-item__content {
+    width: 89%;
+  }
 }
 </style>

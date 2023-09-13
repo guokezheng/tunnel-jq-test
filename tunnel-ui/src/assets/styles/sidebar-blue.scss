@@ -3993,6 +3993,9 @@
       max-height: 70vh;
       overflow: auto;
     }
+    .el-dialog:not(.is-fullscreen){
+      margin-top: 4vh !important;
+    }
   }
 
   // 应急调度

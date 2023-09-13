@@ -101,7 +101,7 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
         //状态映射
         jsonObject.put("rdRunStatus",getRunStatusMapping(state));
         //与回复指令对应，使用时间戳
-        jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
+        jsonObject.put("actionId", getRunStatusMapping(state));
 
         mqttGateway.sendToMqtt("rhy/iot/control/rollDoor/runStatus/"+ctrlSn,1,jsonObject.toJSONString());
         return AjaxResult.success();
@@ -181,7 +181,33 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
      */
     private void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic){
 
-        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
+        String deviceId = sdDevices.getEqId();
+
+//        {
+//            "sn": "1",
+//                "actionId": "1",
+//                "error": "00",
+//                "timeStamp": ""
+//        }
+//        error
+//        00：无错误
+//        01：指令执行错误
+//        02：命令设备与控制器挂在设备不符合
+//        03：错误的参数
+        JSONObject jsonObject = JSONObject.parseObject(payload);
+        String actionId = String.valueOf(jsonObject.get("actionId"));
+        String error = String.valueOf(jsonObject.get("error"));
+        String timeStamp = String.valueOf(jsonObject.get("timeStamp"));
+        //todo 如何处理
+        if(!"00".equals(error)){
+            log.error("鸿蒙MQTT指令上报，设备ID="+deviceId+",设备故障码="+error);
+        }else{
+            updateRunStatus(sdDevices,actionId);
+
+            //TODO 死循环，厂家流程问题
+            // queryDeviceData(sdDevices,topic);
+        }
+      //  hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
     }
 
 
@@ -226,6 +252,8 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
                 break;
 
         }
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**

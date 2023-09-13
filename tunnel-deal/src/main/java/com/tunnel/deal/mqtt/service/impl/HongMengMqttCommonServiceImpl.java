@@ -158,7 +158,9 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         if(!"00".equals(error)){
             log.error("鸿蒙MQTT指令上报，设备ID="+deviceId+",设备故障码="+error);
         }else{
-           queryDeviceData(sdDevices,topic);
+
+            //TODO 死循环，厂家流程问题
+          // queryDeviceData(sdDevices,topic);
         }
     }
 

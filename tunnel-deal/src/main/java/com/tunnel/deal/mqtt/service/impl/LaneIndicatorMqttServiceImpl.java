@@ -106,7 +106,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //状态映射
         jsonObject.put("liRunStatus",getRunStatusMapping(state));
         //与回复指令对应，使用时间戳
-        jsonObject.put("actionId", hongMengMqttCommonService.getActionId());
+        jsonObject.put("actionId", getRunStatusMapping(state));
 
         mqttGateway.sendToMqtt("rhy/iot/control/laneIndicator/runStatus/"+ctrlSn,1,jsonObject.toJSONString());
 
@@ -168,8 +168,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
 
-        //向万集推送机电设备实时数据
-        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
+
         mcaLogger.info("鸿蒙测控执行器"+sdDevices.getExternalDeviceId()+"[万集推送] == > " + ",设备sn：" + sdDevices.getExternalDeviceId()  +",当前时间" + DateUtils.getTime());
 
     }
@@ -190,8 +189,34 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
      * @param payload    消息
      */
     private void handleExecStateReceiveData(SdDevices sdDevices, String payload,String topic){
+        String deviceId = sdDevices.getEqId();
 
-        hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
+//        {
+//            "sn": "1",
+//                "actionId": "1",
+//                "error": "00",
+//                "timeStamp": ""
+//        }
+//        error
+//        00：无错误
+//        01：指令执行错误
+//        02：命令设备与控制器挂在设备不符合
+//        03：错误的参数
+        JSONObject jsonObject = JSONObject.parseObject(payload);
+        String actionId = String.valueOf(jsonObject.get("actionId"));
+        String error = String.valueOf(jsonObject.get("error"));
+        String timeStamp = String.valueOf(jsonObject.get("timeStamp"));
+        //todo 如何处理
+        if(!"00".equals(error)){
+            log.error("鸿蒙MQTT指令上报，设备ID="+deviceId+",设备故障码="+error);
+        }else{
+            updateRunStatus(sdDevices,actionId);
+
+            //TODO 死循环，厂家流程问题
+            // queryDeviceData(sdDevices,topic);
+        }
+
+        //hongMengMqttCommonService.handleExecStateReceiveData(sdDevices,payload,topic);
     }
 
     /**
@@ -205,7 +230,7 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
         //状态设备类型数据项
         long statusItemCode;
         String eqType = String.valueOf(sdDevices.getEqType());
-        if(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().equals(eqType)){
+        if(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().toString().equals(eqType)){
             //普通车道指示器
             statusItemCode = DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode();
         }else{
@@ -250,6 +275,8 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
                 break;
 
         }
+        //向万集推送机电设备实时数据
+        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
 

@@ -1000,14 +1000,14 @@ export default {
       );
      
       // getVideoUrl()
-        // .then((res) => {
-          // console.log(res, "机器人视频");
-          this.liveUrl5 = 'http://10.7.179.15:7080/video/fireVideo.mp4'
+      //   .then((res) => {
+      //     console.log(res, "机器人视频");
+      //     this.liveUrl5 = res.data.infrared
+          this.liveUrl5 = 'rtmp://192.168.50.123:1231/live/2'
+
           this.$nextTick(()=>{
             this.$refs.playerObj.init(this.liveUrl5)
           })
-          
-
         // })
         // .catch(() => {
         // });

@@ -284,6 +284,21 @@
               ></el-switch>
             </div>
           </el-col>
+          <el-col :span="12">
+            <div class="drawerItem zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.7vw; margin-right: 0.5vw"
+              >
+                {{ fluctuateSwitch == 0 ? "波动灯光开" : "波动灯光关" }}
+              </p>
+              <el-switch
+                v-model="fluctuateSwitch"
+                class="switchStyle"
+                @change="fluctuateChange"
+              ></el-switch>
+            </div>
+          </el-col>
         </el-row>
       </el-drawer>
       <div
@@ -2076,6 +2091,7 @@ import {
   getLightingConfigByParam,
   addConfig,
   updateConfig,
+  openIllumination, closeIllumination
 } from "@/api/business/enhancedLighting/app.js";
 import { listRl } from "@/api/event/strategyRl";
 
@@ -2445,6 +2461,7 @@ export default {
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       displayNumb: false, //显示编号
       zoomSwitch: false, //缩放
+      fluctuateSwitch:false,
       currentTunnel: {
         id: "",
         name: "",
@@ -3854,7 +3871,23 @@ export default {
         this.handleTableWheelSwithch = true;
       }
     },
-
+    fluctuateChange(val){
+      if (val == true) {
+        openIllumination().then((response) => {
+          if (response.code == 200) {
+          } else {
+            this.$modal.msgError(response.msg);
+          }
+        });
+      } else {
+        closeIllumination().then((response) => {
+          if (response.code == 200) {
+          } else {
+            this.$modal.msgError(response.msg);
+          }
+        });
+      }
+    },
     /** 设备类型 */
     getEqType() {
       getCategoryTree().then((response) => {

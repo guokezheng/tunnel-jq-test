@@ -540,7 +540,7 @@ public class SanJingLight implements Light, GeneralControlBean {
     public int setBrightnessByDevice(SdDevices device,Integer nowLuminanceRange ,Integer luminanceRange, String controlType) {
         int resultStatus;
         try{
-//            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+            resultStatus = setBrightness(device.getEqId(),luminanceRange);
             resultStatus = 1;
         }catch (Exception e){
             e.printStackTrace();
@@ -673,6 +673,7 @@ public class SanJingLight implements Light, GeneralControlBean {
         if(StringUtils.isEmpty(baseUrl)){
             return AjaxResult.error("未配置该设备所属的外部系统地址");
         }
+
 
 //        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
         String jessionId;

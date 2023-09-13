@@ -69,9 +69,9 @@ public class HongMengMqttTask {
             if(!onlineFlag.equals(status)){
                 //鸿蒙控制器10秒内没有信息返回，设备设置为离线
                 //2023-9-10修改：鸿蒙控制器长时间不上报数据，将子设备离线去掉
-                devicesService.updateOfflineStatus(deviceId,false);
+                devicesService.updateOfflineStatus(deviceId,true);
             }else{
-                devicesService.updateOnlineStatus(deviceId,false);
+                devicesService.updateOnlineStatus(deviceId,true);
                 onlineCount++;
             }
         }
@@ -84,10 +84,16 @@ public class HongMengMqttTask {
     public void getDeviceData(){
         List<SdDevices> devicesList = getHongMengDeviceList();
         devicesList.forEach(device->{
-            String eqType = String.valueOf(device.getEqType());
-            HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
-            //查询设备状态或者数据
-            hongMengMqttService.queryDeviceData(device);
+            try {
+                String eqType = String.valueOf(device.getEqType());
+                HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
+                //查询设备状态或者数据
+                hongMengMqttService.queryDeviceData(device);
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         });
     }
 

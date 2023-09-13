@@ -138,11 +138,11 @@ public class MqttInboundConfiguration {
                         String clientId = json.get("clientid").toString();
                         //设备上线
                         if(topic.contains("connected")){
-                            devicesService.updateOnlineStatus(clientId,false);
+                            devicesService.updateOnlineStatus(clientId,true);
                         }
                         //设备下线
                         if(topic.contains("disconnected")){
-                            devicesService.updateOfflineStatus(clientId,false);
+                            devicesService.updateOfflineStatus(clientId,true);
                         }
                     }
 

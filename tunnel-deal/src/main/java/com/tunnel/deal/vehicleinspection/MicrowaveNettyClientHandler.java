@@ -10,19 +10,18 @@ import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
-import com.tunnel.business.domain.dataInfo.SdMicrowaveRealData;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
 import com.tunnel.business.utils.util.RadixUtil;
 import com.tunnel.deal.light.impl.SanJingLight;
+import com.tunnel.deal.light.impl.SansiLightImpl;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
@@ -31,6 +30,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -53,6 +53,8 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
     private SanJingLight sanJingLight =  SpringUtils.getBean(SanJingLight.class);
 
+    private SansiLightImpl sansiLightImpl =  SpringUtils.getBean(SansiLightImpl.class);
+
     private SdRadarDetectDataTemporaryMapper sdRadarDetectDataTemporaryMapper =  SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
 
     private SdDeviceDataMapper sdDeviceDataMapper =  SpringUtils.getBean(SdDeviceDataMapper.class);
@@ -63,6 +65,10 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
      * Redis缓存工具类
      * */
     private RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
+
+    @Autowired
+    private ISdDevicesProtocolService sdDevicesProtocolService;
+
 
     /**
      * 建立连接时
@@ -311,7 +317,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         Long respondTime = sdEnhancedLightingConfig.getRespondTime();
         //最小亮度值
         Integer  minLuminance = sdEnhancedLightingConfig.getMinLuminance();
-
+        //当前亮度值
         Integer beforeLuminance = sdEnhancedLightingConfig.getBeforeLuminance();
 
         Integer luminanceRange;
@@ -425,7 +431,18 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                         ThreadPool.executor.execute(() -> {
                             for (SdDevices devices:deviceIds) {
                                 log.info("结束亮光值:["+ tunnelId +"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                                SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
+                                if(devicesProtocol == null){
+                                    continue;
+                                }
+                                String className = devicesProtocol.getClassName();
+                                int flag =0;
+                                if(className.contains("sansi")){
+                                     flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                                }else{
+                                    flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                                }
+//                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
                                 if(flag == 0){
                                     log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                 }
@@ -561,7 +578,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 //                //当前亮度值初始值
 //                luminanceRange = sdEnhancedLightingConfig.getBeforeLuminance();
 //                //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
-//                //int nowLuminanceRange =  sdEnhancedLightingConfigService.getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
+////                int nowLuminanceRange =  sdEnhancedLightingConfigService.getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
 //                int nowLuminanceRange = luminanceRange;
 //                //循环推送当前调光值
 //                for (SdDevices devices:deviceIds) {

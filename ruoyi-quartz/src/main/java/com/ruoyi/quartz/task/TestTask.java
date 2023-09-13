@@ -53,7 +53,7 @@ public class TestTask {
     public void runTask(){
         //模拟数据
         for (int i = 0; i < 10; i++) {
-            getCar("JQ-WeiFang-JiuLongYu-HSD" ,"1" ,i);
+            getCar("JQ-JiNan-WenZuBei-MJY" ,"1" ,i);
 
             long time = (long ) (Math.random()*1000)*30;
             System.out.println("主线程等待"+time);
@@ -80,14 +80,14 @@ public class TestTask {
         for (SdEnhancedLightingConfig sdEnhancedLightingConfig:sdEnhancedLightingConfigList) {
             //隧道id , 方向
             //查看当前模式是否为 定时模式。 若为定时模式，则忽略操作
-            if(sdEnhancedLightingConfig.getTunnelId().equals("JQ-WeiFang-JiuLongYu-HSD")&&sdEnhancedLightingConfig.getModeType() != 0){
+            if(sdEnhancedLightingConfig.getTunnelId().equals("JQ-JiNan-WenZuBei-MJY")&&sdEnhancedLightingConfig.getModeType() != 0){
 
                 //响应时间
                 Integer respondTime = Math.toIntExact(sdEnhancedLightingConfig.getRespondTime());
                 //模拟过车数据
                 Map vehicleMap  = new HashMap<>();
                 vehicleMap.put("no",carNumber);
-                redisCache.setCacheObject("vehicleSnap:" + "JQ-WeiFang-JiuLongYu-HSD" + ":" + "1" + ":" + "vehicle"+carNumber, vehicleMap,respondTime, TimeUnit.MILLISECONDS);
+                redisCache.setCacheObject("vehicleSnap:" + "JQ-JiNan-WenZuBei-MJY" + ":" + "1" + ":" + "vehicle"+carNumber, vehicleMap,respondTime, TimeUnit.MILLISECONDS);
 
                 //推送当前指令
                 adjustBrightnessByRunMode(tunnelId,roadDir,sdEnhancedLightingConfig);
@@ -116,7 +116,7 @@ public class TestTask {
         //调光最小区间
         Integer  minLuminanceRange = sdEnhancedLightingConfig.getMinLuminanceRange();
         //最大车流量
-        Integer  maxTrafficFlow = Math.toIntExact(sdEnhancedLightingConfig.getMaxTrafficFlow());
+//        Integer  maxTrafficFlow = Math.toIntExact(sdEnhancedLightingConfig.getMaxTrafficFlow());
         //响应时间
         Long respondTime = sdEnhancedLightingConfig.getRespondTime();
         //最小亮度值

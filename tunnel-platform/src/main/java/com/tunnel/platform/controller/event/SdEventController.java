@@ -391,7 +391,7 @@ public class SdEventController extends BaseController
                 ExternalSystem system = new ExternalSystem();
                 system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
                 List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
-                int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), distance + 10 + "", null, null, list.get(0).getSystemUrl());
+                int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), distance - 10 + "", null, null, list.get(0).getSystemUrl());
                 if(count == 1){
                     //getRobotNum(sdEvent1);
                     roBotNum = eventPile;

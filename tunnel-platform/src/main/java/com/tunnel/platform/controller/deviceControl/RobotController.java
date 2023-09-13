@@ -580,11 +580,17 @@ public class RobotController {
         StatusDto statusDto = zhuoShiCorniceTunnelRobot.GetStatus(list.get(0).getParam(),list.get(0).getSystemUrl());
 
         if(statusDto != null){
-            BigDecimal position = new BigDecimal(statusDto.getPosition());
-            statusDto.setPosition(position.divide(new BigDecimal(1000),0,BigDecimal.ROUND_HALF_UP).toString());
+            if(statusDto.getPosition() == null || "".equals(statusDto.getPosition())){
+                statusDto.setPosition("0");
+            }else {
+                BigDecimal position = new BigDecimal(statusDto.getPosition());
+                statusDto.setPosition(position.divide(new BigDecimal(1000),0,BigDecimal.ROUND_HALF_UP).toString());
+            }
             Integer position1 = Integer.valueOf(statusDto.getPosition());
-            if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
-                zhuoShiCorniceTunnelRobot.SetLEDLight(list.get(0).getParam(),1,list.get(0).getSystemUrl());
+            if(SdEventController.roBotNum != 0){
+                if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
+                    zhuoShiCorniceTunnelRobot.SetLEDLight(list.get(0).getParam(),1,list.get(0).getSystemUrl());
+                }
             }
             return  AjaxResult.success(statusDto);
         }

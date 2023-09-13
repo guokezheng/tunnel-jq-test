@@ -320,9 +320,18 @@
                       size="mini"
                       style="float: right; "
                       icon="el-icon-check"
-                      v-show="itm.eventState != '0' && itm.processId"
+                      v-show="itm.eventState != '0' && itm.processId && itm.eqTypeId != '29'"
                       @click="getManagementDevice(itm)">
                       完成
+                    </el-button>
+                    <el-button type="success"
+                      plain
+                      size="mini"
+                      style="float: right; "
+                      icon="el-icon-check"
+                      v-show="itm.eventState != '0' && itm.eqTypeId == '29'"
+                      @click="getManagementDevice(itm)">
+                      打开
                     </el-button>
                     <!-- <img
                       :src="incHand2"
@@ -1025,6 +1034,7 @@ import {
   updateSituationUpgrade,
   getEventInif,
   getAllManagementDevices,
+  roBotDong,
 } from "@/api/event/event";
 // import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -1326,8 +1336,14 @@ export default {
     },
     getManagementDevice(item) {
       console.log(item);
+      console.log(this.$route.query.id,"aaaaa")
       if (item.eqTypeId == 29) {
         this.robotDialogVisible = true;
+        if(item.eventState == "0"){
+          roBotDong(this.$route.query.id,item.id).then((res) => {
+            this.evtHandle();
+          })
+        }
         return;
       }
       if (item.eventState != "0" && item.processId) {

@@ -214,4 +214,10 @@ public interface SdEventMapper
      * @return 事件管理集合
      */
     public List<SdEvent> selectSdEventSingleList(SdEvent sdEvent);
+
+    //修改事件置信度
+    int updateEventConfidence(SdEvent sdEvent);
+
+    //新增事件置信度
+    int insertEventConfidence(SdEvent sdEvent);
 }

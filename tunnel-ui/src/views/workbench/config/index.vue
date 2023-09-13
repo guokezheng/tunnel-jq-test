@@ -4868,9 +4868,9 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               if (tunnelId == "JQ-JiNan-WenZuBei-MJY") {
-                // setInterval(() => {
-                //   this.getRobot();
-                // }, 2000);
+                setInterval(() => {
+                  this.getRobot();
+                }, 2000);
               }
 
               // 匹配设备方向
@@ -4970,7 +4970,7 @@ export default {
         deviceId: this.robotId,
       };
       await getWorkStagingRobot(param).then((res) => {
-        console.log(res, "机器人");
+        // console.log(res, "机器人");
         this.robotPositon = (
           (Number(res.data.position) / this.tunnelLang) *
           100

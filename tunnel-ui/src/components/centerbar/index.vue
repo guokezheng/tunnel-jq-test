@@ -88,6 +88,7 @@
       <el-badge
         :value="nodealNum"
         :hidden="nodealNum > 0 ? false : true"
+        :max="99"
         class="item bell_icon"
       >
         <img

@@ -370,47 +370,40 @@ public class SdEventController extends BaseController
     public AjaxResult getHandle(SdEvent sdEvent){
         List<SdEventHandle> handle = sdEventService.getHandle(sdEvent);
         SdEvent sdEvent1 = sdEventService.selectSdEventById(sdEvent.getId());
-        threadPoolTaskExecutor.execute(()->{
+        /*threadPoolTaskExecutor.execute(()->{
             rodro(handle,sdEvent1);
-        });
+        });*/
         return AjaxResult.success(handle);
     }
 
-    public void rodro(List<SdEventHandle> handle,SdEvent sdEvent1){
-        for(SdEventHandle item : handle){
-            if(DevicesTypeEnum.ROBOT.getCode() == item.getEqTypeId() && TunnelEnum.HU_SHAN.getCode().equals(sdEvent1.getTunnelId())){
-                CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
-                SdTunnels sdTunnels = tunnelsService.selectSdTunnelsById(TunnelEnum.HU_SHAN.getCode());
-                //事件桩号
-                Integer eventPile = Integer.valueOf(sdEvent1.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
-                //隧道起点桩号
-                Integer tunnelPile = Integer.valueOf(sdTunnels.getStartPileNum());
-                //计算距离
-                Integer distance = eventPile - tunnelPile;
-                //查询地址
-                ExternalSystem system = new ExternalSystem();
-                system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
-                List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
-                int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), distance - 10 + "", null, null, list.get(0).getSystemUrl());
-                if(count == 1){
-                    //getRobotNum(sdEvent1);
-                    roBotNum = eventPile;
-                }
-
-            }
+    /**
+     * 机器人移动
+     * @param
+     */
+    @GetMapping("/roBotDong")
+    public void roBotDong(@RequestParam("eventId") Long eventId, @RequestParam("handleId") Long handleId){
+        CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
+        SdEvent sdEvent1 = sdEventMapper.selectSdEventById(eventId);
+        SdTunnels sdTunnels = tunnelsService.selectSdTunnelsById(TunnelEnum.HU_SHAN.getCode());
+        //事件桩号
+        Integer eventPile = Integer.valueOf(sdEvent1.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
+        //隧道起点桩号
+        Integer tunnelPile = Integer.valueOf(sdTunnels.getStartPileNum());
+        //计算距离
+        Integer distance = eventPile - tunnelPile;
+        //查询地址
+        ExternalSystem system = new ExternalSystem();
+        system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
+        List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
+        int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), distance - 10 + "", null, null, list.get(0).getSystemUrl());
+        if(count == 1){
+            roBotNum = eventPile;
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventState("1");
+            sdEventHandle.setId(handleId);
+            sdEventHandleMapper.updateSdEventHandle(sdEventHandle);
         }
     }
-
-    /*public void getRobotNum(SdEvent sdEvent){
-        RobotController robotController = new RobotController();
-        //事件桩号
-        Integer eventPile = Integer.valueOf(sdEvent.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
-        StatusDto statusDto = (StatusDto)robotController.getWorkStagingRobot(null).get("data");
-        Integer position = Integer.valueOf(statusDto.getPosition());
-        do {
-
-        }while (position-3)
-    }*/
 
     /**
      * 更新事件处置

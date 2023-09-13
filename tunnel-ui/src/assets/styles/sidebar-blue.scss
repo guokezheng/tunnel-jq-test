@@ -264,7 +264,7 @@
   }
 
   .el-tree {
-    background: rgba(44, 62, 145, 0.3);
+    background: #181A5B;
     color: #fff;
   }
 
@@ -1075,7 +1075,7 @@
       }
 
       .el-tree-node__content:hover {
-        background: rgba(0, 0, 0, 0.1) !important;
+        background: #2C3E91  !important;
 
       }
 
@@ -1239,7 +1239,7 @@
     }
 
     .el-input--medium .el-input__inner {
-      background-color: #004375 !important;
+      background-color: #1A3579 !important;
       color: white;
       border: 1px solid #25678D !important;
     }
@@ -1415,7 +1415,7 @@
   }
 
   .el-dropdown-menu {
-    background: rgba(0, 56, 89, .8);
+    background: rgba($color: #182B6E, $alpha: 0.8);
     border: none;
 
     .el-dropdown-menu__item {
@@ -1645,7 +1645,7 @@
     }
 
     .el-tree-node__content:hover {
-      background: rgba(0, 0, 0, 0.1) !important;
+      background: #2C3E91 !important;
     }
 
     .el-textarea__inner {
@@ -2558,7 +2558,7 @@
   }
 
   .videoTabs .el-tabs__item.is-active {
-    color: #0198FF !important;
+    color: #01aafd !important;
   }
 
   .vehicle-dialog {
@@ -3992,6 +3992,9 @@
     .el-dialog__body {
       max-height: 70vh;
       overflow: auto;
+    }
+    .el-dialog:not(.is-fullscreen){
+      margin-top: 4vh !important;
     }
   }
 

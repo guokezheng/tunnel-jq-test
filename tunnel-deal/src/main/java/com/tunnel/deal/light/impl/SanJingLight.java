@@ -144,7 +144,7 @@ public class SanJingLight implements Light, GeneralControlBean {
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         String jessionId;
         try {
-            String tokenKey = "control:sanJingLighttoken";
+            String tokenKey = "control:sanJingLighttoken" + baseUrl;
             jessionId = redisCache.getCacheObject(tokenKey);
             if(jessionId == null){
                 jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
@@ -212,7 +212,7 @@ public class SanJingLight implements Light, GeneralControlBean {
 //        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
         String jessionId;
 
-        String tokenKey = "control:sanJingLighttoken";
+        String tokenKey = "control:sanJingLighttoken" + baseUrl;
 
         jessionId = redisCache.getCacheObject(tokenKey);
 
@@ -611,7 +611,7 @@ public class SanJingLight implements Light, GeneralControlBean {
     public String getCacheToken(String username,String password,String systemUrl){
 
         //token缓存key值
-        String key = Constants.SANJING_LIGHT_TOKEN;
+        String key = Constants.SANJING_LIGHT_TOKEN + systemUrl;
         //token有效时间15分钟
         Integer expireTime = 15;
         //获取缓存token
@@ -678,7 +678,7 @@ public class SanJingLight implements Light, GeneralControlBean {
 //        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
         String jessionId;
 
-        String tokenKey = "control:sanJingLighttoken";
+        String tokenKey = "control:sanJingLighttoken" + baseUrl;
 
         jessionId = redisCache.getCacheObject(tokenKey);
 

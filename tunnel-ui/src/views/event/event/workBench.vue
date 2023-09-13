@@ -127,10 +127,11 @@
             <div>{{ item.label }}</div>
           </div>
         </div>
-        <div 
+        <div
           class="vehicleLane"
           @mouseover="mouseoversImage"
-          @mouseleave="mouseleaveImage">
+          @mouseleave="mouseleaveImage"
+        >
           <div
             class="content"
             ref="divRoller"
@@ -190,6 +191,27 @@
                         ><br />
                         <span>方向：{{ getDirection(item.eqDirection) }}</span>
                       </div>
+                      <!-- <template>
+                        <div
+                          style="
+                            width: 1955px;
+                            height: 15px;
+                            position: relative;
+                            top: 548px;
+                            left: 209px;
+                          "
+                          v-show="robotShow"
+                        >
+                          <img
+                            src="../../../assets/logo/equipment_log/机器人-在线.png"
+                            class="robotAnimation"
+                            :style="{
+                              left: robotPositon + '%',
+                            }"
+                            @click="clickRobot()"
+                          />
+                        </div>
+                      </template> -->
                       <div
                         v-show="
                           (item.eqType != 7 &&
@@ -748,7 +770,7 @@
   </div>
 </template>
 <script>
-import { laneImage,laneImage2 } from "../../../utils/configData.js";
+import { laneImage, laneImage2 } from "../../../utils/configData.js";
 import {
   listTunnels,
   getTunnels,
@@ -765,6 +787,7 @@ import {
   getJlyTunnel,
   energyConsumptionDetection,
   getBoardContent,
+  getWorkStagingRobot
 } from "@/api/equipment/tunnel/api.js";
 import {
   listType,
@@ -864,6 +887,9 @@ export default {
   },
   data() {
     return {
+      tunnelLang: 0,//隧道长度
+      robotPositon:99,
+      robotShow:false,
       leftButtonS: "leftButtonS",
       robotIframeShow: false,
       title: "",
@@ -906,7 +932,8 @@ export default {
       handleTableWheelSwithch: false,
       moveTop: 0.11,
       move: false,
-      laneUrlList: this.$cache.local.get("navigationBar") == '0'?laneImage:laneImage2,
+      laneUrlList:
+        this.$cache.local.get("navigationBar") == "0" ? laneImage : laneImage2,
       showTooltipIndex: 9999,
       eqInfo: {},
       brandList: [],
@@ -930,10 +957,10 @@ export default {
     // "scrollview": function (newVal, oldVal) {
     //   console.log(newVal, "newVal");
     // },
-    treeShow(val){
-      if(!val){
+    treeShow(val) {
+      if (!val) {
         // 关闭树形菜单后 折叠之前打开的树形菜单
-      const nodes = this.$refs.tree.store._getAllNodes();
+        const nodes = this.$refs.tree.store._getAllNodes();
         nodes.forEach((item) => {
           item.expanded = false;
         });
@@ -1040,10 +1067,9 @@ export default {
   },
   created() {},
   mounted() {
-    
-   // 添加滚动监听，该滚动监听了拖拽滚动条
-   // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-      window.addEventListener("scroll", this.mouseSrollAuto);
+    // 添加滚动监听，该滚动监听了拖拽滚动条
+    // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
+    window.addEventListener("scroll", this.mouseSrollAuto);
   },
   //实例销毁前清除定时器
   beforeDestroy() {
@@ -1056,7 +1082,7 @@ export default {
   },
   beforeRouteLeave(to, form, next) {
     // 离开路由移除滚动事件
-    window.removeEventListener('scroll',this.mouseSrollAuto, true);
+    window.removeEventListener("scroll", this.mouseSrollAuto, true);
     next();
   },
   methods: {
@@ -1066,6 +1092,7 @@ export default {
       this.tunnelId = workBenchProp.tunnelId;
       this.tunnelName = workBenchProp.tunnelName;
       this.tunnelStationName = workBenchProp.tunnelStationName;
+      this.tunnelLang = workBenchProp.tunnelLang
       this.visible = true;
       this.getBoardContent();
       this.getEqTypeStateIcon();
@@ -1080,11 +1107,11 @@ export default {
       window.addEventListener("click", this.otherClose);
       // if (this.$refs["divRoller"]) {
       //   console.log(111111111)
-        // 获取指定元素
-        // this.scrollview = this.$refs["divRoller"];
-        // // 添加滚动监听，该滚动监听了拖拽滚动条
-        // // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-        // this.scrollview.addEventListener("scroll", this.mouseSrollAuto, true);
+      // 获取指定元素
+      // this.scrollview = this.$refs["divRoller"];
+      // // 添加滚动监听，该滚动监听了拖拽滚动条
+      // // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
+      // this.scrollview.addEventListener("scroll", this.mouseSrollAuto, true);
       // }
     },
     getDict() {
@@ -1103,7 +1130,7 @@ export default {
     },
     // 移动滚动条
     mouseSrollAuto(e) {
-      console.log(e.target.scrollLeft,"e.target.scrollLeft")
+      console.log(e.target.scrollLeft, "e.target.scrollLeft");
       if (e.target.scrollLeft > 0) {
         this.resetCanvasFlag = true;
       } else {
@@ -1196,7 +1223,12 @@ export default {
                   }
                 }
               }
-              that.selectedIconList = res.eqList; //设备zxczczxc
+              that.selectedIconList = res.eqList; //设备
+              // if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+              //   setInterval(() => {
+              //     this.getRobot();
+              //   }, 2000);
+              // }
               // 匹配设备方向
               listDevices().then((data) => {
                 console.log(data, "设备表");
@@ -1263,6 +1295,20 @@ export default {
         this.treeData = res.data;
       });
     },
+    // async getRobot() {
+    //   const param = {
+    //     deviceId: 7,
+    //   };
+    //   await getWorkStagingRobot(param).then((res) => {
+    //     // console.log(res, "机器人");
+    //     this.robotPositon = (
+    //       (Number(res.data.position) / this.tunnelLang) *
+    //       100
+    //     ).toFixed(2) - 1;
+    //     // console.log(this.robotPositon, "this.robotPositon");
+    //     this.$forceUpdate();
+    //   });
+    // },
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, "item");
@@ -1534,7 +1580,7 @@ export default {
       }
       this.$forceUpdate();
     },
-    
+
     // 模拟定时
     getRealTimeData() {
       getDeviceData({
@@ -1658,30 +1704,32 @@ export default {
       let scrollContainer = document.querySelector(".vehicleLane");
       let dragContainer = document.querySelector(".content");
       let mouseDownScrollPosition = {
-            scrollLeft: scrollContainer.scrollLeft,
-            scrollTop: scrollContainer.scrollTop
+        scrollLeft: scrollContainer.scrollLeft,
+        scrollTop: scrollContainer.scrollTop,
+      };
+      //鼠标按下的位置坐标
+      let mouseDownPoint = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+      dragContainer.onmousemove = (e) => {
+        //鼠标滑动的实时距离
+        let dragMoveDiff = {
+          x: mouseDownPoint.x - e.clientX,
+          y: mouseDownPoint.y - e.clientY,
         };
-        //鼠标按下的位置坐标
-        let mouseDownPoint = {
-            x: e.clientX,
-            y: e.clientY
-        };
-        dragContainer.onmousemove = e => {
-            //鼠标滑动的实时距离
-            let dragMoveDiff = {
-                x: mouseDownPoint.x - e.clientX,
-                y: mouseDownPoint.y - e.clientY
-            };
-            scrollContainer.scrollLeft = mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
-            scrollContainer.scrollTop = mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
-            if(scrollContainer.scrollLeft > 0 || scrollContainer.scrollTop > 0){
-              this.resetCanvasFlag = true;
-            }
-        };
-        document.onmouseup = e => {
-            dragContainer.onmousemove = null;
-            document.onmouseup = null;
-        };
+        scrollContainer.scrollLeft =
+          mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
+        scrollContainer.scrollTop =
+          mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
+        if (scrollContainer.scrollLeft > 0 || scrollContainer.scrollTop > 0) {
+          this.resetCanvasFlag = true;
+        }
+      };
+      document.onmouseup = (e) => {
+        dragContainer.onmousemove = null;
+        document.onmouseup = null;
+      };
     },
     // 模糊查询
     treeClick() {
@@ -1704,34 +1752,38 @@ export default {
       if (this.screenEqName) {
         let bigType = "";
         let param = document.getElementsByClassName("vehicleLane");
-        for (var i=0;i< this.selectedIconList.length;i++) {
-          let item = this.selectedIconList[i]
+        for (var i = 0; i < this.selectedIconList.length; i++) {
+          let item = this.selectedIconList[i];
           if (item.eqName == this.screenEqName) {
             bigType = item.bigType;
-            this.showTooltipIndex = i
+            this.showTooltipIndex = i;
             // 工作台宽度1728 所以/864 处置页工作台宽1440 /2 = 720
             if (
               this.currentTunnel.lane.width - item.position.left > 864 &&
               item.position.left > 864
             ) {
               // 中间
-              param[0].scrollLeft = (item.position.left - 864) / 1.2 / 100 * this.zoom;
+              param[0].scrollLeft =
+                ((item.position.left - 864) / 1.2 / 100) * this.zoom;
             } else if (item.position.left < 864) {
               // 左边
               param[0].scrollLeft = 0;
             } else if (
-              this.currentTunnel.lane.width - item.position.left < 864
+              this.currentTunnel.lane.width - item.position.left <
+              864
             ) {
               // 右边
-              param[0].scrollLeft = (this.currentTunnel.lane.width - 1728) / 1.2 * ((this.zoom / 100 ) * 2)  ;
+              param[0].scrollLeft =
+                ((this.currentTunnel.lane.width - 1728) / 1.2) *
+                ((this.zoom / 100) * 2);
             }
-            if(this.zoom != 100){
-                if(item.position.top <300){
-                  param[0].scrollTop = 0
-                }else{
-                  param[0].scrollTop = 580
-                }
+            if (this.zoom != 100) {
+              if (item.position.top < 300) {
+                param[0].scrollTop = 0;
+              } else {
+                param[0].scrollTop = 580;
               }
+            }
             if (
               item.position.left / 1.2 <=
                 this.currentTunnel.lane.width / 1.2 - 200 &&
@@ -2643,5 +2695,15 @@ export default {
   > span {
     display: flex;
   }
+}
+.robotAnimation {
+  width: 25px;
+  height: 25px;
+  // transform: translateY(-12px);
+  // animation: mymove 60s infinite linear;
+  float: left;
+  z-index: 10;
+  cursor: pointer;
+  position: absolute;
 }
 </style>

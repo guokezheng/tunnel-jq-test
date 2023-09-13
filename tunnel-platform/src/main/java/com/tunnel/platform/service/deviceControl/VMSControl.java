@@ -1,16 +1,20 @@
 package com.tunnel.platform.service.deviceControl;
 
+import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdJoinPlanStrategy;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdJoinPlanStrategyMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
@@ -24,15 +28,14 @@ import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
+import com.tunnel.platform.controller.informationBoard.BoardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * describe: 情报板控制类
@@ -69,6 +72,12 @@ public class VMSControl implements GeneralControlBean {
 
     @Autowired
     private ISdIotDeviceService sdIotDeviceService;
+
+    @Autowired
+    private SdEventMapper sdEventMapper;
+
+    @Autowired
+    private RadarEventMapper radarEventMapper;
 
     private static final Logger log = LoggerFactory.getLogger(VMSControl.class);
 
@@ -233,6 +242,8 @@ public class VMSControl implements GeneralControlBean {
         planStrategy.setType(map.get("type").toString());
         List<SdJoinPlanStrategy> vmsDataList = planStrategyMapper.selectSdJoinPlanStrategyList(planStrategy);
         String parameters = "[Playlist]<r><n>ITEM_NO=2<r><n>ITEM000=300,0,1,\\C000000\\fh2424\\c255255000000谨慎驾驶\\n注意安全<r><n>ITEM001=300,0,1,\\C000000\\fh2424\\c255255000000山东高速\\n欢迎您";
+        //情报板参数集合
+        Map<String, Object> boardMap = new HashMap<>();
         if (iotBoardTemplate != null || vmsDataList.size() > 0) {
             IotBoardTemplateContent iotBoardTemplateContent = new IotBoardTemplateContent();
             iotBoardTemplateContent.setTemplateId(templateId.toString());
@@ -263,14 +274,40 @@ public class VMSControl implements GeneralControlBean {
                 fontColor = "000000255000";
             }
             //[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000=500,0,1,\C072004\fh3232\c255255000000前方事故xxxxxx米
-            parameters = "[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000="+ iotBoardTemplate.getStopTime()+",1,1,\\C"
+            //情报板参数光电，电明
+            boardMap.put("deviceIds",sdDevices.getEqId());
+            List<Map<String, Object>> mapList = new ArrayList<>();
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("STAY", iotBoardTemplate.getStopTime());
+            paramMap.put("ACTION","1");
+            paramMap.put("SPEED",1);
+            paramMap.put("COORDINATE",templateContent.getCoordinate());
+            paramMap.put("COLOR",fontColor);
+            paramMap.put("FONT",fontType);
+            paramMap.put("FONT_SIZE",templateContent.getFontSize());
+            if(templateContent.getContent().contains("#")){
+                String content = templateContent.getContent().replaceAll("#", "");
+                Long eventId = Long.valueOf(map.get("currentId").toString());
+                String carPa = radarEventMapper.selectConfidence(eventId);
+                paramMap.put("CONTENT",carPa + content);
+            }else {
+                paramMap.put("CONTENT",templateContent.getContent());
+            }
+            mapList.add(paramMap);
+            boardMap.put("parameters",mapList);
+            /*parameters = "[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000="+ iotBoardTemplate.getStopTime()+",1,1,\\C"
                     +templateContent.getCoordinate()+"\\f"+fontType+templateContent.getFontSize()
-                    +templateContent.getFontSize()+templateContent.getFontSize()+"\\c"+fontColor+templateContent.getContent();
+                    +templateContent.getFontSize()+templateContent.getFontSize()+"\\c"+fontColor+templateContent.getContent();*/
             state = templateContent.getContent();
         }
 
         if (!isopen) {
-            Long dId = sdDevices.getAssociatedDeviceId();
+            BoardController boardController = SpringUtils.getBean(BoardController.class);
+            Object json = JSON.toJSON(boardMap);
+            Map<String, Object> map1 = new HashMap<>();
+            map1.put("objectData",json);
+            AjaxResult ajaxResult = boardController.splicingBoard(map1);
+            /*Long dId = sdDevices.getAssociatedDeviceId();
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(dId);
             String protocolType = sdIotDevice.getProtocolName();
             //连接设备进行控制，需要组装报文
@@ -285,8 +322,13 @@ public class VMSControl implements GeneralControlBean {
             }catch (Exception e){
                 log.error("情报板控制报错："+e.getMessage());
                 controlState = 0;
+            }*/
+            Integer code = Integer.valueOf(ajaxResult.get("code").toString());
+            if(code == 200){
+                controlState = 1;
+            } else {
+                controlState = 0;
             }
-
         } else  {
             //模拟控制
            controlState = analogControl(map,sdDevices,state);

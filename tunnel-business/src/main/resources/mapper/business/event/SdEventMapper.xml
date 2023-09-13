@@ -819,4 +819,24 @@
         </where>
         ORDER BY A.end_time
     </select>
+
+    <update id="updateEventConfidence" parameterType="sdEvent">
+        update sd_event_confidence
+        <set>
+            <if test="confidenceList != null">plate = #{confidenceList},</if>
+        </set>
+        where event_id = #{id}
+    </update>
+
+    <insert id="insertEventConfidence" parameterType="SdEvent">
+        insert into sd_event_confidence
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">event_id,</if>
+            <if test="confidenceList != null">plate,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="confidenceList != null">#{confidenceList},</if>
+        </trim>
+    </insert>
 </mapper>

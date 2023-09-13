@@ -221,7 +221,8 @@ public class SdEventServiceImpl implements ISdEventService {
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
             //计算累计时间
-            String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.getEndTime()), DateUtils.parseDate(item.getStartTime()));
+            String endDatePoor = DateUtils.getDatePoor(item.getEndTime() == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.getEndTime()), item.getStartTime() == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.getStartTime()));;
+
             item.setContinuedTime(endDatePoor);
             SdTrafficImage image = new SdTrafficImage();
             image.setBusinessId(item.getId().toString());
@@ -343,6 +344,12 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
+        String carPa = radarEventMapper.selectConfidence(sdEvent.getId());
+        if(carPa == null){
+            sdEventMapper.insertEventConfidence(sdEvent);
+        }else {
+            sdEventMapper.updateEventConfidence(sdEvent);
+        }
         return count;
     }
 

@@ -588,9 +588,13 @@ public class RobotController {
             }
             Integer position1 = Integer.valueOf(statusDto.getPosition());
             if(SdEventController.roBotNum != 0){
-                if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
-                    zhuoShiCorniceTunnelRobot.SetLEDLight(list.get(0).getParam(),1,list.get(0).getSystemUrl());
-                }
+                /*if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
+                    int count = zhuoShiCorniceTunnelRobot.SetLEDLight(list.get(0).getParam(),1,list.get(0).getSystemUrl());
+                    if(count == 1){
+                        System.out.println("[机器人投光灯已开启]");
+                        SdEventController.roBotNum = 0;
+                    }
+                }*/
             }
             return  AjaxResult.success(statusDto);
         }

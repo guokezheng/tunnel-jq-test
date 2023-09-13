@@ -377,3 +377,11 @@ export function downloadVedio(camId,downLoadTime) {
     method: 'get'
   })
 }
+
+//应急处置-机器人移动
+export function roBotDong(eventId,handleId) {
+  return request({
+    url: '/event/roBotDong?eventId='+eventId+'&handleId='+handleId,
+    method: 'get'
+  })
+}

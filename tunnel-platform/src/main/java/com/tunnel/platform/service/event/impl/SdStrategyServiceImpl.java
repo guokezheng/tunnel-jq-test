@@ -33,6 +33,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.deal.corniceTunnelRobot.CorniceTunnelRobot;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
+import com.tunnel.platform.controller.event.SdEventController;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
@@ -1465,22 +1466,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         rl.setEquipments(joinReserveHandle.getEquipments());
         rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
         rl.setState(joinReserveHandle.getState());
-        SdEvent sdEvent1 = sdEventMapper.selectSdEventById(eventId);
-        if(joinReserveHandle.getEqTypeId() == DevicesTypeEnum.ROBOT.getCode() && TunnelEnum.HU_SHAN.getCode().equals(sdEvent1.getTunnelId())){
-            CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
-            SdTunnels sdTunnels = tunnelsMapper.selectSdTunnelsById(TunnelEnum.HU_SHAN.getCode());
-            //事件桩号
-            Integer eventPile = Integer.valueOf(sdEvent1.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
-            //隧道起点桩号
-            Integer tunnelPile = Integer.valueOf(sdTunnels.getStartPileNum());
-            //计算距离
-            Integer distance = eventPile - tunnelPile;
-            //查询地址
-            ExternalSystem system = new ExternalSystem();
-            system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
-            List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
-            corniceTunnelRobot.OneClickArrival(joinReserveHandle.getEquipments(),distance - 10 + "",null,null,list.get(0).getSystemUrl());
-        }
         int issueResult = issuedDevice(rl,eventId,"4");
         String deviceExecutionState = getDeviceExecutionState(processId);
         if(issueResult>0){

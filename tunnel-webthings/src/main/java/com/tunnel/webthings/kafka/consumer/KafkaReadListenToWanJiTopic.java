@@ -93,6 +93,16 @@ public class KafkaReadListenToWanJiTopic {
         consumer.commitSync();
     }
 
+    @KafkaListener(topics = {"baseDeviceStatus"}, containerFactory = "kafkaOneContainerFactory")
+    public void baseDeviceStatus(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
+        log.info("监听到万集事件数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+
+        }
+        //手动提交
+        consumer.commitSync();
+    }
+
     /**
      * 获取事件图片视频
      * @param record
@@ -206,7 +216,7 @@ public class KafkaReadListenToWanJiTopic {
 
         for(int i = 0; i < eventList.size(); i++){
             JSONObject eventData = JSONObject.parseObject(eventList.get(i).toString());
-            SdEvent data = sdEventService.selectSdEventById(eventData.getLongValue("eventId"));
+            SdEvent data = sdEventMapper.selectSdEventById(eventData.getLongValue("eventId"));
             SdEvent sdEvent = new SdEvent();
             sdEvent.setId(eventData.getLongValue("eventId"));
             sdEvent.setTunnelId(tunnelId);
@@ -219,8 +229,8 @@ public class KafkaReadListenToWanJiTopic {
             //所有隧道Map
             Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
             sdEvent.setEventTitle(sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap));
-            sdEvent.setStartTime(eventData.getString("startTime"));
-            sdEvent.setEndTime(eventData.getString("endTime("));
+            sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(Long.parseLong(eventData.getString("startTime")))));
+            sdEvent.setEndTime("0".equals(eventData.getString("endTime")) ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(Long.parseLong(eventData.getString("endTime")))));
             sdEvent.setEventTime(DateUtils.parseDate(sdEvent.getStartTime()));
             sdEvent.setLaneNo(eventData.getString("laneNo"));
             sdEvent.setEventSource("1");
@@ -408,14 +418,10 @@ public class KafkaReadListenToWanJiTopic {
                 redisCache.setCacheObject(getCacheEventKey(sdEventItem.getId().toString()),sdEventItem);
             }
         });
-        List<SdTunnels> sdTunnelsList = sdTunnelsService.selectTunnels(SecurityUtils.getDeptId());
-        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
-        if(collect.size() > 0){
-            //新增事件后推送前端  弹出视频
-            JSONObject object = new JSONObject();
-            object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
-        }
+        //新增事件后推送前端  弹出视频
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 
     /**

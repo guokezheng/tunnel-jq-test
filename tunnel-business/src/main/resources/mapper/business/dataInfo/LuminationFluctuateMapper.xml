@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.LuminationFluctuateMapper">
+
+    <resultMap type="LightConfiguration" id="LightConfigurationResult">
+        <result property="id"    column="id"    />
+        <result property="eqId"    column="eq_id"    />
+        <result property="externalId"    column="external_id"    />
+    </resultMap>
+
+    <sql id="selectlightVo">
+        select id, eqId,external_id from external_system
+    </sql>
+
+    <select id="getlightConfiguration" resultMap="LightConfigurationResult">
+        <include refid="selectlightVo"/>
+    </select>
+
+
+
+</mapper>

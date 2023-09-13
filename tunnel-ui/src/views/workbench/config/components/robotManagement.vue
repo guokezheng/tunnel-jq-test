@@ -16,7 +16,7 @@
 export default {
   data() {
     return {
-      url:"http://10.7.182.85:8080/robot/robotManagement.html"
+      url:"http://10.7.179.33:8080/robot/robotManagement.html"
     }
   },
   created() {

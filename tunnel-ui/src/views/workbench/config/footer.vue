@@ -415,12 +415,13 @@
             <p>inspection robot</p>
           </div>
         </div>
-        <!-- <videoPlayer
+        <videoPlayer
           v-if="liveUrl5"
           :rtsp="liveUrl5"
           :open="cameraPlayer5"
-        ></videoPlayer> -->
-        <videoRtmp v-if="liveUrl5" ref="playerObj"></videoRtmp>
+        ></videoPlayer>
+        <!-- <videoRtmp v-if="liveUrl5" ref="playerObj"></videoRtmp> -->
+        <!-- <videoM3u8 v-if="liveUrl5" ref="playerObj"></videoM3u8> -->
         <div class="noPicBox" v-else>
           <img src="../../../assets/image/noVideo.png" />
         </div>
@@ -525,6 +526,7 @@ import { mapState } from "vuex";
 import * as echarts from "echarts";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import videoRtmp from "@/views/event/vedioRecord/videoRtmp";
+import videoM3u8 from "@/views/event/vedioRecord/videoM3u8";
 
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { videoStreaming, getDeviceById } from "@/api/equipment/eqlist/api";
@@ -543,6 +545,7 @@ export default {
   components: {
     videoPlayer,
     videoRtmp,
+    videoM3u8
   },
   data() {
     return {
@@ -999,18 +1002,18 @@ export default {
         }
       );
      
-      // getVideoUrl()
-      //   .then((res) => {
-      //     console.log(res, "机器人视频");
-      //     this.liveUrl5 = res.data.infrared
-          this.liveUrl5 = 'rtmp://192.168.50.123:1231/live/2'
-
-          this.$nextTick(()=>{
-            this.$refs.playerObj.init(this.liveUrl5)
-          })
-        // })
-        // .catch(() => {
-        // });
+      getVideoUrl()
+        .then((res) => {
+          console.log(res, "机器人视频");
+          this.liveUrl5 = res.data.infrared
+          // this.liveUrl5 = 'rtmp://192.168.50.123:1231/live/2'
+          // this.liveUrl5 =  'http://10.7.182.85:40080/hls2FAF2DE3/9_10.7.182.85.m3u8'
+          // this.$nextTick(()=>{
+          //   this.$refs.playerObj.init(this.liveUrl5)
+          // })
+        })
+        .catch(() => {
+        });
     },
     initNoDecelerationChart(oneList, twoList, threeList) {
       let newPromise = new Promise((resolve) => {

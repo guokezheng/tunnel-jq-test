@@ -203,10 +203,10 @@ export default {
     noMore() {
             //当起始页数大于总页数时停止加载
       if (this.total % 10 == 0) {
-        console.log(2222222)
+        // console.log(2222222)
         return this.pageNum >= parseInt(this.total / 10);
       } else {
-        console.log(33333333)
+        // console.log(33333333)
 
         return this.pageNum >= parseInt(this.total / 10) + 1;
       }
@@ -245,7 +245,7 @@ export default {
       this.$forceUpdate();
     },
     getList(num) {
-      console.log(num,"num")
+      // console.log(num,"num")
       let prevControlType = "";
       if (this.searchValue != 3) {
         prevControlType = this.searchValue;

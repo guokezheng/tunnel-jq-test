@@ -5,6 +5,7 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
@@ -34,6 +35,8 @@ import sun.misc.BASE64Encoder;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -541,6 +544,9 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         }
 
 
+        //开关
+//        int switchType = updateSwitch(jessionId, baseUrl, step, Integer.valueOf(state));
+
 
 
         logger.error("照明开关控制打印信息:switchType="+switchType+",brightnessType="+brightnessType);
@@ -591,5 +597,75 @@ public class SansiLightImpl implements Light , GeneralControlBean {
             statusItemCode = DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode();
         }
         return statusItemCode;
+    }
+    /**
+     * 单个设备调光
+     * @param device
+     * @param nowLuminanceRange    原有亮度
+     * @param luminanceRange    当前亮度
+     * @param controlType
+     * @return
+     */
+    public int setBrightnessByDevice(SdDevices device,Integer nowLuminanceRange ,Integer luminanceRange, String controlType) {
+        int resultStatus;
+        try{
+            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+            resultStatus = 1;
+        }catch (Exception e){
+            e.printStackTrace();
+            resultStatus = 0;
+        }
+        // 如果控制成功
+        if (resultStatus == 1) {
+            //设备类型
+            Integer typeItem = null;
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(device.getEqType())){
+                typeItem = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+            }else if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(device.getEqType())){
+                typeItem = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+            }
+            // 更新设备在线状态
+            device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            //更新设备实时数据
+            updateDeviceData(device, String.valueOf(luminanceRange), typeItem);
+            //更新redis缓存
+            String redisLuminanceRangeKey = "control:"+device.getEqId()+"_LuminanceRange";
+            redisCache.setCacheObject(redisLuminanceRangeKey,luminanceRange);
+        }
+        //添加操作日志
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(device.getEqType());
+        sdOperationLog.setTunnelId(device.getEqTunnelId());
+        sdOperationLog.setEqId(device.getEqId());
+        sdOperationLog.setOperationState(String.valueOf(luminanceRange));
+        sdOperationLog.setControlType(controlType);
+        sdOperationLog.setCreateTime(new Date());
+        try {
+            sdOperationLog.setOperIp(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        sdOperationLog.setState(String.valueOf(resultStatus));
+        sdOperationLog.setBeforeState(nowLuminanceRange.toString());
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return resultStatus;
+    }
+    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            sdDeviceDataService.updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            sdDeviceDataService.insertSdDeviceData(sdDeviceData);
+        }
     }
 }

@@ -35,6 +35,21 @@ export function addConfig(data) {
   })
 }
 
+// 照明波动开
+export function openIllumination(data) {
+  return request({
+    url: '/illumination/openIllumination',
+    method: 'post',
+  })
+}
+
+// 照明波动关
+export function closeIllumination(data) {
+  return request({
+    url: '/illumination/closeIllumination',
+    method: 'post',
+  })
+}
 // 修改【加强照明配置】
 export function updateConfig(data) {
   return request({

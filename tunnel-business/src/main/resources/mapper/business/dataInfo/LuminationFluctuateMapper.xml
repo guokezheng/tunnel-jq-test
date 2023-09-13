@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectlightVo">
-        select id, eqId,external_id from external_system
+        select id, eq_id,external_id from light_configuration
     </sql>
 
     <select id="getlightConfiguration" resultMap="LightConfigurationResult">

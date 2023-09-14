@@ -1763,6 +1763,11 @@ export default {
             tunnelName:response.rows[0].tunnelName,
             tunnelId:response.rows[0].tunnelId
           }
+          if(response.rows[0].tunnelId == "JQ-JiNan-WenZuBei-MJY"){
+            setInterval(() => {
+              this.getRobot();
+            }, 2000);
+          }
           this.eventForm = response.rows[0];
           this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(
             0,
@@ -1780,6 +1785,20 @@ export default {
           }, 500);
         });
       }
+    },
+    async getRobot(){
+      const param = {
+        deviceId: 7,
+      };
+      await getWorkStagingRobot(param).then((res) => {
+        // console.log(res, "机器人");
+        // this.robotPositon = (
+        //   (Number(res.data.position) / this.tunnelLang) *
+        //   100
+        // ).toFixed(2) - 1;
+        // // console.log(this.robotPositon, "this.robotPositon");
+        // this.$forceUpdate();
+      });
     },
     // 左上角视频
     getVideoList() {

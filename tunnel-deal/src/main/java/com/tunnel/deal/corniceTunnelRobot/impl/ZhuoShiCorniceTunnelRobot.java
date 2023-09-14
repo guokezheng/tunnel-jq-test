@@ -341,10 +341,9 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
                 .url(url)
                 .method(post,null)
                 .build();*/
-        OkHttpClient client = new OkHttpClient();
-        client.newBuilder().connectTimeout(3, TimeUnit.SECONDS)
-                .readTimeout(3,TimeUnit.SECONDS)
-                .writeTimeout(3,TimeUnit.SECONDS).build();
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2,TimeUnit.SECONDS)
+                .writeTimeout(2,TimeUnit.SECONDS).build();
         Request request = new Request
                 .Builder() //利用建造者模式创建Request对象
                 .url(url) //设置请求的URL

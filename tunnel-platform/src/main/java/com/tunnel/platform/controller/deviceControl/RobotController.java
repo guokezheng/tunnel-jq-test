@@ -569,6 +569,7 @@ public class RobotController {
      */
     @GetMapping("/getWorkStagingRobot")
     public AjaxResult getWorkStagingRobot(@RequestParam("deviceId") String deviceId){
+        long l = System.currentTimeMillis();
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
@@ -598,7 +599,8 @@ public class RobotController {
             }
             return  AjaxResult.success(statusDto);
         }
-
+        long l1 = System.currentTimeMillis();
+        System.out.println("总耗时：" + (l1-l));
         return  AjaxResult.success("","");
     }
 

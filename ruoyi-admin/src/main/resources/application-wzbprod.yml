@@ -66,6 +66,11 @@ spring:
       properties:
         max.poll.interval.ms: 1000000
 
+#集团智慧大脑单点登录
+sso:
+  url: http://10.166.154.106:32725
+  #智慧大脑单点登录跳转高速云级平台时，如果没有对应的用户，仍然可以进入隧道平台，使用此默认账号登录隧道平台
+  defaultUser: wzbadmin
 
 mqtt:
   #emqx地址+ MQTT协议端⼝ 1883 映射外网地址$SYS/brokers/+/clients/#

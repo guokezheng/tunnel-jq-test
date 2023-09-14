@@ -4874,7 +4874,7 @@ export default {
               if (tunnelId == "JQ-JiNan-WenZuBei-MJY") {
                 this.robotTimer = setInterval(() => {
                   setTimeout(this.getRobot, 0);
-                }, 1000 * 2);
+                }, 1000 * 3);
                 // setInterval(() => {
                 //   this.getRobot();
                 // }, 2000);

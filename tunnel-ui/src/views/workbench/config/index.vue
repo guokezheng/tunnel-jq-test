@@ -2091,7 +2091,8 @@ import {
   getLightingConfigByParam,
   addConfig,
   updateConfig,
-  openIllumination, closeIllumination
+  openIllumination,
+  closeIllumination,
 } from "@/api/business/enhancedLighting/app.js";
 import { listRl } from "@/api/event/strategyRl";
 
@@ -2458,10 +2459,11 @@ export default {
       /* -------------------------*/
       timer: null, //定时器
       timerCat: null, //小车定时器
+      robotTimer:null,
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       displayNumb: false, //显示编号
       zoomSwitch: false, //缩放
-      fluctuateSwitch:false,
+      fluctuateSwitch: false,
       currentTunnel: {
         id: "",
         name: "",
@@ -2783,8 +2785,10 @@ export default {
     // debugger
     //小车运行渲染定时任务
     clearInterval(this.timerCat);
+    window.clearInterval(this.robotTimer);
     this.timer = null;
     this.timerCat = null;
+    this.robotTimer = null;
     this.carSetTimer();
     this.getUserDept();
     //关闭小车
@@ -3871,7 +3875,7 @@ export default {
         this.handleTableWheelSwithch = true;
       }
     },
-    fluctuateChange(val){
+    fluctuateChange(val) {
       if (val == true) {
         openIllumination().then((response) => {
           if (response.code == 200) {
@@ -4868,9 +4872,12 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               if (tunnelId == "JQ-JiNan-WenZuBei-MJY") {
-                setInterval(() => {
-                  this.getRobot();
-                }, 2000);
+                this.robotTimer = setInterval(() => {
+                  setTimeout(this.getRobot, 0);
+                }, 1000 * 2);
+                // setInterval(() => {
+                //   this.getRobot();
+                // }, 2000);
               }
 
               // 匹配设备方向
@@ -4971,10 +4978,8 @@ export default {
       };
       await getWorkStagingRobot(param).then((res) => {
         // console.log(res, "机器人");
-        this.robotPositon = (
-          (Number(res.data.position) / this.tunnelLang) *
-          100
-        ).toFixed(2) - 1;
+        this.robotPositon =
+          ((Number(res.data.position) / this.tunnelLang) * 100).toFixed(2) - 1;
         // console.log(this.robotPositon, "this.robotPositon");
         this.$forceUpdate();
       });
@@ -5235,9 +5240,12 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
-      console.log(value, lable,"value, lable")
+      console.log(value, lable, "value, lable");
       // carShow
-      if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" && (value == 9 || value == 0)) {
+      if (
+        this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" &&
+        (value == 9 || value == 0)
+      ) {
         this.robotShow = true;
       } else {
         this.robotShow = false;
@@ -6057,6 +6065,8 @@ export default {
     this.timer = null;
     clearInterval(this.imageTimer);
     this.imageTimer = null;
+    window.clearInterval(this.robotTimer);
+    this.robotTimer = null;
     window.removeEventListener("click", this.otherClose);
 
     document.removeEventListener("click", this.bodyCloseMenus);

@@ -686,7 +686,7 @@ export default {
   },
   data() {
     return {
-      tableKey:0,
+      tableKey: 0,
       rules: {
         otherContent: [
           { max: 100, message: "最长输入100个字符", trigger: "blur" },
@@ -733,10 +733,12 @@ export default {
             trigger: "change",
           },
         ],
-        confidenceList:[
+        confidenceList: [
           {
-            validator: this.confidenceListRules, trigger: "blur" 
-          }
+            required: false,
+            validator: this.confidenceListRules,
+            trigger: "blur",
+          },
         ],
       },
       processDialog: "false",
@@ -905,7 +907,7 @@ export default {
       ],
       manageStation: this.$cache.local.get("manageStation"),
       manageStationSelect: this.$cache.local.get("manageStationSelect"),
-      evtWebsoktList:[]
+      evtWebsoktList: [],
     };
   },
   watch: {
@@ -915,7 +917,6 @@ export default {
       this.queryParams.eventTypeId = "";
       this.getTunnelLane();
     },
-    
   },
   created() {},
   mounted() {
@@ -949,15 +950,19 @@ export default {
     bus.$off("getPicId");
   },
   methods: {
-    confidenceListRules(rule, value, callback){
-      console.log(value,"value")
-      const plateNumber = /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/
-      if (plateNumber.test(value)) {
-        callback()
-      } else {
-        callback(new Error('请输入正确的车牌号，字母大写'))
+    confidenceListRules(rule, value, callback) {
+      console.log(value, "value");
+      if (value) {
+        const plateNumber =
+          /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/;
+        if (plateNumber.test(value)) {
+          callback();
+        } else {
+          callback(new Error("请输入正确的车牌号，字母大写"));
+        }
+      }else{
+        callback();
       }
-
     },
     getFrom(from) {
       for (let item of this.fromList) {
@@ -1007,7 +1012,7 @@ export default {
       this.getReservePlanData();
 
       this.$nextTick(() => {
-        if(this.$refs.swiperTop){
+        if (this.$refs.swiperTop) {
           const swiperTop = this.$refs.swiperTop.$el.swiper;
           const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
           swiperTop.controller.control = swiperThumbs;
@@ -1118,11 +1123,11 @@ export default {
     eventStateChange() {
       if (this.eventFormDetail.eventState != 0) {
         this.eventFormDetail.currencyId = "";
-      }else{
-        if(this.ReservePlanList.length>0){
-          this.eventFormDetail.currencyId = this.ReservePlanList[0].id
-        }else{
-          this.eventFormDetail.currencyId = ''
+      } else {
+        if (this.ReservePlanList.length > 0) {
+          this.eventFormDetail.currencyId = this.ReservePlanList[0].id;
+        } else {
+          this.eventFormDetail.currencyId = "";
         }
       }
       this.eventFormDetail.reviewRemark = [];
@@ -1169,7 +1174,7 @@ export default {
             this.eventFormDetail.reviewRemark =
               this.eventFormDetail.reviewRemark.toString();
           }
-          
+
           const currencyId = this.eventFormDetail.currencyId;
           if (this.eventFormDetail.laneNo) {
             this.eventFormDetail.laneNo =
@@ -1180,12 +1185,15 @@ export default {
             this.closeProcessDialog = false;
             this.processType = false;
             this.details = false;
-            this.cameraPlayer = false
+            this.cameraPlayer = false;
             this.$modal.msgSuccess("修改成功");
-            if(this.evtWebsoktList.length > 0 && this.evtWebsoktList[0].ids == this.eventFormDetail.id){
-                console.log("点复核提交 关弹窗")
-                bus.$emit("closeDialog");
-              }
+            if (
+              this.evtWebsoktList.length > 0 &&
+              this.evtWebsoktList[0].ids == this.eventFormDetail.id
+            ) {
+              console.log("点复核提交 关弹窗");
+              bus.$emit("closeDialog");
+            }
             //主动安全
             //策略不为空
             // if (
@@ -1200,14 +1208,11 @@ export default {
             //   });
             // }
             loading.close();
-              
+
             // 1.预案不为空
             // 2.当前状态为0
             // 3.普通事件
-            if (
-              currencyId &&
-              this.eventFormDetail.eventState == 0
-            ) {
+            if (currencyId && this.eventFormDetail.eventState == 0) {
               console.log("我跳转了啊~~");
               this.$router.push({
                 path: "/emergency/administration/dispatch",
@@ -1240,7 +1245,7 @@ export default {
       examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
-        this.activeName = res.data[0].tableName
+        this.activeName = res.data[0].tableName;
         this.dialogVisibleDevice = true;
       });
     },
@@ -1341,7 +1346,7 @@ export default {
     handleClickDevice(tab, event) {
       console.log(tab.index);
       this.deviceIndexShow = tab.index;
-      this.tableKey = tab.index
+      this.tableKey = tab.index;
     },
     getImgUrl(item) {
       this.urlsList = [];
@@ -1506,7 +1511,7 @@ export default {
     cancel() {
       this.open = false;
       this.details = false;
-      this.cameraPlayer = false
+      this.cameraPlayer = false;
       this.processDialog = false;
       this.processType = false;
       this.reset();

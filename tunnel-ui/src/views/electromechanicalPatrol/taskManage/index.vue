@@ -239,6 +239,7 @@
                   ? ''
                   : 'none',
             }"
+            v-hasPermi="['system:list:repeal']"
             >废止任务</el-button
           >
           <el-button

@@ -108,12 +108,14 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:teams:emit']"
             >修改</el-button
           >
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['system:teams:del']"
             >删除</el-button
           >
           <el-button

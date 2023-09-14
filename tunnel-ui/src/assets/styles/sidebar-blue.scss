@@ -543,7 +543,7 @@
       .handControl-container {
         .grid-content {
           .el-input--small .el-input__inner {
-            border: 1px solid #00c8ff !important;
+            border: 1px solid #5783B4 !important;
             border-right: none !important;
             background: transparent !important;
           }
@@ -552,7 +552,7 @@
         .el-input-group__append .el-button {
           background-color: transparent !important;
           color: #00c8ff !important;
-          border: 1px solid #00c8ff !important;
+          border: 1px solid #5783B4 !important;
           border-left: none !important;
         }
 
@@ -1180,6 +1180,7 @@
         margin-bottom: 30px;
         height: 45px;
         padding: 0px 20px !important;
+        float: right;
 
         .el-pagination__total,
         .el-pagination__jump {
@@ -1947,7 +1948,7 @@
 
     .el-table .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {
-      background-color: #2C3E91;
+      background-color: rgba($color: #2C3E91, $alpha: 0.8);
       // border-bottom: solid 1px rgba(225, 228, 230, .16);
       border-bottom: none;
 
@@ -3102,13 +3103,13 @@
     }
 
     .el-table tr {
-      background-color: #00152B;
+      background-color: transparent;
       color: white;
     }
 
     .el-table .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {
-      background-color: #03659E;
+      background-color: rgba($color: #2C3E91, $alpha: 0.8);
       color: white;
     }
 
@@ -3153,7 +3154,7 @@
 
     .el-table__header-wrapper th,
     .el-table__fixed-header-wrapper th {
-      background: #2C3E91 !important;
+      background: rgba($color: #2C3E91, $alpha: 0.8) !important;
     }
     td.el-table__cell{
       border-bottom: solid 1px rgba(225, 228, 230, 0.08) !important;
@@ -3210,7 +3211,7 @@
       }
 
       .el-table__header-wrapper th {
-        background-color: #00ADFF !important;
+        background-color: rgba($color: #2C3E91, $alpha: 0.8) !important;
         color: #fff !important;
       }
 
@@ -3336,7 +3337,7 @@
       //   color: white;
       // }
       .el-table__header-wrapper th {
-        background-color: #2C3E91 !important;
+        background-color: rgba($color: #2C3E91, $alpha: 0.8) !important;
         color: #fff !important;
       }
 
@@ -3455,7 +3456,7 @@
 
     .el-table__header-wrapper th,
     .el-table__fixed-header-wrapper th {
-      background: #00487F;
+      background: rgba($color: #2C3E91, $alpha: 0.8);
       color: #fff;
 
     }
@@ -3488,7 +3489,7 @@
     }
 
     .el-table .el-table__header-wrapper th {
-      background-color: #2C3E91 !important;
+      background-color: rgba($color: #2C3E91, $alpha: 0.8) !important;
       color: #fff !important;
     }
 

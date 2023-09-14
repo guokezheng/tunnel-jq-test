@@ -212,6 +212,7 @@
                     inactive-color="#ff4949"
                     active-value="0"
                     inactive-value="1"
+                    v-hasPermi="['workbench:dialog:save']"
                     @change="changeStrategyState(item)"
                   >
                   </el-switch
@@ -248,6 +249,7 @@
                   size="mini"
                   class="tableDelButtton"
                   @click="handleDelete(item)"
+                  v-hasPermi="['workbench:dialog:save']"
                   >删除</el-button
                 >
                 <el-button
@@ -255,6 +257,7 @@
                   size="mini"
                   class="tableBlueButtton"
                   @click="handleUpdate(item)"
+                  v-hasPermi="['workbench:dialog:save']"
                   >编辑</el-button
                 >
               </el-row>

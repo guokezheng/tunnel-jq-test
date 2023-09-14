@@ -1220,6 +1220,7 @@ export default {
   },
 
   created() {
+      console.log(this.$route.query.message,"this.$route.query")
     this.getList();
     this.getTunnel();
     this.getEqType();

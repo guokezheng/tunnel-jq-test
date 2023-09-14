@@ -211,6 +211,7 @@
               v-once
               v-if="item.eventState == '3'"
               @click="detailsButton(item)"
+              v-hasPermi="['system:event:check']"
             >
               复核
             </div>
@@ -218,6 +219,7 @@
               v-if="item.eventState == '0'"
               class="chuzhi"
               @click="management(item.id)"
+              v-hasPermi="['system:event:disposeOf']"
             >
               处置
             </div>

@@ -337,6 +337,7 @@
             v-model="item.strategy_state"
             active-value="0"
             inactive-value="1"
+            v-hasPermi="['workbench:dialog:save']"
             @change="timStrategySwitch(item)"
           >
           </el-switch>
@@ -452,6 +453,7 @@
               v-model="item.strategyState"
               active-value="0"
               inactive-value="1"
+              v-hasPermi="['workbench:dialog:save']"
               @change="changeStrategyState(item.id, item.strategyState)"
             ></el-switch>
           </el-col>

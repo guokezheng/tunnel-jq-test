@@ -95,6 +95,7 @@
               placeholder="请选择设备类型"
               clearable
               @visible-change="elCascaderOnClick"
+              popper-class="cascaderClass"
               :key="refresh"
             ></el-cascader>
 <!--            <el-select

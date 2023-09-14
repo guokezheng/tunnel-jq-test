@@ -194,7 +194,7 @@
             type="primary"
             size="mini"
             @click="batchManage"
-            v-if="batchManageType == 1"
+            v-hasPermi="['workbench:dialog:save']"
           >
             <img src="../../../assets/icons/plcz.png" />
             <span>批量操作</span>
@@ -553,7 +553,8 @@
                         v-show="
                           item.eqType != '31' &&
                           item.eqType != '16' &&
-                          item.eqType != '36'
+                          item.eqType != '36' && 
+                          item.eqType != '29'
                         "
                         v-for="(url, indexs) in item.url"
                         style="position: absolute"
@@ -1885,6 +1886,7 @@
           align="center"
           prop="schedulerTime"
           v-if="strategyActive != 'richang'"
+
         >
           <template slot-scope="scope">
             <el-switch
@@ -1893,6 +1895,7 @@
               inactive-color="#ccc"
               active-value="0"
               inactive-value="1"
+              v-hasPermi="['workbench:dialog:save']"
               @change="changeStrategyState(scope.row)"
             >
             </el-switch>
@@ -1909,6 +1912,7 @@
               size="mini"
               type="text"
               class="tableBlueButtton"
+              v-hasPermi="['workbench:dialog:save']"
               @click="richanghandleUpdate(scope.row)"
               >执行</el-button
             >

@@ -79,7 +79,7 @@
                     :value="dict.dictValue" />
                 </el-select>
                 <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 30%;margin-left: 5px" placeholder="下修比例"
+                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例"
                   v-model="item.beforeLuminance"></el-input>
 
 
@@ -148,7 +148,7 @@
                     :value="dict.dictValue" />
                 </el-select>
                 <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 30%;margin-left: 5px" placeholder="下修比例"
+                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例"
                   v-model="item.beforeLuminance"></el-input>
                 <div class="buttonBox" style="width: 20% ;float: right;">
                   <el-button class="delete" @click="deleteHandleUpdateWei(index)"></el-button>

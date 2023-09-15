@@ -155,6 +155,27 @@
                   ></el-image>
                   <div class="wrapper" id="eq-wrapper" ref="eqWrapper">
                     <!-- 设备图标-->
+                    <template>
+                        <div
+                          style="
+                            width: 1629px;
+                            height: 15px;
+                            position: relative;
+                            top: 456px;
+                            left: 174px;
+                          "
+                          v-show="robotShow"
+                        >
+                          <img
+                            src="../../../assets/logo/equipment_log/机器人-在线.png"
+                            class="robotAnimation"
+                            :style="{
+                              left: robotPositon / 1.2 + '%',
+                            }"
+                            @click="clickRobot()"
+                          />
+                        </div>
+                      </template>
                     <div
                       class="icon-box mouseHover"
                       v-for="(item, index) in selectedIconList"
@@ -191,27 +212,6 @@
                         ><br />
                         <span>方向：{{ getDirection(item.eqDirection) }}</span>
                       </div>
-                      <!-- <template>
-                        <div
-                          style="
-                            width: 1955px;
-                            height: 15px;
-                            position: relative;
-                            top: 548px;
-                            left: 209px;
-                          "
-                          v-show="robotShow"
-                        >
-                          <img
-                            src="../../../assets/logo/equipment_log/机器人-在线.png"
-                            class="robotAnimation"
-                            :style="{
-                              left: robotPositon + '%',
-                            }"
-                            @click="clickRobot()"
-                          />
-                        </div>
-                      </template> -->
                       <div
                         v-show="
                           (item.eqType != 7 &&
@@ -787,7 +787,7 @@ import {
   getJlyTunnel,
   energyConsumptionDetection,
   getBoardContent,
-  getWorkStagingRobot
+  listTunnels1
 } from "@/api/equipment/tunnel/api.js";
 import {
   listType,
@@ -853,6 +853,12 @@ import comTemperatureHumidity from "@/views/workbench/config/components/temperat
 import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
 
 export default {
+  props:{
+    robotPositon: {
+      type: Number,
+      default: 0
+    },
+  },
   dicts: ["sd_sys_name", "sys_common_status", "sd_control_type"],
   components: {
     // DragItDude,
@@ -887,8 +893,8 @@ export default {
   },
   data() {
     return {
-      tunnelLang: 0,//隧道长度
-      robotPositon:99,
+      // tunnelLang: 0,//隧道长度
+      // robotPositon:99,
       robotShow:false,
       leftButtonS: "leftButtonS",
       robotIframeShow: false,
@@ -1065,7 +1071,8 @@ export default {
       );
     },
   },
-  created() {},
+  created() {
+  },
   mounted() {
     // 添加滚动监听，该滚动监听了拖拽滚动条
     // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
@@ -1088,11 +1095,12 @@ export default {
   methods: {
     init(workBenchProp) {
       console.log(workBenchProp, "workBenchProp");
+      // console.log(this.robotPositon,"robotPositon11111")
+
       this.getDict();
       this.tunnelId = workBenchProp.tunnelId;
       this.tunnelName = workBenchProp.tunnelName;
       this.tunnelStationName = workBenchProp.tunnelStationName;
-      this.tunnelLang = workBenchProp.tunnelLang
       this.visible = true;
       this.getBoardContent();
       this.getEqTypeStateIcon();
@@ -1113,6 +1121,22 @@ export default {
       // // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
       // this.scrollview.addEventListener("scroll", this.mouseSrollAuto, true);
       // }
+      if(this.tunnelId == "JQ-JiNan-WenZuBei-MJY"){
+        this.robotShow = true
+        setInterval(() => {
+          this.robotPositon = this.$parent.robotPositon
+          console.log(this.robotPositon,"this.robotPositonsetInterval")
+        }, 2000);
+      }else{
+        this.robotShow = false
+      }
+    },
+    clickRobot() {
+      this.eqInfo.clickEqType = 29;
+      const param = {
+        eqType: 29,
+      };
+      this.openStateSwitch(param);
     },
     getDict() {
       this.getDicts("brand").then((data) => {
@@ -1225,9 +1249,19 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备
               // if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
-              //   setInterval(() => {
-              //     this.getRobot();
-              //   }, 2000);
+                // listTunnels1().then((res)=>{
+                //   console.log(res,"res隧道列表")
+                //   for(let item of res.rows){
+                //     if(item.tunnelId == "JQ-JiNan-WenZuBei-MJY"){
+                //     this.tunnelLang =
+                //       Number(item.endPileNum) - Number(item.startPileNum) + 10;
+                //     }
+                //   }
+                // })
+                // console.log(this.tunnelLang,"this.tunnelLang机器人")
+                // setInterval(() => {
+                //   this.getRobot();
+                // }, 2000);
               // }
               // 匹配设备方向
               listDevices().then((data) => {
@@ -1295,20 +1329,6 @@ export default {
         this.treeData = res.data;
       });
     },
-    // async getRobot() {
-    //   const param = {
-    //     deviceId: 7,
-    //   };
-    //   await getWorkStagingRobot(param).then((res) => {
-    //     // console.log(res, "机器人");
-    //     this.robotPositon = (
-    //       (Number(res.data.position) / this.tunnelLang) *
-    //       100
-    //     ).toFixed(2) - 1;
-    //     // console.log(this.robotPositon, "this.robotPositon");
-    //     this.$forceUpdate();
-    //   });
-    // },
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, "item");
@@ -1499,16 +1519,16 @@ export default {
     displayControl(value, lable) {
       // console.log(value, lable,"value, lable")
       // carShow
-      //   for (var item of this.selectedIconList) {
-      //     if (
-      //       this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" &&
-      //       item.eqType == 29
-      //     ) {
-      //       this.robotShow = true;
-      //     } else {
-      //       this.robotShow = false;
-      //     }
-      //   }
+        for (var item of this.selectedIconList) {
+          if (
+            this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
+            (value == 9 || value == 0)
+          ) {
+            this.robotShow = true;
+          } else {
+            this.robotShow = false;
+          }
+        }
       $(".leftButtonS")
         .eq(value)
         .addClass("leftButton_hover")
@@ -2697,8 +2717,8 @@ export default {
   }
 }
 .robotAnimation {
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   // transform: translateY(-12px);
   // animation: mymove 60s infinite linear;
   float: left;

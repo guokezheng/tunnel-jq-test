@@ -1001,7 +1001,7 @@ export default {
           }
         }
       );
-     
+     if(this.tunnelId == "JQ-JiNan-WenZuBei-MJY"){
       getVideoUrl()
         .then((res) => {
           console.log(res, "机器人视频");
@@ -1014,6 +1014,7 @@ export default {
         })
         .catch(() => {
         });
+     }
     },
     initNoDecelerationChart(oneList, twoList, threeList) {
       let newPromise = new Promise((resolve) => {

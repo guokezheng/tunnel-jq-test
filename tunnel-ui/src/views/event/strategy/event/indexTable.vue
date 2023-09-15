@@ -234,6 +234,7 @@
                 inactive-color="#ccc"
                 active-value="0"
                 inactive-value="1"
+                v-hasPermi="['system:strategy:state']"
                 @change="changeStrategyState(scope.row,scope.row.index)"
               >
               </el-switch>
@@ -257,6 +258,7 @@
                 size="mini"
                 class="tableBlueButtton"
                 v-if="tableType == 'shoudong'"
+                v-hasPermi="['system:strategy:execute']"
                 @click="richanghandleUpdate(scope.row)"
               >执行</el-button
               >

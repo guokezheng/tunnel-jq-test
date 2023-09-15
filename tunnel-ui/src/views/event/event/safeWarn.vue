@@ -211,6 +211,7 @@
               v-once
               v-if="item.eventState == '3'"
               @click="detailsButton(item)"
+              v-hasPermi="['system:event:check']"
             >
               复核
             </div>
@@ -218,6 +219,7 @@
               v-if="item.eventState == '0'"
               class="chuzhi"
               @click="management(item.id)"
+              v-hasPermi="['system:event:disposeOf']"
             >
               处置
             </div>
@@ -1817,12 +1819,13 @@ export default {
             trigger: "change",
           },
         ],
-        confidenceList:[
+        confidenceList: [
           {
-            validator: this.confidenceListRules, trigger: "blur" 
-          }
+            required: false,
+            validator: this.confidenceListRules,
+            trigger: "blur",
+          },
         ],
-        
       },
       // isLoading: false,
       loadingText: "加载中...",
@@ -1916,15 +1919,19 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
-    confidenceListRules(rule, value, callback){
-      console.log(value,"value")
-      const plateNumber = /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/
-      if (plateNumber.test(value)) {
-        callback()
-      } else {
-        callback(new Error('请输入正确的车牌号，字母大写'))
+    confidenceListRules(rule, value, callback) {
+      console.log(value, "value");
+      if (value) {
+        const plateNumber =
+          /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/;
+        if (plateNumber.test(value)) {
+          callback();
+        } else {
+          callback(new Error("请输入正确的车牌号，字母大写"));
+        }
+      }else{
+        callback();
       }
-
     },
     //下载录像
     // downloadVedio(){

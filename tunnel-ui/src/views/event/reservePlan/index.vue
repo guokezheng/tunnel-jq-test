@@ -536,9 +536,23 @@
             v-model="reservePlanDrawForm.planTypeId"
             placeholder="请选择事件类型"
             style="width: 100%"
+            v-if="reservePlanDrawForm.prevControlType"
           >
             <el-option
               v-for="(item, index) in planTypeData"
+              :key="index"
+              :label="item.eventType"
+              :value="item.id"
+            />
+          </el-select>
+          <el-select
+            v-model="reservePlanDrawForm.planTypeId"
+            placeholder="请选择事件类型"
+            style="width: 100%"
+            v-else
+          >
+            <el-option
+              v-for="(item, index) in planTypeDataAll"
               :key="index"
               :label="item.eventType"
               :value="item.id"

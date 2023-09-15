@@ -8,6 +8,7 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
+import com.tunnel.business.mapper.event.SdLaneStatisticsMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
@@ -52,5 +53,13 @@ public class RadarTemporaryTask {
             mapper.deleteCatData();
         }
 
+    }
+
+    /**
+     * 清除两天前的车道统计数据
+     */
+    public void clearLaneData(){
+        SdLaneStatisticsMapper statisticsMapper = SpringUtils.getBean(SdLaneStatisticsMapper.class);
+        statisticsMapper.clearLaneData();
     }
 }

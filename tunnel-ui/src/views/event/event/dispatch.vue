@@ -975,7 +975,7 @@
       </el-dialog>
        
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
-    <workBench class="workBenchBox" ref="workBenchRef" />
+    <workBench class="workBenchBox" ref="workBenchRef" :robotPositon="robotPositon"/>
 
     <!-- </el-dialog> -->
   </div>
@@ -984,7 +984,7 @@
 import robot from "@/views/workbench/config/components/robotManagement";
 import { intervalTime } from "../../../utils/index.js";
 import { mapState } from "vuex";
-import { getTunnels } from "@/api/equipment/tunnel/api.js";
+import { getTunnels,getWorkStagingRobot,listTunnels1 } from "@/api/equipment/tunnel/api.js";
 import { laneImage,laneImage2 } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
@@ -1058,6 +1058,9 @@ export default {
   },
   data() {
     return {
+      robotTimer:null,
+      tunnelLang:0,
+      robotPositon:99,
       workBenchProp:{},
       robotDialogVisible: false,
       clickEqType: "",
@@ -1232,9 +1235,10 @@ export default {
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
   },
-  // beforeDestroy(){
-  //   clearInterval(this.deadline4);
-  // },
+  beforeDestroy(){
+    window.clearInterval(this.robotTimer);
+    this.robotTimer = null;
+  },
   methods: {
     openWorkBench(){
       this.$refs.workBenchRef.init(this.workBenchProp)
@@ -1763,6 +1767,19 @@ export default {
             tunnelName:response.rows[0].tunnelName,
             tunnelId:response.rows[0].tunnelId
           }
+          if(response.rows[0].tunnelId == "JQ-JiNan-WenZuBei-MJY"){
+            listTunnels1().then((res)=>{
+              for(let item of res.rows){
+                if(item.tunnelId == "JQ-JiNan-WenZuBei-MJY"){
+                this.tunnelLang =
+                  Number(item.endPileNum) - Number(item.startPileNum) + 10;
+                }
+              }
+            })
+            this.robotTimer = setInterval(() => {
+              setTimeout(this.getRobot, 0);
+            }, 1000 * 3);
+          }
           this.eventForm = response.rows[0];
           this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(
             0,
@@ -1780,6 +1797,18 @@ export default {
           }, 500);
         });
       }
+    },
+    async getRobot(){
+      const param = {
+        deviceId: 7,
+      };
+      await getWorkStagingRobot(param).then((res) => {
+        console.log(res, "机器人");
+        this.robotPositon = (
+          (Number(res.data.position) / this.tunnelLang) *
+          100
+        ).toFixed(2) - 1;
+      });
     },
     // 左上角视频
     getVideoList() {

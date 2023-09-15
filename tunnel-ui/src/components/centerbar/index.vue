@@ -108,7 +108,7 @@
               ? 'avatar-wrapper white_icon'
               : 'avatar-wrapper'
           "
-          style="display: flex; align-items: center"
+          style="display: flex; align-items: center;transform: translateX(10px);"
         >
           <img src="@/assets/images/avatar.png" class="user-avatar" />
           <span style="font-size: 0.7vw">{{ roleGroup }}</span>

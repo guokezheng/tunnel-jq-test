@@ -272,14 +272,14 @@
             size="mini"
             class="tableBlueButtton"
             @click="tunnelConfig(scope.row)"
-            v-hasPermi="['system:tunnels:edit']"
+            v-hasPermi="['system:tunnels:configuration']"
             >配置
           </el-button>
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="tunnelAssociationConfig(scope.row)"
-            v-hasPermi="['system:tunnels:edit']"
+            v-hasPermi="['system:tunnels:configuration']"
             >关联配置
           </el-button>
           <!--          <el-button-->

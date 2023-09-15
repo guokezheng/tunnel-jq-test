@@ -18,9 +18,11 @@ import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.controller.informationBoard.BoardController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,12 @@ public class VmsTask {
 
     @Autowired
     private IIotDeviceAccessService iotDeviceAccessService;
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**
      *
@@ -144,6 +152,8 @@ public class VmsTask {
 
     @PostConstruct
     public void init() {
-        getVmsData();
+        threadPoolTaskExecutor.execute(()->{
+            getVmsData();
+        });
     }
 }

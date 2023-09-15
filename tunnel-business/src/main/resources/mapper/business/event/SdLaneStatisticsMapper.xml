@@ -144,4 +144,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="clearLaneData">
+        DELETE
+        FROM
+            sd_lane_statistics
+        WHERE
+        time <![CDATA[ < ]]> DATE_SUB(
+        NOW(),
+        INTERVAL 2 DAY)
+    </delete>
 </mapper>

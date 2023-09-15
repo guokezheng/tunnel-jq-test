@@ -146,5 +146,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND ps.current_id = #{currentId}
         AND ps.template_id = #{templateId}
         AND ps.type = #{type}
+        LIMIT 1
     </select>
 </mapper>

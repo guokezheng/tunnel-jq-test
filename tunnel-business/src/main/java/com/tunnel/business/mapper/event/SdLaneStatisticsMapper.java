@@ -59,4 +59,10 @@ public interface SdLaneStatisticsMapper
      * @return 结果
      */
     public int deleteSdLaneStatisticsByIds(Long[] ids);
+
+    /**
+     * 清除两天前的数据
+     * @return
+     */
+    public int clearLaneData();
 }

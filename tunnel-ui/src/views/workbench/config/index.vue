@@ -4878,10 +4878,7 @@ export default {
               if (tunnelId == "JQ-JiNan-WenZuBei-MJY") {
                 this.robotTimer = setInterval(() => {
                   setTimeout(this.getRobot, 0);
-                }, 1000 * 3);
-                // setInterval(() => {
-                //   this.getRobot();
-                // }, 2000);
+                }, 1000 * 5);
               }
 
               // 匹配设备方向
@@ -5198,6 +5195,10 @@ export default {
         lane: item.lane,
         index: index,
       };
+      if(item.tunnelId != "JQ-JiNan-WenZuBei-MJY"){
+        window.clearInterval(this.robotTimer);
+        this.robotTimer = null;
+      }
       // 判断是否有缓存的currentTunnel对象
       // 1. get不到currentTunnel对象 this.currentTunnel.name为空 是第一次进入 默认在第一个隧道 正常赋值
       // 2. get不到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值

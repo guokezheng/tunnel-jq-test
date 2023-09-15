@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -194,15 +197,4 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }
 
-    /**
-     * 向万集推送机电设备实时数据
-     * @param sdDevices
-     */
-    @Override
-    public void sendWanjiBaseDeviceStatus(SdDevices sdDevices) {
-        List<SdDevices> sdDevicesList =  new ArrayList<>();
-        sdDevicesList.add(sdDevices);
-        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
-        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
-    }
 }

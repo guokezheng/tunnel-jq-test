@@ -269,8 +269,6 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
                 break;
 
         }
-        //向万集推送机电设备实时数据
-        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**

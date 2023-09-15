@@ -88,13 +88,13 @@
               </el-form-item>
             </el-col>
             <el-col class="infoBoardButton" :span="16">
-              <el-button type="primary" @click="alignment(1)" size="mini"
+              <el-button type="primary" @click="alignment(1)" size="mini" 
                 >左对齐</el-button
               >
-              <el-button type="primary" @click="alignment(2)" size="mini"
+              <el-button type="primary" @click="alignment(2)" size="mini" 
                 >左右居中</el-button
               >
-              <el-button type="primary" @click="alignment(3)" size="mini"
+              <el-button type="primary" @click="alignment(3)" size="mini" 
                 >右对齐</el-button
               >
             </el-col>
@@ -255,6 +255,7 @@ import { checkIotBoardContent } from "@/api/board/vocabulary";
 export default {
   data() {
     return {
+      radio1:'',
       alignmentNum:2,
       content: "",
       boardWidth: "",

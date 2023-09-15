@@ -318,14 +318,14 @@
 
   .el-card {
     .el-input--mini .el-input__inner {
-      background: #2B346D !important;
+      background: rgba(20, 34, 111, 0.74) !important;
       // border: solid 1px #05AFE3;
       color: #fff;
     }
 
     .el-input-number__decrease,
     .el-input-number__increase {
-      background: #2B346D !important;
+      background: rgba(20, 34, 111, 0.74) !important;
       // border: solid 1px #00152B;
       color: #fff;
     }
@@ -519,7 +519,9 @@
     .el-dialog__body {
       max-height: 88vh;
       overflow: hidden;
-
+      .searchBoxLight{
+        background-color:#100A43;
+      }
       .content-centre-one,
       .content-centre-tree {
         background-color: #100A43;
@@ -883,19 +885,19 @@
       }
 
       .el-input--small .el-input__inner {
-        background: rgba($color: #14226F, $alpha: 0.74) !important;
+        background: rgba(20, 34, 111, 0.74) !important;
         border: none !important;
         color: #fff;
       }
 
       .el-textarea__inner {
-        background: rgba($color: #14226F, $alpha: 0.74) !important;
+        background: rgba(20, 34, 111, 0.74) !important;
         border: none !important;
         color: #fff;
       }
 
       .el-upload--picture-card {
-        background: rgba($color: #14226F, $alpha: 0.74) !important;
+        background: rgba(20, 34, 111, 0.74) !important;
         color: white;
         border: none !important;
       }
@@ -928,7 +930,7 @@
       .el-input-number__decrease {
         background: rgba($color: #14226F, $alpha: 0.74) !important;
         color: white !important;
-        border-left: none;
+        border: none;
 
       }
 
@@ -942,7 +944,7 @@
       }
 
       .el-input-number__increase {
-        border-bottom: 1px solid #00152B;
+        border-bottom: 1px solid rgba(20, 34, 111, 0.74);
 
       }
 
@@ -1284,16 +1286,16 @@
   .el-input-number__increase {
     background: #012E51 !important;
     color: white !important;
-    border-left: 1px solid #00152B !important;
-    border-bottom: 1px solid #00152B !important;
+    // border-left: 1px solid #00152B !important;
+    // border-bottom: 1px solid #052C4D !important;
 
   }
 
   .el-input-number__decrease {
     background: #012E51 !important;
     color: white !important;
-    border-right: 1px solid #00152B !important;
-    border-bottom: 1px solid #00152B !important;
+    // border-right: 1px solid #00152B !important;
+    // border-bottom: 1px solid #052C4D !important;
   }
 
   .hitchDialog {
@@ -1771,13 +1773,17 @@
         color: #fff;
       }
     }
-
-    .infoBoardButton .el-button {
+    
+    .infoBoardButton .el-button{
       border: solid 1px #65BFFF;
       background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%) !important;
       color: #fff;
     }
-
+    .infoBoardButton .el-button:focus,.infoBoardButton .el-button:hover{
+      border: solid 1px #2C3E91;
+      background: #00B0FF linear-gradient(90deg, #2C3E91 0%, #100A43 100%) !important;
+      color: #fff;
+    }
     .bigTitle {
       color: #fff !important;
     }

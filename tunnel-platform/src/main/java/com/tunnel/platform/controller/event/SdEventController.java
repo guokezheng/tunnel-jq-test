@@ -18,6 +18,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.RoBotVoiceEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
@@ -43,6 +44,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,6 +99,10 @@ public class SdEventController extends BaseController
      */
     @Resource(name = "threadPoolTaskExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
     public static Integer roBotNum = 0;
 
@@ -387,22 +394,38 @@ public class SdEventController extends BaseController
         SdTunnels sdTunnels = tunnelsService.selectSdTunnelsById(TunnelEnum.HU_SHAN.getCode());
         //事件桩号
         Integer eventPile = Integer.valueOf(sdEvent1.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
-        //隧道起点桩号
-        Integer tunnelPile = Integer.valueOf(sdTunnels.getStartPileNum());
+        //隧道终点桩号
+        Integer tunnelPile = Integer.valueOf(sdTunnels.getEndPileNum());
         //计算距离
-        Integer distance = eventPile - tunnelPile;
+        //Integer distance = tunnelPile - eventPile;
+        Integer distance = 2256;
         //查询地址
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
-        int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), distance - 10 + "", null, null, list.get(0).getSystemUrl());
+        int count = corniceTunnelRobot.OneClickArrival(list.get(0).getParam(), (distance - 10) + "", null, null, list.get(0).getSystemUrl());
         if(count == 1){
-            roBotNum = eventPile;
+            roBotNum = distance - 10;
             SdEventHandle sdEventHandle = new SdEventHandle();
             sdEventHandle.setEventState("1");
             sdEventHandle.setId(handleId);
             sdEventHandleMapper.updateSdEventHandle(sdEventHandle);
+            //机器人语音播报
+            robotVoice(sdEvent1);
         }
+    }
+
+    /**
+     * 机器人语音播报
+     * @param sdEvent
+     * @return
+     */
+    public int robotVoice(SdEvent sdEvent){
+        CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
+        ExternalSystem system = new ExternalSystem();
+        system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
+        List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
+        return corniceTunnelRobot.Broadcast(list.get(0).getParam(), RoBotVoiceEnum.getValue(sdEvent.getEventTypeId().toString()),list.get(0).getSystemUrl(),"20");
     }
 
     /**
@@ -603,11 +626,12 @@ public class SdEventController extends BaseController
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));//开始时间
         sdEvent.setEventState("3");//状态  待确认
         sdEvent.setEventGrade("1");//事件等级 一般
-        sdEvent.setStakeNum("YK16+678");//事件桩号
+        sdEvent.setStakeNum("YK16+698");//事件桩号
         sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
         sdEvent.setDirection("1");//方向
         sdEventMapper.insertSdEvent(sdEvent);
         sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
+        //kafkaOneTemplate.send("fireEvent",JSON.toJSONString(sdEvent));
     }
 
 }

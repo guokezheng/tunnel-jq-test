@@ -88,6 +88,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     @Override
     public int updateSdDeviceData(SdDeviceData sdDeviceData) {
         sdDeviceData.setUpdateTime(DateUtils.getNowDate());
+        SdDevices devices = new SdDevices();
+        devices.setEqId(sdDeviceData.getDeviceId());
+        devices.setEqStatus("1");
+        sdDevicesMapper.updateSdDevices(devices);
         return sdDeviceDataMapper.updateSdDeviceData(sdDeviceData);
     }
 

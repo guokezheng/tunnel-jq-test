@@ -377,21 +377,15 @@ public class RobotController {
     /**
      * 语言播报功能
      * @param deviceId 机器人id
-     * @param text  播报文字内容
+     * @param control  播报文字内容
+     * @param numberCycles 播放次数
      * @return
      */
     @GetMapping(value = "/broadcast")
     @ApiOperation(value = "语言播报功能", httpMethod = "GET")
-    public AjaxResult broadcast(@RequestParam(name = "deviceId")String deviceId,
-                                @RequestParam(name = "text")String text){
-
-
-        if(deviceId.equals("JQ-WeiFang-JiuLongYu-JJL-ROBOT-001")){
-            return  AjaxResult.success(1);
-        }else if(true){
-            return  AjaxResult.error("未查询到外部配置，请核实后再操作");
-        }
-
+    public AjaxResult broadcast(@RequestParam(name = "deviceId") String deviceId,
+                                @RequestParam(name = "control") String control,
+                                @RequestParam(name = "numberCycles") String numberCycles){
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
@@ -400,7 +394,7 @@ public class RobotController {
             return  AjaxResult.error("未查询到外部配置，请核实后再操作");
         }
 
-        return  AjaxResult.success(zhuoShiCorniceTunnelRobot.Broadcast(deviceId,text,list.get(0).getSystemUrl()));
+        return  AjaxResult.success(zhuoShiCorniceTunnelRobot.Broadcast(list.get(0).getParam(),control,list.get(0).getSystemUrl(),numberCycles));
     }
 
 
@@ -589,13 +583,24 @@ public class RobotController {
             }
             Integer position1 = Integer.valueOf(statusDto.getPosition());
             if(SdEventController.roBotNum != 0){
-                /*if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
+                if(position1 >= SdEventController.roBotNum-5 && position1 <= SdEventController.roBotNum+5){
                     int count = zhuoShiCorniceTunnelRobot.SetLEDLight(list.get(0).getParam(),1,list.get(0).getSystemUrl());
                     if(count == 1){
                         System.out.println("[机器人投光灯已开启]");
                         SdEventController.roBotNum = 0;
                     }
-                }*/
+                }
+            }
+            if("在线".equals(statusDto.getIsOnline())){
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqId("JQ-JiNan-WenZuBei-MJY-ROBOT-001");
+                sdDevices.setEqStatus("1");
+                sdDevicesService.updateSdDevices(sdDevices);
+            }else {
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqId("JQ-JiNan-WenZuBei-MJY-ROBOT-001");
+                sdDevices.setEqStatus("2");
+                sdDevicesService.updateSdDevices(sdDevices);
             }
             return  AjaxResult.success(statusDto);
         }

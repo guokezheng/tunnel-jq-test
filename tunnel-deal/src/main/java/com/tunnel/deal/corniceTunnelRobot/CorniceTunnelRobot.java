@@ -93,7 +93,7 @@ public interface CorniceTunnelRobot {
      * @param text  播报文字内容
      * @return
      */
-    int Broadcast(String deviceId,String text,String baseUrl);
+    int Broadcast(String deviceId,String text,String baseUrl,String numberCycles);
 
     /**
      * 设置机器人自动巡航

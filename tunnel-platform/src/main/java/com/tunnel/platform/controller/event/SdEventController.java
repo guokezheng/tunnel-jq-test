@@ -16,10 +16,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.RoBotVoiceEnum;
-import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.*;
@@ -619,9 +616,9 @@ public class SdEventController extends BaseController
         //存 故障清单表sd_event
         SdEvent sdEvent = new SdEvent();
         sdEvent.setTunnelId("JQ-JiNan-WenZuBei-MJY");//隧道
-        sdEvent.setEventSource("2");//事件来源  消防炮
-        sdEvent.setEventTypeId((long) 4);//事件类型
-        sdEvent.setEventTitle("胡山隧道潍坊方向桩号YK16+678发生异常停车事件");//事件标题  隧道+方向+桩号+发生火警
+        sdEvent.setEventSource("3");//事件来源  消防炮
+        sdEvent.setEventTypeId((long) 20);//事件类型
+        sdEvent.setEventTitle("胡山隧道,火灾");//事件标题  隧道+方向+桩号+发生火警
         sdEvent.setEventTime(DateUtils.getNowDate());//时间
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));//开始时间
         sdEvent.setEventState("3");//状态  待确认
@@ -631,7 +628,18 @@ public class SdEventController extends BaseController
         sdEvent.setDirection("1");//方向
         sdEventMapper.insertSdEvent(sdEvent);
         sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
-        //kafkaOneTemplate.send("fireEvent",JSON.toJSONString(sdEvent));
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId","胡山隧道");
+        map.put("eventSource","火灾报警系统");
+        map.put("eventTypeId","火灾");
+        map.put("eventTitle",sdEvent.getEventTitle());
+        map.put("eventTime",sdEvent.getEventTime());
+        map.put("startTime",sdEvent.getStartTime());
+        map.put("eventState", EventStateEnum.unprocessed.getName());
+        map.put("eventGrade",EventGradeEnum.YI_BAN.getName());
+        map.put("stakeNum",sdEvent.getStakeNum());
+        map.put("direction",DeviceDirectionEnum.WEI_FANG.getName());
+        kafkaOneTemplate.send("fireEvent",JSON.toJSONString(map));
     }
 
 }

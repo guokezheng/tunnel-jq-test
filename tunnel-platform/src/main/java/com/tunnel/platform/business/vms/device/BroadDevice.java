@@ -73,6 +73,10 @@ public class BroadDevice implements IDeviceMonitor {
             content = DevicesManager.getInstance().executeCommand(deviceId, driverBean.getCommands().get("DISPLAYLIST"),"100");
         } else if (vender.startsWith(IDeviceProtocol.SANSI) || vender.startsWith(IDeviceProtocol.GUANGDIAN)) {
             content = DisPlayUtil.getlistDisPlayForSanSiAndGuangDian(driverBean.getCommands().get("DISPLAYLIST"), deviceId);
+            //content = "02 30 30 5B 50 6C 61 79 6C 69 73 74 5D 0D 0A 49 54 45 4D 5F 4E 4F 3D 31 0D 0A 49 54 45 4D 30 30 30 3D 33 30 30 2C 31 2C 31 2C 5C 43 30 30 30 30 30 30 5C 53 30 30 5C 63 32 35 35 32 35 35 30 30 30 30 30 30 5C 66 66 31 36 31 36 C9 BD B6 AB B8 DF CB D9 BB B6 D3 AD C4 FA 00 00 03";
+            //content = "02 30 31 5B 50 4C 41 59 4C 49 53 54 5D 0D 0A 49 54 45 4D 5F 4E 4F 3D 30 30 31 0D 0A 49 54 45 4D 30 30 30 3D 35 30 30 2C 31 2C 31 2C 5C 43 30 30 30 30 30 30 5C 53 30 30 5C 63 32 35 35 30 30 30 30 30 30 30 30 30 5C 66 73 32 34 32 34 D2 BB C2 B7 0D 0A C6 BD B0 B2 38 84 03";
+            String[] split = content.split("03");
+            content = split[0] + "03";
         } else if (vender.startsWith(IDeviceProtocol.DINGEN)) {
             content = DevicesManager.getInstance().executeCommand(deviceId, driverBean.getCommands().get("DISPLAY"),"100");
         } else {

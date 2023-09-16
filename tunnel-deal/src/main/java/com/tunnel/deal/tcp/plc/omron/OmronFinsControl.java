@@ -8,9 +8,9 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeE
 import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.protocol.SdDevicePoint;
+import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.protocol.ISdDevicePointService;
+import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.tcp.client.config.ChannelKey;
@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask.commandLock;
+
 /**
  * describe: 欧姆龙fins PLC控制
  *
@@ -46,7 +48,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
     private CommonControlService commonControlService;
 
     @Autowired
-    private ISdDevicePointService devicePointService;
+    private ISdDevicePointPlcService devicePointPlcService;
 
     @Autowired
     private FinsCmd finsCmd;
@@ -177,6 +179,25 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
      * @return
      */
     public AjaxResult control(SdDevices sdDevices, String state) {
+
+        //控制指令下发，将下发指令锁置为false
+        OmronFinsTask.commandLock = false;
+        System.out.println("关闭指令锁：commandLock="+commandLock);
+
+        //通过控制父设备PLC控制设备
+        String fEqId = sdDevices.getfEqId();
+        if(fEqId == null || "".equals(fEqId)){
+            return AjaxResult.error("未配置设备关联的父设备");
+        }
+        SdDevices fDevice = sdDevicesService.selectSdDevicesById(fEqId);
+        String ip = fDevice.getIp();
+        String port = fDevice.getPort();
+        Integer portNum = Integer.valueOf(port);
+        //先关闭通道，解除查询指令占用的通道
+        Channel cmdChannel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,Integer.valueOf(port)));
+        cmdChannel.close();
+
+
         //点位类型：控制点位
         Long pointType = DevicePointControlTypeEnum.control_enable.getCode();
         //数据状态
@@ -187,16 +208,16 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
 //        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
 
         //查询设备点位
-        SdDevicePoint devicePoint = new SdDevicePoint();
-        devicePoint.setEqId(eqId);
-        devicePoint.setIsReserved(pointType);
-        List<SdDevicePoint> devicePointList = devicePointService.selectSdDevicePointList(devicePoint);
+        SdDevicePointPlc devicePointPlc = new SdDevicePointPlc();
+        devicePointPlc.setEqId(eqId);
+        devicePointPlc.setIsReserved(pointType);
+        List<SdDevicePointPlc> devicePointList = devicePointPlcService.selectSdDevicePointPlcList(devicePointPlc);
         if(devicePointList == null || devicePointList.size() == 0){
             return AjaxResult.error("未配置设备点位");
         }
-        devicePoint = devicePointList.get(0);
+        devicePointPlc = devicePointList.get(0);
 
-        String pointConfig = devicePoint.getPointConfig();
+        String pointConfig = devicePointPlc.getPointConfig();
         JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
         //点位状态
         String stateStr = jsonConfig.getString("stateConfig");
@@ -230,18 +251,11 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
 //            return AjaxResult.error("设备点位配置不完整");
 //        }
 
-        //通过控制父设备PLC控制设备
-        String fEqId = sdDevices.getfEqId();
-        if(fEqId == null || "".equals(fEqId)){
-            return AjaxResult.error("未配置设备关联的父设备");
-        }
+
 
         //默认操作失败
         AjaxResult ajaxResult = AjaxResult.success(0);
-        SdDevices fDevice = sdDevicesService.selectSdDevicesById(fEqId);
-        String ip = fDevice.getIp();
-        String port = fDevice.getPort();
-        Integer portNum = Integer.valueOf(port);
+
 
         //源地址
         String sourceAddress = plcServer;
@@ -254,6 +268,8 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         int count = 50;
         int i = 0;
         boolean flag = false;
+        long shakeTime = 0L;
+        long controlTime = 0L;
         //发送指令
         while(i < count){
             Channel channel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,portNum));
@@ -261,6 +277,8 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
                 if(!flag){
                     //建立连接后，发送握手指令,只发送一次
                     finsCmd.sendHandshakeCommand(OmronFinsTask.deviceMap,fEqId,sourceAddress);
+                    shakeTime = System.currentTimeMillis();
+                    System.out.println("ip="+ip+",握手指令发送时间："+ shakeTime);
                     flag = true;
                 }
                 //判断握手是否成功
@@ -269,8 +287,11 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
                 if(isHandshake){
                     //握手成功
                     //发送指令
+                    sleep(100);
                     ajaxResult = finsCmd.sendControlCommand(OmronFinsTask.deviceMap,fEqId,sourceAddress,destinationAddress,
                             area,address,bitAddress,writeLength,controlState);
+                    controlTime = System.currentTimeMillis();
+                    System.out.println("ip="+ip+",控制指令发送时间："+ controlTime);
                     break;
                 }
             }
@@ -278,7 +299,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
             sleep(20);
         }
 
-
+        System.out.println("ip="+ip+",控制指令发送时间-握手指令发送时间="+ (controlTime-shakeTime));
 //        //判断握手是否成功
 //        Map itemMap = OmronFinsTask.deviceMap.get(fEqId);
 //        if(itemMap == null){
@@ -298,6 +319,9 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
 //        }
 
 
+        sleep(50);
+        OmronFinsTask.commandLock = true;
+        System.out.println("打开指令锁：commandLock="+commandLock);
         return ajaxResult;
     }
 

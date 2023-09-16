@@ -1355,6 +1355,7 @@
           style="width: 100%"
           height="600"
           v-if="deviceIndexShow == index"
+          :key="deviceIndexShow"
         >
           <el-table-column prop="eqName" label="设备名称" align="center">
           </el-table-column>
@@ -2008,6 +2009,7 @@ export default {
     handleClickDevice(tab, event) {
       console.log(tab.index);
       this.deviceIndexShow = tab.index;
+
     },
 
     handleChangeControl() {

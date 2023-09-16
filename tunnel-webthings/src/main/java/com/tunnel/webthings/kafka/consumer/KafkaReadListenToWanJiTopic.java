@@ -87,7 +87,7 @@ public class KafkaReadListenToWanJiTopic {
             //解析事件数据
             JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件数据
-            saveEvent(objects);
+            //saveEvent(objects);
         }
         //手动提交
         consumer.commitSync();
@@ -237,11 +237,18 @@ public class KafkaReadListenToWanJiTopic {
             sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
             sdEvent.setStakeNum(eventData.getString("stakeNum"));
             sdEvent.setDirection(direction);
+            sdEvent.setConfidenceList(eventData.getString("plate"));
             if(data != null){
                 sdEvent.setEventState(data.getEventState());
                 sdEventMapper.updateSdEvent(sdEvent);
+                if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+                    sdEventMapper.updateEventConfidence(sdEvent);
+                }
             }else {
                 sdEventService.insertSdEvent(sdEvent);
+                if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+                    sdEventMapper.insertEventConfidence(sdEvent);
+                }
                 //将事件推送到前端展示
                 eventSendWeb(jsonObject);
             }
@@ -348,6 +355,9 @@ public class KafkaReadListenToWanJiTopic {
         /*JSONObject eventInfo = jsonObject.getJSONObject("eventInfo");
         WjConfidence wjConfidence = new WjConfidence();
         wjConfidence.setEventIds(eventInfo.getLongValue("eventId"));*/
+        if(participantList == null){
+            return;
+        }
         for(int i = 0; i < participantList.size(); i++){
             //单条感知数据
             JSONObject radar = JSONObject.parseObject(participantList.get(i).toString());

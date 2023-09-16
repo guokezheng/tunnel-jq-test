@@ -344,11 +344,13 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
-        String carPa = radarEventMapper.selectConfidence(sdEvent.getId());
-        if(carPa == null){
-            sdEventMapper.insertEventConfidence(sdEvent);
-        }else {
-            sdEventMapper.updateEventConfidence(sdEvent);
+        if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+            String carPa = radarEventMapper.selectConfidence(sdEvent.getId());
+            if(carPa == null){
+                sdEventMapper.insertEventConfidence(sdEvent);
+            }else {
+                sdEventMapper.updateEventConfidence(sdEvent);
+            }
         }
         return count;
     }

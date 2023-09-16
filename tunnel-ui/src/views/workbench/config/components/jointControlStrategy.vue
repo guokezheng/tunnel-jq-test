@@ -69,7 +69,7 @@
             >
             <!--              </el-col>-->
             <!--            </el-row>-->
-            <div class="searchBox" v-show="boxShow" ref="cc">
+            <div class="searchBox searchBoxLight" v-show="boxShow" ref="cc">
               <el-form
                 ref="queryForm"
                 :inline="true"

@@ -995,7 +995,6 @@ export default {
     };
     return {
       refresh:0,
-      refresh1:0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -1216,11 +1215,26 @@ export default {
       input: "",
       externalSystemList: [],
       eqStatusList: [],
+      flag:false,
     };
   },
-
+  beforeDestroy(){
+    if(this.flag){
+      this.$cache.local.set("settingPoint", JSON.stringify(this.queryParams));
+    }else{
+      this.$cache.local.remove("settingPoint");
+    }
+  },
   created() {
-      console.log(this.$route.query.message,"this.$route.query")
+    if(this.$cache.local.get("settingPoint")){
+      let form = JSON.parse(this.$cache.local.get("settingPoint"))
+      if(form.type == 1){
+        this.queryParams = form
+      }else{
+        this.$cache.local.remove("settingPoint")
+        this.resetForm("queryForm");
+      }
+    }
     this.getList();
     this.getTunnel();
     this.getEqType();
@@ -1250,7 +1264,7 @@ export default {
     // 关闭级联选择器时 把打开的二级菜单折叠
     elCascaderOnClick(f){
       if(!f){
-        ++this.refresh
+        this.refresh++
       }
     },
     changeEquipmentType(index) {
@@ -1507,15 +1521,20 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.refresh++
       this.eqTypeData = [];
       this.getEqType();
       this.checkeBox = [];
+      this.queryParams = {}
       this.queryParams.remark = "";
       this.queryParams.searchValue = "";
       this.queryParams.eqState = "";
-
+      this.queryParams.eqType = null;
+      this.queryParams.eqTunnelId = "";
+      this.$cache.local.remove("settingPoint");
       this.resetForm("queryForm");
       this.handleQuery();
+      this.$forceUpdate()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1595,7 +1614,8 @@ export default {
       const eqId = row.eqId || 0;
       const eqType = row.eqType || 0;
       const protocolId = row.protocolId || 0;
-
+      
+      this.flag = true
       this.$router.push({
         path: "/equipment/eqlist-point/index",
         query: { eqId: eqId, typeId: eqType, protocolId: protocolId },

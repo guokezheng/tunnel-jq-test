@@ -125,7 +125,7 @@ public class VMSControl implements GeneralControlBean {
 //            sdOperationLog.setOperationState(sdVmsContent == null ? "" : sdVmsContent.get("content").toString());
             operationState = sdVmsContent == null ? "" : sdVmsContent.get("content").toString();
         }
-
+        System.out.println(devId + "情报板模板内容：" + operationState);
         //控制情报板
         controlState = controlInformationBoard(controlState, templateId, sdDevices, state, map);
         //日志
@@ -307,6 +307,7 @@ public class VMSControl implements GeneralControlBean {
             Map<String, Object> map1 = new HashMap<>();
             map1.put("objectData",json);
             AjaxResult ajaxResult = boardController.splicingBoard(map1);
+            System.out.println(sdDevices.getEqId() + "：情报板下发  " + ajaxResult.get("code"));
             /*Long dId = sdDevices.getAssociatedDeviceId();
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(dId);
             String protocolType = sdIotDevice.getProtocolName();

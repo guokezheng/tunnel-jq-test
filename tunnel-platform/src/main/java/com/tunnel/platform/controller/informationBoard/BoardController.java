@@ -1467,7 +1467,7 @@ public class BoardController extends BaseController {
                 parameters = parameters.replaceAll("<r><n>","\r\n");
                 parameters = parameters.replaceAll("<br>","\\\\n");
                 String newContent = parameters;
-                if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                /*if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
                     flag = true;
                     newContent = newContent.replaceAll("\n", "<n>");
                     newContent = newContent.replaceAll("\r", "<r>");
@@ -1477,7 +1477,7 @@ public class BoardController extends BaseController {
                     //储存失败设备名称
                     failDevList.add(device.getEqName());
                     continue;
-                }
+                }*/
                 for (int g = 0;g < iotBoardVocabularies.size();g++) {
                     String word = iotBoardVocabularies.get(g).getWord();
                     if (parameters.contains(word)) {

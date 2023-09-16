@@ -1410,6 +1410,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     issuedParam.put("type","0");
                 }
                 issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+                System.out.println(devId + "：情报板下发中");
                 issueResult = sdDeviceControlService.controlDevices(issuedParam);
                 if(StrUtil.isNotBlank(rl.getEffectiveTime()) && issueResult > 0) {
                     issuedParam.put("eqTypeId",eqTypeId);
@@ -1466,7 +1467,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         rl.setEquipments(joinReserveHandle.getEquipments());
         rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
         rl.setState(joinReserveHandle.getState());
-        int issueResult = issuedDevice(rl,eventId,"4");
+        SdEvent sdEvent1 = sdEventMapper.selectSdEventById(eventId);
+        int issueResult = 0;
+        if(joinReserveHandle.getEqTypeId() == DevicesTypeEnum.ROBOT.getCode() && TunnelEnum.HU_SHAN.getCode().equals(sdEvent1.getTunnelId())){
+            SdEventController bean = SpringUtils.getBean(SdEventController.class);
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(eventId);
+            sdEventHandle.setProcessId(processId);
+            List<SdEventHandle> list = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle);
+            bean.roBotDong(eventId,list.get(0).getId());
+            issueResult = 1;
+        }else {
+            issueResult = issuedDevice(rl,eventId,"4");
+        }
         String deviceExecutionState = getDeviceExecutionState(processId);
         if(issueResult>0){
             //保存处置记录

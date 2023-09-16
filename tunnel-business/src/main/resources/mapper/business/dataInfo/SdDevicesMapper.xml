@@ -1344,6 +1344,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update_time = #{updateTime}
         where ip = #{ip}
     </update>
+    <update id="updateFDeviceStatusByEqId">
+        UPDATE sd_devices
+        set eq_status = #{eqStatus},
+            eq_status_time = #{updateTime},
+            update_time = #{updateTime}
+        WHERE eq_id = (
+            select a.id from
+                (select f_eq_id as id from sd_devices where eq_id = #{eqId}) as A)
+    </update>
 
 
     <select id="getFireMonitorId" parameterType="java.lang.String" resultType="java.lang.String">

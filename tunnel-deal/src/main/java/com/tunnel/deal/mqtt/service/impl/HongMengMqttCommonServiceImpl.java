@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -119,10 +120,12 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
             if("00".equals(devStatus)){
                 //离线
                 sdDevicesService.updateOfflineStatus(deviceId,false);
+                sdDevicesService.updateFDeviceStatusByEqId(deviceId, DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             }
             if("01".equals(devStatus)){
                 //在线
                 sdDevicesService.updateOnlineStatus(deviceId,false);
+                sdDevicesService.updateFDeviceStatusByEqId(deviceId, DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             }
         }
         if("01".equals(isFault)){

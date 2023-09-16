@@ -2,6 +2,7 @@ package com.tunnel.business.service.dataInfo;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 
@@ -388,5 +389,11 @@ public interface ISdDevicesService {
      */
     List<String> getDevicesListByMacAndEqTypeAndLane(String mac, String eqType, String lane);
 
-
+    /**
+     * 更新设备父设备状态
+     * @param deviceId
+     * @param devicesStatusEnum
+     * @return
+     */
+    int updateFDeviceStatusByEqId(String deviceId, String status);
 }

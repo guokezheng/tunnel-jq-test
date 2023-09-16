@@ -244,27 +244,27 @@ public class LaneIndicatorMqttServiceImpl implements HongMengMqttService {
             case "laneIndicator_00":
                 status = "4";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "laneIndicator_01":
                 status = "1";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "laneIndicator_02":
                 status = "2";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "laneIndicator_03":
                 status = "3";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "laneIndicator_04":
                 status = "5";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "laneIndicator_FF":
                 //故障处理

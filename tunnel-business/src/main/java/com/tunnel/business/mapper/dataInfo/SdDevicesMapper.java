@@ -553,4 +553,5 @@ public interface SdDevicesMapper {
 
 	List<String> getDevicesListByMacAndEqTypeAndLane(@Param("mac") String mac, @Param("eqType") String eqType, @Param("lane") String lane);
 
+    int updateFDeviceStatusByEqId(SdDevices sdDevices);
 }

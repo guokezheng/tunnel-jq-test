@@ -254,17 +254,17 @@ public class FanMqttServiceImpl implements HongMengMqttService
             case "fan_01":
                 status = "1";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "fan_02":
                 status = "2";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "fan_00":
                 status = "3";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "fan_FF":
                 //故障处理

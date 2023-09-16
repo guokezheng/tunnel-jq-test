@@ -240,7 +240,6 @@ public class FireMonitorDataParse {
         int num = 0;
         while (num < len) {
             String s = data.substring(num, num + 2);
-            System.out.println(s);
             total += Integer.parseInt(s, 16);
             num = num + 2;
         }
@@ -303,7 +302,6 @@ public class FireMonitorDataParse {
         String content =  " 3C 01 01 02";
         // 授权码
         String code = getAscii("6E6017A7145935A0EFFE1714FBAA2848");
-        System.out.println(commend0 + commend1 + commend2);
         String num = " " + makeChecksum((commend0 + commend1 + commend2).replaceAll(" ",""));
         // 结束字符
         String end = " 23 23";

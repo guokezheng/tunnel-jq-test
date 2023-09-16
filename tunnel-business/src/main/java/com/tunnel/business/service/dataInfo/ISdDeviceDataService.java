@@ -131,5 +131,13 @@ public interface ISdDeviceDataService {
      */
    void updateDeviceData(SdDevices sdDevices, String value, Long itemId);
 
+    /**
+     * 修改设备数据表中实时数据
+     * @param sdDevices 设备信息
+     * @param value 数据
+     * @param itemId 数据项
+     */
+    void updateDeviceData(SdDevices sdDevices, String value, Long itemId,boolean createLog);
+
     List<Map> getItemDataByEqId(String eqId);
 }

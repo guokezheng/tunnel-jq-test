@@ -1,7 +1,6 @@
 package com.tunnel.business.service.protocol.impl;
 
 
-import com.tunnel.business.domain.protocol.SdDevicePoint;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 import com.tunnel.business.mapper.protocol.SdDevicePointPlcMapper;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
@@ -109,6 +108,19 @@ public class SdDevicePointPlcServiceImpl implements ISdDevicePointPlcService
     }
 
     /**
+     * 根据父设备ID、点位类型筛选最小点位、最大点位
+     *
+     * @param list      父设备ID列表
+     * @param codeList  功能码列表
+     * @param pointType 点位类型
+     * @return
+     */
+    @Override
+    public List<Map> selectDevicePointByGroupNum(List<String> list, List<String> codeList, String pointType) {
+        return sdDevicePointPlcMapper.selectDevicePointByGroupNum(list,codeList,pointType);
+    }
+
+    /**
      * 根据父设备ID、点位类型查询点位信息
      *
      * @param list      父设备ID列表
@@ -130,7 +142,7 @@ public class SdDevicePointPlcServiceImpl implements ISdDevicePointPlcService
      * @return
      */
     @Override
-    public List<SdDevicePoint> selectDevicePointByFEqId(List<String> list, Long pointType, String functionCode) {
+    public List<SdDevicePointPlc> selectDevicePointByFEqId(List<String> list, Long pointType, String functionCode) {
         return sdDevicePointPlcMapper.selectDevicePointByFEqId(list,pointType,functionCode);
     }
 }

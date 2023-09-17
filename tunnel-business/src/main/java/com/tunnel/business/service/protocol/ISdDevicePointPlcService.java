@@ -1,10 +1,9 @@
 package com.tunnel.business.service.protocol;
 
+import com.tunnel.business.domain.protocol.SdDevicePointPlc;
+
 import java.util.List;
 import java.util.Map;
-
-import com.tunnel.business.domain.protocol.SdDevicePoint;
-import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 
 /**
  * PLC设备点位(区别测控执行器)Service接口
@@ -75,6 +74,15 @@ public interface ISdDevicePointPlcService
 
 
     /**
+     * 根据父设备ID、点位类型筛选最小点位、最大点位
+     * @param list 父设备ID列表
+     * @param codeList 功能码列表
+     * @param pointType 点位类型
+     * @return
+     */
+    List<Map> selectDevicePointByGroupNum(List<String> list, List<String> codeList, String pointType);
+
+    /**
      * 根据父设备ID、点位类型查询点位信息
      * @param list 父设备ID列表
      * @param codeList 功能码列表
@@ -91,5 +99,5 @@ public interface ISdDevicePointPlcService
      * @param functionCode 功能码
      * @return
      */
-    List<SdDevicePoint> selectDevicePointByFEqId(List<String> list, Long pointType, String functionCode);
+    List<SdDevicePointPlc> selectDevicePointByFEqId(List<String> list, Long pointType, String functionCode);
 }

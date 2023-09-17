@@ -5,10 +5,7 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
@@ -72,6 +69,10 @@ public class SansiLightImpl implements Light , GeneralControlBean {
 
     private static final Logger logger = LoggerFactory.getLogger(SanJingLight.class);
 
+    @Autowired
+    private ISdDevicesService devicesService;
+
+
     /**
      * 登录获取会话ID
      * 用户名/密码默认是：admin/admin123
@@ -92,6 +93,9 @@ public class SansiLightImpl implements Light , GeneralControlBean {
                     return true;
                 }
             }).build();
+//            OkHttpClient client = new OkHttpClient().newBuilder()
+//                    .hostnameVerifier((hostname, session) -> true)
+//                    .build();
             MediaType mediaType=MediaType.parse("application/json");
             RequestBody body=RequestBody.create(mediaType, data);
             Request request=new Request.Builder().url(baseUrl+"api/core/users/login").post(body).build();
@@ -106,8 +110,6 @@ public class SansiLightImpl implements Light , GeneralControlBean {
                 response.close();
             }
         }
-
-
     }
 
     /**
@@ -140,7 +142,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
 
         //获取三思Cookie
         String jessionId = loginRedis(externalSystem, baseUrl);
-        return updateBrightness(jessionId, baseUrl, baseUrl, 1);
+        return updateSwitch(jessionId, baseUrl, step, bright);
     }
 
     /**
@@ -221,12 +223,13 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         }).build();
         MediaType mediaType = MediaType.parse("application/json");
         //传入的请求参数
-        String data = "{\"param\":" + openClose + "}";
-        RequestBody body = RequestBody.create(mediaType, data);
-
         if (openClose == 2) {
             openClose = 0;
         }
+        String data = "{\"param\":" + openClose + "}";
+        RequestBody body = RequestBody.create(mediaType, data);
+
+
         String url = baseUrl + "api/core/assetGroups/"+step+"/action/device-sensor:switch-status";
 
         Request request = new Request.Builder()
@@ -249,6 +252,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
                 response.close();
             }
         }
+        System.out.print("控制回调"+responseBody.toString());
         return responseBody.contains("pipelineId") ? 1 : 0;
     }
 
@@ -546,8 +550,11 @@ public class SansiLightImpl implements Light , GeneralControlBean {
 
         //开关
 //        int switchType = updateSwitch(jessionId, baseUrl, step, Integer.valueOf(state));
-
-
+        //说明控制成功
+        if(switchType==1&&brightnessType==1){
+            //将获取到的照明实时数据更新到设备实时记录表中
+            getLightDeviceData(sdDevices,brightnessStr,eqDirection);
+        }
 
         logger.error("照明开关控制打印信息:switchType="+switchType+",brightnessType="+brightnessType);
         System.out.println("照明开关控制打印信息:switchType="+switchType+",brightnessType="+brightnessType);
@@ -560,7 +567,46 @@ public class SansiLightImpl implements Light , GeneralControlBean {
             return AjaxResult.error("控制失败",0);
         }
     }
+    /**
+     * 将获取到的照明实时数据更新到设备实时记录表中
+     * @param sdDevices 设备数据
+     * @param brightnessStr 照明亮度
+     * @param direction 隧道方向
+     */
+    private void getLightDeviceData(SdDevices sdDevices, String brightnessStr, String direction){
+        //设备上线
+        sdDevices.setEqStatus("1");
+        devicesService.updateSdDevices(sdDevices);
 
+        Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+        if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            //基本照明
+            itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+        }
+
+        sdDeviceDataService.updateDeviceData(sdDevices, brightnessStr, Long.valueOf(itemId));
+//        for (TunnelStepEnum tunnelStepEnum : TunnelStepEnum.values()) {
+//            String name = tunnelStepEnum.getName();
+//            Integer brightness = data.getInteger(name);
+//
+//            if (null != brightness) {
+//                //设备类型
+//                sdDevices.setEqType(TunnelStepEnum.getEqType(name));
+//                //段号
+//                sdDevices.setExternalDeviceId(TunnelStepEnum.getValue(name));
+//                SdDevices device = sdDevicesService.getLight(sdDevices);
+//                if (device != null) {
+//
+//                    Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+//                    if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+//                        //基本照明
+//                        itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+//                    }
+//                    sdDeviceDataService.updateDeviceData(device, String.valueOf(brightness), Long.valueOf(itemId));
+//                }
+//            }
+//        }
+    }
     /**
      * 获取开关实时状态
      * @param sdDevices
@@ -599,7 +645,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         return statusItemCode;
     }
     /**
-     * 单个设备调光
+     * 设备调光
      * @param device
      * @param nowLuminanceRange    原有亮度
      * @param luminanceRange    当前亮度

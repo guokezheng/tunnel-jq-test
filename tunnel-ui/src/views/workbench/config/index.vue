@@ -284,13 +284,14 @@
               ></el-switch>
             </div>
           </el-col>
+
           <el-col :span="12">
             <div class="drawerItem zoomClass">
               <p
                 class="zoom-title"
                 style="font-size: 0.7vw; margin-right: 0.5vw"
               >
-                {{ fluctuateSwitch == 0 ? "波动灯光开" : "波动灯光关" }}
+                {{ fluctuateSwitch == 0 ? "照明图标显示" : "照明图标显示" }}
               </p>
               <el-switch
                 v-model="fluctuateSwitch"
@@ -299,6 +300,22 @@
               ></el-switch>
             </div>
           </el-col>
+          <el-col :span="12">
+            <div class="drawerItem zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.7vw; margin-right: 0.5vw"
+              >
+                {{ fluctuateSwitch1 == 0 ? "照明图标关" : "照明图标关" }}
+              </p>
+              <el-switch
+                v-model="fluctuateSwitch1"
+                class="switchStyle"
+                @change="fluctuateChange1"
+              ></el-switch>
+            </div>
+          </el-col>
+
         </el-row>
       </el-drawer>
       <div
@@ -553,7 +570,7 @@
                         v-show="
                           item.eqType != '31' &&
                           item.eqType != '16' &&
-                          item.eqType != '36' && 
+                          item.eqType != '36' &&
                           item.eqType != '29'
                         "
                         v-for="(url, indexs) in item.url"
@@ -2468,6 +2485,7 @@ export default {
       displayNumb: false, //显示编号
       zoomSwitch: false, //缩放
       fluctuateSwitch: false,
+      fluctuateSwitch1: false,
       currentTunnel: {
         id: "",
         name: "",
@@ -3880,21 +3898,23 @@ export default {
       }
     },
     fluctuateChange(val) {
-      if (val == true) {
+      closeIllumination().then((response) => {
+        if (response.code == 200) {
+        } else {
+          this.$modal.msgError(response.msg);
+        }
+      });
+    },
+    fluctuateChange1(val) {
         openIllumination().then((response) => {
           if (response.code == 200) {
           } else {
             this.$modal.msgError(response.msg);
           }
         });
-      } else {
-        closeIllumination().then((response) => {
-          if (response.code == 200) {
-          } else {
-            this.$modal.msgError(response.msg);
-          }
-        });
-      }
+
+
+
     },
     /** 设备类型 */
     getEqType() {

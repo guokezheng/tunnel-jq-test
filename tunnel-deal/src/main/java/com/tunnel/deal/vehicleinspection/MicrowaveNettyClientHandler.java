@@ -153,9 +153,9 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 //            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
 //        }
 //        //单车数据
-//        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
-//            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-//        }
+        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
+            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+        }
 //
         //单车数据
         //增加  模式功能。根据选择不同模式 。做出响应策略。
@@ -163,7 +163,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         // 当前模式为定时模式时，随时间段进行调整亮度照明。并增加根据当前时间  15分钟内隧道过车 流量数量来进行控制加强照明亮度浮动范围
         //  当前模式为ECO模式时，结合上述两种功能实现
         //redisCache.getCacheObject();
-        if(receiveStr.length()==34&&(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8"))){
+        if(receiveStr.length()==32&&(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8"))){
             //查询当前加强照明配置信息
             List<SdEnhancedLightingConfig> sdEnhancedLightingConfigList;
             sdEnhancedLightingConfigList = redisCache.getCacheObject("control:lightFixedTimeTask");
@@ -312,7 +312,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         //调光最小区间
         Integer  minLuminanceRange = sdEnhancedLightingConfig.getMinLuminanceRange();
         //最大车流量
-        Integer  maxTrafficFlow = Math.toIntExact(sdEnhancedLightingConfig.getMaxTrafficFlow());
+//        Integer  maxTrafficFlow = Math.toIntExact(sdEnhancedLightingConfig.getMaxTrafficFlow());
         //响应时间
         Long respondTime = sdEnhancedLightingConfig.getRespondTime();
         //最小亮度值
@@ -406,6 +406,16 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                     if("2".equals(deviceState)){
                                         log.info("当前[{}]设备状态为关闭状态,需要开启照明方可进行调光。",devices.getEqId());
                                         int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),1,null);
+                                        SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
+                                        if(devicesProtocol == null){
+                                            continue;
+                                        }
+                                        String className = devicesProtocol.getClassName();
+                                        if(className.contains("sansi")){
+                                            flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                                        }else{
+                                            flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
+                                        }
                                         if(flag == 0){
                                             log.error("当前[{}]加强照明为关闭状态，开启失败。请联系管理员",devices.getEqId());
                                             continue;
@@ -460,7 +470,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                 for (SdDevices devices:deviceIds) {
                     //忽略车流量
                     //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
-                    //int nowLuminanceRange =  sdEnhancedLightingConfigService.getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
+//                    int nowLuminanceRange =  sdEnhancedLightingConfigService.getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
                     //亮度值计算:
                     // 后期修改为 根据洞外亮度计算当前亮度值
                     // 当前亮度值 根据定时模式获取当前路段亮度。

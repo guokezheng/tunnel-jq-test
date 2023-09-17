@@ -16,7 +16,11 @@ import sun.misc.BASE64Encoder;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class lluminationFluctuateServiceImpl implements IlluminationFluctuateService {
 
@@ -36,10 +40,66 @@ public class lluminationFluctuateServiceImpl implements IlluminationFluctuateSer
      */
     @Override
     public boolean openIllumination() {
-        List<LightConfiguration> lightConfigurations = lluminationFluctuateMapper.getlightConfiguration();
+//        List<LightConfiguration> lightConfigurations = lluminationFluctuateMapper.getlightConfiguration();
+//        // 根据某个字段分成两个集合
+//        Map<Boolean, List<LightConfiguration>> dividedConfigurations = lightConfigurations.stream()
+//                .collect(Collectors.partitioningBy(configuration -> configuration.getExternalId().equals("1")));
+//
+//        // 分成两个集合的结果
+//        List<LightConfiguration> trueList = dividedConfigurations.get(true); // 符合条件的集合
+//        List<LightConfiguration> falseList = dividedConfigurations.get(false); // 不符合条件的集合
+//
+//        List<LightConfiguration> mergedList = new ArrayList<>();
+//
+//        int size = Math.min(trueList.size(), falseList.size());
+//
+//        for (int i = 0; i < size; i++) {
+//            mergedList.add(trueList.get(i));
+//            mergedList.add(falseList.get(i));
+//        }
+//
+//        // 如果两个集合长度不一致，将剩余的元素添加到合并后的集合中
+//        mergedList.addAll(trueList.subList(size, trueList.size()));
+//        mergedList.addAll(falseList.subList(size, falseList.size()));
+//
+//        //查询外部系统信息
+//        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(1l);
+        // 打印合并后的结果
 
-        //查询外部系统信息
-        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(22l);
+
+//        String baseUrl = externalSystem.getSystemUrl();
+//
+//        String jessionId;
+//
+//        String tokenKey = "sanSiToken";
+//
+//        jessionId = redisCache.getCacheObject(tokenKey);
+//
+//        if(jessionId == null || "".equals(jessionId)){
+//            jessionId =  login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+//            redisCache.setCacheObject(tokenKey,jessionId);
+//            redisCache.expire(tokenKey,15*60);
+//        }
+//
+//        if(jessionId == null || "".equals(jessionId)){
+//            return false;
+//        }
+//        try {
+//            for( LightConfiguration LightConfig :mergedList){
+//                updateSwitch(jessionId, baseUrl, LightConfig.getEqId(), Integer.valueOf(1));
+//                updateBrightness(jessionId, baseUrl, LightConfig.getEqId() ,90);
+//                Thread.sleep(500);
+//
+//            } } catch (InterruptedException e) {
+//
+//        }
+//        return false;
+
+                //查询外部系统信息
+        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(1l);
+//         打印合并后的结果
+
+
         String baseUrl = externalSystem.getSystemUrl();
 
         String jessionId;
@@ -58,12 +118,18 @@ public class lluminationFluctuateServiceImpl implements IlluminationFluctuateSer
             return false;
         }
         try {
-        for( LightConfiguration LightConfig :lightConfigurations){
-            updateSwitch(jessionId, baseUrl, LightConfig.getExternalId(), Integer.valueOf(1));
-            updateBrightness(jessionId, baseUrl, LightConfig.getExternalId() ,90);
-            Thread.sleep(500);
 
-        } } catch (InterruptedException e) {
+//                updateSwitch(jessionId, baseUrl, "6500204b59070f001218e5f3", Integer.valueOf(1));
+            updateBrightness(jessionId, baseUrl, "6500204b59070f001218e5f3" ,10);
+            updateBrightness(jessionId, baseUrl, "6500204b59070f001218e5f3" ,10);
+
+
+            //加强照明开
+            updateSwitch(jessionId, baseUrl, "6500204b59070f001218e5f3", Integer.valueOf(1));
+            updateBrightness(jessionId, baseUrl, "6500204b59070f001218e5f3" ,98);
+                Thread.sleep(500);
+
+             } catch (InterruptedException e) {
 
         }
 
@@ -76,10 +142,62 @@ public class lluminationFluctuateServiceImpl implements IlluminationFluctuateSer
      */
     @Override
     public boolean closeIllumination() {
-        List<LightConfiguration> lightConfigurations = lluminationFluctuateMapper.getlightConfiguration();
+//        List<LightConfiguration> lightConfigurations = lluminationFluctuateMapper.getlightConfiguration();
+//        // 根据某个字段分成两个集合
+//        Map<Boolean, List<LightConfiguration>> dividedConfigurations = lightConfigurations.stream()
+//                .collect(Collectors.partitioningBy(configuration -> configuration.getExternalId().equals("1")));
+//
+//        // 分成两个集合的结果
+//        List<LightConfiguration> trueList = dividedConfigurations.get(true); // 符合条件的集合
+//        List<LightConfiguration> falseList = dividedConfigurations.get(false); // 不符合条件的集合
+//
+//        List<LightConfiguration> mergedList = new ArrayList<>();
+//
+//        int size = Math.min(trueList.size(), falseList.size());
+//
+//        for (int i = 0; i < size; i++) {
+//            mergedList.add(trueList.get(i));
+//            mergedList.add(falseList.get(i));
+//        }
+//
+//        // 如果两个集合长度不一致，将剩余的元素添加到合并后的集合中
+//        mergedList.addAll(trueList.subList(size, trueList.size()));
+//        mergedList.addAll(falseList.subList(size, falseList.size()));
+//        //查询外部系统信息
+//        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(1l);
+//        // 打印合并后的结果
+//
+//        String baseUrl = externalSystem.getSystemUrl();
+//
+//        String jessionId;
+//
+//        String tokenKey = "sanSiToken";
+//
+//        jessionId = redisCache.getCacheObject(tokenKey);
+//
+//        if(jessionId == null || "".equals(jessionId)){
+//            jessionId =  login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+//            redisCache.setCacheObject(tokenKey,jessionId);
+//            redisCache.expire(tokenKey,15*60);
+//        }
+//
+//        if(jessionId == null || "".equals(jessionId)){
+//            return false ;
+//        }
+//        try {
+//            for( LightConfiguration LightConfig :lightConfigurations){
+//                updateSwitch(jessionId, baseUrl, LightConfig.getEqId(), Integer.valueOf(1));
+//                updateBrightness(jessionId, baseUrl, LightConfig.getEqId() ,30);
+//                Thread.sleep(500);
+//
+//            } } catch (InterruptedException e) {
+//
+//        }
 
-        //查询外部系统信息
-        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(22l);
+//查询外部系统信息
+        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(1l);
+        // 打印合并后的结果
+
         String baseUrl = externalSystem.getSystemUrl();
 
         String jessionId;
@@ -95,17 +213,22 @@ public class lluminationFluctuateServiceImpl implements IlluminationFluctuateSer
         }
 
         if(jessionId == null || "".equals(jessionId)){
-            return false;
+            return false ;
         }
         try {
-            for( LightConfiguration LightConfig :lightConfigurations){
-                updateSwitch(jessionId, baseUrl, LightConfig.getExternalId(), Integer.valueOf(1));
-                updateBrightness(jessionId, baseUrl, LightConfig.getExternalId() ,30);
+                //基础照明开
+                updateSwitch(jessionId, baseUrl, "6500204b59070f001218e5f3", Integer.valueOf(1));
+                updateBrightness(jessionId, baseUrl, "6500204b59070f001218e5f3" ,98);
+
+                //加强照明开
+                updateSwitch(jessionId, baseUrl, "6500204b59070f001218e5f3", Integer.valueOf(1));
+                updateBrightness(jessionId, baseUrl, "6500204b59070f001218e5f3" ,98);
                 Thread.sleep(500);
 
-            } } catch (InterruptedException e) {
+             } catch (InterruptedException e) {
 
         }
+
         return false;
     }
 
@@ -164,12 +287,13 @@ public class lluminationFluctuateServiceImpl implements IlluminationFluctuateSer
         }).build();
         MediaType mediaType = MediaType.parse("application/json");
         //传入的请求参数
-        String data = "{\"param\":" + openClose + "}";
-        RequestBody body = RequestBody.create(mediaType, data);
-
         if (openClose == 2) {
             openClose = 0;
         }
+        String data = "{\"param\":" + openClose + "}";
+        RequestBody body = RequestBody.create(mediaType, data);
+//        step ="0000B84D43EBB603";
+
         String url = baseUrl + "api/core/assetGroups/"+step+"/action/device-sensor:switch-status";
 
         Request request = new Request.Builder()

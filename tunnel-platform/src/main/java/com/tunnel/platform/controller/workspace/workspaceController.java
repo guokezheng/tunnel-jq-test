@@ -61,7 +61,7 @@ public class workspaceController extends BaseController {
     @Autowired
     private ISdDevicesService sdDevicesService;
     @Autowired
-    private static RedisCache redisCache;
+    private RedisCache redisCache;
     @Autowired
     private ISdTunnelsService sdTunnelsService;
     @Autowired
@@ -246,6 +246,18 @@ public class workspaceController extends BaseController {
             if(generalControlBean == null){
                 return AjaxResult.error("设备协议配置为空");
             }
+
+            //照明控制增加
+            if( DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(map.get("eqType").toString())||
+                    DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(map.get("eqType").toString())){
+                //将当前设备亮度存储redis缓存。
+                String redisLuminanceRangeKey = "control_regular:"+sdDevices.getEqId()+"_LuminanceRange";
+                redisCache.setCacheObject(redisLuminanceRangeKey,Integer.valueOf(brightness));
+                //将当前设备亮度存储redis缓存。
+                String redisStateLuminanceRangeKey = "control_regular:"+sdDevices.getEqId()+"_state";
+                redisCache.setCacheObject(redisStateLuminanceRangeKey,state);
+            }
+
             AjaxResult ajaxResult = generalControlBean.control(map,sdDevices);
 //            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
 //            if( code == HttpStatus.SUCCESS){

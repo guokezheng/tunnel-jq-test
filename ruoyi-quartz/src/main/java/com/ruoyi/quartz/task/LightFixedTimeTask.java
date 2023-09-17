@@ -8,15 +8,19 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
 import com.tunnel.deal.light.impl.SanJingLight;
+import com.tunnel.deal.light.impl.SansiLightImpl;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -42,7 +46,12 @@ public class LightFixedTimeTask {
 
     private SanJingLight sanJingLight =  SpringUtils.getBean(SanJingLight.class);
 
+    private SansiLightImpl sansiLightImpl =  SpringUtils.getBean(SansiLightImpl.class);
+
     private RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
+
+    @Autowired
+    private ISdDevicesProtocolService sdDevicesProtocolService;
 
 
     /**
@@ -238,27 +247,39 @@ public class LightFixedTimeTask {
                         if(nowLuminanceRange != null && minLuminance != nowLuminanceRange){
                             log.info("结束亮光值:["+ sdEnhancedLightingConfig.getTunnelId() +"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
                             int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+
+                            SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
+                            if(devicesProtocol == null){
+                                continue;
+                            }
+                            String className = devicesProtocol.getClassName();
                             if(flag == 0){
                                 log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
+                            }
+                            if(className.contains("sansi")){
+                                flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                            }else{
+                                flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
                             }
                         }
                     }
                 }
-            }else if(sdEnhancedLightingConfig.getModeType() == 1){
-                for (SdDevices devices:deviceIds) {
-                    //查看两个亮度值是否一致
-                    //定时原有亮度值
-                    String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
-                    Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
-                    //当前亮度值
-                    String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
-                    Integer nowLuminanceRange2 = redisCache.getCacheObject(redisLuminanceRangeKey);
-                    //如果亮度值不同，则重新调整亮度值
-                    if(nowLuminanceRange1!=null && !nowLuminanceRange1.equals(nowLuminanceRange2)){
-                        sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange2,nowLuminanceRange1,"2");
-                    }
-                }
             }
+//            else if(sdEnhancedLightingConfig.getModeType() == 1){
+//                for (SdDevices devices:deviceIds) {
+//                    //查看两个亮度值是否一致
+//                    //定时原有亮度值
+//                    String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
+//                    Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
+//                    //当前亮度值
+//                    String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
+//                    Integer nowLuminanceRange2 = redisCache.getCacheObject(redisLuminanceRangeKey);
+//                    //如果亮度值不同，则重新调整亮度值
+//                    if(nowLuminanceRange1!=null && !nowLuminanceRange1.equals(nowLuminanceRange2)){
+//                        sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange2,nowLuminanceRange1,"2");
+//                    }
+//                }
+//            }
         }
     }
 }

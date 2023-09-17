@@ -7,6 +7,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +15,15 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class MicrowaveNettyConfig {
 
     private static final Logger log = LoggerFactory.getLogger(MicrowaveNettyConfig.class);
+
+    @Value("${spring.profiles.active}")
+    private String active;
 
     @Autowired
     MicrowaveNettyClientHandler nettyClientHandler;
@@ -62,18 +67,35 @@ public class MicrowaveNettyConfig {
                     // device from db
                     SdDevices sdDevices = new SdDevices();
                     sdDevices.setEqTypes(new Long[]{DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode()});
+
                     List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
+                    List<SdDevices> collecttunnelId =  null;
+                    if(active.equals("wzbprod")){
+                        collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-JiNan-WenZuBei-MJY")).collect(Collectors.toList());
+                    }else if(active.equals("ytsprod")){
+                        collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-SZS")
+                        ||devices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-YTS")).collect(Collectors.toList());
+                    }else if(active.equals("thprod")){
+                        collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-ZiBo-TaiHe-PDS")
+                                ||devices.getEqTunnelId().equals("JQ-ZiBo-TaiHe-QFL")).collect(Collectors.toList());
+                    }else if(active.equals("mzprod")){
+                        collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-MiaoZi-BJY")
+                                ||devices.getEqTunnelId().equals("JQ-WeiFang-MiaoZi-WCL")).collect(Collectors.toList());
+                    }else if(active.equals("jlyprod")){
+                        collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-JiuLongYu-JJL")
+                                ||devices.getEqTunnelId().equals("JQ-WeiFang-JiuLongYu-MAS")||devices.getEqTunnelId().equals("JQ-WeiFang-JiuLongYu-HSD")).collect(Collectors.toList());
+                    }
 //                    List<DeviceEntity> list = deviceRepository.getIps();
-                    for(SdDevices it : devicesList) {
+                    for(SdDevices it : collecttunnelId) {
                         //隧道入口微波车检  可用。   仅用来测试使用。后期优化。
-                        if("10.7.187.145".equals(it.getIp())||"10.7.187.147".equals(it.getIp())){
+//                        if("10.7.187.145".equals(it.getIp())||"10.7.187.147".equals(it.getIp())){
                             NettyConnectInfo info = new NettyConnectInfo();
                             info.setPort(Integer.parseInt(it.getPort()));
                             info.setChannel(null);
                             info.setConnected(false);
                             info.setSdDevices(it);
                             mapParam.put(it.getIp()+":"+(it.getPort()), info);
-                        }
+//                        }
                     }
                     // connect
                     MicrowaveNettyClient.getChannel(mapParam);

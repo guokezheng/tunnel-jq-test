@@ -520,7 +520,7 @@ export default {
     },
 
     init(timingType,operationName) {
-      debugger
+      // debugger
       if(!!operationName&&"调光"==operationName){
         this.equipmentType = false
       }
@@ -537,7 +537,7 @@ export default {
       this.getDirection();
     },
     getStrategyData: async function (row) {
-      debugger
+      // debugger
       console.log(row, "当前策略数据");
       await getCategoryTree().then((data) => {
         let dataNum = 0;
@@ -548,7 +548,7 @@ export default {
             break;
           }
         }
-        debugger
+        // debugger
         data.data.splice(dataNum, 1);
         //判断是否是智慧调光 只保留照明
         if (!this.equipmentType) {
@@ -1046,7 +1046,7 @@ export default {
             }
           }
           data.data.splice(dataNum, 1);
-          debugger
+          // debugger
           console.log(data.data)
           //判断是否是智慧调光 只保留照明
           if (!this.equipmentType) {

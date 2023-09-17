@@ -205,12 +205,13 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
     }
 
     @Override
-    public int Broadcast(String deviceId, String text, String baseUrl) {
+    public int Broadcast(String deviceId, String text, String baseUrl, String numberCycles) {
         Map<String, Object> reqMap = new HashMap<>();
         reqMap.put("deviceId", deviceId);
-        reqMap.put("text", text);
+        reqMap.put("control", text);
+        reqMap.put("numberCycles",numberCycles);
 
-        JSONObject jsonObject = toSend(baseUrl + "/Robot/Broadcast", "GET", reqMap);
+        JSONObject jsonObject = toSend(baseUrl + "/Robot/Broadcast?deviceId="+deviceId+"&control="+text+"&numberCycles="+numberCycles, "GET", reqMap);
 
         try {
             if (jsonObject != null && jsonObject.getInteger("code") == 0) {

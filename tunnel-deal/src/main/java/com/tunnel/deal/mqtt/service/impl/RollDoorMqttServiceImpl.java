@@ -230,17 +230,17 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
             case "rollDoor_00":
                 status = "3";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "rollDoor_01":
                 status = "1";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "rollDoor_02":
                 status = "2";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "rollDoor_FF":
                 //故障处理
@@ -251,8 +251,6 @@ public class RollDoorMqttServiceImpl implements HongMengMqttService {
                 break;
 
         }
-        //向万集推送机电设备实时数据
-        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**

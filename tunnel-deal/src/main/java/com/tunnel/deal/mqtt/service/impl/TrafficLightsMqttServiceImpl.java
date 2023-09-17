@@ -238,27 +238,27 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
             case "trafficLight_00":
                 status = "4";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "trafficLight_01":
                 status = "2";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "trafficLight_02":
                 status = "1";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "trafficLight_03":
                 status = "3";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "trafficLight_04":
                 status = "5";
                 //修改设备实时状态
-                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode);
+                sdDeviceDataService.updateDeviceData(sdDevices,status, statusItemCode,true);
                 break;
             case "trafficLight_FF":
                 //故障处理
@@ -269,8 +269,6 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
                 break;
 
         }
-        //向万集推送机电设备实时数据
-        hongMengMqttCommonService.sendWanjiBaseDeviceStatus(sdDevices);
     }
 
     /**

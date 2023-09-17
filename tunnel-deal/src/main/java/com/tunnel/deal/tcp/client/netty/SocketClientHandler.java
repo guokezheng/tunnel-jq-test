@@ -3,9 +3,9 @@ package com.tunnel.deal.tcp.client.netty;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralBean;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
+import com.tunnel.deal.tcp.util.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,6 +30,10 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
 
     private TcpClientGeneralService tcpClientGeneralService = SpringUtils.getBean(TcpClientGeneralService.class);
 
+    /**
+     * 欧姆龙默认端口（短连接，特殊处理）
+     */
+    private static final Integer OMRON_PLC__DEFAULT_PORT = 9600;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
@@ -44,7 +48,7 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
 
 
            String deviceId = tcpClientGeneralService.getDeviceIdByIp(ip);
-            System.out.println("响应命令：ip="+ip+",设备,"+"设备id"+deviceId+",时间："+System.currentTimeMillis());
+            System.out.println("响应命令：ip="+ip+",cmd="+strMsg+","+"设备id="+deviceId+",时间："+System.currentTimeMillis());
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
             //设备解析类
             TcpClientGeneralBean tcpClientGeneralBean = tcpClientGeneralService.getProtocolBean(sdDevices);
@@ -124,12 +128,16 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
         InetSocketAddress ipSocket = (InetSocketAddress)channel.remoteAddress();
         String ip = ipSocket.getAddress().getHostAddress();
         int port = ipSocket.getPort();
-        String deviceId =  tcpClientGeneralService.getDeviceIdByIp(ip);
-        //设置设备及子设备离线
-        sdDevicesService.updateOfflineStatus(deviceId,true);
-        log.error("channelInactive:访问地址="+ip+":"+port);
-        //连接失败，重新连接
-        TcpNettySocketClient.getInstance().connect(ip,port);
+        if(port != OMRON_PLC__DEFAULT_PORT){
+            //除了欧姆龙PLC短连接，普通长连接需要在断连后额外处理
+            String deviceId =  tcpClientGeneralService.getDeviceIdByIp(ip);
+            //设置设备及子设备离线
+            sdDevicesService.updateOfflineStatus(deviceId,true);
+            log.error("channelInactive:访问地址="+ip+":"+port);
+            //连接失败，重新连接
+            TcpNettySocketClient.getInstance().connect(ip,port);
+        }
+
         channel.close();
     }
 

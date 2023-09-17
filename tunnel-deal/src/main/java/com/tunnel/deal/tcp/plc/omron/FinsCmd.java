@@ -121,7 +121,7 @@ public class FinsCmd {
                     channel.writeAndFlush(ByteBufUtil.convertStringToByteBuf(command.replace(" ","")));
                     String deviceId1 = tcpClientGeneralService.getDeviceIdByIp(ip);
                     System.out.println("发送命令：ip="+ip+",cmd="+command+",时间："+System.currentTimeMillis());
-                    System.out.println("发送命令：ip="+ip+",设备,"+"设备id"+deviceId+",时间："+System.currentTimeMillis());
+//                    System.out.println("发送命令：ip="+ip+",设备,"+"设备id"+deviceId+",时间："+System.currentTimeMillis());
                     log.info("向设备["+ip+":"+port+"],发送指令："+command);
                 } catch (DecoderException e) {
                     e.printStackTrace();

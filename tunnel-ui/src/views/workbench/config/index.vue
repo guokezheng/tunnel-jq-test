@@ -403,11 +403,11 @@
                   <template>
                     <div
                       style="
-                        width: 1955px;
+                        width: 1945px;
                         height: 15px;
                         position: relative;
                         top: 548px;
-                        left: 209px;
+                        left: 219px;
                       "
                       v-show="robotShow"
                     >
@@ -415,7 +415,7 @@
                         src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
                         :style="{
-                          left: robotPositon + '%',
+                          right: robotPositon + '%',
                         }"
                         @click="clickRobot()"
                       />

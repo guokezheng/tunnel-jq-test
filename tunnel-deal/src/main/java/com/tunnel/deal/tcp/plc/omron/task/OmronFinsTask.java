@@ -7,7 +7,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.protocol.ISdDevicePointService;
+import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.tcp.client.config.ChannelKey;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
@@ -31,14 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.D_AREA_CODE;
 import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.W_WORD_AREA_CODE;
 
 /**
  * describe: 欧姆龙PLC读取数据--定时任务
- *  区别于原代码：长连接
+ *  区别于原代码：点位配置不同
  * @author zs
  * @date 2023/8/22
  **/
@@ -51,7 +50,7 @@ public class OmronFinsTask {
     private ISdDevicesService devicesService;
 
     @Autowired
-    private ISdDevicePointService devicePointService;
+    private ISdDevicePointPlcService devicePointPlcService;
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
@@ -79,6 +78,13 @@ public class OmronFinsTask {
 
     @Value("${plc.server}")
     private String plcServer;
+
+    /**
+     * 欧姆龙PLC下发指令锁：控制指令、读取指令不同时下发
+     * (不加锁：六标程序会出现异常情况：
+     * 连续下发七八次控制指令后（同时开启查询的定时任务），PLC返回：46494e53000000080000000600000000)
+     */
+    public static Boolean commandLock = true;
 
 
 
@@ -140,9 +146,13 @@ public class OmronFinsTask {
         List<String> functionCodeList = new ArrayList<>();
         functionCodeList.add(areaCode);
         //根据父设备ID、点位类型筛选最小点位、最大点位
-        List<Map> pointList = devicePointService.selectDevicePointByGroup(fEqIdList,functionCodeList,String.valueOf(pointType));
+        List<Map> pointList = devicePointPlcService.selectDevicePointByGroup(fEqIdList,functionCodeList,String.valueOf(pointType));
 
         for (Map map : pointList){
+            if(!commandLock){
+                //没有拿到锁,不执行查询指令
+                continue;
+            }
             //测控执行器ID
             String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
             //最小点位
@@ -164,12 +174,12 @@ public class OmronFinsTask {
             //查询具体的点位配置,待优化 todo
             List<String> idList = new ArrayList<>();
             idList.add(fEqId);
-           List<Map> pList = devicePointService.selectPointMapByFEqId(idList,functionCodeList,String.valueOf(pointType));
+           List<Map> pList = devicePointPlcService.selectPointMapByFEqId(idList,functionCodeList,String.valueOf(pointType));
             if(pList != null && pList.size() > 0){
                 //点位配置
-                Map pointMap = pList.get(0);
-                String pointConfig = pointMap.get("pointConfig") == null ? "" : pointMap.get("pointConfig").toString();
-                JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
+//                Map pointMap = pList.get(0);
+//                String pointConfig = pointMap.get("pointConfig") == null ? "" : pointMap.get("pointConfig").toString();
+//                JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
                 String sourceAddress = plcServer;
                 String destinationAddress = ip;
 
@@ -193,6 +203,7 @@ public class OmronFinsTask {
                         Boolean isHandshake = Boolean.valueOf(String.valueOf(isHandshakeObj));
                         if(isHandshake){
                             //握手成功
+                            sleep(100);
                             finsCmd.sendQueryCommand(OmronFinsTask.deviceMap,fEqId,sourceAddress,destinationAddress,areaCode,minAddress,"",String.valueOf(cmdLength));
 
 //                            long time = System.currentTimeMillis();
@@ -236,7 +247,7 @@ public class OmronFinsTask {
             list = ModbusCmdResolver.handleTwoBytesData(value);
         }
         if(FinsCmdValues.W_WORD_AREA_CODE.equals(areaCode)){
-            //1个字节一个数据
+            //2个字节一个数据
             list = FinsCmdResolver.handleTwoBytesData(value);
         }
 
@@ -254,6 +265,7 @@ public class OmronFinsTask {
            String pointConfig = itemMap.get("pointConfig") == null ? "" : itemMap.get("pointConfig").toString();
             //原始数据
             String data = valueMap.get(Integer.valueOf(address));
+//            System.out.println("测试配置：pointConfig="+pointConfig+",eqId="+eqId);
             JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
 
             //获取公式计算
@@ -290,6 +302,7 @@ public class OmronFinsTask {
 //                    String dataStr = String.format("%04x",Integer.valueOf(data));
                     if(data.equals(valueConfig)){
                         stateJson = jsonObject;
+                        System.out.println("实时数据状态：stateJson="+stateJson+",eqId="+eqId);
                         break;
                     }
                 }
@@ -299,15 +312,11 @@ public class OmronFinsTask {
                     log.error("点位配置不完整，pointConfig="+pointConfig+"eqId="+eqId);
                 }else{
                     data = stateMapping;
-                    log.error("状态配置打印：pointConfig="+pointConfig);
+//                    log.error("状态配置打印：pointConfig="+pointConfig);
                 }
             }
 
-            //26代表车指
-            String fEqType = itemMap.get("fEqType").toString();
-            if(fEqType.equals("26")&&"0000".equals(data)){
-                data = "1";
-            }
+
             //存储实时数据
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqId(eqId);
@@ -318,53 +327,89 @@ public class OmronFinsTask {
     }
 
 
+    /**
+     * 单个点位下发一条指令
+     * @param fEqIdList
+     * @param pointType
+     */
+    public void sendSinglePointCmd(List<String> fEqIdList,Long pointType,String areaCode){
 
-//    /**
-//     * 单个点位下发一条指令
-//     * @param fEqIdList
-//     * @param pointType
-//     */
-//    public void sendSinglePointCmd(List<String> fEqIdList,Long pointType){
-//
-//        List<String> functionCodeList = new ArrayList<>();
-//        List<Map> devicePointList = devicePointService.selectPointMapByFEqId(fEqIdList, functionCodeList,String.valueOf(pointType));
-//
-//        for(Map  map : devicePointList){
-//            //设备ID
-//            String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
-//            //点位配置
-//            String pointConfig = map.get("pointConfig") == null ? "" : map.get("pointConfig").toString();
-//            JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
-//            //{sourceAddress:'127.0.0.1',destinationAddress:'127.0.0.1',area:'82',address:'502',bitAddress,'',readlength:'2'}
+        List<String> functionCodeList = new ArrayList<>();
+        functionCodeList.add(areaCode);
+        List<Map> devicePointList = devicePointPlcService.selectPointMapByFEqId(fEqIdList, functionCodeList,String.valueOf(pointType));
+
+        for(Map  map : devicePointList){
+            //设备ID
+            String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
+            //点位配置
+            String pointConfig = map.get("pointConfig") == null ? "" : map.get("pointConfig").toString();
+            JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
+            //{sourceAddress:'127.0.0.1',destinationAddress:'127.0.0.1',area:'82',address:'502',bitAddress,'',readlength:'2'}
 //            String sourceAddress = jsonConfig.getString("sourceAddress");
-//            String destinationAddress = jsonConfig.getString("destinationAddress");
-//            String area = jsonConfig.getString("area");
-//            String address = jsonConfig.getString("address");
-//            String bitAddress = jsonConfig.getString("bitAddress");
-//            String readLength = jsonConfig.getString("readLength");
-//
-//            System.out.println("sendSinglePointCmd 读取数据：设备ID="+fEqId+",时间："+System.currentTimeMillis());
-//            //2毫秒间隔，如果定时任务执行周期是2秒钟，支持1000个指令循环下发，大概可以支持1000个设备的查询指令
-////            mcaCmd.sleep(2);
-//
-//            //判断握手是否成功
-//            Object isHandshakeObj = OmronFinsTask.deviceMap.get(fEqId).get("handshake");
-//            Boolean isHandshake = Boolean.valueOf(String.valueOf(isHandshakeObj));
-//            if(!isHandshake){
-//                //未握手成功，发送握手指令
-//                finsCmd.sendHandshakeCommand(deviceMap,fEqId,sourceAddress);
-//                //延迟1秒钟后执行
-//                executor.schedule(()->{
-//                    finsCmd.sendQueryCommand(deviceMap,fEqId,sourceAddress,destinationAddress,area,address,bitAddress,readLength);
-//                },1, TimeUnit.SECONDS);
-//                continue;
-//            }
-//
-//            //握手成功，直接发送指令
-//            finsCmd.sendQueryCommand(deviceMap,fEqId,sourceAddress,destinationAddress,area,address,bitAddress,readLength);
-//
-//        }
-//    }
+////            String destinationAddress = jsonConfig.getString("destinationAddress");
+            String area = jsonConfig.getString("area");
+            String address = jsonConfig.getString("address");
+            String bitAddress = jsonConfig.getString("bitAddress");
+            String readLength = jsonConfig.getString("readLength");
+
+            System.out.println("sendSinglePointCmd 读取数据：设备ID="+fEqId+",时间："+System.currentTimeMillis());
+            //2毫秒间隔，如果定时任务执行周期是2秒钟，支持1000个指令循环下发，大概可以支持1000个设备的查询指令
+//            mcaCmd.sleep(2);
+
+            //查询设备信息
+            Map deviceMap = OmronFinsTask.deviceMap.get(fEqId);
+            String ip = deviceMap.get("ip") == null ? "" : deviceMap.get("ip").toString();
+            String port = deviceMap.get("port") == null ? "" : deviceMap.get("port").toString();
+            int portNum = Integer.valueOf(port);
+            String sourceAddress = plcServer;
+            String destinationAddress = ip;
+
+            //获取连接通道
+            TcpNettySocketClient.getInstance().connect(ip,portNum);
+
+            int count = 50;
+            int i = 0;
+            boolean flag = false;
+            //发送指令
+            while(i < count){
+                Channel channel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,portNum));
+                if (channel != null && channel.isActive()) {
+                    if(!flag){
+                        //建立连接后，发送握手指令,只发送一次
+                        finsCmd.sendHandshakeCommand(OmronFinsTask.deviceMap,fEqId,sourceAddress);
+                        flag = true;
+                    }
+                    //判断握手是否成功
+                    Object isHandshakeObj = OmronFinsTask.deviceMap.get(fEqId).get("handshake");
+                    Boolean isHandshake = Boolean.valueOf(String.valueOf(isHandshakeObj));
+                    if(isHandshake){
+                        //握手成功
+                        finsCmd.sendQueryCommand(OmronFinsTask.deviceMap,fEqId,sourceAddress,destinationAddress,areaCode,address,bitAddress,readLength);
+
+//                            long time = System.currentTimeMillis();
+
+                        break;
+                    }
+                }
+                i++;
+                sleep(20);
+            }
+
+            int j = 0;
+            //等待指令返回
+            while(j < count){
+                String value = OmronFinsTask.pointCmdCache.get(fEqId+"query");
+                if(value != null && !"".equals(value)){
+//                    handleDeviceData(pList,fEqId,value,minAddress,cmdLength,dataLength,areaCode);
+                    OmronFinsTask.pointCmdCache.remove(fEqId+"query");
+                    break;
+                }
+                j++;
+                sleep(20);
+            }
+
+        }
+    }
 
     /**
      * 线程休眠固定时间

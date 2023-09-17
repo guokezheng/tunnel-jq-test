@@ -88,6 +88,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     @Override
     public int updateSdDeviceData(SdDeviceData sdDeviceData) {
         sdDeviceData.setUpdateTime(DateUtils.getNowDate());
+        SdDevices devices = new SdDevices();
+        devices.setEqId(sdDeviceData.getDeviceId());
+        devices.setEqStatus("1");
+        sdDevicesMapper.updateSdDevices(devices);
         return sdDeviceDataMapper.updateSdDeviceData(sdDeviceData);
     }
 
@@ -663,6 +667,40 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             sdDeviceData.setData(value);
             sdDeviceData.setCreateTime(new Date());
             insertSdDeviceData(sdDeviceData);
+        }
+    }
+
+    /**
+     * 修改设备数据表中实时数据
+     * @param sdDevices 设备信息
+     * @param value 数据
+     * @param itemId 数据项
+     */
+    @Override
+    public void updateDeviceData(SdDevices sdDevices, String value, Long itemId,boolean createLog) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            insertSdDeviceData(sdDeviceData);
+        }
+        // 是否插入log
+        if(createLog){
+            //存入数据记录表中
+            SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
+            sdDeviceDataRecord.setDeviceId(sdDevices.getEqId());
+            sdDeviceDataRecord.setItemId(Long.valueOf(itemId));
+            sdDeviceDataRecord.setData(value);
+            sdDeviceDataRecord.setCreateTime(new Date());
+            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
         }
     }
 

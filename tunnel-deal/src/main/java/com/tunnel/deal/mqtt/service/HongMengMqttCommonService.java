@@ -52,9 +52,4 @@ public interface HongMengMqttCommonService {
      */
     void setRedisCacheDeviceStatus(String deviceId);
 
-    /**
-     * 向万集推送机电设备实时数据
-     * @param sdDevices
-     */
-    void sendWanjiBaseDeviceStatus(SdDevices sdDevices);
 }

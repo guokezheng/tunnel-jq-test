@@ -497,6 +497,8 @@ export default {
       form: {},
       // 表单校验
       rules: {},
+
+      flag: false,
     };
   },
   created() {
@@ -697,10 +699,10 @@ export default {
     },
     // 返回按钮
     handleClose() {
+      this.flag = true;
       this.$store.dispatch("tagsView/delView", this.$route);
       this.$router.push({
-        path: "/dev/device/eqlist",
-        query: { message: '1' },
+        path: "/dev/device/eqlist"
       });
     },
     // 取消按钮
@@ -819,6 +821,15 @@ export default {
         })
         .catch(() => {});
     },
+  },
+  beforeDestroy(){
+    if(this.flag){
+      let form = JSON.parse(this.$cache.local.get("settingPoint"))
+      form.type = 1
+      this.$cache.local.set("settingPoint", JSON.stringify(form));
+    }else{
+      this.$cache.local.remove("settingPoint");
+    }
   },
 };
 </script>

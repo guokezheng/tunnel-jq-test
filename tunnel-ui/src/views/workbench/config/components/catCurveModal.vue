@@ -103,8 +103,8 @@
                 class="el-form-item-data"
               >
                 <el-input
-                  :disabled="tunnelDisabled"
-                  style="width: 100%"
+                  disabled
+                  style="width: 98%"
                   v-model="
                     catFilesModel.direction == '1' ? '潍坊方向' : '济南方向'
                   "
@@ -252,8 +252,8 @@
                 class="el-form-item-data"
               >
                 <el-input
-                  :disabled="tunnelDisabled"
-                  style="width: 100%"
+                  disabled
+                  style="width: 98%"
                   v-model="
                     catFilesModelWei.direction == '1' ? '潍坊方向' : '济南方向'
                   "
@@ -351,7 +351,7 @@ export default {
       //车辆数配置文件
       catFilesModel: { beforeLuminance: "", isStatus: "" },
       //车辆数配置文件
-      catFilesModelWei: { beforeLuminance: "", isStatus: "" },
+      catFilesModelWei: { beforeLuminance: "", isStatus: "",direction:'1' },
       formItems: [
         {
           label: "",

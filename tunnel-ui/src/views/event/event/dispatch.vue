@@ -1778,7 +1778,7 @@ export default {
             })
             this.robotTimer = setInterval(() => {
               setTimeout(this.getRobot, 0);
-            }, 1000 * 3);
+            }, 1000 * 5);
           }
           this.eventForm = response.rows[0];
           this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(

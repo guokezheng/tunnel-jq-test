@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -116,10 +120,12 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
             if("00".equals(devStatus)){
                 //离线
                 sdDevicesService.updateOfflineStatus(deviceId,false);
+                sdDevicesService.updateFDeviceStatusByEqId(deviceId, DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             }
             if("01".equals(devStatus)){
                 //在线
                 sdDevicesService.updateOnlineStatus(deviceId,false);
+                sdDevicesService.updateFDeviceStatusByEqId(deviceId, DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             }
         }
         if("01".equals(isFault)){
@@ -194,15 +200,4 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }
 
-    /**
-     * 向万集推送机电设备实时数据
-     * @param sdDevices
-     */
-    @Override
-    public void sendWanjiBaseDeviceStatus(SdDevices sdDevices) {
-        List<SdDevices> sdDevicesList =  new ArrayList<>();
-        sdDevicesList.add(sdDevices);
-        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
-        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
-    }
 }

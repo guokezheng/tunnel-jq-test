@@ -872,9 +872,9 @@ export default {
 ::v-deep .el-radio-button--mini .el-radio-button__inner {
   padding: 6px 13px !important;
 }
-::v-deep .el-radio-group .el-radio-button__inner {
+/* ::v-deep .el-radio-group .el-radio-button__inner {
   background: white;
-}
+} */
 .workbench-boardDialog {
   .el-dialog {
     left: 28%;

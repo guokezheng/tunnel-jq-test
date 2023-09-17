@@ -1209,4 +1209,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<String> getDevicesListByMacAndEqTypeAndLane(String mac, String eqType, String lane) {
         return sdDevicesMapper.getDevicesListByMacAndEqTypeAndLane(mac,eqType,lane);
     }
+
+    @Override
+    public int updateFDeviceStatusByEqId(String deviceId, String status) {
+        SdDevices sdDevices = new SdDevices();
+        //设置设备状态
+        sdDevices.setEqId(deviceId);
+        sdDevices.setEqStatus(status);
+        sdDevices.setEqStatusTime(new Date());
+        sdDevices.setUpdateTime(new Date());
+
+        return sdDevicesMapper.updateFDeviceStatusByEqId(sdDevices);
+    }
 }

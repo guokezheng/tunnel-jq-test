@@ -276,7 +276,7 @@ export default {
         }else if(newVal == "2" || newVal == ''){
           this.stateForm.brightness = 0;
           this.brightnessMin = 0;
-        } 
+        }
       }else if([30, 31].includes(this.clickEqType)){
          // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
          // 诱导灯 state == 1 关闭 state == 2 同步单山 state == 3 逆向流水
@@ -418,7 +418,7 @@ export default {
     },
     handleOK() {
       let that = this;
-      
+
       // 警示灯带
       if (this.eqInfo.clickEqType == 45) {
         const loading = this.$loading({
@@ -544,9 +544,9 @@ export default {
         };
         controlDevice(param).then((response) => {
           if (response.data == 0) {
-            this.$modal.msgError("控制失败");
+            this.$modal.msgError("下发失败");
           } else if (response.data == 1) {
-            this.$modal.msgSuccess("控制成功");
+            this.$modal.msgSuccess("下发成功");
           }
           loading.close();
         }).catch(()=>{

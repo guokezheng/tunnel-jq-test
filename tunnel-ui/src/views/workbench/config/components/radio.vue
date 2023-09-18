@@ -167,8 +167,8 @@
                   style="align-items: center"
                 >{{ item.label }}</el-radio>
               </el-radio-group>
-              <!-- <el-select 
-                v-model="stateForm2.loopStatus" 
+              <!-- <el-select
+                v-model="stateForm2.loopStatus"
                 placeholder="请选择状态"
                 clearable
                 size="mini"
@@ -316,7 +316,7 @@ export default {
       playVoice(param)
         .then((res) => {
           loading.close();
-          this.$modal.msgSuccess("控制成功");
+          this.$modal.msgSuccess("下发成功");
         })
         .catch(() => {
           loading.close();

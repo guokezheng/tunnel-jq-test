@@ -195,7 +195,10 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         Integer portNum = Integer.valueOf(port);
         //先关闭通道，解除查询指令占用的通道
         Channel cmdChannel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,Integer.valueOf(port)));
-        cmdChannel.close();
+        if(cmdChannel != null){
+            cmdChannel.close();
+        }
+
 
 
         //点位类型：控制点位

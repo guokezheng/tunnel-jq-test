@@ -34,3 +34,8 @@ sso:
 mqtt:
   #emqx地址+ MQTT协议端⼝ 1883 映射外网地址
   url: tcp://localhost:1883
+
+
+#欧姆龙PLC通信的服务IP
+plc:
+  server: 10.7.183.14

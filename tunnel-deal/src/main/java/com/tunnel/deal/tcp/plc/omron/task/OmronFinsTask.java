@@ -128,7 +128,7 @@ public class OmronFinsTask {
 
         //D区
         sendMultiplePointCmd(fEqIdList,pointType,D_AREA_CODE);
-        sleep(2000);
+        sleep(50);
         //W字代码
         sendMultiplePointCmd(fEqIdList,pointType,W_WORD_AREA_CODE);
 //        //W位代码
@@ -251,7 +251,7 @@ public class OmronFinsTask {
             list = FinsCmdResolver.handleTwoBytesData(value);
         }
 
-
+        // 配置的10进制地址直接转换
         Integer startAddress = Integer.valueOf(minAddress);
         for(int i = 0; i < cmdLength; i++){
             valueMap.put(startAddress,list.get(i));

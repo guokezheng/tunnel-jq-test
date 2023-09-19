@@ -398,12 +398,17 @@
     <select id="getAlarmInformation" parameterType="java.lang.String" resultType="hashmap">
         SELECT
             e.event_title AS eventTitle,
-            DATE_FORMAT(e.event_time,'%Y-%m-%d %H:%i:%S') AS startTime,
-            IFNULL(e.video_url,'') AS videoUrl
+            DATE_FORMAT( e.event_time, '%Y-%m-%d %H:%i:%S' ) AS startTime,
+            IFNULL( e.video_url, '' ) AS videoUrl,
+            DATE_FORMAT( e.update_time, '%Y-%m-%d %H:%i:%S' ) AS updateTime,
+            e.event_state AS eventState,
+            sdd.dict_label AS eventSource
         FROM
             sd_event e
+        LEFT JOIN sys_dict_data sdd ON e.event_source = sdd.dict_value
         WHERE
             1 = 1
+        AND sdd.dict_type = 'sd_event_source'
         <if test="tunnelId != null and tunnelId != ''">
             AND e.tunnel_id = #{tunnelId}
         </if>

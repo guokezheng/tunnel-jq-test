@@ -10,6 +10,7 @@ import com.tunnel.business.datacenter.domain.enumeration.FaultStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
@@ -163,7 +164,26 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Override
     public AjaxResult getAlarmInformation(String tunnelId) {
-        return AjaxResult.success(sdSmartBigScreenMapper.getAlarmInformation(tunnelId));
+        List<Map<String, Object>> alarmInformation = sdSmartBigScreenMapper.getAlarmInformation(tunnelId);
+        List<Map<String, Object>> list = new ArrayList<>();
+        alarmInformation.stream().forEach(item -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("eventTitle",item.get("eventTitle"));
+            map.put("startTime",item.get("startTime"));
+            map.put("videoUrl",item.get("videoUrl"));
+            map.put("eventSource",item.get("eventSource"));
+            //计算持续时间
+            String datePoor = "";
+            if("3".equals(item.get("eventState").toString())){
+                datePoor = DateUtils.getDatePoor(DateUtils.getNowDate(), DateUtils.parseDate(item.get("startTime").toString()));
+            }else {
+                datePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.get("updateTime").toString()), DateUtils.parseDate(item.get("startTime").toString()));
+            }
+            map.put("sustainTime",datePoor);
+            list.add(map);
+        });
+
+        return AjaxResult.success(list);
     }
 
     @Override

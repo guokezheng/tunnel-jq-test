@@ -41,7 +41,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="searchBoxTab" v-show="boxShow">
+        <div class="searchBoxTab" v-show="boxShow" ref="cc">
           <el-form
             ref="queryForm"
             :inline="true"
@@ -832,7 +832,10 @@ export default {
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
-    document.addEventListener("click", this.bodyCloseMenus1);
+    // document.addEventListener("click", this.bodyCloseMenus1);
+  },
+  beforeDestroy(){
+    document.removeEventListener("click", this.bodyCloseMenus);
   },
   methods: {
     // 点击某一行，将其选中(表格)
@@ -847,20 +850,23 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
-        }
+      if(self.boxShow == true){
+        if (this.$refs.main && !this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+          // if (self.boxShow == true) {
+            self.boxShow = false;
+          }
+        // }
       }
+      
     },
-    bodyCloseMenus1(e) {
-      let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
-        if (self.boxShow1 == true) {
-          self.boxShow1 = false;
-        }
-      }
-    },
+    // bodyCloseMenus1(e) {
+    //   let self = this;
+    //   if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+    //     if (self.boxShow1 == true) {
+    //       self.boxShow1 = false;
+    //     }
+    //   }
+    // },
     handleClick(tab, event) {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);

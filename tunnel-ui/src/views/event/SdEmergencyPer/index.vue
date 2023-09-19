@@ -60,6 +60,7 @@
           <div
             class="searchBox"
             v-show="ry_boxShow"
+            ref="cc" 
           >
             <el-form
               ref="queryForm"
@@ -359,6 +360,9 @@ export default {
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
+  beforeDestroy(){
+    document.removeEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
@@ -367,7 +371,7 @@ export default {
     bodyCloseMenus(e) {
       let self = this;
       if (self.ry_boxShow == true) {
-        if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (this.$refs.main && !this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
           if (self.ry_boxShow == true) {
             self.ry_boxShow = false;
           }

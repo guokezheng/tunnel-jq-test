@@ -331,6 +331,7 @@
 
 <script>
 import * as echarts from "echarts";
+import moment from "moment";
 import {
   addConfig,
   listConfig,
@@ -492,47 +493,71 @@ export default {
     },
     //车来灯亮配置保存
     submitCatForm() {
-      //formItems 校验
-      for (let index = 0; index < this.formItems.length; index++) {
-        const element = this.formItems[index];
-        if (element.startTime == null || element.startTime == "") {
-          this.$modal.msgError("时间区间开始时间不能为空,请填写开始时间");
-          return;
-        } else if (element.endTime == null || element.endTime == "") {
-          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
-          return;
-        } else if (
-          element.beforeLuminance == null ||
-          element.beforeLuminance == ""
-        ) {
-          this.$modal.msgError("下修比例不能为空");
-          return;
+      if(!this.catFilesModel.tunnelId){
+          this.$modal.msgWarning("请选择隧道名称");
+          return
         }
-      }
+        for(let item of this.formItems){
+          if(!item.startTime){
+            this.$modal.msgWarning("请选择开始时间");
+            return
+          }else if(!item.endTime){
+            this.$modal.msgWarning("请选择结束时间");
+            return
+          }else if(!item.beforeLuminance){
+            this.$modal.msgWarning("请输入下修比例");
+            return
+          }else if(item.startTime.getTime() > item.endTime.getTime()){
+            this.$modal.msgWarning("结束时间不能早于开始时间");
+            return
+          }
+        }
+      //formItems 校验
+      // for (let index = 0; index < this.formItems.length; index++) {
+      //   const element = this.formItems[index];
+      //   if (element.startTime == null || element.startTime == "") {
+      //     this.$modal.msgError("时间区间开始时间不能为空,请填写开始时间");
+      //     return;
+      //   } else if (element.endTime == null || element.endTime == "") {
+      //     this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+      //     return;
+      //   } else if (
+      //     element.beforeLuminance == null ||
+      //     element.beforeLuminance == ""
+      //   ) {
+      //     this.$modal.msgError("下修比例不能为空");
+      //     return;
+      //   }
+      // }
       // if(this.catFilesModel.beforeLuminance== null || this.catFilesModel.beforeLuminance== ""){
       //   this.$modal.msgError("下修比例不能为空");
       //   return;
       // }
-      if (
-        this.catFilesModel.tunnelId == null ||
-        this.catFilesModel.tunnelId == ""
-      ) {
-        this.$modal.msgError("隧道名称不能为空");
-        return;
-      }
-      if (
-        this.catFilesModel.direction == null ||
-        this.catFilesModel.direction == ""
-      ) {
-        this.$modal.msgError("隧道方向不能为空");
-        return;
-      }
+      // if (
+      //   this.catFilesModel.tunnelId == null ||
+      //   this.catFilesModel.tunnelId == ""
+      // ) {
+      //   this.$modal.msgError("隧道名称不能为空");
+      //   return;
+      // }
+      // console.log()
+      // if (
+      //   this.catFilesModel.direction == null ||
+      //   this.catFilesModel.direction == ""
+      // ) {
+      //   this.$modal.msgError("隧道方向不能为空");
+      //   return;
+      // }
       //处理时间转json
       let formItemsOne = JSON.parse(JSON.stringify(this.formItems));
       for (let index = 0; index < this.formItems.length; index++) {
         const param = this.formItems[index];
         param.direction = this.catFilesModel.direction;
         param.startTime = new Date(param.startTime);
+
+        // 后期问时间格式 可以不带数据表的 1970-01-01T07:39:34.000Z 'T' '0Z' 么 能行就换下面写法
+        // let time =moment(new Date(param.startTime)).format("YYYY-MM-DD HH:MM:SS")
+        
         param.startTime =
           (param.startTime.getHours() < 10
             ? "0" + param.startTime.getHours()
@@ -545,6 +570,7 @@ export default {
           (param.startTime.getSeconds() < 10
             ? "0" + param.startTime.getSeconds()
             : param.startTime.getSeconds());
+
         param.endTime = new Date(param.endTime);
         param.endTime =
           (param.endTime.getHours() < 10
@@ -560,7 +586,7 @@ export default {
             : param.endTime.getSeconds());
       }
       this.catFilesModel.timeSlot = JSON.stringify(this.formItems);
-
+      console.log(formItemsOne,"formItemsOne")
       this.formItems = formItemsOne;
       console.log(this.formItems);
       console.log(this.catFilesModel);
@@ -581,41 +607,60 @@ export default {
     },
     //车来灯亮配置保存
     submitCatFormWei() {
-      //formItems 校验
-      for (let index = 0; index < this.formItemsWei.length; index++) {
-        const element = this.formItemsWei[index];
-        if (element.startTime == null || element.startTime == "") {
-          this.$modal.msgError("时间区间开始时间不能为空,请填写开始时间");
-          return;
-        } else if (element.endTime == null || element.endTime == "") {
-          this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
-          return;
-        } else if (
-          element.beforeLuminance == null ||
-          element.beforeLuminance == ""
-        ) {
-          this.$modal.msgError("下修比例不能为空");
-          return;
+      if(!this.catFilesModelWei.tunnelId){
+          this.$modal.msgWarning("请选择隧道名称");
+          return
         }
-      }
-      // if(this.catFilesModel.beforeLuminance== null || this.catFilesModel.beforeLuminance== ""){
-      //   this.$modal.msgError("下修比例不能为空");
+        for(let item of this.formItemsWei){
+          if(!item.startTime){
+            this.$modal.msgWarning("请选择开始时间");
+            return
+          }else if(!item.endTime){
+            this.$modal.msgWarning("请选择结束时间");
+            return
+          }else if(!item.beforeLuminance){
+            this.$modal.msgWarning("请输入下修比例");
+            return
+          }else if(item.startTime.getTime() > item.endTime.getTime()){
+            this.$modal.msgWarning("结束时间不能早于开始时间");
+            return
+          }
+        }
+      //formItems 校验
+      // for (let index = 0; index < this.formItemsWei.length; index++) {
+      //   const element = this.formItemsWei[index];
+      //   if (element.startTime == null || element.startTime == "") {
+      //     this.$modal.msgError("时间区间开始时间不能为空,请填写开始时间");
+      //     return;
+      //   } else if (element.endTime == null || element.endTime == "") {
+      //     this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
+      //     return;
+      //   } else if (
+      //     element.beforeLuminance == null ||
+      //     element.beforeLuminance == ""
+      //   ) {
+      //     this.$modal.msgError("下修比例不能为空");
+      //     return;
+      //   }
+      // }
+      // // if(this.catFilesModel.beforeLuminance== null || this.catFilesModel.beforeLuminance== ""){
+      // //   this.$modal.msgError("下修比例不能为空");
+      // //   return;
+      // // }
+      // if (
+      //   this.catFilesModelWei.tunnelId == null ||
+      //   this.catFilesModelWei.tunnelId == ""
+      // ) {
+      //   this.$modal.msgError("隧道名称不能为空");
       //   return;
       // }
-      if (
-        this.catFilesModelWei.tunnelId == null ||
-        this.catFilesModelWei.tunnelId == ""
-      ) {
-        this.$modal.msgError("隧道名称不能为空");
-        return;
-      }
-      if (
-        this.catFilesModelWei.direction == null ||
-        this.catFilesModelWei.direction == ""
-      ) {
-        this.$modal.msgError("隧道方向不能为空");
-        return;
-      }
+      // if (
+      //   this.catFilesModelWei.direction == null ||
+      //   this.catFilesModelWei.direction == ""
+      // ) {
+      //   this.$modal.msgError("隧道方向不能为空");
+      //   return;
+      // }
       //处理时间转json
       let formItemsOne = JSON.parse(JSON.stringify(this.formItemsWei));
       for (let index = 0; index < this.formItemsWei.length; index++) {

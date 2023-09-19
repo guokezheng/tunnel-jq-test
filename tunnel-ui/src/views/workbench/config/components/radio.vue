@@ -103,6 +103,7 @@
               <el-slider
                 v-model="stateForm2.volume"
                 :max="100"
+                :min="1"
                 class="sliderClass"
               ></el-slider>
             </el-form-item>
@@ -220,7 +221,7 @@ export default {
         loopStatus: "",
         loopCount: 1,
         loop: false,
-        volume: 0,
+        volume: 1,
         fileNames: [],
       },
       stateForm: {},
@@ -295,6 +296,16 @@ export default {
       this.stateForm2.fileNames = [];
     },
     handleOK() {
+      if(!this.stateForm2.fileNames){
+        this.$modal.msgWarning("请选择播放文件");
+        return
+      }
+      if(this.brandTwo){
+        if(!this.stateForm2.loopStatus){
+          this.$modal.msgWarning("请选择播放状态");
+          return
+        }
+      }
       const loading = this.$loading({
         lock: true,
         text: "Loading",
@@ -307,7 +318,7 @@ export default {
         loopCount: this.stateForm2.loopCount,
         loopStatus: this.stateForm2.loopStatus,
         volume: this.stateForm2.volume,
-        fileNames: Array(this.stateForm2.fileNames),
+        fileNames: Array(this.stateForm2.fileNames),//播放文件
         spkDeviceIds: Array(this.eqInfo.equipmentId),
         controlType: "0",
         tunnelId: this.tunnelId,

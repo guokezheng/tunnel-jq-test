@@ -40,7 +40,7 @@
       </el-col>
     </el-row>
 
-    <div class="searchBox" v-show="boxShow">
+    <div class="searchBox" v-show="boxShow" ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -1313,6 +1313,9 @@ export default {
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
+  beforeDestroy(){
+    document.removeEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
     // 判断预案名称是否重复
     getCheckPlanName() {
@@ -1327,7 +1330,7 @@ export default {
         checkPlanName(param).then((res) => {
           console.log(res, "res");
         }).catch(()=>{
-          this.reservePlanDrawForm.planName = ''
+          // this.reservePlanDrawForm.planName = ''
         });
       }
     },
@@ -1458,7 +1461,7 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (this.$refs.main && !this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.boxShow == true) {
           self.boxShow = false;
         }

@@ -504,7 +504,7 @@
                 />
               </div>
               <div>
-               
+
                 <img
                   src="../../../assets/cloudControl/tunnelBox2.png"
                   @click="changeActiveMap(1)"
@@ -973,7 +973,7 @@
           class="closeRobot"
         />
       </el-dialog>
-       
+
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
     <workBench class="workBenchBox" ref="workBenchRef" :robotPositon="robotPositon"/>
 
@@ -1755,7 +1755,7 @@ export default {
     },
     // 事件详情
     async getListEvent() {
-      
+
       if (this.$route.query.id) {
         const param = {
           id: this.$route.query.id,
@@ -1827,7 +1827,7 @@ export default {
         this.eqIdList.push(response.data[0].inlet);
         videoStreaming(response.data[0].inlet).then((response) => {
           if (response.data) {
-            response.data.title = "入口";
+            response.data.title = "";
             if (response.code == 200) {
               this.videoForm1 = response.data;
               this.videoForm1.cameraPlayer = true;
@@ -1837,7 +1837,7 @@ export default {
         this.eqIdList.push(response.data[0].outlet);
         videoStreaming(response.data[0].outlet).then((response) => {
           if (response.data) {
-            response.data.title = "出口";
+            response.data.title = "";
             if (response.code == 200) {
               this.videoForm2 = response.data;
               this.videoForm2.cameraPlayer = true;

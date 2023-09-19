@@ -467,7 +467,7 @@
               <div class="titleRow" style="width: 20%">设备位置</div>
               <div class="titleRow" style="width: 15%">操作</div>
             </div>
-            <div class="box" :key="index" v-for="(item, index) in boxList">
+            <div class="box" :key="index" v-for="(item, index) in boxList" ref="scrollContainer">
               <div class="contentTextRow" style="float: left">
                 <div class="number" style="width: 10%">{{ index + 1 }}</div>
                 <div class="text" style="padding-left: 0px; margin-left: 0px">
@@ -2106,7 +2106,7 @@ export default {
       getList(id).then((response) => {
         that.form = response.data.task[0];
         this.boxList = response.data.list;
-        console.log(this.boxList, "修改按钮操作boxList");
+        console.log(response.data, "修改按钮操作boxList");
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
         // this.boxList.forEach((item) => {
@@ -2130,11 +2130,14 @@ export default {
           }else{
             this.form.bzId=""
           }*/
+        this.getBz(that.form.tunnelId) 
         this.boxList.sort(this.arraySort("xc_sort"));
         this.open = true;
         this.openGz = true;
         this.openCz = true;
         this.title = "修改巡查任务";
+        this.$refs.scrollContainer.scrollTop = 0;
+
       });
     },
     focus() {

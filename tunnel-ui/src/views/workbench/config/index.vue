@@ -1944,6 +1944,7 @@
         @pagination="handlestrategyQuery"
         class="paginationWorkbench"
       />
+      <div style="clear: both;"></div>
     </el-dialog>
     <!--    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>-->
     <jointControlStrategy

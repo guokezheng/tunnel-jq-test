@@ -1,9 +1,10 @@
 .theme-blue {
-  .cascaderClass{
-    .el-cascader-menu__wrap{
-      margin-bottom:0px !important;
+  .cascaderClass {
+    .el-cascader-menu__wrap {
+      margin-bottom: 0px !important;
     }
   }
+
   .searchTable {
     background-image: url(../../assets/icons/searchTable_white.png) !important;
   }
@@ -122,14 +123,15 @@
 
     .el-scrollbar__wrap {
       margin-bottom: 0px !important;
-      .el-select-dropdown__list{
-        padding:0px !important;
+
+      .el-select-dropdown__list {
+        padding: 0px !important;
       }
     }
   }
 
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-    background: #004F8B !important;
+    background: #4659B4 !important;
   }
 
   .el-menu--horizontal .el-menu .el-menu-item,
@@ -519,9 +521,11 @@
     .el-dialog__body {
       max-height: 88vh;
       overflow: hidden;
-      .searchBoxLight{
-        background-color:#100A43;
+
+      .searchBoxLight {
+        background-color: #100A43;
       }
+
       .content-centre-one,
       .content-centre-tree {
         background-color: #100A43;
@@ -529,11 +533,11 @@
       }
 
       .left-content {
-        background: #182053;
+        background: #131253;
       }
 
       .content {
-        background: #182053;
+        background: #131253;
       }
 
       .content-centre {
@@ -748,7 +752,7 @@
   .el-dialog {
     background-color: #100A43 !important;
     border-bottom: solid 2px white;
-    border-image: linear-gradient(to left, #131253 0%, #0179F0 1%, #00C1FF 70%, #9481FF 99%,#131253 100%)1 10;
+    border-image: linear-gradient(to left, #131253 0%, #0179F0 1%, #00C1FF 70%, #9481FF 99%, #131253 100%)1 10;
 
     border-left: solid 1px white;
     border-right: solid 1px white;
@@ -770,7 +774,7 @@
       height: 4vh !important;
       line-height: 4vh !important;
       padding: 0 0 0 20px;
-      background: linear-gradient(270deg, rgba(43,58,137,0.3) 0%, rgba(68,107,222,0.3) 100%) !important;
+      background: linear-gradient(270deg, rgba(43, 58, 137, 0.3) 0%, rgba(68, 107, 222, 0.3) 100%) !important;
 
       .el-dialog__title {
         font-size: 14px;
@@ -829,7 +833,7 @@
 
       .dialog-footer {
         .submitButton {
-          background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+          background: #00B0FF linear-gradient(180deg, #4A75C3 0%, #0A4ABD 100%);
         }
 
         .closeButton {
@@ -1077,7 +1081,7 @@
       }
 
       .el-tree-node__content:hover {
-        background: #2C3E91  !important;
+        background: #2C3E91 !important;
 
       }
 
@@ -1206,9 +1210,10 @@
   }
 
   .specialPagination {
-    position:fixed;
+    position: fixed;
     bottom: 40px;
     right: 40px;
+
     // transform: translateX(-50%);
     .el-pager li {
       background: #1A3579;
@@ -1668,10 +1673,60 @@
     }
 
     .infoBoardBox {
-      background: #182053;
-
+      background: #131253;
+        .menuBox{
+          .edit{
+            background-image: url(../../assets/cloudControl/edit0.png);
+          }
+          .del{
+            background-image: url(../../assets/cloudControl/closeIcon0.png);
+          }
+          .toLeft{
+            background-image: url(../../assets/cloudControl/toLeft0.png);
+          }
+          .edit:hover{
+            background-image: url(../../assets/cloudControl/edit1.png);
+          }
+          .del:hover{
+            background-image: url(../../assets/cloudControl/closeIcon1.png);
+          }
+          .toLeft:hover{
+            background-image: url(../../assets/cloudControl/toLeft1.png);
+          }
+        }
+      .el-form {
+        .el-checkbox__inner{
+          border: 1px solid #05AAFD;
+          background-color: transparent;
+        }
+        .el-collapse-item__wrap {
+          padding-left: 10px;
+          border-bottom: transparent;
+          background: transparent;
+        }
+        .el-collapse-item__header {
+          padding-left: 10px;
+          background: transparent;
+          color: #fff;
+          border-bottom: transparent;
+        }
+        .el-collapse {
+          border-top: transparent;
+        }
+        .el-collapse-item {
+          background: rgba(20, 34, 111, 0.74);
+          margin-bottom: 8px;
+        }
+        .el-collapse-item__header.is-active {
+          border-bottom: transparent;
+        }
+      }
+      
+      .el-checkbox__input.is-checked .el-checkbox__inner{
+        background-color: #39ADFF !important;
+      }
       .bigTitle {
-        border-bottom: 1px solid #006BF4;
+        border-bottom: 1px solid rgba($color: #fff, $alpha: 0.3);
       }
 
       .verticalBoxBorderLeft {
@@ -1684,38 +1739,41 @@
         }
 
         .el-button--primary.is-disabled {
-          background: #00B0FF linear-gradient(90deg, #92A3C0 0%, #5679B7 100%) !important;
-          border: 1px solid #65BFFF !important;
+          background: #9B9BAF !important;
+          border: 1px solid #595979 !important;
         }
       }
 
       .el-checkbox {
         color: #fff;
       }
-
-      .el-collapse {
-        border-top: transparent;
-        border-bottom: solid 1px #006BF4;
+      .templateBox{
+        .el-collapse {
+          border-top: transparent;
+          // border-bottom: solid 1px rgba($color: #fff, $alpha: 0.3);
+        }
+  
+        .el-collapse-item {
+          // border-bottom: solid 1px rgba($color: #fff, $alpha: 0.3);
+          background: transparent;
+        }
+  
+        .el-collapse-item__wrap {
+          border-bottom: transparent;
+          background: transparent;
+        }
+  
+        .el-collapse-item__header {
+          background: transparent;
+          color: #fff;
+          border-bottom: transparent;
+        }
+  
+        .el-collapse-item__header.is-active {
+          border-bottom: transparent;
+        }
       }
-
-      .el-collapse-item {
-        border-bottom: solid 1px #006BF4;
-      }
-
-      .el-collapse-item__wrap {
-        border-bottom: transparent;
-        background: #182053;
-      }
-
-      .el-collapse-item__header {
-        background: #182053;
-        color: #fff;
-        border-bottom: transparent;
-      }
-
-      .el-collapse-item__header.is-active {
-        border-bottom: transparent;
-      }
+      
 
       .con .menuBox i {
         color: #fff;
@@ -1742,14 +1800,16 @@
       .contentBox .con,
       .contentBox .menuBox,
       .templateTitle {
-        border: 1px solid #006BF4;
+        border: none;
+        background:rgba(20, 34, 111, 0.74) !important;
       }
 
       .templateBox {
 
         .templateTitle,
         .menuBox {
-          border: 1px solid #006BF4;
+          border: none;
+          background:rgba(20, 34, 111, 0.74) !important;
         }
       }
 
@@ -1773,17 +1833,20 @@
         color: #fff;
       }
     }
-    
-    .infoBoardButton .el-button{
+
+    .infoBoardButton .el-button {
       border: solid 1px #65BFFF;
       background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%) !important;
       color: #fff;
     }
-    .infoBoardButton .el-button:focus,.infoBoardButton .el-button:hover{
+
+    .infoBoardButton .el-button:focus,
+    .infoBoardButton .el-button:hover {
       border: solid 1px #2C3E91;
       background: #00B0FF linear-gradient(90deg, #2C3E91 0%, #100A43 100%) !important;
       color: #fff;
     }
+
     .bigTitle {
       color: #fff !important;
     }
@@ -1809,7 +1872,53 @@
     .dispatchAss {
       background: #000000 !important;
       overflow: hidden;
-
+      .disLeftBox .IncHand{
+        background-color: rgba($color: #100a43, $alpha: 0.8);
+        border: 1px solid #3856b6;
+        .title{
+          background-image: url(../../assets/cloudControl/distitlebg2.png);
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+        }
+        .rightButton{
+          .el-button--primary{
+            background: #00B0FF linear-gradient(180deg, #4A75C3 0%, #0A4ABD 100%);
+            border: 1px solid #65BFFF;
+          }
+        }
+        .dieBox{
+          .el-button--primary{
+            background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%);
+            border: 1px solid #65BFFF;
+          }
+        }
+      }
+      .disRightBox {
+        .plan{
+          .el-tabs--card > .el-tabs__header{
+            background-color:rgba(10,16,67, 0.4);
+          }
+          .el-table .el-table__header-wrapper th{
+            background-color:rgba(44,62,145,.8);
+          }
+          .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell{
+            background-color:rgba(10,16,67, 0.4);
+          }
+        }
+        .video,.evtMessage,.plan {
+          .title{
+            background-image: url(../../assets/cloudControl/distitlebg2.png);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-color: rgba(1, 46, 81, 0.7);
+          }
+        }
+        .dispatchLeft .video .title .touping{
+          background: #00B0FF linear-gradient(90deg, #4A75C3 0%, #0A4ABD 100%);
+          border: 1px solid #65BFFF;
+        }
+      }
+      
     }
 
     // 外边框
@@ -1873,20 +1982,20 @@
     // }
     // 输入框背景色
     .el-input--small .el-input__inner {
-      background-color: #272770;
+      background-color: rgba($color: #14226F, $alpha: 0.74);
       border: none;
       color: #fff;
     }
 
     .el-input--mini .el-input__inner {
-      background-color: #272770;
+      background-color: rgba($color: #14226F, $alpha: 0.74);
       border: none;
       color: #fff;
     }
 
     // 下拉框背景色
     .el-input--medium .el-input__inner {
-      background-color: #272770;
+      background-color: rgba($color: #14226F, $alpha: 0.74);
       border: none;
       color: #fff;
     }
@@ -1927,7 +2036,7 @@
     }
 
     .vue-treeselect__control {
-      background: #272770 !important;
+      background: rgba(20, 34, 111, 0.74) !important;
       color: white !important;
       border: none !important;
     }
@@ -1938,7 +2047,7 @@
 
     // 时间框背景色
     .el-range-editor.el-input__inner {
-      background-color: #272770;
+      background-color: rgba(20, 34, 111, 0.74);
       border: none;
       color: #fff;
     }
@@ -2497,6 +2606,17 @@
           color: #fff;
           background-color: #1A3579;
         }
+
+        // .el-radio .el-radio__inner {
+        //   position: absolute;
+        //   top: -20px;
+        //   left: -20px;
+        //   width: 180px;
+        //   height: 34px;
+        //   background-color: transparent;
+        //   border: none;
+        //   border-radius: 0;
+        // }
       }
 
       .el-cascader-node.in-active-path,
@@ -2928,7 +3048,7 @@
     .el-dialog {
       background-color: #100A43;
       border-bottom: solid 2px white;
-      border-image: linear-gradient(to left, #131253 0%, #0179F0 2%, #00C1FF 70%, #9481FF 98%,#131253 100%)1 10;
+      border-image: linear-gradient(to left, #131253 0%, #0179F0 2%, #00C1FF 70%, #9481FF 98%, #131253 100%)1 10;
       border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
       border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
       border-top: solid 2px rgba($color: #0198FF, $alpha: 0.8);
@@ -2948,7 +3068,7 @@
       height: 30px;
       line-height: 30px;
       font-size: 14px;
-      background: linear-gradient(270deg, rgba(43,58,137,0.3) 0%, rgba(68,107,222,0.3) 100%);
+      background: linear-gradient(270deg, rgba(43, 58, 137, 0.3) 0%, rgba(68, 107, 222, 0.3) 100%);
     }
 
     .el-dialog__title {
@@ -3162,7 +3282,8 @@
     .el-table__fixed-header-wrapper th {
       background: rgba($color: #2C3E91, $alpha: 0.8) !important;
     }
-    td.el-table__cell{
+
+    td.el-table__cell {
       border-bottom: solid 1px rgba(225, 228, 230, 0.08) !important;
     }
   }
@@ -4000,7 +4121,8 @@
       max-height: 70vh;
       overflow: auto;
     }
-    .el-dialog:not(.is-fullscreen){
+
+    .el-dialog:not(.is-fullscreen) {
       margin-top: 4vh !important;
     }
   }
@@ -4008,7 +4130,7 @@
   // 应急调度
   .dispatchLeft {
     >div {
-      background: #012e51;
+      background: rgba(10,16,67, 0.7);
     }
 
     .evtMessage .evtMessBox .evtMessRight .evtMessTarget>div:nth-of-type(2) {
@@ -4017,7 +4139,7 @@
 
     .evtMessBox,
     .videoBox1 {
-      background: rgba(1, 46, 81, 0.7);
+      // background: rgba(1, 46, 81, 0.7);
     }
 
     .plan .planBox1 {
@@ -4071,7 +4193,7 @@
     }
 
     .el-timeline-item__content {
-      background-color: #182053;
+      background-color: #131253;
     }
 
     .disposalRecordBox {
@@ -4164,7 +4286,7 @@
 
   // tab页下方横线
   .el-tabs__nav-wrap::after {
-    background-color: #054D83;
+    background-color: #0D46B7;
   }
 
 }

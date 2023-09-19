@@ -188,7 +188,7 @@
               stripe
               class="phoneTable"
               :fit="true"
-              height="158"
+              height="180"
             >
               <el-table-column
                 label="姓名"
@@ -2169,7 +2169,7 @@ export default {
 }
 ::v-deep .el-tabs--card > .el-tabs__header {
   border-bottom: none;
-  background: rgba(1, 46, 81, 0.7) !important;
+  /* background: rgba(1, 46, 81, 0.7) !important; */
   padding: 10px 0;
   margin: 0 0 5px;
 }
@@ -2183,7 +2183,7 @@ export default {
   background-color: transparent;
 }
 ::v-deep .el-table .el-table__header-wrapper th {
-  background-color: #03659e !important;
+  /* background-color: #03659e !important; */
   color: white;
 }
 .drawerBox:hover {
@@ -2277,10 +2277,10 @@ export default {
   padding-bottom: 2%;
 }
 .disRightBox > div {
-  background-color: rgba(1, 46, 81, 0.7) !important;
+  /* background-color: rgba(1, 46, 81, 0.7) !important; */
 }
 .videoBox1 {
-  background-color: rgba(1, 46, 81, 0.7) !important;
+  /* background-color: rgba(1, 46, 81, 0.7) !important; */
 }
 .dispatchAss {
   .tunnelBox3 {
@@ -2327,10 +2327,10 @@ export default {
         margin-top: 0px !important;
         border-radius: 0px !important;
         .title {
-          background-image: url(../../../assets/cloudControl/distitlebg.png);
+          /* background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
-          background-color: rgba(1, 46, 81, 0.7);
+          background-color: rgba(1, 46, 81, 0.7); */
           .touping {
             float: right;
             display: inline-block;
@@ -2346,7 +2346,7 @@ export default {
           }
         }
         .videoBox1 {
-          background-color: rgba(1, 46, 81, 0.7);
+          /* background-color: rgba(1, 46, 81, 0.7); */
           width: 100%;
           height: calc(100% - 40px);
           // word-wrap: break-word;
@@ -2394,10 +2394,10 @@ export default {
         height: 33.3%;
         margin-top: 10px;
         .title {
-          background-image: url(../../../assets/cloudControl/distitlebg.png);
+          /* background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
-          background-color: rgba(1, 46, 81, 0.7);
+          background-color: rgba(1, 46, 81, 0.7); */
         }
         .evtMessBox {
           display: flex;
@@ -2480,10 +2480,10 @@ export default {
         height: 33.3%;
         margin-top: 10px;
         .title {
-          background-image: url(../../../assets/cloudControl/distitlebg.png);
+          /* background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
-          background-color: rgba(1, 46, 81, 0.7);
+          background-color: rgba(1, 46, 81, 0.7); */
         }
         ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
           border-bottom-color: transparent !important;
@@ -2631,15 +2631,15 @@ export default {
     background-repeat: no-repeat;
     background-size: 100% 100%;
     .IncHand {
-      background-color: rgba(1, 46, 81, 0.7);
+      /* background-color: rgba(1, 46, 81, 0.7); */
       height: 100%;
       box-sizing: border-box;
-      border: 1px solid #0661ae;
+      /* border: 1px solid #0661ae; */
       .title {
         font-size: 16px;
-        background-image: url(../../../assets/cloudControl/distitlebg.png);
+        /* background-image: url(../../../assets/cloudControl/distitlebg.png);
         background-repeat: no-repeat;
-        background-size: 100% 100%;
+        background-size: 100% 100%; */
         span {
           font-size: 13px;
           color: #93a8b9;
@@ -2838,7 +2838,7 @@ export default {
 .dispatchLeft {
   > div {
     width: 100%;
-    background-color: transparent;
+    /* background-color: transparent; */
   }
 }
 // .dispatchRight {
@@ -3051,7 +3051,7 @@ export default {
 ::v-deep .el-table .el-table__cell {
   height: 35px !important;
   border-bottom: 1px solid #03659e !important;
-  border-left: 1px solid #03659e !important;
+  /* border-left: 1px solid #03659e !important; */
 }
 ::v-deep ::-webkit-scrollbar {
   // width: 0px;

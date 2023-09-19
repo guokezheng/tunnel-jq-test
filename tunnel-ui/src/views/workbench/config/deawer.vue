@@ -996,7 +996,9 @@ export default {
 ::v-deep .el-drawer.rtl {
   width: 23% !important;
   font-size: 0.7vw;
-
+  .Time{
+    width: 98%;
+  }
   // ::-webkit-scrollbar-track-piece {
   //   background-color: #100A43;
   //   border-left: 1px solid rgba(0, 0, 0, 0);

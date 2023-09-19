@@ -1643,7 +1643,29 @@
 
     .infoBoardBox {
       background: #004375;
-
+      .menuBox{
+        .edit{
+          background-image: url(../../assets/cloudControl/edit2.png);
+        }
+        .del{
+          background-image: url(../../assets/cloudControl/edit4.png);
+        }
+        .toLeft{
+          background-image: url(../../assets/cloudControl/toLeft2.png);
+        }
+        .edit:hover{
+          background-image: url(../../assets/cloudControl/edit1.png);
+        }
+        .del:hover{
+          background-image: url(../../assets/cloudControl/closeIcon1.png);
+        }
+        
+        .toLeft:hover{
+          background-image: url(../../assets/cloudControl/toLeft1.png);
+        }
+      }
+        
+      
       .bigTitle {
         border-bottom: 1px solid #05afe3;
       }
@@ -1763,7 +1785,36 @@
     .dispatchAss {
       background: #000000 !important;
       overflow: hidden;
-
+      .disLeftBox .IncHand{
+        background-color: rgba(1,46,81,.7);
+        border: 1px solid #0661ae;
+        .title{
+          background-image: url(../../assets/cloudControl/distitlebg.png);
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+      .disRightBox {
+        .plan{
+          .el-tabs--card > .el-tabs__header{
+            background-color:rgba(1, 46, 81, 0.7);
+          }
+          .el-table .el-table__header-wrapper th{
+            background-color:#03659e;
+          }
+          .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell{
+            background-color:rgba(1, 46, 81, 0.7);
+          }
+        }
+        .video,.evtMessage,.plan{
+          .title{
+            background-image: url(../../assets/cloudControl/distitlebg.png);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-color: rgba(1, 46, 81, 0.7);
+          }
+        } 
+      }
     }
 
     // 外边框
@@ -3938,7 +3989,7 @@
   // 应急调度
   .dispatchLeft {
     >div {
-      background: #012e51;
+      background: rgba(1, 46, 81, 0.7);
     }
 
     .evtMessage .evtMessBox .evtMessRight .evtMessTarget>div:nth-of-type(2) {
@@ -3947,7 +3998,7 @@
 
     .evtMessBox,
     .videoBox1 {
-      background: rgba(1, 46, 81, 0.7);
+      // background: rgba(1, 46, 81, 0.7);
     }
 
     .plan .planBox1 {

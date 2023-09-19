@@ -10,21 +10,21 @@
       <div style="width: 20%" class="verticalBox">
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form">
-          <el-form-item prop="deptId">
+          <el-form-item prop="deptId" style="margin-bottom: 6px;">
             <treeselect v-model="form.deptId" :options="siteList" :props="siteProps" :show-count="true"
               noResultsText="暂无数据" placeholder="请选择归属部门" @select="changeSite" style="width: 100%" size="small"
               :beforeClearAll="beforeClearAll" />
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-bottom: 12px;">
             <el-row>
-              <el-col :span="12" style="padding-right: 5px">
+              <el-col :span="12" style="padding-right: 5px;height: 30px;">
                 <el-select v-model="form.tunnel" placeholder="请选择所属隧道" clearable size="small" style="width: 100%">
                   <el-option v-for="item in tunnelData" :key="item.tunnelId" :label="item.tunnelName"
                     :value="item.tunnelId" @click.native="changeTunnel(item.tunnelId)" />
                 </el-select>
               </el-col>
-              <el-col :span="12" style="padding-left: 5px">
-                <el-select v-model="form.eqDirection" size="small" placeholder="请选择方向">
+              <el-col :span="12" style="padding-left: 5px;height: 30px;">
+                <el-select v-model="form.eqDirection" size="small" placeholder="请选择方向" style="overflow: hidden;">
                   <el-option v-for="item in boardDirectionList" :key="item.dictValue" :label="item.dictLabel"
                     :value="item.dictValue" @click.native="changeDirection(item.dictValue)" />
                 </el-select>
@@ -111,10 +111,10 @@
                   </el-tooltip> -->
 
                   <el-tooltip content="编辑" placement="top">
-                    <div @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
+                    <div @click="openQbbDrawer(scope.row, scope.$index, 1)" class="edit"></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
-                    <div @click="delQbbDrawer(scope.$index)"></div>
+                    <div @click="delQbbDrawer(scope.$index)" class="del"></div>
                   </el-tooltip>
                 </div>
               </template>
@@ -176,13 +176,13 @@
                         disabledButton && !form.devicePixel
                           ? 'disabledClass'
                           : ''
-                      " style="cursor: pointer"></div>
+                      " style="cursor: pointer" class="toLeft"></div>
                   </el-tooltip>
                   <el-tooltip content="编辑" placement="top">
-                    <div @click="editOutline(itm, indx, 2)"></div>
+                    <div @click="editOutline(itm, indx, 2)" class="edit"></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
-                    <div @click="handleDelete(itm)"></div>
+                    <div @click="handleDelete(itm)" class="del"></div>
                   </el-tooltip>
                 </div>
               </div>
@@ -720,9 +720,9 @@
             });
             const objAll = {};
             objAll.deviceIds = this.checkedCities.toString();
-            console.log(objAll,"objAll")
+            console.log(objAll, "objAll")
             let that = this
-            console.log(this.contentList,"this.contentList")
+            console.log(this.contentList, "this.contentList")
             let newArr = this.contentList.map(function (item) {
               let obj = {}
               obj.STAY = item.STAY;
@@ -742,10 +742,10 @@
             }
             console.log(param, "param")
             splicingBoard(param).then((res) => {
-              console.log(res,"返回结果")
+              console.log(res, "返回结果")
               loading.close();
               this.$modal.msgSuccess("发布成功");
-            }).catch(()=>{
+            }).catch(() => {
               loading.close();
             })
             // console.log(this.contentList, "发布信息");
@@ -1116,21 +1116,23 @@
       padding: 10px;
 
       .bigTitle {
-        padding: 15px 0;
-        // border-bottom: 1px solid #05afe3;
+        padding: 10px 0;
+        /* // border-bottom: 1px solid #05afe3; */
         margin-bottom: 10px;
         display: flex;
         justify-content: space-between;
         height: 60px;
+        font-size: 0.8vw;
+        align-items: center;
       }
 
       .contentBox {
         width: 100%;
         height: calc(100% - 67px);
-        // overflow: auto;
+        /* // overflow: auto; */
 
         .con {
-          // border: 1px solid #05afe3;
+          /* // border: 1px solid #05afe3; */
           height: 75px;
           position: relative;
           width: 540px;
@@ -1143,8 +1145,8 @@
         .menuBox {
           display: flex;
           align-items: center;
-          // margin-left: 10px;
-          // border: solid 1px #05afe3;
+          /* // margin-left: 10px; */
+          /* // border: solid 1px #05afe3; */
           height: 75px;
           justify-content: space-around;
           align-items: center;
@@ -1157,27 +1159,27 @@
           }
 
           >div:first-of-type {
-            background-image: url(../../../assets/cloudControl/edit2.png);
+            /* background-image: url(../../../assets/cloudControl/edit2.png); */
           }
 
           >div:nth-of-type(2) {
-            background-image: url(../../../assets/cloudControl/edit4.png);
+            /* background-image: url(../../../assets/cloudControl/edit4.png); */
           }
 
-          // >div:last-of-type{
+          /* // >div:last-of-type{
           //   background-image: url(../../../assets/cloudControl/edit4.png);
-          // }
+          // } */
           >div:first-of-type:hover {
-            background-image: url(../../../assets/cloudControl/edit1.png);
+            /* background-image: url(../../../assets/cloudControl/edit1.png); */
           }
 
           >div:nth-of-type(2):hover {
-            background-image: url(../../../assets/cloudControl/closeIcon1.png);
+            /* background-image: url(../../../assets/cloudControl/closeIcon1.png); */
           }
 
-          // >div:last-of-type:hover{
+          /* // >div:last-of-type:hover{
           //   background-image: url(../../../assets/cloudControl/closeIcon1.png);
-          // }
+          // } */
           i {
             font-size: 24px;
             color: #666;
@@ -1191,7 +1193,7 @@
           }
         }
 
-        // }
+        /* // } */
         .controlBox {
           display: flex;
           justify-content: center;
@@ -1205,13 +1207,13 @@
         .con {
           height: 75px;
           margin: 10px 0;
-          padding: 0 20px;
+          padding: 0 10px;
           overflow: hidden;
           display: flex;
 
           .templateTitle {
             height: 75px;
-            // border: 1px solid #05afe3;
+            /* // border: 1px solid #05afe3; */
             position: relative;
             width: 540px;
             float: left;
@@ -1224,9 +1226,9 @@
           .menuBox {
             display: flex;
             float: right;
-            margin-left: 10px;
-            // border: solid 1px #05afe3;
-            width: calc(100% - 550px);
+            margin-left: 15px;
+            /* // border: solid 1px #05afe3; */
+            width: calc(100% - 555px);
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -1239,27 +1241,27 @@
             }
 
             >div:first-of-type {
-              background-image: url(../../../assets/cloudControl/toLeft2.png);
+              /* background-image: url(../../../assets/cloudControl/toLeft2.png); */
             }
 
             >div:nth-of-type(2) {
-              background-image: url(../../../assets/cloudControl/edit2.png);
+              /* background-image: url(../../../assets/cloudControl/edit2.png); */
             }
 
             >div:last-of-type {
-              background-image: url(../../../assets/cloudControl/edit4.png);
+              /* background-image: url(../../../assets/cloudControl/edit4.png); */
             }
 
             >div:first-of-type:hover {
-              background-image: url(../../../assets/cloudControl/toLeft1.png);
+              /* background-image: url(../../../assets/cloudControl/toLeft1.png); */
             }
 
             >div:nth-of-type(2):hover {
-              background-image: url(../../../assets/cloudControl/edit1.png);
+              /* background-image: url(../../../assets/cloudControl/edit1.png); */
             }
 
             >div:last-of-type:hover {
-              background-image: url(../../../assets/cloudControl/closeIcon1.png);
+              /* background-image: url(../../../assets/cloudControl/closeIcon1.png); */
             }
 
             i {
@@ -1353,7 +1355,7 @@
     height: 19px;
     line-height: 20px;
     padding: 0;
-    // color: #fff;
+    /* // color: #fff; */
     font-size: 16px;
   }
 
@@ -1397,4 +1399,27 @@
   ::v-deep .el-checkbox+.el-checkbox {
     margin-left: 0px !important;
   }
+//树形菜单
+::v-deep .vue-treeselect__menu {
+  background: #2C3E91;
+  border: none;
+}
+//hover
+::v-deep .vue-treeselect__option--highlight{
+background-color: #4659B4 !important;
+}
+//选中的menu
+::v-deep .vue-treeselect__option--selected{
+background: #2C3E91;
+}
+//menu文字
+::v-deep .vue-treeselect__label{
+color: #fff;
+font-size: 0.7vw;
+font-weight: normal;
+}
+//menu-icon
+::v-deep .vue-treeselect__option-arrow-container .vue-treeselect__option-arrow{
+  color: #fff !important;
+}
 </style>

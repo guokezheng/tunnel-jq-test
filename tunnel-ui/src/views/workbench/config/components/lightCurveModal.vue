@@ -78,7 +78,7 @@
                   <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
                     :value="dict.dictValue" />
                 </el-select>
-                <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
+                <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
                 <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例"
                   v-model="item.beforeLuminance"></el-input>
 
@@ -147,7 +147,7 @@
                   <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
                     :value="dict.dictValue" />
                 </el-select>
-                <span style="color: #05AAFD;margin-left: 10px;font-weight: bold;">下修比例</span>
+                <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
                 <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例"
                   v-model="item.beforeLuminance"></el-input>
                 <div class="buttonBox" style="width: 20% ;float: right;">
@@ -966,6 +966,19 @@
       },
       //济南光照下修比例保存
       submitlightForm() {
+        if(!this.lightFilesModel.tunnelId){
+          this.$modal.msgWarning("请选择隧道名称");
+          return
+        }
+        for(let item of this.lightFormItems){
+          if(!item.lightParagraph){
+            this.$modal.msgWarning("请选择设备");
+            return
+          }else if(!item.beforeLuminance){
+            this.$modal.msgWarning("请输入下修比例");
+            return
+          }
+        }
         // debugger
         console.log(this.lightFilesModel)
         //模式1 车辆 0光强
@@ -987,6 +1000,19 @@
       },
       //潍坊光照下修比例保存
       submitlightFormWei() {
+        if(!this.lightFilesModelWei.tunnelId){
+          this.$modal.msgWarning("请选择隧道名称");
+          return
+        }
+        for(let item of this.lightFormItemsWei){
+          if(!item.lightParagraph){
+            this.$modal.msgWarning("请选择设备");
+            return
+          }else if(!item.beforeLuminance){
+            this.$modal.msgWarning("请输入下修比例");
+            return
+          }
+        }
         // debugger
         console.log(this.lightFilesModelWei)
         //模式1 车辆 0光强

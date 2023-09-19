@@ -1327,7 +1327,7 @@ export default {
         checkPlanName(param).then((res) => {
           console.log(res, "res");
         }).catch(()=>{
-          this.reservePlanDrawForm.planName = ''
+          // this.reservePlanDrawForm.planName = ''
         });
       }
     },

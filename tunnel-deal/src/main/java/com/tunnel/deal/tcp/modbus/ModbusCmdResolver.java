@@ -25,6 +25,8 @@ public class ModbusCmdResolver {
         JSONObject jsonObject = new JSONObject();
         if(msg.length() < ModbusCmdValues.RECV_CMD_MIN_LENGTH){
             jsonObject.put("msg", MessageType.ERROR_MESSAGE);
+            log.error("查询指令返回错误结果："+msg+",指令可能粘包，请排查问题");
+            System.out.println("查询指令返回错误结果："+msg+",指令可能粘包，请排查问题");
             return jsonObject;
         }
         String serial = msg.substring(0,4);
@@ -46,6 +48,23 @@ public class ModbusCmdResolver {
             jsonObject.put("readData",readData);
         }
         return jsonObject;
+    }
+
+    /**
+     * 解析读取的数据,2个字节作为一个数据
+     * (不做进制转换，输出十六进制数据)
+     * @param data
+     * @return
+     */
+    public static List<String> handleTwoBytesDataHex(String data){
+        List<String> list = new ArrayList<>();
+        for(int i = 0; i < data.length(); ){
+            int len = 4;
+            String item = data.substring(i,i+len);
+            list.add(item);
+            i += len;
+        }
+        return list;
     }
 
     /**

@@ -128,9 +128,10 @@ public class XiMenZiPlcTask {
                 for(int addressCursor = minAddressNum; addressCursor < maxAddressNum; ){
                     Integer addressEnd = addressCursor + 50;
                     Integer cmdLength = addressEnd + Integer.valueOf(dataLength) - addressCursor;
-                    modbusCmd.sleep(2);
                     modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,String.valueOf(addressCursor),String.valueOf(cmdLength));
                     addressCursor += 50;
+                    //添加延时，避免发送数据过快，出现粘包（用助手循环发送测试，300毫米循环下发可以正常回复）
+                    modbusCmd.sleep(300);
                 }
             }else{
                 //计算读取指令的地址长度, 最大 + 地址长度 - 最小
@@ -138,8 +139,8 @@ public class XiMenZiPlcTask {
                 Integer cmdLength = maxAddressNum + Integer.valueOf(dataLength) - minAddressNum;
 //            System.out.println("sendMultiplePointCmd 读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength+",时间："+System.currentTimeMillis());
 
-                modbusCmd.sleep(2);
                 modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,minAddress,String.valueOf(cmdLength));
+                modbusCmd.sleep(100);
             }
         }
     }

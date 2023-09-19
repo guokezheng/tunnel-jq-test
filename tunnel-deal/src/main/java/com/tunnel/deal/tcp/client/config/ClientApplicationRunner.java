@@ -3,6 +3,7 @@ package com.tunnel.deal.tcp.client.config;
 import com.tunnel.deal.mca.task.McaTask;
 import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask;
+import com.tunnel.deal.tcp.plc.ximenzi.task.XiMenZiPlcTask;
 import com.tunnel.deal.warninglightstrip.WarningLightStripTask;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class ClientApplicationRunner implements ApplicationRunner {
     @Autowired
     private OmronFinsTask omronFinsTask;
 
+    @Autowired
+    private XiMenZiPlcTask xiMenZiPlcTask;
+
 
 
 //    /**
@@ -49,7 +53,8 @@ public class ClientApplicationRunner implements ApplicationRunner {
                 //项目启动时缓存设备信息，与设备建立通信通道
                 mcaTask.connect();
                 warningLightStripTask.connect();
-//                omronFinsTask.connect();
+                omronFinsTask.connect();
+                xiMenZiPlcTask.connect();
             } catch (Exception e) {
                 e.printStackTrace();
             }

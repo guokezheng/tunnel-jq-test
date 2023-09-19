@@ -19,6 +19,7 @@ import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import com.tunnel.deal.tcp.plc.ximenzi.task.XiMenZiPlcTask;
+import com.tunnel.deal.tcp.util.NumberSystemConvert;
 import com.tunnel.deal.tcp.util.Obj2ListUtil;
 import com.tunnel.deal.tcp.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,9 +219,9 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
         if(ModbusFunctionCode.CODE_THREE.equals(functionCode) || ModbusFunctionCode.CODE_FOUR.equals(functionCode)){
             Integer length = readData.length();
 //            //按照功能码分析
-            //两个字节一个数字
+            //两个字节一个字（一个寄存器地址的长度）
             if(length % 4 == 0){
-                List<String> list = ModbusCmdResolver.handleTwoBytesData(readData);
+                List<String> list = ModbusCmdResolver.handleTwoBytesDataHex(readData);
                 jsonObject.put("data",list);
             }
         }
@@ -280,7 +281,7 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
     public void getFunctionThreeData(List<SdDevicePointPlc> pointList,List<String> dataList,String address){
         Map<Integer,String> valueMap = new HashMap<>();
 
-
+        //十六进制地址转换
         Integer startAddress = Integer.valueOf(address,16);
         for(int i = 0; i < dataList.size(); i++){
             valueMap.put(startAddress,dataList.get(i));
@@ -300,7 +301,7 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             //点位地址
             Integer pointAddress = Integer.valueOf(devicePointPlc.getAddress());
 //            //点位长度
-//            Integer dataLength = Integer.valueOf(devicePointPlc.getDataLength());
+            Integer dataLength = Integer.valueOf(devicePointPlc.getDataLength());
             //实时数据
             String data = valueMap.get(pointAddress);
             if(data == null){
@@ -308,6 +309,9 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             }
             String pointConfig = devicePointPlc.getPointConfig();
             if(pointConfig != null && !"".equals(pointConfig)){
+                //将十六进制数据转换为十进制，再做匹配
+                Integer value = Integer.parseInt(data,16);
+                data = String.valueOf(value);
                 //状态映射
                 JSONArray jsonArray = JSONArray.parseArray(pointConfig);
                 String state = "";
@@ -321,10 +325,12 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
                     }
                 }
                 result = state;
-            }else if(data.indexOf(".") > 0){
-                //小数模拟量
+            }else if(dataLength == 2){
+                //模拟量，4个字节，2个寄存器地址，双字
+                data = data + valueMap.get(pointAddress + 1);
+                Float num = NumberSystemConvert.convertHexToFloat(data);
                 //精确2位小数
-                BigDecimal dataNum = new BigDecimal(data);
+                BigDecimal dataNum = new BigDecimal(num);
                 //最终结果保留2位小数
                 dataNum = dataNum.setScale(2,BigDecimal.ROUND_HALF_UP);
                 result = String.valueOf(dataNum);

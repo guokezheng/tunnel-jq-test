@@ -47,10 +47,10 @@ public class ModbusCmdValues {
     public static final String READ_STATE_START_ADDRESS = "0006";
 
     /**
-     * 接收指令最小长度（接收指令字符串的长度）,7个字节，14个长度
+     * 接收指令最小长度（接收指令字符串的长度）,8个字节，16个长度
      * 从序列号到设备地址
      */
-    public static final int RECV_CMD_MIN_LENGTH = 14;
+    public static final int RECV_CMD_MIN_LENGTH = 16;
 
     /**
      * 接收指令正常情况下的最小长度，9个字节，18个长度

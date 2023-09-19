@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.D_AREA_CODE;
+import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.W_BIT_AREA_CODE;
 import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.W_WORD_AREA_CODE;
 
 /**
@@ -131,8 +132,8 @@ public class OmronFinsTask {
         sleep(50);
         //W字代码
         sendMultiplePointCmd(fEqIdList,pointType,W_WORD_AREA_CODE);
-//        //W位代码
-//        sendMultiplePointCmd(fEqIdList,pointType,"31");
+        //W位代码
+        sendSinglePointCmd(fEqIdList,pointType,W_BIT_AREA_CODE);
     }
 
     /**
@@ -259,63 +260,17 @@ public class OmronFinsTask {
         }
 
         for(Map itemMap : pointList){
-            String eqId = itemMap.get("eq_id") == null ? "" : itemMap.get("eq_id").toString();
+            String eqId = itemMap.get("eqId") == null ? "" : itemMap.get("eqId").toString();
            String address = itemMap.get("address") == null ? "" : itemMap.get("address").toString();
            String itemId = itemMap.get("itemId") == null ? "":itemMap.get("itemId").toString();
            String pointConfig = itemMap.get("pointConfig") == null ? "" : itemMap.get("pointConfig").toString();
             //原始数据
+            if(address == null || "".equals(address)){
+                continue;
+            }
             String data = valueMap.get(Integer.valueOf(address));
 //            System.out.println("测试配置：pointConfig="+pointConfig+",eqId="+eqId);
-            JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
-
-            //获取公式计算
-            String formula = jsonConfig.getString("formula");
-            //formula:{divisor:'1000',multiple:'406.25',sub:'1625'}}
-            if(formula != null && !"".equals(formula)){
-                JSONObject formulaObject = JSONObject.parseObject(formula);
-                BigDecimal divisor = formulaObject.getBigDecimal("divisor");
-                BigDecimal multiple = formulaObject.getBigDecimal("multiple");
-                BigDecimal sub = formulaObject.getBigDecimal("sub");
-
-                BigDecimal dValue = new BigDecimal(data);
-                dValue = dValue.divide(divisor,2,BigDecimal.ROUND_HALF_UP);
-                if(multiple != null){
-                    dValue = dValue.multiply(multiple);
-                }
-                if(sub != null){
-                    dValue = dValue.subtract(sub);
-                }
-                dValue = dValue.setScale(2,BigDecimal.ROUND_HALF_UP);
-
-                data = String.valueOf(dValue);
-                log.error("公式配置打印：pointConfig="+pointConfig);
-            }
-            //匹配状态值
-            String stateConfigStr = jsonConfig.getString("stateConfig");
-            if(stateConfigStr != null && !"".equals(stateConfigStr)){
-                JSONArray jsonArray = JSONArray.parseArray(stateConfigStr);
-                //状态匹配
-                JSONObject stateJson = new JSONObject();
-                for(Object obj : jsonArray){
-                    JSONObject jsonObject = (JSONObject) obj;
-                    String valueConfig = jsonObject.getString("value");
-//                    String dataStr = String.format("%04x",Integer.valueOf(data));
-                    if(data.equals(valueConfig)){
-                        stateJson = jsonObject;
-                        System.out.println("实时数据状态：stateJson="+stateJson+",eqId="+eqId);
-                        break;
-                    }
-                }
-                String stateMapping = stateJson.getString("state");
-                if(stateMapping == null){
-                    //报错
-                    log.error("点位配置不完整，pointConfig="+pointConfig+"eqId="+eqId);
-                }else{
-                    data = stateMapping;
-//                    log.error("状态配置打印：pointConfig="+pointConfig);
-                }
-            }
-
+            data = getFinalData(eqId,data,pointConfig);
 
             //存储实时数据
             SdDevices sdDevices = new SdDevices();
@@ -324,6 +279,64 @@ public class OmronFinsTask {
             //设置设备在线
             devicesService.updateOnlineStatus(eqId,false);
         }
+    }
+
+
+    /**
+     * 根据公式计算或者状态匹配，获得最终的数据
+     * @param eqId 设备ID
+     * @param data 原始数据
+     * @param pointConfig 点位配置
+     * @return
+     */
+    public String getFinalData(String eqId,String data,String pointConfig){
+        JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
+        //获取公式计算
+        String formula = jsonConfig.getString("formula");
+        //formula:{divisor:'1000',multiple:'406.25',sub:'1625'}}
+        if(formula != null && !"".equals(formula)){
+            JSONObject formulaObject = JSONObject.parseObject(formula);
+            BigDecimal divisor = formulaObject.getBigDecimal("divisor");
+            BigDecimal multiple = formulaObject.getBigDecimal("multiple");
+            BigDecimal sub = formulaObject.getBigDecimal("sub");
+
+            BigDecimal dValue = new BigDecimal(data);
+            dValue = dValue.divide(divisor,2,BigDecimal.ROUND_HALF_UP);
+            if(multiple != null){
+                dValue = dValue.multiply(multiple);
+            }
+            if(sub != null){
+                dValue = dValue.subtract(sub);
+            }
+            dValue = dValue.setScale(2,BigDecimal.ROUND_HALF_UP);
+
+            data = String.valueOf(dValue);
+            log.error("公式配置打印：pointConfig="+pointConfig);
+        }
+        //匹配状态值
+        String stateConfigStr = jsonConfig.getString("stateConfig");
+        if(stateConfigStr != null && !"".equals(stateConfigStr)){
+            JSONArray jsonArray = JSONArray.parseArray(stateConfigStr);
+            //状态匹配
+            JSONObject stateJson = new JSONObject();
+            for(Object obj : jsonArray){
+                JSONObject jsonObject = (JSONObject) obj;
+                String valueConfig = jsonObject.getString("value");
+                if(data.equals(valueConfig)){
+                    stateJson = jsonObject;
+                    System.out.println("实时数据状态：stateJson="+stateJson+",eqId="+eqId);
+                    break;
+                }
+            }
+            String stateMapping = stateJson.getString("state");
+            if(stateMapping == null){
+                //报错
+                log.error("点位配置不完整，pointConfig="+pointConfig+"eqId="+eqId);
+            }else{
+                data = stateMapping;
+            }
+        }
+        return data;
     }
 
 
@@ -341,14 +354,18 @@ public class OmronFinsTask {
         for(Map  map : devicePointList){
             //设备ID
             String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
+            //子设备ID
+            String eqId = map.get("eqId") == null ? "" : map.get("eqId").toString();
+            String itemId = map.get("itemId") == null ? "": map.get("itemId").toString();
             //点位配置
             String pointConfig = map.get("pointConfig") == null ? "" : map.get("pointConfig").toString();
+            String addressIndex = map.get("addressIndex") == null ? "" : map.get("addressIndex").toString();
             JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
             //{sourceAddress:'127.0.0.1',destinationAddress:'127.0.0.1',area:'82',address:'502',bitAddress,'',readlength:'2'}
-//            String sourceAddress = jsonConfig.getString("sourceAddress");
-////            String destinationAddress = jsonConfig.getString("destinationAddress");
+
             String area = jsonConfig.getString("area");
             String address = jsonConfig.getString("address");
+            //读取的位地址
             String bitAddress = jsonConfig.getString("bitAddress");
             String readLength = jsonConfig.getString("readLength");
 
@@ -400,7 +417,7 @@ public class OmronFinsTask {
             while(j < count){
                 String value = OmronFinsTask.pointCmdCache.get(fEqId+"query");
                 if(value != null && !"".equals(value)){
-//                    handleDeviceData(pList,fEqId,value,minAddress,cmdLength,dataLength,areaCode);
+                    handleSinglePointDeviceData(map,value);
                     OmronFinsTask.pointCmdCache.remove(fEqId+"query");
                     break;
                 }
@@ -409,6 +426,30 @@ public class OmronFinsTask {
             }
 
         }
+    }
+
+
+    /**
+     * 解析单个点位的设备数据
+     * @param map
+     * @param value
+     */
+    public void handleSinglePointDeviceData(Map map,String value){
+
+        //子设备ID
+        String eqId = map.get("eqId") == null ? "" : map.get("eqId").toString();
+        String itemId = map.get("itemId") == null ? "": map.get("itemId").toString();
+        //点位配置
+        String pointConfig = map.get("pointConfig") == null ? "" : map.get("pointConfig").toString();
+
+        String data = getFinalData(eqId,value,pointConfig);
+
+        //存储实时数据
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqId(eqId);
+        sdDeviceDataService.updateDeviceData(sdDevices,data,Long.valueOf(itemId));
+        //设置设备在线
+        devicesService.updateOnlineStatus(eqId,false);
     }
 
     /**

@@ -72,10 +72,15 @@
               </el-form-item>
             </el-col>
             <el-col :span="16" class="infoBoardButton">
+              <el-radio-group v-model="radio1" @input="alignment(radio1)">
+                <el-radio-button :label="1">左对齐</el-radio-button>
+                <el-radio-button :label="2">左右居中</el-radio-button>
+                <el-radio-button :label="3">右对齐</el-radio-button>
+              </el-radio-group>
               <!-- <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
             <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
             <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button> -->
-              <el-button type="primary" @click="alignment(1)" size="mini"
+              <!-- <el-button type="primary" @click="alignment(1)" size="mini"
                 >左对齐</el-button
               >
               <el-button type="primary" @click="alignment(2)" size="mini"
@@ -83,7 +88,7 @@
               >
               <el-button type="primary" @click="alignment(3)" size="mini"
                 >右对齐</el-button
-              >
+              > -->
 
               <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
             </el-col>
@@ -298,6 +303,7 @@ export default {
 
   data() {
     return {
+      radio1:'0',
       alignmentNum:2,
       iotTemplateCategoryList: [],
       content: "",
@@ -840,8 +846,11 @@ export default {
   // height: 80px;
 }
 .infoBoardButton {
-  display: flex;
-  justify-content: left;
+  ::v-deep .el-radio-button--medium .el-radio-button__inner{
+      height: 3vh;
+      line-height: 3vh;
+      padding: 0 0.6vw;
+    }
 }
 ::v-deep .el-card__body {
   padding: 10px 0;

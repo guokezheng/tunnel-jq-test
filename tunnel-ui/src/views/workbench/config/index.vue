@@ -1474,6 +1474,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
+      <div style="clear: both;"></div>
     </el-dialog>
     <com-video class="comClass" ref="videoRef"></com-video>
     <com-light class="comClass" ref="lightRef"></com-light>

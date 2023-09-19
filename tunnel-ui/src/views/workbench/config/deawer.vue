@@ -165,6 +165,7 @@
             :max="100"
             class="sliderClass"
           ></el-slider>
+          <span style="padding-left: 10px;">{{phoneForm1.volume}} %</span>
         </div>
         <div class="phoneBox1" v-show="brandId == '10011'">
           <div class="chezhiName">播放状态:</div>
@@ -249,6 +250,7 @@
             :max="100"
             class="sliderClass"
           ></el-slider>
+          <span style="padding-left: 10px;">{{phoneForm2.volume}} %</span>
         </div>
         <div class="phoneBox1" v-show="brandId == '10011'">
           <div class="chezhiName">播放状态:</div>

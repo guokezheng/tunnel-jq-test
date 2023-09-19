@@ -129,7 +129,8 @@
                   <el-switch v-model="item.strategyState" active-color="#13ce66" inactive-color="#ff4949"
                     active-value="0" inactive-value="1" v-hasPermi="['workbench:dialog:save']"
                     @change="changeStrategyState(item)">
-                  </el-switch></el-col>
+                  </el-switch>
+                </el-col>
               </el-row>
               <!--              <el-row :gutter="24">-->
               <!--                <el-col :span="4" class="elcolName">创建</el-col>-->
@@ -170,13 +171,15 @@
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatus" active-color="#13ce66" inactive-color="#ff4949"
                     :active-value="parseInt(0)" :inactive-value="parseInt(1)" @change="changeSdWisdomIsStatus(item)">
-                  </el-switch></el-col>
+                  </el-switch>
+                </el-col>
                 <el-col :span="4" class="elcolName">济南</el-col>
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatusWei" active-color="#13ce66" inactive-color="#ff4949"
                     :active-value="parseInt(0)" :inactive-value="parseInt(1)"
                     @change="changeSdWisdomIsStatus(item, true)">
-                  </el-switch></el-col>
+                  </el-switch>
+                </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">指令</el-col>
@@ -209,13 +212,15 @@
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatus" active-color="#13ce66" inactive-color="#ff4949"
                     :active-value="parseInt(0)" :inactive-value="parseInt(1)" @change="changeSdWisdomIsStatus(item)">
-                  </el-switch></el-col>
+                  </el-switch>
+                </el-col>
                 <el-col :span="4" class="elcolName">济南</el-col>
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatusWei" active-color="#13ce66" inactive-color="#ff4949"
                     :active-value="parseInt(0)" :inactive-value="parseInt(1)"
                     @change="changeSdWisdomIsStatus(item, true)">
-                  </el-switch></el-col>
+                  </el-switch>
+                </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">指令</el-col>
@@ -270,10 +275,20 @@
     delConfig,
     updateSdWisdomIsStatus,
   } from "@/api/business/wisdomLight/app";
-  import { listTunnels } from "@/api/equipment/tunnel/api";
-  import { getUserDeptId } from "@/api/system/user";
-  import { analysisDataByTime } from "@/api/system/trafficStatistics/api";
-  import { delStrategy, listStrategy, updateState } from "@/api/event/strategy";
+  import {
+    listTunnels
+  } from "@/api/equipment/tunnel/api";
+  import {
+    getUserDeptId
+  } from "@/api/system/user";
+  import {
+    analysisDataByTime
+  } from "@/api/system/trafficStatistics/api";
+  import {
+    delStrategy,
+    listStrategy,
+    updateState
+  } from "@/api/event/strategy";
 
   import timingControl from "@/views/event/strategy/components/timingControl"; //定时控制
   import lightCurveModal from "./lightCurveModal";
@@ -287,23 +302,20 @@
     },
     data() {
       return {
+        checkDefault: ['0'],
         visibleSync: false,
-        dataTree: [
-          {
+        dataTree: [{
             label: "日常联控",
-            value: "0",
-            children: [
-              {
-                label: "时序自动控制",
-                value: "0",
-              },
-            ],
+            value: "4",
+            children: [{
+              label: "时序自动控制",
+              value: "0",
+            }, ],
           },
           {
             label: "节能照明联控",
-            value: "1",
-            children: [
-              {
+            value: "5",
+            children: [{
                 label: "亮度差联控照明",
                 value: "1",
               },
@@ -317,6 +329,7 @@
         defaultProps: {
           children: "children",
           label: "label",
+          value: "value"
         },
         checkDefault: [0], //存放默认选中节点的id
         //主定时任务列表
@@ -332,7 +345,9 @@
         //光照曲线ref
         loginChart: null,
         //光强配置文件
-        lightFilesModel: { beforeLuminance: "" },
+        lightFilesModel: {
+          beforeLuminance: ""
+        },
         //光照查询
         queryParamsLight: {},
         //光 x  光强
@@ -349,28 +364,38 @@
         //部門id
         userDeptId: "",
         //隧道方向
-        lightDirectionOptions: [
-          { dictLabel: "济南方向", dictValue: "2" },
-          { dictLabel: "潍坊方向", dictValue: "1" },
+        lightDirectionOptions: [{
+            dictLabel: "济南方向",
+            dictValue: "2"
+          },
+          {
+            dictLabel: "潍坊方向",
+            dictValue: "1"
+          },
         ], //方向列表
-        catDirectionOptions: [
-          { dictLabel: "上行", dictValue: "1" },
-          { dictLabel: "下行", dictValue: "2" },
+        catDirectionOptions: [{
+            dictLabel: "上行",
+            dictValue: "1"
+          },
+          {
+            dictLabel: "下行",
+            dictValue: "2"
+          },
         ],
         //车辆数配置文件
-        catFilesModel: { beforeLuminance: "" },
+        catFilesModel: {
+          beforeLuminance: ""
+        },
         tunnelItems: {},
         tunnelLists: [],
         //隧道列表
         tunnelData: [],
         directionOptions: [],
-        formItems: [
-          {
-            label: "",
-            startTime: "",
-            endTime: "",
-          },
-        ],
+        formItems: [{
+          label: "",
+          startTime: "",
+          endTime: "",
+        }, ],
         //策略实体
         strategyForm: {},
         //策略标题
@@ -393,6 +418,7 @@
       document.addEventListener("click", this.bodyCloseMenus);
     },
     created() {
+      this.treeModel = '0'
       // 日常策略
       this.getDicts("sd_strategy_type").then((response) => {
         this.strategyTypeOptions = response.data;
@@ -484,14 +510,18 @@
           })
           .finally
 
-          // setInterval(function(){
-          //   loading.close();
-          // },3000)
-          ();
+        // setInterval(function(){
+        //   loading.close();
+        // },3000)
+        ();
       },
       //光照任务列表
       selectLightStrategyList(data) {
-        let queryParams = { pageSize: 999, pageNum: 1, modeType: 0 };
+        let queryParams = {
+          pageSize: 999,
+          pageNum: 1,
+          modeType: 0
+        };
         if (data == "resetQuery") {
           this.queryParams = {};
         }
@@ -538,7 +568,11 @@
       },
       //车辆任务列表
       selectCatStrategyList(data) {
-        let queryParams = { pageSize: 999, pageNum: 1, modeType: 1 };
+        let queryParams = {
+          pageSize: 999,
+          pageNum: 1,
+          modeType: 1
+        };
         if (data == "resetQuery") {
           this.queryParams = {};
         }
@@ -606,8 +640,14 @@
       closeLogin() {
         // // // debugger
         this.visibleSync = false;
+        this.resetQuery()
+        this.treeModel = '0'
+        document
+          .querySelector(".left-content .el-tree-node__children .el-tree-node__content")
+          .click();
       },
       handleNodeClickLight(data) {
+        this.boxShow = false
         if (data.value == "0") {
           //时序自动控制
           this.treeModel = "0";
@@ -776,10 +816,10 @@
         const rlIds = row.id;
         const jobRelationId = row.jobRelationId;
         this.$confirm("是否确认删除？", "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
           .then(() => {
             delStrategy(ids).then((res) => {
               if (res.code == 200) {
@@ -793,7 +833,7 @@
               // this.getList();
             });
           })
-          .catch(function () { });
+          .catch(function () {});
       },
       //删除照明策略
       lightStrategyDelete(row) {
@@ -802,10 +842,10 @@
         ids.push(row.id);
         ids.push(row.idWei);
         this.$confirm("是否确认删除？", "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
           .then(() => {
             // // // debugger
             delConfig(ids).then((res) => {
@@ -821,7 +861,7 @@
               // this.getList();
             });
           })
-          .catch(function () { });
+          .catch(function () {});
       },
       //0:手动 1：定时 2：分时
       strategyTypeClose(row) {
@@ -881,7 +921,10 @@
         done();
       },
       changeStrategyState(row) {
-        let data = { strategyId: row.id, change: row.strategyState };
+        let data = {
+          strategyId: row.id,
+          change: row.strategyState
+        };
         updateState(data).then((result) => {
           if (result.code == 200) {
             if (row.strategyState == 0) {
@@ -899,9 +942,15 @@
         //type==true 说明是另一个
         let data = {};
         if (type) {
-          data = { id: row.idWei, isStatus: row.isStatusWei };
+          data = {
+            id: row.idWei,
+            isStatus: row.isStatusWei
+          };
         } else {
-          data = { id: row.id, isStatus: row.isStatus };
+          data = {
+            id: row.id,
+            isStatus: row.isStatus
+          };
         }
 
         updateSdWisdomIsStatus(data).then((result) => {
@@ -935,10 +984,10 @@
           // // // debugger
           if (newVal && this.visibleSync) {
             this.$nextTick(() => {
-              document.querySelector(".el-tree-node__content").click();
+              document.querySelector(".left-content .el-tree-node__content").click();
               //默认选中第一层级的第一个节点
               document
-                .querySelector(".el-tree-node__children .el-tree-node__content")
+                .querySelector(".left-content .el-tree-node__children .el-tree-node__content")
                 .click();
             });
           }
@@ -949,14 +998,17 @@
         async handler(newValue, oldValue) {
           // // // debugger
           this.treeModel = "0";
-          this.visibleSync = !this.visibleSync;
+          this.$nextTick(() => {
+            this.visibleSync = !this.visibleSync;
+
+          })
           //查询主策略
           this.selectListStrategy();
           //查询隧道列表
           await this.getTunnels();
           //查询方向
           await this.getDirection();
-          this.$nextTick(() => {
+          // this.$nextTick(() => {
             // // // debugger
             // document.querySelector(".left-content .el-tree-node__content").click();
             //默认选中第一层级的第一个节点
@@ -965,11 +1017,12 @@
               .click();
             // const firstNode = document.querySelector(".left-content .el-tree-node");
             // firstNode.click();
-          });
+          // });
         },
       },
     },
   };
+
 </script>
 
 <style scoped lang="scss">
@@ -1144,4 +1197,5 @@
       border: transparent !important;
     }
   }
+
 </style>

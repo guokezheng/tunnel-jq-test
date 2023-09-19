@@ -88,7 +88,12 @@
               </el-form-item>
             </el-col>
             <el-col class="infoBoardButton" :span="16">
-              <el-button type="primary" @click="alignment(1)" size="mini" 
+              <el-radio-group v-model="radio1" @input="alignment(radio1)">
+                <el-radio-button :label="1">左对齐</el-radio-button>
+                <el-radio-button :label="2">左右居中</el-radio-button>
+                <el-radio-button :label="3">右对齐</el-radio-button>
+              </el-radio-group>
+              <!-- <el-button type="primary" @click="alignment(1)" size="mini" 
                 >左对齐</el-button
               >
               <el-button type="primary" @click="alignment(2)" size="mini" 
@@ -96,7 +101,7 @@
               >
               <el-button type="primary" @click="alignment(3)" size="mini" 
                 >右对齐</el-button
-              >
+              > -->
             </el-col>
           </el-row>
         
@@ -255,7 +260,7 @@ import { checkIotBoardContent } from "@/api/board/vocabulary";
 export default {
   data() {
     return {
-      radio1:'',
+      radio1:'0',
       alignmentNum:2,
       content: "",
       boardWidth: "",
@@ -868,6 +873,13 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+  .infoBoardButton{
+    ::v-deep .el-radio-button--medium .el-radio-button__inner{
+      height: 3vh;
+      line-height: 3vh;
+      padding: 0 0.6vw;
+    }
+  }
 .previewContentCSS {
   border: yellow 1px dashed;
 }

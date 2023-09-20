@@ -504,7 +504,7 @@
                 />
               </div>
               <div>
-
+               
                 <img
                   src="../../../assets/cloudControl/tunnelBox2.png"
                   @click="changeActiveMap(1)"
@@ -973,7 +973,7 @@
           class="closeRobot"
         />
       </el-dialog>
-
+       
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
     <workBench class="workBenchBox" ref="workBenchRef" :robotPositon="robotPositon"/>
 
@@ -1755,7 +1755,7 @@ export default {
     },
     // 事件详情
     async getListEvent() {
-
+      
       if (this.$route.query.id) {
         const param = {
           id: this.$route.query.id,
@@ -2263,9 +2263,9 @@ export default {
 // ::v-deep .el-table{
 //   background-color: rgba(1, 46, 81, 0.7)!important;
 // }
-::v-deep .el-table tr {
+/* ::v-deep .el-table tr {
   background: rgba(1, 46, 81, 0.7);
-}
+} */
 ::v-deep
   .el-table--striped
   .el-table__body
@@ -3083,11 +3083,11 @@ export default {
   ::v-deep .el-table__row td {
     padding: 10px 0 !important;
     color: white;
-    border-bottom: 1px solid #03659e !important;
-    border-left: 1px solid #03659e !important;
+    /* border-bottom: 1px solid #03659e !important;
+    border-left: 1px solid #03659e !important; */
   }
   ::v-deep .el-table__row td:last-of-type {
-    border-right: 1px solid #03659e !important;
+    /* border-right: 1px solid #03659e !important; */
   }
   .GDeviceCard {
     background-color: #05213e;

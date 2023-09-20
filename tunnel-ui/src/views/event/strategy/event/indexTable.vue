@@ -208,6 +208,13 @@
             :formatter="directionFormat"
           />
           <el-table-column
+            label="事件类型"
+            align="center"
+            prop="eventType"
+            :formatter="eventTypeFormatEvent"
+            v-if="tableType == 'zidong'"
+          />
+          <el-table-column
             label="策略类型"
             align="center"
             prop="strategyType"
@@ -801,10 +808,8 @@ export default {
   created() {
     this.getList(); //查询控制策略
     this.getTunnels(); //获取隧道
-    let data = {prevControlType: "1"};
-    listEventType(data).then(res => {
-      this.eventTypeList = res.rows;
-    })
+    this.getListEventType()
+    
     // 预警策略
     this.getDicts("sys_common_event").then((response) => {
       this.strategyTypeEvent = response.data;
@@ -838,6 +843,12 @@ export default {
     document.removeEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    getListEventType(){
+      let data = {prevControlType: "1"};
+      listEventType(data).then(res => {
+        this.eventTypeList = res.rows;
+      })
+    },
     // 点击某一行，将其选中(表格)
     handleRowClick(row, i, a) {
       if(i.label != '状态'){
@@ -867,13 +878,13 @@ export default {
     //     }
     //   }
     // },
-    handleClick(tab, event) {
-      this.dictCode = tab.index;
-      this.queryParams.strategyGroup = Number(tab.index) + Number(1);
-      this.$refs.tableFile1.clearSelection();
-      //  this.$refs.tableFile2.clearSelection();
-      this.getList();
-    },
+    // handleClick(tab, event) {
+    //   this.dictCode = tab.index;
+    //   this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+    //   this.$refs.tableFile1.clearSelection();
+    //   //  this.$refs.tableFile2.clearSelection();
+    //   this.getList();
+    // },
     closeDialogEvent() {
       let index = this.strategyForm.strategyType;
       switch (index) {
@@ -972,6 +983,7 @@ export default {
     },
     /** 编辑修改按钮操作 */
     handleUpdate(row) {
+      console.log(row,"编辑修改按钮操作")
       this.title = "策略编辑";
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
@@ -1321,7 +1333,7 @@ export default {
     },
     //模式中转换
     eventTypeFormatEvent(row, column) {
-      console.log(row)
+      // console.log(row)
       for (let i = 0; i < this.eventTypeList.length; i++) {
         if (row.eventType == this.eventTypeList[i].id) {
           return this.eventTypeList[i].eventType;
@@ -1395,7 +1407,7 @@ export default {
       this.queryParams.jobTime = null
       console.log( this.queryParams )
       this.handleQuery();
-      this.getList();
+      // this.getList();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1574,6 +1586,7 @@ export default {
 
     tableType:{
       handler(val){
+        console.log(val,"tableTypetableTypetableTypetableTypetableTypetableTypetableTypetableType")
         this.strategyList = []
         this.tableType = val
         if(val=="shoudong"){

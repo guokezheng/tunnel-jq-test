@@ -3987,6 +3987,16 @@
   }
 
   // 应急调度
+  .IssuedDialog{
+     .phoneTable {
+      .el-table__header-wrapper th{
+        background-color: #03659E;
+      }
+      tr{
+        background-color: #05213E;
+      }
+     }
+  }
   .dispatchLeft {
     >div {
       background: rgba(1, 46, 81, 0.7);

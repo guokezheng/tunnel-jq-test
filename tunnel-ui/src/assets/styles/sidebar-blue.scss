@@ -4150,6 +4150,16 @@
   }
 
   // 应急调度
+  .IssuedDialog{
+     .phoneTable {
+      .el-table__header-wrapper th{
+        background-color: rgba($color: #2C3E91, $alpha: 0.8);
+      }
+      tr{
+        background-color: transparent;
+      }
+     }
+  }
   .dispatchLeft {
     >div {
       background: rgba(10,16,67, 0.7);

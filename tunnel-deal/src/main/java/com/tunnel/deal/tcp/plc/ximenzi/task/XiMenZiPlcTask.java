@@ -2,6 +2,8 @@ package com.tunnel.deal.tcp.plc.ximenzi.task;
 
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
@@ -33,6 +35,9 @@ public class XiMenZiPlcTask {
     @Autowired
     private TcpClientGeneralService tcpClientGeneralService;
 
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
 
     @Autowired
     private ModbusCmd modbusCmd;
@@ -42,6 +47,16 @@ public class XiMenZiPlcTask {
      * 将HashMap替换为线程安全类ConcurrentHashMap
      */
     public static Map<String, Map> deviceMap = new ConcurrentHashMap<>();
+
+    /**
+     * 控制指令的结果，缓存失败数据，用于指令重发
+     */
+    public static Map<String,Map> controlResultMap = new ConcurrentHashMap<>();
+
+
+    public static Map<String,Map> controlCmdMap = new ConcurrentHashMap<>();
+
+    public static final String XIMENZI_PROTOCOL_ID = "17";
 
     /**
      * 固定时间间隔更新设备信息缓存,定时重新连接
@@ -63,7 +78,10 @@ public class XiMenZiPlcTask {
     /**
      * 定时请求获取设备的实时数据
      */
+//    @Scheduled(cron="0/5 * * * * ?")
     public void getDeviceData(){
+//        long startTime = System.currentTimeMillis();
+//        System.out.println("轮询开启时间：startTime="+startTime);
         //拿到缓存设备数据
         Map<String, Map> deviceMap = XiMenZiPlcTask.deviceMap;
         //点位类型：只读点位
@@ -81,8 +99,11 @@ public class XiMenZiPlcTask {
 
         sendMultiplePointCmd(fEqIdList,pointType);
 
-        sendSinglePointCmd(fEqIdList,pointType);
 
+        sendSinglePointCmd(fEqIdList,pointType);
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("轮询结束时间：endTime="+endTime);
+//        System.out.println("轮询一次的时间：endTime - startTime=" + (endTime - startTime));
     }
 
     /**
@@ -101,6 +122,11 @@ public class XiMenZiPlcTask {
         List<Map> pointList = devicePointPlcService.selectDevicePointByGroupNum(fEqIdList,functionCodeList,String.valueOf(pointType));
 
         for (Map map : pointList){
+            if(!ModbusCmd.commandLock){
+                //没有拿到锁,不执行查询指令
+                continue;
+            }
+
             //父设备ID
             String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
             //功能码
@@ -123,15 +149,25 @@ public class XiMenZiPlcTask {
             Integer maxAddressNum = Integer.valueOf(maxAddress);
             Integer minAddressNum = Integer.valueOf(minAddress);
             Integer num = maxAddressNum - minAddressNum;
+
+//            SdDevices fDevice = sdDevicesService.selectSdDevicesById(fEqId);
+//            String ip = fDevice.getIp();
+//            String port = fDevice.getPort();
+//            Integer portNum = Integer.valueOf(port);
+
+//            Channel channel = getChannel(ip,portNum);
+
             //暂定一次下发50个寄存器地址查询
-            if(num > 50){
+            if(num > 30){
                 for(int addressCursor = minAddressNum; addressCursor < maxAddressNum; ){
                     Integer addressEnd = addressCursor + 50;
                     Integer cmdLength = addressEnd + Integer.valueOf(dataLength) - addressCursor;
                     modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,String.valueOf(addressCursor),String.valueOf(cmdLength));
+
+//                            System.out.println("下发了命令：fEqId="+fEqId+",addressCursor="+addressCursor+",addressEnd="+addressEnd+",time="+System.currentTimeMillis());
                     addressCursor += 50;
                     //添加延时，避免发送数据过快，出现粘包（用助手循环发送测试，300毫米循环下发可以正常回复）
-                    modbusCmd.sleep(300);
+                    modbusCmd.sleep(400);
                 }
             }else{
                 //计算读取指令的地址长度, 最大 + 地址长度 - 最小
@@ -140,7 +176,8 @@ public class XiMenZiPlcTask {
 //            System.out.println("sendMultiplePointCmd 读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength+",时间："+System.currentTimeMillis());
 
                 modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,minAddress,String.valueOf(cmdLength));
-                modbusCmd.sleep(100);
+//                        System.out.println("下发了命令：fEqId="+fEqId+",minAddressNum="+minAddressNum+",maxAddressNum="+maxAddressNum+",time="+System.currentTimeMillis());
+                modbusCmd.sleep(300);
             }
         }
     }
@@ -161,6 +198,11 @@ public class XiMenZiPlcTask {
         List<Map> devicePointList = devicePointPlcService.selectPointMapByFEqId(fEqIdList, functionCodeList,String.valueOf(pointType));
 
         for(Map  map : devicePointList){
+            if(!ModbusCmd.commandLock){
+                //没有拿到锁,不执行查询指令
+                return;
+            }
+
             //父设备ID
             String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
             //功能码
@@ -172,8 +214,10 @@ public class XiMenZiPlcTask {
 //            System.out.println("sendSinglePointCmd 读取数据：设备ID="+fEqId+",功能码="+functionCode+",点位地址="+address+",读取长度="+dataLength+",时间："+System.currentTimeMillis());
             //2毫秒间隔，如果定时任务执行周期是2秒钟，支持1000个指令循环下发，大概可以支持1000个设备的查询指令
             //最长的盘顶山隧道按照200个设备计算，3个隧道，600个设备
-            modbusCmd.sleep(2);
+            modbusCmd.sleep(100);
             modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,address,String.valueOf(dataLength));
         }
     }
+
+
 }

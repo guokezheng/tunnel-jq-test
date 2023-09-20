@@ -59,5 +59,13 @@ public class ModbusCmdValues {
     public static final int RECV_CMD_NORMAL_MIN_LENGTH = 18;
 
 
+    /**
+     * 功能码06的返回指令长度
+     */
+    public static final int FUNCTION_SIX_RECV_CMD_LENGTH = 24;
+
+
     public static final String DEVICE_ADDRESS_DEFAULT = "01";
+
+
 }

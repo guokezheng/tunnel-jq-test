@@ -21,12 +21,12 @@ public class ModbusCmdResolver {
 
     // todo 考虑错误码的情况  00 00 00 00 00 03 01 84 03
 
-    public static JSONObject commandParse(String msg){
+    public static JSONObject commandParse(String ip, String deviceId, String msg){
         JSONObject jsonObject = new JSONObject();
         if(msg.length() < ModbusCmdValues.RECV_CMD_MIN_LENGTH){
             jsonObject.put("msg", MessageType.ERROR_MESSAGE);
-            log.error("查询指令返回错误结果："+msg+",指令可能粘包，请排查问题");
-            System.out.println("查询指令返回错误结果："+msg+",指令可能粘包，请排查问题");
+            log.error("查询指令返回错误结果："+msg+",指令可能粘包，请排查问题;ip="+ip+",deviceId="+deviceId);
+            System.out.println("查询指令返回错误结果："+msg+",指令可能粘包，请排查问题;ip="+ip+",deviceId="+deviceId);
             return jsonObject;
         }
         String serial = msg.substring(0,4);
@@ -41,7 +41,7 @@ public class ModbusCmdResolver {
 
         if(msg.length() <= ModbusCmdValues.RECV_CMD_NORMAL_MIN_LENGTH){
             //分析错误码
-            log.error("查询指令返回错误结果："+msg+",功能码为："+functionCode);
+            log.error("查询指令返回错误结果："+msg+",功能码为："+functionCode+"ip="+ip+",deviceId="+deviceId);
         }else{
             String dataLength = msg.substring(16,18);
             String readData = msg.substring(18);

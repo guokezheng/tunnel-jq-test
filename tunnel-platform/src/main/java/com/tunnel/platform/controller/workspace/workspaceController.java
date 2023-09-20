@@ -7,6 +7,8 @@ import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.framework.config.ThreadPoolConfig;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -24,12 +26,14 @@ import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
+import com.tunnel.deal.tcp.modbus.ModbusCmd;
+import com.tunnel.deal.tcp.plc.ximenzi.XiMenZiPlcControl;
+import com.tunnel.deal.tcp.plc.ximenzi.task.XiMenZiPlcTask;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.deviceFunctions.DeviceFunctionsService;
-import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +116,8 @@ public class workspaceController extends BaseController {
 
     @Autowired
     private CommonControlService commonControlService;
+
+    private XiMenZiPlcControl xiMenZiPlcControl = SpringUtils.getBean(XiMenZiPlcControl.class);
 
 
 //    //3d测试
@@ -708,15 +714,48 @@ public class workspaceController extends BaseController {
         Map<String, Object> map = new HashMap<>();
         map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
 
+        long startTime = System.currentTimeMillis();
+
         Integer controlDevices = 0;
-        for (int i = 0; i < list.size(); i++) {
-            String eqId = list.get(i).getEqId();
-            String state = carFingerDevices.get("state").toString();
-            map.put("devId", eqId);
-            map.put("state", state);
-            map.put("controlType", "0");
-            controlDevices = sdDeviceControlService.controlDevices(map);
+        if(list == null || list.size() == 0){
+            //控制失败
+            log.error("车指批量控制报错：未查询到可控制设备");
+            return AjaxResult.success(controlDevices);
         }
+        SdDevices sdDevices  = list.get(0);
+        String protocolId = String.valueOf(sdDevices.getProtocolId());
+        if(XiMenZiPlcTask.XIMENZI_PROTOCOL_ID.equals(protocolId)){
+            //西门子PLC协议，特殊处理
+            XiMenZiPlcControl.batchControl = true;
+
+            for (int i = 0; i < list.size(); i++) {
+                String eqId = list.get(i).getEqId();
+                String state = carFingerDevices.get("state").toString();
+                map.put("devId", eqId);
+                map.put("state", state);
+                map.put("controlType", "0");
+                controlDevices = sdDeviceControlService.controlDevices(map);
+                sleep(300);
+            }
+            //开启线程，执行控制
+//            ThreadPool.executor.execute(()->{
+                xiMenZiPlcControl.sendFailCmd();
+//            });
+            ModbusCmd.commandLock = true;
+            XiMenZiPlcControl.batchControl = false;
+        }else{
+            for (int i = 0; i < list.size(); i++) {
+                String eqId = list.get(i).getEqId();
+                String state = carFingerDevices.get("state").toString();
+                map.put("devId", eqId);
+                map.put("state", state);
+                map.put("controlType", "0");
+                controlDevices = sdDeviceControlService.controlDevices(map);
+            }
+        }
+
+        long endTime = System.currentTimeMillis();
+        System.out.println("车指批量控制：endTime-startTime="+(endTime-startTime));
         return AjaxResult.success(controlDevices);
     }
 
@@ -843,5 +882,19 @@ public class workspaceController extends BaseController {
     public int asynInduce(SdDevices dev, String state, String brightness, String frequency){
         System.out.println(dev.getIp() + "：进来了");
         return GuidanceLampHandle.getInstance().toControlXianKeDev(dev.getEqId(), Integer.parseInt(state), dev, brightness, frequency);
+    }
+
+
+    /**
+     * 线程休眠固定时间
+     * @param ms 毫秒
+     */
+    public void sleep(int ms){
+        //间隔固定时间（毫秒）发送指令，避免同一个设备连续多次发送指令无回复
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

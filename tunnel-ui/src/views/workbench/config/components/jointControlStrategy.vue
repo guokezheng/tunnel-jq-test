@@ -29,7 +29,7 @@
               </el-input>
             </div>
             <el-button style="float: left; height: 30px" size="small" type="primary" icon="el-icon-plus"
-              class="tableBlueButtton" @click="openInsertStrategy">新增策略</el-button>
+              class="tableBlueButtton" @click="openInsertStrategy" v-hasPermi="['workbench:light:add']">新增策略</el-button>
             <!--              </el-col>-->
             <!--            </el-row>-->
             <div class="searchBox searchBoxLight" v-show="boxShow" ref="cc">
@@ -127,7 +127,7 @@
                 <el-col :span="4" class="elcolName">状态</el-col>
                 <el-col :span="20" class="elcolNameOne">
                   <el-switch v-model="item.strategyState" active-color="#13ce66" inactive-color="#ff4949"
-                    active-value="0" inactive-value="1" v-hasPermi="['workbench:dialog:save']"
+                    active-value="0" inactive-value="1" v-hasPermi="['workbench:light:switch']"
                     @change="changeStrategyState(item)">
                   </el-switch>
                 </el-col>
@@ -151,9 +151,9 @@
               <!--            </el-row>-->
               <el-row :gutter="24">
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableDelButtton"
-                  @click="handleDelete(item)" v-hasPermi="['workbench:dialog:save']">删除</el-button>
+                  @click="handleDelete(item)" v-hasPermi="['workbench:light:del']">删除</el-button>
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableBlueButtton"
-                  @click="handleUpdate(item)" v-hasPermi="['workbench:dialog:save']">编辑</el-button>
+                  @click="handleUpdate(item)" v-hasPermi="['workbench:light:edit']">编辑</el-button>
               </el-row>
             </div>
           </div>

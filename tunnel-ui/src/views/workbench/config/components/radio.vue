@@ -222,7 +222,7 @@ export default {
         loopCount: 1,
         loop: false,
         volume: 1,
-        fileNames: [],
+        fileNames: '',
       },
       stateForm: {},
       fileNamesList: [],
@@ -237,6 +237,11 @@ export default {
       brandTwo: false,
       radioFileList:[]
     };
+  },
+  watch:{
+    "stateForm2.fileNames":function(newVal,oldVal){
+      console.log(newVal,"newVal")
+    }
   },
   created() {},
   methods: {
@@ -276,7 +281,7 @@ export default {
             this.brandTwo = false;
           }
           this.stateForm2.loopStatus = "";
-          this.stateForm2.fileNames = [];
+          this.stateForm2.fileNames = '';
           this.stateForm = res.data;
           this.device = res.data.externalDeviceId;
           this.title = this.stateForm.eqName;
@@ -293,7 +298,7 @@ export default {
     handleClosee() {
       this.visible = false;
       this.stateForm2.loopStatus = "";
-      this.stateForm2.fileNames = [];
+      this.stateForm2.fileNames = '';
     },
     handleOK() {
       if(!this.stateForm2.fileNames){

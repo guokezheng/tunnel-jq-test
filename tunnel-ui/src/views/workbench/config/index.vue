@@ -2797,7 +2797,7 @@
           (this.itemEqType == 7 && !this.batchManageForm.brightness) ||
           (this.itemEqType == 30 && this.batchManageForm.state == 5 && !this.batchManageForm.frequency) ||
           (this.itemEqType == 31 && !this.batchManageForm.frequency) || (!this.batchManageForm.state)) {
-          this.$modal.msgWarning("请选择配置状态");
+          this.$modal.msgWarning("未指定设备需要变更的状态信息");
           return
         } else {
           const loading = this.$loading({

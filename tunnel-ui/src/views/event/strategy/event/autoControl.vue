@@ -275,7 +275,7 @@
               >
                 <el-select
                   v-model="dain.state"
-                  placeholder="请选择设备执行操作"
+                  :placeholder="dain.equipmentTypeId == 22?'请选择播放文件':'请选择设备执行操作'"
                   style="width: 100%"
                 >
                   <el-option
@@ -919,7 +919,7 @@ export default {
     },
     /** 提交按钮 */
     async submitStrategyForm() {
-      this.submitStrategyLoading = true
+      // this.submitStrategyLoading = true
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
           this.submitStrategyLoading = true

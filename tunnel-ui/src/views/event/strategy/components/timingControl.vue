@@ -111,7 +111,7 @@
             </el-col>
             <el-col :span="8"
               v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7 && items.equipmentTypeId != 9">
-              <el-select v-model="items.state" placeholder="请选择设备执行操作" style="width:100%">
+              <el-select v-model="items.state" :placeholder="items.equipmentTypeId == 22?'请选择播放文件':'请选择设备执行操作'" style="width:100%">
                 <el-option v-for="(item, indx) in items.eqStateList" :key="item.deviceState" :label="item.stateName"
                   :value="item.deviceState">
                 </el-option>
@@ -135,7 +135,7 @@
             </el-col>
             <el-col :span="8" v-show="items.equipmentTypeId == 7 ||  items.equipmentTypeId == 9">
               <el-select :style="{'width':  items.state == 1 ? '45%' :'100%' }" v-model="items.state"
-                placeholder="请选择执行操作" @change="selectStateVal(index)">
+                placeholder="请选择设备执行操作" @change="selectStateVal(index)">
                 <el-option v-for="item in items.eqStateList" :key="item.deviceState + 1" :label="item.stateName"
                   :value="item.deviceState">
                 </el-option>

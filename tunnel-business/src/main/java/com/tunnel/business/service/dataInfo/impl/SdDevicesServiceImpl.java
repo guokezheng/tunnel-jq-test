@@ -79,6 +79,11 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.selectSdDevicesById(eqId);
     }
 
+    @Override
+    public SdDevices selectBoardSdDevicesById(String eqId) {
+        return sdDevicesMapper.selectBoardSdDevicesById(eqId);
+    }
+
     /**
      * 查询设备详情
      *

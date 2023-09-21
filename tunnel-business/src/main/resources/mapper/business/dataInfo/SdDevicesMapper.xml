@@ -209,6 +209,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_id = #{eqId}
     </select>
 
+    <select id="selectBoardSdDevicesById" parameterType="String" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"/>
+        where (eq_id = #{eqId} or associated_device_id = #{eqId})
+    </select>
+
     <!--查询设备详情-->
     <select id="queryDeviceById" parameterType="String" resultType="java.util.Map">
         select

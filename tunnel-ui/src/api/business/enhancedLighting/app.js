@@ -75,3 +75,12 @@ export function exportConfig(query) {
     params: query
   })
 }
+
+
+// 对外情报板控制
+export function setWjModel(wjModel) {
+  return request({
+    url: '/parser/board/setWjModel/' + wjModel,
+    method: 'get'
+  })
+}

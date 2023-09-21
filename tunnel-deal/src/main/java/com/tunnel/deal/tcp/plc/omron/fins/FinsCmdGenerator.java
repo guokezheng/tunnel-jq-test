@@ -53,6 +53,39 @@ public class FinsCmdGenerator {
     }
 
     /**
+     * udp读报文拼接
+     * @param sourceAddress
+     * @param destinationAddress
+     * @param area
+     * @param address
+     * @param bitAddress
+     * @param readLength
+     * @return
+     */
+    public static String getUdpReadCommand(String sourceAddress,String destinationAddress,String area,String address,String bitAddress,String readLength){
+        //46494E53 0000001A 00000002 00000000 80 00 02 00 01 00 00 C8 00 00 01 01 82 01F400 0002
+        String command = "";
+        FinsReadSendCmd send = new FinsReadSendCmd();
+//        send.setLength();
+        send.setDa1(String.format("%02x",getIPLast(destinationAddress)));
+        send.setSa1(String.format("%02x",getIPLast(sourceAddress)));
+        //16进制数，不需要转换
+        send.setArea(area);
+        //转16进制前补0,2字节4位
+        send.setAddress(String.format("%04x",Integer.parseInt(address)));
+        if(bitAddress != null && !"".equals(bitAddress)){
+            //转16进制前补0,1字节2位
+            send.setBitAddress(String.format("%02x",Integer.parseInt(bitAddress)));
+        }
+        //2字节4位
+        send.setReadLength(String.format("%04x",Integer.valueOf(readLength)));
+
+        command = send.getOmlUdpCmd();
+
+        return command;
+    }
+
+    /**
      * 控制指令
      readLength
      * @return
@@ -85,6 +118,37 @@ public class FinsCmdGenerator {
     }
 
 
+    /**
+     * udp写报文拼接
+     readLength
+     * @return
+     */
+    public static String getUdpControlCommand(String sourceAddress,String destinationAddress,
+                                           String area,String address,String bitAddress,String writeLength,String value){
+        //46494E53 0000001E 00000002 00000000 80 00 02 001700 001800 FF 0102 B1 000A00 0002 AABBCCDD
+        String command = "";
+        FinsWriteSendCmd send = new FinsWriteSendCmd();
+//        send.setLength();
+        send.setDa1(String.format("%02x",getIPLast(destinationAddress)));
+        send.setSa1(String.format("%02x",getIPLast(sourceAddress)));
+        //16进制数，不需要转换
+        send.setArea(area);
+        //转16进制前补0,2字节4位
+        send.setAddress(String.format("%04x",Integer.parseInt(address)));
+        if(bitAddress != null && !"".equals(bitAddress)){
+            //转16进制前补0,1字节2位
+            send.setBitAddress(String.format("%02x",Integer.parseInt(bitAddress)));
+        }
+        //2字节4位
+        send.setWriteLength(String.format("%04x",Integer.valueOf(writeLength)));
+        //2字节4位
+        //send.setValue(String.format("%04x",Integer.valueOf(value)));
+        //点表中是十六进制，不需要转换
+        send.setValue(value);
+        command = send.getOmlUdpCmd();
+
+        return command;
+    }
 
     /**
      * 获取ip的最后一位数字

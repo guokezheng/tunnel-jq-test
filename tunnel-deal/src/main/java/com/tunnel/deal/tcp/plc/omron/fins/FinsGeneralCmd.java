@@ -78,6 +78,9 @@ public class FinsGeneralCmd {
      */
     protected String sid = "00";
 
+    //欧姆龙udp
+    protected String omlUdpHeader = "800002";
+
 //    /**
 //     * 主请求码，1字节
 //     */

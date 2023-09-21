@@ -65,7 +65,7 @@ import static com.tunnel.business.datacenter.util.CronUtil.CronConvertDateTime;
  * @date 2020-08-27
  */
 @Service
-public class SdStrategyServiceImpl implements ISdStrategyService {
+public class  SdStrategyServiceImpl implements ISdStrategyService {
 
     @Autowired
     private SdStrategyMapper sdStrategyMapper;
@@ -1394,6 +1394,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 issuedParam.put("state",controlStatus);
                 issuedParam.put("eventId",eventId);
                 issuedParam.put("controlType",controlType);
+                issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+                //下发卷帘门先停止
+                if(eqTypeId.equals(DevicesTypeEnum.JUAN_LIAN_MEN.getCode().toString())){
+                    try {
+                        issuedParam.put("state","2");
+                        issueResult = sdDeviceControlService.controlDevices(issuedParam);
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    issuedParam.put("state",controlStatus);
+                }
                 //诱导灯
                 if(eqTypeId.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
                     issuedParam.put("brightness","50");
@@ -1409,7 +1421,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     //0：预案 1：策略
                     issuedParam.put("type","0");
                 }
-                issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
                 System.out.println(devId + "：情报板下发中");
                 issueResult = sdDeviceControlService.controlDevices(issuedParam);
                 if(StrUtil.isNotBlank(rl.getEffectiveTime()) && issueResult > 0) {

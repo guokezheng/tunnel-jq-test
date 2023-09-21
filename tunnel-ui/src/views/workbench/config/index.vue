@@ -183,7 +183,21 @@
               <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1"></el-switch>
             </div>
           </el-col>
-
+          <el-col :span="12">
+            <div class="drawerItem zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.7vw; margin-right: 0.5vw"
+              >
+                {{'对外情报板控制'}}
+              </p>
+              <el-switch
+                v-model="wjmodel"
+                class="switchStyle"
+                @change="wjModelChange"
+              ></el-switch>
+            </div>
+          </el-col>
         </el-row>
       </el-drawer>
       <div class="vehicleLane" @mouseover="mouseoversImage" @mouseleave="mouseleaveImage">
@@ -1341,6 +1355,7 @@
     updateConfig,
     openIllumination,
     closeIllumination,
+    setWjModel,
   } from "@/api/business/enhancedLighting/app.js";
   import {
     listRl
@@ -1705,6 +1720,7 @@
         zoomSwitch: false, //缩放
         fluctuateSwitch: false,
         fluctuateSwitch1: false,
+        wjmodel: false,
         currentTunnel: {
           id: "",
           name: "",
@@ -3143,6 +3159,17 @@
 
 
 
+      },
+
+      wjModelChange(val) {
+          let model = 0;
+          if(val == true){
+            model = 1;
+          }else {
+            model = 0;
+          }
+          setWjModel(model).then((res) => {})
+          console.log(val,"情报板情报板情报板")
       },
       /** 设备类型 */
       getEqType() {

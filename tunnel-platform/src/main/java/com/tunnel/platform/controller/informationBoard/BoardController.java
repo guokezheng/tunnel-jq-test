@@ -1247,12 +1247,12 @@ public class BoardController extends BaseController {
                 return null;
             }
             String[] deviceIds = jsonObject.getString("deviceIds").split(",");
-            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceIds[0]);
+            SdDevices sdDevices = sdDevicesService.selectBoardSdDevicesById(deviceIds[0]);
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(sdDevices.getAssociatedDeviceId());
             String protocolType = sdIotDevice.getProtocolName();
             List<String> deviceIdList = new ArrayList<>();
             for(int i = 0; i < deviceIds.length; i++){
-                deviceIdList.add(sdDevicesService.selectSdDevicesById(deviceIds[i]).getAssociatedDeviceId().toString());
+                deviceIdList.add(sdDevicesService.selectBoardSdDevicesById(deviceIds[i]).getAssociatedDeviceId().toString());
             }
             //拼接内容
             StringBuffer content = new StringBuffer();

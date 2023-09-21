@@ -101,7 +101,7 @@ public class MinaConnection
 		 */
 		ConnectFuture cf = connector.connect(new InetSocketAddress(ip, port));
 		// 3.1 等待连接创建完成 3秒钟超时时间
-		cf.awaitUninterruptibly(3L,TimeUnit.SECONDS);
+		cf.awaitUninterruptibly(5L,TimeUnit.SECONDS);
 
 		/*
 		 * 4.建立连接后，获取连接session

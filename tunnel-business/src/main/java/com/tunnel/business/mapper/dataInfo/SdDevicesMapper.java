@@ -25,6 +25,8 @@ public interface SdDevicesMapper {
 	 */
 	public SdDevices selectSdDevicesById(String eqId);
 
+	public SdDevices selectBoardSdDevicesById(String eqId);
+
 	SdDevices getDevicesListByExternalId(String externalId);
 
 	/**

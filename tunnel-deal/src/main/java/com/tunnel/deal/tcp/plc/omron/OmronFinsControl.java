@@ -13,6 +13,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.mqtt.config.MqttInboundConfiguration;
 import com.tunnel.deal.tcp.client.config.ChannelKey;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralBean;
 import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
@@ -24,10 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask.commandLock;
@@ -95,7 +94,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         }
         //操作日志
         commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
-        return AjaxResult.success(controlState);
+        return AjaxResult.success("下发成功");
     }
 
     /**
@@ -111,8 +110,24 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-
+        boolean isopen = commonControlService.queryAnalogControlConfig();
         Integer controlState = 0;
+        if (isopen) {
+            //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+            controlState = commonControlService.analogControl(map,sdDevices);
+            return controlState;
+        }
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("sdDevices",sdDevices);
+        map1.put("state",state);
+        map1.put("type","2");
+        OmronFinsControlProcession.queue.add(map1);
+        //控制设备之前获取设备状态
+        String beforeState = commonControlService.selectBeforeState(sdDevices);
+        //操作日志
+        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
+        return 1;
+        /*Integer controlState = 0;
 
         boolean isopen = commonControlService.queryAnalogControlConfig();
         if (isopen) {
@@ -132,7 +147,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         }
         //操作日志
         commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
-        return controlState;
+        return controlState;*/
     }
 
     /**
@@ -179,8 +194,12 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
      * @return
      */
     public AjaxResult control(SdDevices sdDevices, String state) {
-
-        //控制指令下发，将下发指令锁置为false
+        Map<String, Object> map = new HashMap<>();
+        map.put("sdDevices",sdDevices);
+        map.put("state",state);
+        map.put("type","2");
+        OmronFinsControlProcession.queue.add(map);
+       /* //控制指令下发，将下发指令锁置为false
         OmronFinsTask.commandLock = false;
         System.out.println("关闭指令锁：commandLock="+commandLock);
 
@@ -257,7 +276,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
 
 
         //默认操作失败
-        AjaxResult ajaxResult = AjaxResult.success(0);
+        AjaxResult ajaxResult = AjaxResult.error();
 
 
         //源地址
@@ -324,10 +343,25 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
 
         sleep(50);
         OmronFinsTask.commandLock = true;
-        System.out.println("打开指令锁：commandLock="+commandLock);
-        return ajaxResult;
+        System.out.println("打开指令锁：commandLock="+commandLock);*/
+        return AjaxResult.success();
     }
 
+    public void readCommitData(String fEqId, String eqId){
+        //查询设备点位
+        SdDevicePointPlc devicePointPlc = new SdDevicePointPlc();
+        devicePointPlc.setEqId(eqId);
+        devicePointPlc.setIsReserved(DevicePointControlTypeEnum.only_read.getCode());
+        List<SdDevicePointPlc> devicePointList = devicePointPlcService.selectSdDevicePointPlcList(devicePointPlc);
+        if(devicePointList == null || devicePointList.size() == 0){
+            return;
+        }
+        devicePointPlc = devicePointList.get(0);
+
+        String pointConfig = devicePointPlc.getPointConfig();
+        JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
+        String area = jsonConfig.getString("area");
+    }
 
     /**
      * 线程休眠固定时间

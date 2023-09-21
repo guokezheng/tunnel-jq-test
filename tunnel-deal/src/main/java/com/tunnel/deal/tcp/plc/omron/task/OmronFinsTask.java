@@ -14,6 +14,7 @@ import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.plc.omron.FinsCmd;
+import com.tunnel.deal.tcp.plc.omron.OmronFinsControlProcession;
 import com.tunnel.deal.tcp.plc.omron.fins.FinsCmdResolver;
 import com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues;
 import io.netty.channel.Channel;
@@ -134,6 +135,16 @@ public class OmronFinsTask {
         sendMultiplePointCmd(fEqIdList,pointType,W_WORD_AREA_CODE);
         //W位代码
         sendSinglePointCmd(fEqIdList,pointType,W_BIT_AREA_CODE);
+    }
+
+    public void getDeviceDataList(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("sdDevices",new SdDevices());
+        map.put("state","");
+        map.put("type","1");
+        if(OmronFinsControlProcession.queue.isEmpty()){
+            OmronFinsControlProcession.queue.add(map);
+        }
     }
 
     /**

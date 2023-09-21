@@ -107,5 +107,19 @@ public class FinsReadSendCmd extends FinsGeneralCmd {
         return result;
     }
 
+    /**
+     * 欧姆龙Udp读
+     * @return
+     */
+    public String getOmlUdpCmd(){
+        StringBuffer s = new StringBuffer();
+        s.append(dna).append(da1).append(da2).append(sna)
+                .append(sa1).append(sa2).append(sid).append(mrc).append(src)
+                .append(area).append(address).append(bitAddress).append(readLength);
 
+        StringBuffer cmd = new StringBuffer();
+        cmd.append(omlUdpHeader).append(s);
+        String result = cmd.toString();
+        return result;
+    }
 }

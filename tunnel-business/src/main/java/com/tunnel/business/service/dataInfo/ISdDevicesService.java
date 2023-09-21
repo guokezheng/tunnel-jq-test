@@ -24,6 +24,9 @@ public interface ISdDevicesService {
      */
     SdDevices selectSdDevicesById(String eqId);
 
+
+    SdDevices selectBoardSdDevicesById(String eqId);
+
     /**
      * 查询设备详情
      *

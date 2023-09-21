@@ -113,7 +113,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 }
                 ExternalSystem system = externalSystems.get(0);
 
-                if (data.contains("恢复") || data.contains("全部声光停止")) {
+                if (data.contains("恢复") || data.contains("全部声光停止") || data.contains("控制器复位")) {
                     log.info("主机{}进行了复位，事件类型为{}", system.getSystemUrl(), alarmType);
                     //复位清除设备报警状态
                     SdDevices dev = new SdDevices();

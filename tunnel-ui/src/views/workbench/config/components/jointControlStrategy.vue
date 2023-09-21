@@ -170,14 +170,15 @@
                 <el-col :span="4" class="elcolName">潍坊</el-col>
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatus" active-color="#13ce66" inactive-color="#ff4949"
-                    :active-value="parseInt(0)" :inactive-value="parseInt(1)" @change="changeSdWisdomIsStatus(item)">
+                    :active-value="parseInt(0)" :inactive-value="parseInt(1)" @change="changeSdWisdomIsStatus(item)"
+                    v-hasPermi="['workbench:light:direction']">
                   </el-switch>
                 </el-col>
                 <el-col :span="4" class="elcolName">济南</el-col>
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatusWei" active-color="#13ce66" inactive-color="#ff4949"
                     :active-value="parseInt(0)" :inactive-value="parseInt(1)"
-                    @change="changeSdWisdomIsStatus(item, true)">
+                    @change="changeSdWisdomIsStatus(item, true)" v-hasPermi="['workbench:light:direction']">
                   </el-switch>
                 </el-col>
               </el-row>
@@ -192,9 +193,9 @@
               </el-row>
               <el-row :gutter="24">
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableDelButtton"
-                  @click="lightStrategyDelete(item)">删除</el-button>
+                  @click="lightStrategyDelete(item)" v-hasPermi="['workbench:light:del']">删除</el-button>
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableBlueButtton"
-                  @click="lightStrategyUpdate(item)">编辑</el-button>
+                  @click="lightStrategyUpdate(item)" v-hasPermi="['workbench:light:edit']">编辑</el-button>
               </el-row>
             </div>
           </div>
@@ -211,14 +212,15 @@
                 <el-col :span="4" class="elcolName">潍坊</el-col>
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatus" active-color="#13ce66" inactive-color="#ff4949"
-                    :active-value="parseInt(0)" :inactive-value="parseInt(1)" @change="changeSdWisdomIsStatus(item)">
+                    :active-value="parseInt(0)" :inactive-value="parseInt(1)" @change="changeSdWisdomIsStatus(item)"
+                    v-hasPermi="['workbench:light:direction']">
                   </el-switch>
                 </el-col>
                 <el-col :span="4" class="elcolName">济南</el-col>
                 <el-col :span="4" class="elcolNameOne">
                   <el-switch v-model="item.isStatusWei" active-color="#13ce66" inactive-color="#ff4949"
                     :active-value="parseInt(0)" :inactive-value="parseInt(1)"
-                    @change="changeSdWisdomIsStatus(item, true)">
+                    @change="changeSdWisdomIsStatus(item, true)" v-hasPermi="['workbench:light:direction']">
                   </el-switch>
                 </el-col>
               </el-row>
@@ -233,9 +235,9 @@
               </el-row>
               <el-row :gutter="24">
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableDelButtton"
-                  @click="lightStrategyDelete(item)">删除</el-button>
+                  @click="lightStrategyDelete(item)" v-hasPermi="['workbench:light:del']">删除</el-button>
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableBlueButtton"
-                  @click="catStrategyUpdate(item)">编辑</el-button>
+                  @click="catStrategyUpdate(item)" v-hasPermi="['workbench:light:edit']">编辑</el-button>
               </el-row>
             </div>
           </div>

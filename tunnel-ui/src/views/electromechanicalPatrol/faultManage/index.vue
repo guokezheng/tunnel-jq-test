@@ -493,7 +493,7 @@
                   />
                 </el-select> -->
                 <el-cascader
-                  @change='getEqId()'
+                  @change='eqTypeGet'
                   v-model="form.typeId"
                   :options="eqTypeListData" 
                   :props="equipmentTypeProps"
@@ -1090,7 +1090,7 @@ export default {
   },
   methods: {
     getEqId(){
-      this.form.eqId = ''
+      
     },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
@@ -1249,10 +1249,9 @@ export default {
       this.form.eqStatus = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
+      console.log(this.form.typeId,"隧道点击事件")
       if (
-        this.form.typeId != null &&
-        this.form.typeId != "" &&
-        typeof this.form.typeId != undefined
+        this.form.typeId
       ) {
         this.disstateDevice = false;
         this.getDevices();
@@ -1265,11 +1264,10 @@ export default {
       this.form.eqRunStatus = "";
       this.form.eqStatus = null;
       this.disstateDevice = true;
+      console.log(this.form.tunnelId,"设备类型点击事件")
       $("#deviceSel").attr("pointer-events", "none");
       if (
-        this.form.tunnelId != null &&
-        this.form.tunnelId != "" &&
-        typeof this.form.tunnelId != undefined
+        this.form.tunnelId
       ) {
         this.disstateDevice = false;
         this.getDevices();
@@ -1403,6 +1401,7 @@ export default {
 
     /*设备名称点击事件*/
     selChange() {
+      console.log(this.form.tunnelId,this.form.typeId,"设备名称点击事件")
       if (this.title != "故障详情") {
         if (
           this.form.tunnelId == null ||
@@ -1468,18 +1467,19 @@ export default {
     },
     /** 设备 */
     getDevices() {
-      if (this.form.tunnelId == "") {
-        this.$message.warning("请先选择所属隧道");
-        return;
-      }
-      if (this.form.typeId == "") {
-        this.$message.warning("请先选择设备类型");
-        return;
-      }
+      // if (this.form.tunnelId == "") {
+      //   this.$message.warning("请先选择所属隧道");
+      //   return;
+      // }
+      // if (this.form.typeId == "") {
+      //   this.$message.warning("请先选择设备类型");
+      //   return;
+      // }
       listDevices({
         eqTunnelId: this.form.tunnelId,
         eqType: this.form.typeId,
       }).then((response) => {
+        console.log(this.eqListData,"this.eqListData")
         this.eqListData = response.rows;
         this.$forceUpdate()
       });
@@ -1556,7 +1556,7 @@ export default {
       this.disstate = false;
       this.disstateDevice = false;
       this.activeName = "2";
-      this.getTunnel();
+      // this.getTunnel();
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
@@ -1582,6 +1582,7 @@ export default {
         fileName + ".docx"
       );
     },
+    // 故障详情
     async handleCheckDetail(row) {
       this.uploadDisabled = false;
       this.openDialogScreen();
@@ -1593,12 +1594,12 @@ export default {
       this.isWritable = false;
       that.reset();
       const id = row.id || that.ids;
-      this.getTunnel();
+      // this.getTunnel();
       // const response = getList()
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
-        this.getDevices();
+        // this.getDevices();
         this.form = response.data;
         this.form.typeId = String(response.data.typeId);
         that.planRoadmapUrl(that.form.iFileList);

@@ -1,5 +1,8 @@
 .theme-dark {
-
+  .dialogFormNoIcon{
+    border-right: #00c8ff solid 1px !important;
+    border-radius: 3px;
+  }
   .searchTable {
     background-image: url(../../assets/icons/searchTable.png) !important;
   }

@@ -1827,7 +1827,7 @@ export default {
         this.eqIdList.push(response.data[0].inlet);
         videoStreaming(response.data[0].inlet).then((response) => {
           if (response.data) {
-            response.data.title = "";
+            response.data.title = "入口";
             if (response.code == 200) {
               this.videoForm1 = response.data;
               this.videoForm1.cameraPlayer = true;
@@ -1837,7 +1837,7 @@ export default {
         this.eqIdList.push(response.data[0].outlet);
         videoStreaming(response.data[0].outlet).then((response) => {
           if (response.data) {
-            response.data.title = "";
+            response.data.title = "出口";
             if (response.code == 200) {
               this.videoForm2 = response.data;
               this.videoForm2.cameraPlayer = true;

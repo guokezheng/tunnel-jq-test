@@ -163,6 +163,7 @@
           <el-slider
             v-model="phoneForm1.volume"
             :max="100"
+            :min="1"
             class="sliderClass"
           ></el-slider>
           <span style="padding-left: 10px;">{{phoneForm1.volume}} %</span>
@@ -248,6 +249,7 @@
           <el-slider
             v-model="phoneForm2.volume"
             :max="100"
+            :min="1"
             class="sliderClass"
           ></el-slider>
           <span style="padding-left: 10px;">{{phoneForm2.volume}} %</span>
@@ -505,14 +507,14 @@ export default {
       phoneForm1: {
         loopCount: "1",
         loop: false,
-        volume: 0,
+        volume: 1,
         fileNames: [],
         loopStatus:''
       },
       phoneForm2: {
         loopCount: 1,
         loop: false,
-        volume: 0,
+        volume: 1,
         fileNames: [],
         loopStatus:''
       },

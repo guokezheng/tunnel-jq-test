@@ -139,7 +139,7 @@
             <el-select
               style="width: 100%"
               v-model="items.state"
-              placeholder="请选择执行操作"
+              :placeholder="items.equipmentTypeId == 22?'请选择播放文件':'请选择执行操作'"
             >
               <el-option
                 v-for="item in items.manualControlStateList"

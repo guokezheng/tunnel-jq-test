@@ -260,10 +260,7 @@
               v-model="queryParamsUser.userName"
               @keyup.enter.native="handleQueryUser"
               size="small"
-              style="
-                border-right: #00c8ff solid 1px !important;
-                border-radius: 3px;
-              "
+              class="dialogFormNoIcon"
             >
             </el-input>
           </div>

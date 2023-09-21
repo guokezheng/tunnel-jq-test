@@ -106,14 +106,14 @@ public class ThirdPartLoginService {
                 //查询己方系统中是否存在此用户
                 SysUser sysUser = sysUserService.selectUserByUserName(thirdUserName);
                 String username;
-                if (sysUser != null) {
-                    username = sysUser.getUserName();
-                }else{
+//                if (sysUser != null) {
+//                    username = sysUser.getUserName();
+//                }else{
                     //应高速云登录要求，没有对应的用户也可以跳转到隧道平台，特此修改
                     username = AuthConfig.defaultUser;
                     //查询默认用户的信息
                     sysUser = sysUserService.selectUserByUserName(username);
-                }
+//                }
                     Authentication authentication = null;
                     try {
                         authentication = authenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(username, sysUser.getPassword()));

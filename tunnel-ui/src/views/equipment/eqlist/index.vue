@@ -369,6 +369,7 @@
                 clearable
                 placeholder="请选择设备类型"
                 @visible-change="elCascaderOnClick"
+                popper-class="cascaderClass"
               ></el-cascader>
             </el-form-item>
           </el-col>

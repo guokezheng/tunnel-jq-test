@@ -752,6 +752,7 @@
                   :show-all-levels="false"
                   @change="changeEquipmentType(itemed.eqTypeId, number, index)"
                   style="width: 100%"
+                  popper-class="cascaderClass"
                 ></el-cascader>
               </el-col>
               <el-col :span="4">
@@ -784,6 +785,7 @@
                   node-key="label"
                   @check-change="treeChange"
                   ref="tree"
+                  popper-class="cascaderClass"
                 ></el-cascader>
               </el-col>
 

@@ -228,6 +228,7 @@
                   clearable
                   @visible-change="elCascaderOnClick"
                   :key="refresh"
+                  popper-class="cascaderClass"
                 ></el-cascader>
                 <!-- <el-select
                   v-model="dain.equipmentTypeId"

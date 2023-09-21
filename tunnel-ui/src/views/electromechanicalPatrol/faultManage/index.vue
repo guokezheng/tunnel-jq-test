@@ -501,6 +501,7 @@
                   style="width: 100%"
                   ref="cascader"
                   :key="cascaderKey"
+                  popper-class="cascaderClass"
                 ></el-cascader>
               </el-form-item>
             </el-col>

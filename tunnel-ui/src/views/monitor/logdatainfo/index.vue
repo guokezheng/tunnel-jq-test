@@ -209,6 +209,7 @@
             clearable
             style="width: 100%"
             @visible-change="elCascaderOnClick"
+            popper-class="cascaderClass"
             :key="refresh"
           ></el-cascader>
         </el-form-item>

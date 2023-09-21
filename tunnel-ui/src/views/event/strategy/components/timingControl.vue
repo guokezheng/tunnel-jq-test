@@ -82,11 +82,11 @@
 
               <el-cascader v-if="equipmentType" v-model="items.equipmentTypeId" :options="equipmentTypeData"
                 :props="equipmentTypeProps" :show-all-levels="false" @change="changeEquipmentType('',index)"
-                style="width: 100%"></el-cascader>
+                style="width: 100%" popper-class="cascaderClass"></el-cascader>
               <el-cascader v-if="!equipmentType" v-model="items.equipmentTypeId" :options="equipmentTypeData"
                 :props="equipmentTypeProps" :show-all-levels="false" @change="changeEquipmentType($event,index)"
                 style="width: 100%" placeholder="请选择设备类型" clearable @visible-change="elCascaderOnClick"
-                :key="refresh"></el-cascader>
+                :key="refresh" popper-class="cascaderClass"></el-cascader>
               <!--              <el-select
                 v-model="items.equipmentTypeId"
                 placeholder="请选择设备类型"

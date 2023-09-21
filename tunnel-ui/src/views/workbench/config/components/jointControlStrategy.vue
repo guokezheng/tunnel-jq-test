@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="timedControl" custom-class="no-scroll" title="智慧调光" :close-on-click-modal="false"
+  <el-dialog v-dialogDrag class="timedControl" custom-class="no-scroll" title="智慧调光" :close-on-click-modal="false"
     :visible.sync="visibleSync" width="80%" append-to-body :lock-scroll="true" :before-close="closeLogin">
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>

@@ -274,7 +274,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 } else {
                     sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
                 }
-                sdEvent.setEventSource("1");
+                sdEvent.setEventSource("3");
                 sdEvent.setStartTime(DateUtils.getTime());
                 //要改
                 sdEvent.setEventState("3");

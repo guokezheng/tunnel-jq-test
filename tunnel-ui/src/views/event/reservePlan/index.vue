@@ -1787,13 +1787,9 @@
 
       // 上传到服务器
       async submitUpload() {
-
-
-
         this.$refs["addform1"].validate((valid) => {
           if (valid) {
             if (this.loading) return;
-
             const param = {
               planName: this.reservePlanDrawForm.planName,
               tunnelId: this.reservePlanDrawForm.tunnelId,

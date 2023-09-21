@@ -122,6 +122,7 @@
             size="mini"
             style="margin-left: 10px"
             class="tableBlueButtton"
+            v-hasPermi="['system:teams:user']"
             @click="handleAuthUser(scope.row)"
             >包含用户</el-button
           >

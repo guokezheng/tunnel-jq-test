@@ -1837,7 +1837,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         empty-text="暂无策略"
-        :key="2"
+        :key="tableKey"
       >
         <el-table-column
           type="index"
@@ -2163,6 +2163,7 @@ export default {
 
   data() {
     return {
+      tableKey:0,
       tunnelLang: 0,
       robotPositon: 99,
       robotId: "7", //机器人ID
@@ -5696,6 +5697,7 @@ export default {
       // this.$refs.jointControlStrategy.getEchartsData(this.tunnelList,this.tunnelItem,true)
     },
     handleClick(tab, event) {
+      this.tableKey ++
       this.dictCode = tab.index;
       this.strategResetQuery();
       // this.queryParams.strategyGroup = Number(tab.index) + Number(1);

@@ -238,9 +238,9 @@
               >
                 <div :class="item.reserveId?'classification classificationBox':'classification'">
                   <div class="topDashed" v-show="index != 0"
-                    :style="{'top':circlePosition}">
+                    :style="{'top':item.circlePosition}">
                     <p
-                      :style="{'height':lineHeight+'px'}">
+                      :style="{'height':item.lineHeight+'px'}">
                     </p>
                     <span class="topCircle"></span>
                   </div>
@@ -278,7 +278,7 @@
                     :style="{top:index == 0?'55px':'76px'}"
                     v-show="index != incHandList.length - 1">
                     <span class="circle"></span>
-                    <p :style="{height:index == 0?'50px':lineHeight + 12 + 'px'}"></p>
+                    <p :style="{height:index == 0?'50px':item.lineHeight + 12 + 'px'}"></p>
                   </div>
                 </div>
 
@@ -1722,23 +1722,35 @@ export default {
           // console.log(item);
         });
         this.$nextTick(() => {
-          const incHandContentBox =
-            document.querySelector(".incHandContentBox").offsetHeight;
-          const classificationBox =
-            document.querySelector(".classificationBox").offsetHeight;
-          // 线的高度
-          this.lineHeight = (incHandContentBox - classificationBox) / 2;
-          this.circlePosition = "-" + (this.lineHeight + 10) + "px";
-        });
-        for (let item of this.incHandList) {
-          for (let itm of item.children) {
-            if (itm.flowId == 18 && itm.eventState == "1") {
-              this.iconDisabled = true;
-              this.relationDisabled = true;
-              this.disabledRadio = true;
+          let heightBox = document.querySelectorAll(".heightBox > *");
+          let arr = []
+          
+          for( let i = 0;i<heightBox.length;i++){
+            let obj = {}
+            obj.incHandContentBox = 0
+            obj.classificationBox = 0
+            obj.incHandContentBox = heightBox[i].offsetHeight;
+            obj.classificationBox = heightBox[i].firstChild.offsetHeight
+            arr.push(obj)
+          }
+          for (let i=0;i< this.incHandList.length;i++) {
+            for (let itm of this.incHandList[i].children) {
+              if (itm.flowId == 18 && itm.eventState == "1") {
+                this.iconDisabled = true;
+                this.relationDisabled = true;
+                this.disabledRadio = true;
+              }
+            }
+            for(let j=0;j<arr.length;j++){
+              if(i == j){
+                this.incHandList[i].lineHeight = (arr[j].incHandContentBox - arr[j].classificationBox) / 2
+                this.incHandList[i].circlePosition = "-" + (this.incHandList[i].lineHeight + 10) + "px"
+              }
             }
           }
-        }
+        });
+        
+        // console.log(this.incHandList,"this.incHandListthis.incHandList")
         this.getEventInfo();
         this.$forceUpdate();
       });

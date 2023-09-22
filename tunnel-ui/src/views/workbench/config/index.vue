@@ -172,7 +172,7 @@
               <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{ fluctuateSwitch == 0 ? "照明图标显示" : "照明图标显示" }}
               </p>
-              <el-switch v-model="fluctuateSwitch" class="switchStyle" @change="fluctuateChange"></el-switch>
+              <el-switch v-model="fluctuateSwitch" class="switchStyle" @change="fluctuateChange" v-hasPermi="['workbench:deawer:switch']"></el-switch>
             </div>
           </el-col>
           <el-col :span="12">
@@ -180,7 +180,7 @@
               <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{ fluctuateSwitch1 == 0 ? "照明图标关" : "照明图标关" }}
               </p>
-              <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1"></el-switch>
+              <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1" v-hasPermi="['workbench:deawer:switch']"></el-switch>
             </div>
           </el-col>
           <el-col :span="12">
@@ -195,6 +195,7 @@
                 v-model="wjmodel"
                 class="switchStyle"
                 @change="wjModelChange"
+                v-hasPermi="['workbench:deawer:switch']"
               ></el-switch>
             </div>
           </el-col>
@@ -5434,7 +5435,7 @@
 
     ::v-deep .el-drawer.rtl {
       width: 22.6% !important;
-      height: 12vh;
+      height: 16vh;
       color: #fff;
 
       .el-drawer__header {

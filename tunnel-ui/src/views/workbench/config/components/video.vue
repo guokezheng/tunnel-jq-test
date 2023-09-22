@@ -163,6 +163,7 @@
           @click="videoYunTai()"
           class="submitButton"
           v-show="stateForm.eqType == 24"
+          v-hasPermi="['workbench:dialog:save']"
           >云台控制</el-button
         >
         <!-- <el-button

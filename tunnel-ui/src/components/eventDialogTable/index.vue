@@ -47,6 +47,7 @@
             @click="handleBatch"
             :disabled="searchValue == 2"
             v-if="!batchManageType"
+            v-hasPermi="['system:event:checkAll']"
           >
             批量执行
           </el-button>

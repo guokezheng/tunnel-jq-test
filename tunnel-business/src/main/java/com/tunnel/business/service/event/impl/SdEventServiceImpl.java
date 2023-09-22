@@ -909,14 +909,14 @@ public class SdEventServiceImpl implements ISdEventService {
             int paramIndex = pileNum.indexOf(param);
             param = direction.equals(TunnelDirectionEnum.DOWN_DIRECTION.getCode())?pileNum.get(paramIndex+1):pileNum.get(paramIndex-1);
             devices.setPileNum(new Long((long)param));
-            //List<SdDevices> result = sdDevicesService.selectSdDevicesList(devices);
+            List<SdDevices> result = sdDevicesService.selectSdDevicesList(devices);
             //TODO 演示暂时写死
-            List<SdDevices> result = new ArrayList<>();
+            /*List<SdDevices> result = new ArrayList<>();
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqId("JQ-JiNan-WenZuBei-MJY-CAM_BOX-003");
             result.add(sdDevices);
             sdDevices.setEqId("JQ-JiNan-WenZuBei-MJY-CAM_BOX-039");
-            result.add(sdDevices);
+            result.add(sdDevices);*/
             return result;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1020,8 +1020,8 @@ public class SdEventServiceImpl implements ISdEventService {
             if("1".equals(sdEvent.getDirection())){
                 map.put("outlet",maxEqId.getEqId());
                 //TODO 演示暂时写死
-                //map.put("inlet",minEqId.getEqId());
-                map.put("inlet","JQ-JiNan-WenZuBei-MJY-CAM_BOX-001");
+                map.put("inlet",minEqId.getEqId());
+                //map.put("inlet","JQ-JiNan-WenZuBei-MJY-CAM_BOX-001");
                 map.put("outletName",maxEqId.getEqDirection().concat("出口"));
                 map.put("inletName",minEqId.getEqDirection().concat("入口"));
             }else {

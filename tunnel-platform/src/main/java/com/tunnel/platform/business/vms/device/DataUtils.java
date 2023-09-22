@@ -566,6 +566,65 @@ public class DataUtils {
         return null;
     }
 
+    public static String dengEnContentToGb2312_CG(String content, String color) {
+        try {
+            content.replaceAll("<r>","20");
+            content.replaceAll("<n>","0D 0A");
+            String reback = RadixUtil.wordToGb2312(content).toUpperCase();
+            String colorData = "03";
+            switch (color){
+                case "255000000000":
+                    color = "01";
+                break;
+                case "255255000000":
+                    color = "03";
+                break;
+                case "000255000000":
+                    color = "02";
+                break;
+                case "000000255000":
+                    color = "04";
+                break;
+                default:color = "03";break;
+            }
+            String str1 = new String();
+            String str2 = new String();
+            String str3 = new String();
+            String str4 = new String();
+            String str5 = new String();
+            String str6 = new String();
+            str1 = "FF FF FF FF ";//固定值
+            str2 = " 00 00 00";
+            str3 = " 68 32 FF 7B 01 ";//数据包长度
+            str4 = " 00 00 00";
+            str5 = " 85 00 00 00 01 01 01 30 00 05 01 12 ";
+            str6 = color + " 00 05 00 ";
+            reback = reback + " 00";
+
+            String str = str5 + str6 + reback;
+            str = str.replaceAll(" ","");
+            int strNum = str.length() / 2;
+            //数据包长度
+            String s2 = Integer.toHexString(strNum);
+            str3 = str3 + s2;
+            //计算十六进制
+            String s = JinZhi16Util.makeChecksum(str3 + str4 + str5 + str6 + reback);
+            reback = reback + " " + s.substring(2,s.length());
+            reback = reback + " " + s.substring(0,2);
+
+            //总数
+            String z = str3 + str4 + str5 + str6 + reback;
+            z = z.replaceAll(" ", "");
+            int num = z.length() / 2;
+            String s1 = Integer.toHexString(num);
+            str1 = str1 + s1;
+            return str1 + str2 + str3 + str4 + str5 + str6 + reback;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * 文本转GB2312发送
      *

@@ -133,8 +133,8 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         Assert.hasText(step, "该设备暂时不可控！");
 
         //确定隧道洞编号
-        String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
-        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
+//        String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+//        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String baseUrl = externalSystem.getSystemUrl();
@@ -656,7 +656,6 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         int resultStatus;
         try{
             resultStatus = setBrightness(device.getEqId(),luminanceRange);
-            resultStatus = 1;
         }catch (Exception e){
             e.printStackTrace();
             resultStatus = 0;

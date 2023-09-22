@@ -38,7 +38,7 @@ public class MicrowaveNettyConfig {
         connectDevice();
     }
 
-    //@Scheduled(cron = "30/60 * * * * ?")
+    @Scheduled(cron = "30/60 * * * * ?")
     public void connectDevice() {
         log.info("剔除长时间不活动的终端");
         long curt = System.currentTimeMillis();
@@ -70,7 +70,7 @@ public class MicrowaveNettyConfig {
 
                     List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
                     List<SdDevices> collecttunnelId =  null;
-                    if(active.equals("wzbprod")){
+                    if(active.equals("wzbprod") || active.equals("dev") ){
                         collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-JiNan-WenZuBei-MJY")).collect(Collectors.toList());
                     }else if(active.equals("ytsprod")){
                         collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-SZS")

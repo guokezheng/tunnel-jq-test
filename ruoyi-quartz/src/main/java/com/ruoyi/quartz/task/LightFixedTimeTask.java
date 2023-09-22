@@ -15,6 +15,8 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
+import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.deal.light.impl.SanJingLight;
 import com.tunnel.deal.light.impl.SansiLightImpl;
 import com.zc.common.core.ThreadPool.ThreadPool;
@@ -38,6 +40,8 @@ public class LightFixedTimeTask {
 
     private static ISdEnhancedLightingConfigService sdEnhancedLightingConfigService = SpringUtils.getBean(ISdEnhancedLightingConfigService.class);
 
+    private GeneralControlService generalControlService  = SpringUtils.getBean(GeneralControlService.class);
+
     private SdRadarDetectDataTemporaryMapper sdRadarDetectDataTemporaryMapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
 
     private SdDevicesMapper sdDevicesMapper =  SpringUtils.getBean(SdDevicesMapper.class);
@@ -46,34 +50,31 @@ public class LightFixedTimeTask {
 
     private SanJingLight sanJingLight =  SpringUtils.getBean(SanJingLight.class);
 
-    private SansiLightImpl sansiLightImpl =  SpringUtils.getBean(SansiLightImpl.class);
-
     private RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
 
-    @Autowired
-    private ISdDevicesProtocolService sdDevicesProtocolService;
 
 
     /**
      * 当前调光模式为   定时调光模式
      */
-    public void runTask(){
+    public void runTask(String tunnelId){
         //获取当前调光配置信息
-        List<SdEnhancedLightingConfig> sdEnhancedLightingConfigList;
-        sdEnhancedLightingConfigList = redisCache.getCacheObject("control:lightFixedTimeTask");
-        if(sdEnhancedLightingConfigList == null){
+        SdEnhancedLightingConfig sdEnhancedLightingConfig = null;
+        sdEnhancedLightingConfig = redisCache.getCacheObject("control:lightFixedTimeTask:"+tunnelId);
+        if(sdEnhancedLightingConfig == null){
+            SdEnhancedLightingConfig param = new SdEnhancedLightingConfig();
+            param.setTunnelId(tunnelId);
             //根据隧道id获取对应隧道  加强照明策略 配置信息
-            sdEnhancedLightingConfigList =  sdEnhancedLightingConfigService.selectSdEnhancedLightingConfigList(new SdEnhancedLightingConfig());
-            redisCache.setCacheObject("control:lightFixedTimeTask",sdEnhancedLightingConfigList);
-            redisCache.expire("control:lightFixedTimeTask",60);    //每分钟，重新请求一次
+            List<SdEnhancedLightingConfig> sdEnhancedLightingConfigList =  sdEnhancedLightingConfigService.selectSdEnhancedLightingConfigList(param);
+            sdEnhancedLightingConfig = sdEnhancedLightingConfigList.get(0);
+            redisCache.setCacheObject("control:lightFixedTimeTask:"+tunnelId,sdEnhancedLightingConfig);
+            redisCache.expire("control:lightFixedTimeTask:"+tunnelId,60);    //每分钟，重新请求一次
         }
-        for (SdEnhancedLightingConfig sdEnhancedLightingConfig:sdEnhancedLightingConfigList) {
-            //查看当前隧道 照明配置文件中  模式类型是否为定时模式，如果为定时模式 则继续执行调光指令
-            //查看当前隧道 照明配置文件中/**getModeType 模式类型： 0定时模式  1  自动模式  2 节能模式 */  getIsStatus是否开启调光模式  0关闭  1开启
-            if(sdEnhancedLightingConfig.getModeType() == 0 && sdEnhancedLightingConfig.getIsStatus() == 1){
-                //定时 开启上行隧道  TunnelDirectionEnum.UP_DIRECTION TunnelDirectionEnum.UP_DIRECTION.getCode(),
-                adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),sdEnhancedLightingConfig);
-            }
+        //查看当前隧道 照明配置文件中  模式类型是否为定时模式，如果为定时模式 则继续执行调光指令
+        //查看当前隧道 照明配置文件中/**getModeType 模式类型： 0定时模式  1  自动模式  2 节能模式 */  getIsStatus是否开启调光模式  0关闭  1开启
+        if(sdEnhancedLightingConfig.getModeType() == 0 && sdEnhancedLightingConfig.getIsStatus() == 1){
+            //定时 开启上行隧道  TunnelDirectionEnum.UP_DIRECTION TunnelDirectionEnum.UP_DIRECTION.getCode(),
+//            adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),sdEnhancedLightingConfig);
         }
     }
 
@@ -213,73 +214,87 @@ public class LightFixedTimeTask {
     /**
      * 车来灯亮，定时查看隧道 是否有车。
      */
-    public void dimmingTask(){
-        List<SdEnhancedLightingConfig> sdEnhancedLightingConfigList;
-        sdEnhancedLightingConfigList = redisCache.getCacheObject("control:lightFixedTimeTask");
-        if(sdEnhancedLightingConfigList == null){
+    public void dimmingTask(String tunnelId){
+        //获取当前 隧道照明 配置信息
+        SdEnhancedLightingConfig sdEnhancedLightingConfig = null;
+        sdEnhancedLightingConfig = redisCache.getCacheObject("control:lightFixedTimeTask:"+tunnelId);
+        if(sdEnhancedLightingConfig == null){
+            SdEnhancedLightingConfig config = new SdEnhancedLightingConfig();
+            config.setTunnelId(tunnelId);
             //根据隧道id获取对应隧道  加强照明策略 配置信息
-            sdEnhancedLightingConfigList =  sdEnhancedLightingConfigService.selectSdEnhancedLightingConfigList(new SdEnhancedLightingConfig());
-            redisCache.setCacheObject("control:lightFixedTimeTask",sdEnhancedLightingConfigList,60, TimeUnit.SECONDS);//每分钟，重新请求一次
+            List<SdEnhancedLightingConfig>  sdEnhancedLightingConfigList =  sdEnhancedLightingConfigService.selectSdEnhancedLightingConfigList(config);
+            sdEnhancedLightingConfig = sdEnhancedLightingConfigList.get(0);
+            redisCache.setCacheObject("control:lightFixedTimeTask:"+tunnelId,sdEnhancedLightingConfig,60, TimeUnit.SECONDS);//每分钟，重新请求一次
         }
-        for (SdEnhancedLightingConfig sdEnhancedLightingConfig:sdEnhancedLightingConfigList) {
-            //放入redis缓存
-            //查找所有加强照明与基本照明
-            SdDevices sdDevices = new SdDevices();
-            sdDevices.setEqTunnelId(sdEnhancedLightingConfig.getTunnelId());
-            sdDevices.setEqDirection(TunnelDirectionEnum.UP_DIRECTION.getCode());
-            sdDevices.setEqTypes(new Long[]{DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode(),DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()});
-            List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
-            if(sdEnhancedLightingConfig.getModeType() == 2){
-                //判断当前隧道是否有车辆信息
-                Set<String> keys = redisCache.redisTemplate.keys("vehicleSnap:"+sdEnhancedLightingConfig.getTunnelId()+":"+TunnelDirectionEnum.UP_DIRECTION.getCode()+":*");
-                if(keys != null && keys.size() == 0){
-                    for (SdDevices devices:deviceIds) {
-                        //亮度值计算:
-                        // 后期修改为 根据洞外亮度计算当前亮度值
-                        // 当前亮度值 根据定时模式获取当前路段亮度。
-                        //当前亮度值
-                        String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
-                        //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
-                        Integer nowLuminanceRange = redisCache.getCacheObject(redisLuminanceRangeKey);
-                        //最小亮度值
-                        int minLuminance = sdEnhancedLightingConfig.getMinLuminance();
+        if(sdEnhancedLightingConfig.getModeType() == 2){
+            //配置信息最小亮度值
+            Integer minLuminance = sdEnhancedLightingConfig.getMinLuminance();
+            //判断当前隧道下行是否有车辆信息
+            Set<String> downKeys = redisCache.redisTemplate.keys("vehicleSnap:"+sdEnhancedLightingConfig.getTunnelId()+":"+TunnelDirectionEnum.DOWN_DIRECTION.getCode()+":*");
+            //隧道内存在车辆信息
+            if(downKeys != null && downKeys.size() == 0){
+                //获取当前隧道 所有设备信息
+                //            //查找所有加强照明与基本照明
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqTunnelId(sdEnhancedLightingConfig.getTunnelId());
+                sdDevices.setEqDirection(TunnelDirectionEnum.DOWN_DIRECTION.getCode());
+                sdDevices.setEqTypes(new Long[]{DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode(),DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()});
+                List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
+                for (SdDevices devices:deviceIds) {
+                    //定时原有亮度值
+                    String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
+                    Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
 
-                        if(nowLuminanceRange != null && minLuminance != nowLuminanceRange){
-                            log.info("结束亮光值:["+ sdEnhancedLightingConfig.getTunnelId() +"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                            int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                    if(nowLuminanceRange1 == null || nowLuminanceRange1 > minLuminance){
+                        //设备状态
+                        Map param = new HashMap();
+                        param.put("state",1);
+                        param.put("brightness",minLuminance);
+                        param.put("devId",devices.getEqId());
+                        //设备控制
+                        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(devices);
+                        if(generalControlBean == null){
+                            log.error("设备协议配置为空");
+                        }
+                        Integer flag = generalControlBean.controlDevices(param);
+                        if(flag == 1){
+                            redisCache.setCacheObject(redisRegularLuminanceRangeKey,minLuminance);
+                        }
+                    }
+                }
 
-                            SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
-                            if(devicesProtocol == null){
-                                continue;
-                            }
-                            String className = devicesProtocol.getClassName();
-                            if(flag == 0){
-                                log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
-                            }
-                            if(className.contains("sansi")){
-                                flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
-                            }else{
-                                flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
-                            }
+            }
+            //判断当前隧道上行是否有车辆信息
+            Set<String> upKeys = redisCache.redisTemplate.keys("vehicleSnap:"+sdEnhancedLightingConfig.getTunnelId()+":"+TunnelDirectionEnum.UP_DIRECTION.getCode()+":*");
+            //隧道内存在车辆信息
+            if(upKeys != null && upKeys.size() == 0){
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqTunnelId(sdEnhancedLightingConfig.getTunnelId());
+                sdDevices.setEqDirection(TunnelDirectionEnum.UP_DIRECTION.getCode());
+                sdDevices.setEqTypes(new Long[]{DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode(),DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()});
+                List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
+                for (SdDevices devices:deviceIds) {
+                    //定时原有亮度值
+                    String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
+                    Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
+                    if(nowLuminanceRange1 > minLuminance){
+                        //设备状态
+                        Map param = new HashMap();
+                        param.put("state",1);
+                        param.put("brightness",minLuminance);
+                        param.put("devId",devices.getEqId());
+                        //设备控制
+                        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(devices);
+                        if(generalControlBean == null){
+                            log.error("设备协议配置为空");
+                        }
+                        Integer flag = generalControlBean.controlDevices(param);
+                        if(flag == 1){
+                            redisCache.setCacheObject(redisRegularLuminanceRangeKey,minLuminance);
                         }
                     }
                 }
             }
-//            else if(sdEnhancedLightingConfig.getModeType() == 1){
-//                for (SdDevices devices:deviceIds) {
-//                    //查看两个亮度值是否一致
-//                    //定时原有亮度值
-//                    String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
-//                    Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
-//                    //当前亮度值
-//                    String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
-//                    Integer nowLuminanceRange2 = redisCache.getCacheObject(redisLuminanceRangeKey);
-//                    //如果亮度值不同，则重新调整亮度值
-//                    if(nowLuminanceRange1!=null && !nowLuminanceRange1.equals(nowLuminanceRange2)){
-//                        sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange2,nowLuminanceRange1,"2");
-//                    }
-//                }
-//            }
         }
     }
 }

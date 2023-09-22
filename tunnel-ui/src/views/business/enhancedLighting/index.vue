@@ -693,51 +693,6 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      if (this.form.modeType != 1) {
-        console.log(this.timeSlotList, "this.timeSlotList");
-        //timeSlotList 校验
-        for (let index = 0; index < this.timeSlotList.length; index++) {
-          const element = this.timeSlotList[index];
-          if (element.startTime == null || element.startTime == "") {
-            this.$modal.msgError("时间区间开始时间不能为空,请填写开始时间");
-            return;
-          } else if (element.endTime == null || element.endTime == "") {
-            this.$modal.msgError("时间区间结束时间不能为空,请填写结束时间");
-            return;
-          } else if (element.value == null || element.value == "") {
-            this.$modal.msgError("时间区间亮度不能为空,请填写亮度值");
-            return;
-          }
-        }
-        for (let index = 0; index < this.timeSlotList.length; index++) {
-          const param = this.timeSlotList[index];
-          param.startTime =
-            (param.startTime.getHours() < 10
-              ? "0" + param.startTime.getHours()
-              : param.startTime.getHours()) +
-            ":" +
-            (param.startTime.getMinutes() < 10
-              ? "0" + param.startTime.getMinutes()
-              : param.startTime.getMinutes()) +
-            ":" +
-            (param.startTime.getSeconds() < 10
-              ? "0" + param.startTime.getSeconds()
-              : param.startTime.getSeconds());
-          param.endTime =
-            (param.endTime.getHours() < 10
-              ? "0" + param.endTime.getHours()
-              : param.endTime.getHours()) +
-            ":" +
-            (param.endTime.getMinutes() < 10
-              ? "0" + param.endTime.getMinutes()
-              : param.endTime.getMinutes()) +
-            ":" +
-            (param.endTime.getSeconds() < 10
-              ? "0" + param.endTime.getSeconds()
-              : param.endTime.getSeconds());
-        }
-        this.form.timeSlot = JSON.stringify(this.timeSlotList);
-      }
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {

@@ -541,7 +541,7 @@ public class SanJingLight implements Light, GeneralControlBean {
         int resultStatus;
         try{
             resultStatus = setBrightness(device.getEqId(),luminanceRange);
-            resultStatus = 1;
+//            resultStatus = 1;
         }catch (Exception e){
             e.printStackTrace();
             resultStatus = 0;

@@ -25,10 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -69,7 +66,7 @@ public class SdIntegratedVideoService {
             address = externalSystem.getSystemUrl();
             userName = externalSystem.getUsername();
             password = externalSystem.getPassword();
-            deptId = externalSystem.getSystemParam();
+            deptId = externalSystem.getParam();
         }
 
         String url = address+"/apiLogin";
@@ -103,11 +100,12 @@ public class SdIntegratedVideoService {
      * @return
      */
 //    @Scheduled(fixedRate = 1000*60*60*24)
+//    @Scheduled(cron = "0 * * * * ?")
     public int getDeptCamList(){
         String url = address+"/system/camera/camList";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
+        headers.add("Authorization", getCacheToken());
         headers.setContentType(type);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
@@ -123,11 +121,16 @@ public class SdIntegratedVideoService {
                 devices.setCamType(camInfo.get("camType").toString());
                 devices.setLng(camInfo.get("camLong").toString());
                 devices.setLat(camInfo.get("camLat").toString());
-                String status = "1";
-                if(!camInfo.get("status").equals("0") || camInfo.get("status") == null){
+                String status;
+                if (camInfo.get("status") != null && "0".equals(camInfo.get("status"))){
+                    status = "1";
+                } else if (camInfo.get("status") != null && "1".equals(camInfo.get("status"))){
+                    status = "2";
+                } else {
                     status = "3";
                 }
                 devices.setEqStatus(status);
+                devices.setEqStatusTime(new Date());
                 mapper.updateSdDevices(devices);
             }
         }catch (Exception ex){

@@ -107,7 +107,7 @@
             <!--              />-->
             <!--            </el-select>-->
           </div>
-          <div v-if="treeModel == '0'" style="overflow: auto; width: 100%; height: 88%">
+          <div v-if="treeModel == '0'" style="overflow-y: auto;overflow-x: hidden; width: 100%; height: 88%">
             <div v-for="item in strategyList" :key="item.id" class="content-centre">
               <!--              <span class="diagonal-text-no" v-if="item.strategyState==1">未生效</span>-->
               <!--              <span class="diagonal-text-yes"  v-if="item.strategyState==0">已生效</span>-->
@@ -158,7 +158,7 @@
             </div>
           </div>
 
-          <div v-if="treeModel == '1'" style="overflow: auto; width: 100%; height: 88%">
+          <div v-if="treeModel == '1'" style="overflow-y: auto;overflow-x: hidden; width: 100%; height: 88%">
             <div v-for="item in lightStrategyList" :key="item.id" class="content-centre-one">
               <!--              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>-->
               <!--              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>-->
@@ -199,7 +199,7 @@
               </el-row>
             </div>
           </div>
-          <div v-if="treeModel == '2'" style="overflow: auto; width: 100%; height: 88%">
+          <div v-if="treeModel == '2'" style="overflow-y: auto;overflow-x: hidden; width: 100%; height: 88%">
             <div v-for="item in catStrategyList" :key="item.id" class="content-centre-tree">
               <!--              <span class="diagonal-text-no" v-if="item.isStatus==1">未生效</span>-->
               <!--              <span class="diagonal-text-yes"  v-if="item.isStatus==0">已生效</span>-->
@@ -1068,36 +1068,36 @@
   }
 
   .content-centre {
-    height: 27%;
-    width: 30%;
+    height: 27.5%;
+    width: 24%;
     position: relative;
     float: left;
     // background-color: #042d5f;
     // border: 1px solid #042d5f;
-    margin-left: 30px;
-    margin-top: 20px;
+    margin-left: 10px;
+    margin-top: 10px;
   }
 
   .content-centre-one {
     height: 23%;
-    width: 30%;
+    width: 24%;
     position: relative;
     float: left;
     // background-color: #042d5f;
     // border: 1px solid #042d5f;
-    margin-left: 30px;
-    margin-top: 20px;
+    margin-left: 10px;
+    margin-top: 10px;
   }
 
   .content-centre-tree {
     height: 23%;
-    width: 30%;
+    width: 24%;
     position: relative;
     float: left;
     // background-color: #042d5f;
     // border: 1px solid #042d5f;
-    margin-left: 30px;
-    margin-top: 20px;
+    margin-left: 10px;
+    margin-top: 10px;
   }
 
   .content-centre-login {

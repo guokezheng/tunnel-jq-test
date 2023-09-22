@@ -767,7 +767,7 @@
             </el-select> -->
             <el-cascader ref="cc2" placeholder="请选择设备类型" v-model="operationParam.eqTypeId" :options="eqTypeData"
               :props="equipmentTypeProps" :show-all-levels="false" style="width: 100%" clearable
-              @visible-change="elCascaderOnClick" :key="refresh"></el-cascader>
+              @visible-change="elCascaderOnClick" :key="refresh" popper-class="cascaderClass"></el-cascader>
           </el-form-item>
 
           <!-- <el-form-item

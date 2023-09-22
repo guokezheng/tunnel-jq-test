@@ -33,10 +33,10 @@ public class SdIntegratedVideoService {
 
     private static final Logger log = LoggerFactory.getLogger(SdIntegratedVideoService.class);
 
-    @Value("${video-platform.address}")
+    /*@Value("${video-platform.address}")
     private String address;
     @Value("${video-platform.deptId}")
-    private String deptId;
+    private String deptId;*/
     @Resource(name = "HttpTemplate")
     private RestTemplate template;
 
@@ -56,17 +56,23 @@ public class SdIntegratedVideoService {
         String userName = "hsdsdVideo";
         String password = "hsdsdVideo";
 
+        //查询外部系统配置
         ExternalSystem system = new ExternalSystem();
         system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
         List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
 
+        if (list == null || list.size() < 1){
+            return null;
+        }
         ExternalSystem externalSystem = list.get(0);
+        String address;
         // 获取数据库第三方配置信息
         if(externalSystem != null){
             address = externalSystem.getSystemUrl();
             userName = externalSystem.getUsername();
             password = externalSystem.getPassword();
-            deptId = externalSystem.getParam();
+        } else {
+            return null;
         }
 
         String url = address+"/apiLogin";
@@ -102,7 +108,28 @@ public class SdIntegratedVideoService {
 //    @Scheduled(fixedRate = 1000*60*60*24)
 //    @Scheduled(cron = "0 * * * * ?")
     public int getDeptCamList(){
-        String url = address+"/system/camera/camList";
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+        if (list == null || list.size() < 1){
+            return 0;
+        }
+
+        //查询外部系统配置
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        String userName;
+        String password;
+        String deptId;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+            deptId = externalSystem.getParam();
+        } else {
+            return 0;
+        }
+
+        String url = address +"/system/camera/camList";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.add("Authorization", getCacheToken());
@@ -118,6 +145,9 @@ public class SdIntegratedVideoService {
             for(Map camInfo:camList){
                 String camId = camInfo.get("camId").toString();
                 SdDevices devices = mapper.getDevicesListByExternalId(camId);
+                if (devices == null){
+                    continue;
+                }
                 devices.setCamType(camInfo.get("camType").toString());
                 devices.setLng(camInfo.get("camLong").toString());
                 devices.setLat(camInfo.get("camLat").toString());
@@ -150,6 +180,22 @@ public class SdIntegratedVideoService {
         JSONObject result = new JSONObject();
         if(devices.getExternalDeviceId() == null){
             return Result.success();
+        }
+
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+        if (list == null || list.size() < 1){
+            return Result.error("未配置关联的外部系统");
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return Result.error("未配置关联的外部系统");
         }
         String url = address+"/videoInfo/api/videoStreaming";
         HttpHeaders headers = new HttpHeaders();
@@ -239,11 +285,29 @@ public class SdIntegratedVideoService {
         if(devices.getExternalDeviceId() == null){
             return null;
         }
+
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        if (list == null || list.size() < 1){
+            return null;
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return null;
+        }
+
         String url = address + "/videoInfo/api/PTZControl";
         try {
             HttpHeaders headers = new HttpHeaders();
             MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-            headers.add("Authorization", getToken());
+            headers.add("Authorization", getCacheToken());
             headers.setContentType(type);
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -267,10 +331,28 @@ public class SdIntegratedVideoService {
      * distance	距离单位米
      */
     public Map nearCamList(Map param){
+
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        if (list == null || list.size() < 1){
+            return null;
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return null;
+        }
+
         String url = address+"/videoInfo/api/nearCamListDistance";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
+        headers.add("Authorization", getCacheToken());
         headers.setContentType(type);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
@@ -292,10 +374,28 @@ public class SdIntegratedVideoService {
         if(devices.getExternalDeviceId() == null){
             return null;
         }
+
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        if (list == null || list.size() < 1){
+            return null;
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return null;
+        }
+
         String url = address+"/preset/presetList";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
+        headers.add("Authorization", getCacheToken());
         headers.setContentType(type);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
@@ -319,10 +419,28 @@ public class SdIntegratedVideoService {
         if(devices.getExternalDeviceId() == null){
             return null;
         }
+
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        if (list == null || list.size() < 1){
+            return null;
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return null;
+        }
+
         String url = address + "/preset/addPreset";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
+        headers.add("Authorization", getCacheToken());
         headers.setContentType(type);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -343,11 +461,28 @@ public class SdIntegratedVideoService {
      * @return
      */
     public Map getDeptTree(){
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        if (list == null || list.size() < 1){
+            return null;
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return null;
+        }
+
         String url = address+"/system/dept/treeselect";
         HttpHeaders headers = new HttpHeaders();
         //String dataToken = getDataToken();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
+        headers.add("Authorization", getCacheToken());
         headers.setContentType(type);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
@@ -370,6 +505,24 @@ public class SdIntegratedVideoService {
      * @return
      */
     public Map getCamTree(String token){
+
+        //查询外部系统配置
+        ExternalSystem system = new ExternalSystem();
+        system.setSystemCode(ExternalSystemCode.VIDEO_MANGE.getCode());
+        List<ExternalSystem> list = SpringUtils.getBean(IExternalSystemService.class).selectExternalSystemList(system);
+
+        if (list == null || list.size() < 1){
+            return null;
+        }
+        ExternalSystem externalSystem = list.get(0);
+        String address;
+        // 获取数据库第三方配置信息
+        if(externalSystem != null){
+            address = externalSystem.getSystemUrl();
+        } else {
+            return null;
+        }
+
         String url = address+"/system/dept/camTreeselect";
         HttpHeaders headers = new HttpHeaders();
         //String dataToken = getDataToken();

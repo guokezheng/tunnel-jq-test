@@ -197,7 +197,7 @@
               v-for="item in radioFileList"
               :key="item.dictValue"
               :label="item.dictLabel"
-              :value="item.dictLabel"
+              :value="item.dictValue"
             />
           </el-select>
           <el-select
@@ -283,7 +283,7 @@
               v-for="item in radioFileList"
               :key="item.dictValue"
               :label="item.dictLabel"
-              :value="item.dictLabel"
+              :value="item.dictValue"
             />
           </el-select>
           <el-select
@@ -804,6 +804,24 @@ export default {
       });
     },
     phoneControl(direction) {
+      console.log(this.brandId,"this.brandId")
+      if(direction == 1){
+        if(!this.phoneForm1.fileNames){
+          this.$modal.msgWarning("请选择播放文件");
+            return
+        }else if(this.brandId == '10011' && !this.phoneForm1.loopStatus){
+          this.$modal.msgWarning("请选择播放状态");
+          return 
+        }
+      }else{
+        if(!this.phoneForm2.fileNames){
+          this.$modal.msgWarning("请选择播放文件");
+            return
+        }else if(this.brandId == '10011' && !this.phoneForm2.loopStatus){
+          this.$modal.msgWarning("请选择播放状态");
+          return 
+        }
+      }
       const loading = this.$loading({
         lock: true,
         text: "Loading",
@@ -864,7 +882,7 @@ export default {
         direction: direction,
       };
       getAudioFileList(params).then((res) => {
-        // console.log(res, "广播一键文件列表");
+        console.log(res, "广播一键文件列表");
         this.fileNamesList = res.data;
       });
     },

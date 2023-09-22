@@ -126,6 +126,7 @@
             style="width: 100%"
             @visible-change="elCascaderOnClick"
             :key="refresh"
+            popper-class="cascaderClass"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="设备状态" prop="eqStatus">

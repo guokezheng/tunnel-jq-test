@@ -5,8 +5,10 @@
     <el-row>
       <el-col :span="3" style="float: right; width: 8%;">
 
-        <el-button size="mini" class="tableBlueButtton" @click="submitlightForm">保存</el-button>
-        <el-button size="mini" class="tableBlueButtton" @click="refreshlightForm">刷新</el-button>
+        <el-button size="mini" class="tableBlueButtton" @click="submitlightForm" v-hasPermi="['workbench:light:edit']">
+          保存</el-button>
+        <el-button size="mini" class="tableBlueButtton" @click="refreshlightForm" v-hasPermi="['workbench:light:edit']">
+          刷新</el-button>
       </el-col>
     </el-row>
     <el-row :gutter="24" style="clear:both;margin-top: 5px ">
@@ -79,8 +81,8 @@
                     :value="dict.dictValue" />
                 </el-select>
                 <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例"
-                  v-model="item.beforeLuminance"></el-input>
+                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance">
+                </el-input>
 
 
                 <div class="buttonBox" style="width: 20% ;float: right;margin-left: 10px">
@@ -100,8 +102,10 @@
         <el-row :gutter="24">
           <el-col :span="10" style="float: right; width: 23%;">
 
-            <el-button size="mini" class="tableBlueButtton" @click="submitlightFormWei">保存</el-button>
-            <el-button size="mini" class="tableBlueButtton" @click="refreshlightFormWei">刷新</el-button>
+            <el-button size="mini" class="tableBlueButtton" @click="submitlightFormWei"
+              v-hasPermi="['workbench:light:edit']">保存</el-button>
+            <el-button size="mini" class="tableBlueButtton" @click="refreshlightFormWei"
+              v-hasPermi="['workbench:light:edit']">刷新</el-button>
           </el-col>
         </el-row>
         <el-form ref="loginQueryFormWei" :model="lightFilesModelWei" :inline="true" class="loginQueryFormClass"
@@ -148,8 +152,8 @@
                     :value="dict.dictValue" />
                 </el-select>
                 <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例"
-                  v-model="item.beforeLuminance"></el-input>
+                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance">
+                </el-input>
                 <div class="buttonBox" style="width: 20% ;float: right;">
                   <el-button class="delete" @click="deleteHandleUpdateWei(index)"></el-button>
                   <el-button class="add" @click="addHandleUpdateWei(index)"></el-button>
@@ -171,9 +175,19 @@
 
 <script>
   import * as echarts from "echarts";
-  import { addConfig, listConfig, updateConfig } from "@/api/business/wisdomLight/app";
-  import { dataDevicesLogInfoList, dataLogInfoLineList } from "@/api/equipment/eqTypeItem/item";
-  import { listDepId, listTunnels } from "@/api/equipment/tunnel/api";
+  import {
+    addConfig,
+    listConfig,
+    updateConfig
+  } from "@/api/business/wisdomLight/app";
+  import {
+    dataDevicesLogInfoList,
+    dataLogInfoLineList
+  } from "@/api/equipment/eqTypeItem/item";
+  import {
+    listDepId,
+    listTunnels
+  } from "@/api/equipment/tunnel/api";
 
   export default {
     name: "lightCurveModal",
@@ -183,21 +197,23 @@
         //光照曲线ref
         loginChart: null,
         //光强配置文件
-        lightFilesModel: { beforeLuminance: '', direction: '2' },
+        lightFilesModel: {
+          beforeLuminance: '',
+          direction: '2'
+        },
         //潍坊光强配置文件
-        lightFilesModelWei: { beforeLuminance: '', direction: '1' },
-        lightFormItems: [
-          {
-            lightParagraph: '',
-            beforeLuminance: '',
-          }
-        ],
-        lightFormItemsWei: [
-          {
-            lightParagraph: '',
-            beforeLuminance: '',
-          }
-        ],
+        lightFilesModelWei: {
+          beforeLuminance: '',
+          direction: '1'
+        },
+        lightFormItems: [{
+          lightParagraph: '',
+          beforeLuminance: '',
+        }],
+        lightFormItemsWei: [{
+          lightParagraph: '',
+          beforeLuminance: '',
+        }],
         tunnelDisabled: true,
         //光照查询
         queryParamsLight: {},
@@ -226,47 +242,69 @@
         paramsData: {},
         tunnelData: [],
         //隧道方向
-        lightDirectionOptions: [
-          { dictLabel: "济南方向", dictValue: "2" },
-          { dictLabel: "潍坊方向", dictValue: "1" }
-        ],//方向列表
-        catDirectionOptions: [
-          { dictLabel: "上行", dictValue: "1" },
-          { dictLabel: "下行", dictValue: "2" }
+        lightDirectionOptions: [{
+            dictLabel: "济南方向",
+            dictValue: "2"
+          },
+          {
+            dictLabel: "潍坊方向",
+            dictValue: "1"
+          }
+        ], //方向列表
+        catDirectionOptions: [{
+            dictLabel: "上行",
+            dictValue: "1"
+          },
+          {
+            dictLabel: "下行",
+            dictValue: "2"
+          }
         ],
         //照明段
-        lightParagraphList: [
-          { dictLabel: "棚洞段", dictValue: "棚洞段" },
-          { dictLabel: "入口段", dictValue: "入口段" },
-          { dictLabel: "过渡段", dictValue: "过渡段" },
-          { dictLabel: "基本段", dictValue: "基本段" },
-          { dictLabel: "出口段", dictValue: "出口段" },
+        lightParagraphList: [{
+            dictLabel: "棚洞段",
+            dictValue: "棚洞段"
+          },
+          {
+            dictLabel: "入口段",
+            dictValue: "入口段"
+          },
+          {
+            dictLabel: "过渡段",
+            dictValue: "过渡段"
+          },
+          {
+            dictLabel: "基本段",
+            dictValue: "基本段"
+          },
+          {
+            dictLabel: "出口段",
+            dictValue: "出口段"
+          },
         ],
         directionOptions: [],
         mathNum: 2000,
         mathNum1: 2000,
       }
     },
-    mounted() {
-    },
-    created() {
-    },
+    mounted() {},
+    created() {},
     methods: {
       closeLogin() {
-        this.lightFilesModelWei = { beforeLuminance: '' }
-        this.lightFilesModel = { beforeLuminance: '' }
-        this.lightFormItems = [
-          {
-            lightParagraph: '',
-            beforeLuminance: '',
-          }
-        ]
-        this.lightFormItemsWei = [
-          {
-            lightParagraph: '',
-            beforeLuminance: '',
-          }
-        ]
+        this.lightFilesModelWei = {
+          beforeLuminance: ''
+        }
+        this.lightFilesModel = {
+          beforeLuminance: ''
+        }
+        this.lightFormItems = [{
+          lightParagraph: '',
+          beforeLuminance: '',
+        }]
+        this.lightFormItemsWei = [{
+          lightParagraph: '',
+          beforeLuminance: '',
+        }]
         this.$emit("selectLightStrategyList");
         this.visibleSync = !this.visibleSync
       },
@@ -356,8 +394,7 @@
                 },
               },
             },
-            series: [
-              {
+            series: [{
                 name: "历史光强",
                 type: "line",
                 color: "#787FFE",
@@ -496,8 +533,7 @@
               },
 
             },
-            series: [
-              {
+            series: [{
                 name: "历史光强",
                 type: "line",
                 color: "#787FFE",
@@ -569,20 +605,16 @@
                   this.lightFormItems.push(lightFormItems)
                 }
               } else {
-                this.lightFormItems = [
-                  {
-                    lightParagraph: '',
-                    beforeLuminance: '',
-                  }
-                ]
-              }
-            } else {
-              this.lightFormItems = [
-                {
+                this.lightFormItems = [{
                   lightParagraph: '',
                   beforeLuminance: '',
-                }
-              ]
+                }]
+              }
+            } else {
+              this.lightFormItems = [{
+                lightParagraph: '',
+                beforeLuminance: '',
+              }]
             }
           } else {
             this.lightFilesModel.id = ''
@@ -612,20 +644,16 @@
                   this.lightFormItemsWei.push(lightFormItems)
                 }
               } else {
-                this.lightFormItemsWei = [
-                  {
-                    lightParagraph: '',
-                    beforeLuminance: '',
-                  }
-                ]
-              }
-            } else {
-              this.lightFormItemsWei = [
-                {
+                this.lightFormItemsWei = [{
                   lightParagraph: '',
                   beforeLuminance: '',
-                }
-              ]
+                }]
+              }
+            } else {
+              this.lightFormItemsWei = [{
+                lightParagraph: '',
+                beforeLuminance: '',
+              }]
             }
           } else {
             this.lightFilesModelWei.id = ''
@@ -681,16 +709,28 @@
             //返回设备
             let listTab = response.rows;
             if (listTab.length > 0) {
-              if (!!row) {//编辑打开
+              if (!!row) { //编辑打开
                 //济南
                 this.lightFilesModel.direction = "2"
-                let queryParams = { tunnelName: row.tunnelName, pageSize: 2, pageNum: 1, direction: this.lightFilesModel.direction, modeType: 0 }
+                let queryParams = {
+                  tunnelName: row.tunnelName,
+                  pageSize: 2,
+                  pageNum: 1,
+                  direction: this.lightFilesModel.direction,
+                  modeType: 0
+                }
                 //查询出原有配置并且显示
                 this.lightListConfig(queryParams)
 
                 //潍坊
                 this.lightFilesModelWei.direction = "1"
-                let queryParamsWei = { tunnelName: row.tunnelName, pageSize: 2, pageNum: 1, direction: this.lightFilesModelWei.direction, modeType: 0 }
+                let queryParamsWei = {
+                  tunnelName: row.tunnelName,
+                  pageSize: 2,
+                  pageNum: 1,
+                  direction: this.lightFilesModelWei.direction,
+                  modeType: 0
+                }
                 //查询出原有配置并且显示
                 this.lightListConfigWei(queryParamsWei)
               }
@@ -725,9 +765,9 @@
               let threeDaysAgo = new Date();
               threeDaysAgo.setDate(currentDate.getDate() - 1);
 
-              let ds = this.getdate(currentDate)//当前
-              let ds1 = this.getdate(twoDaysAgo)//前天
-              let ds2 = this.getdate(threeDaysAgo)//昨天
+              let ds = this.getdate(currentDate) //当前
+              let ds1 = this.getdate(twoDaysAgo) //前天
+              let ds2 = this.getdate(threeDaysAgo) //昨天
               // debugger
               let todayDate = ds[0].split(" ")[0]
               this.XDataLight = this.generateTimeList(todayDate)
@@ -966,15 +1006,15 @@
       },
       //济南光照下修比例保存
       submitlightForm() {
-        if(!this.lightFilesModel.tunnelId){
+        if (!this.lightFilesModel.tunnelId) {
           this.$modal.msgWarning("请选择隧道名称");
           return
         }
-        for(let item of this.lightFormItems){
-          if(!item.lightParagraph){
+        for (let item of this.lightFormItems) {
+          if (!item.lightParagraph) {
             this.$modal.msgWarning("请选择设备");
             return
-          }else if(!item.beforeLuminance){
+          } else if (!item.beforeLuminance) {
             this.$modal.msgWarning("请输入下修比例");
             return
           }
@@ -1000,15 +1040,15 @@
       },
       //潍坊光照下修比例保存
       submitlightFormWei() {
-        if(!this.lightFilesModelWei.tunnelId){
+        if (!this.lightFilesModelWei.tunnelId) {
           this.$modal.msgWarning("请选择隧道名称");
           return
         }
-        for(let item of this.lightFormItemsWei){
-          if(!item.lightParagraph){
+        for (let item of this.lightFormItemsWei) {
+          if (!item.lightParagraph) {
             this.$modal.msgWarning("请选择设备");
             return
-          }else if(!item.beforeLuminance){
+          } else if (!item.beforeLuminance) {
             this.$modal.msgWarning("请输入下修比例");
             return
           }
@@ -1074,8 +1114,7 @@
       },
       addHandleUpdate(index) {
         // debugger
-        let form =
-        {
+        let form = {
           lightParagraph: '',
           beforeLuminance: '',
         }
@@ -1090,8 +1129,7 @@
       },
       addHandleUpdateWei(index) {
         // debugger
-        let form =
-        {
+        let form = {
           lightParagraph: '',
           beforeLuminance: '',
         }
@@ -1126,6 +1164,7 @@
       }
     }
   }
+
 </script>
 
 <style scoped>
@@ -1192,4 +1231,5 @@
       background-image: url(../../../../assets/icons/add.png);
     }
   }
+
 </style>

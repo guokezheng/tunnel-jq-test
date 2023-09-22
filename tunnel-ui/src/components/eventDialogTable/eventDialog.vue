@@ -561,7 +561,7 @@
           </el-row>
         </el-form>
         <div class="dialogFooterButton">
-          <div @click="submitDialog">复核提交</div>
+          <div @click="submitDialog" v-hasPermi="['system:event:check']">复核提交</div>
           <!-- <div
             @click="openProcess(1, eventFormDetail.id)"
           >

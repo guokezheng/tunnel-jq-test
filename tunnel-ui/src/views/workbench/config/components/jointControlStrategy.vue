@@ -153,7 +153,7 @@
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableDelButtton"
                   @click="handleDelete(item)" v-hasPermi="['workbench:light:del']">删除</el-button>
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableBlueButtton"
-                  @click="handleUpdate(item)" v-hasPermi="['workbench:light:edit']">编辑</el-button>
+                  @click="handleUpdate(item)">编辑</el-button>
               </el-row>
             </div>
           </div>
@@ -195,7 +195,7 @@
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableDelButtton"
                   @click="lightStrategyDelete(item)" v-hasPermi="['workbench:light:del']">删除</el-button>
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableBlueButtton"
-                  @click="lightStrategyUpdate(item)" v-hasPermi="['workbench:light:edit']">编辑</el-button>
+                  @click="lightStrategyUpdate(item)">编辑</el-button>
               </el-row>
             </div>
           </div>
@@ -237,7 +237,7 @@
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableDelButtton"
                   @click="lightStrategyDelete(item)" v-hasPermi="['workbench:light:del']">删除</el-button>
                 <el-button style="float: right; margin-right: 20px" size="mini" class="tableBlueButtton"
-                  @click="catStrategyUpdate(item)" v-hasPermi="['workbench:light:edit']">编辑</el-button>
+                  @click="catStrategyUpdate(item)" >编辑</el-button>
               </el-row>
             </div>
           </div>
@@ -505,10 +505,6 @@
             this.strategyList = response.rows;
             this.isOneLoading = false;
             // loading.close();
-            console.log(
-              this.strategyList,
-              "this.strategyListthis.strategyListthis.strategyListthis.strategyList"
-            );
           })
           .finally
 

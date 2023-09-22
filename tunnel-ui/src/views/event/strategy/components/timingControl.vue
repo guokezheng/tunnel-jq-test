@@ -153,7 +153,7 @@
 
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button class="submitButton" @click="submitStrategyForm">提交</el-button>
+      <el-button class="submitButton" @click="submitStrategyForm" v-hasPermi="['workbench:light:edit']">提交</el-button>
       <el-button class="closeButton" @click="strategyFormClose">取 消</el-button>
     </div>
     <!--    <div class="dialog-footer" slot="footer">-->

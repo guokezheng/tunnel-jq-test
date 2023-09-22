@@ -69,7 +69,7 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
         for (int i = 0;i < iotBoardReleaseLogs.size();i++) {
             IotBoardReleaseLog releaseLog = iotBoardReleaseLogs.get(i);
             String releaseNewContent = releaseLog.getReleaseNewContent();
-            if (releaseNewContent.equals("") || releaseNewContent == null) {
+            if (releaseNewContent == null || "".equals(releaseNewContent)) {
                 continue;
             }
             releaseNewContent = releaseNewContent.substring(releaseNewContent.indexOf("ITEM000"));

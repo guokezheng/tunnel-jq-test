@@ -1533,7 +1533,7 @@
         directionList: [{}, {}], //设备方向字典
         dictList: [],
         leftButtonS: "leftButtonS",
-        robotShow: true,
+        robotShow: false,
         drawerLineList: [{
             value: 1,
             label: "",
@@ -2308,27 +2308,27 @@
 
         // console.log(handleText, "handleText");
         // 事件监听实现懒加载选择任意一级
-        this.$nextTick(() => {
-          //获取label
-          const labelDoms = document.querySelectorAll(
-            ".el-cascader-node .el-cascader-node__label"
-          );
-          // console.log(labelDoms, "labelDoms");
+        // this.$nextTick(() => {
+        //   //获取label
+        //   const labelDoms = document.querySelectorAll(
+        //     ".el-cascader-node .el-cascader-node__label"
+        //   );
+        //   // console.log(labelDoms, "labelDoms");
 
-          //获取radio 级联带单选框时使用
-          // const radioDoms = document.querySelectorAll('.el-cascader-node .el-radio')
-          //由于label是被radio覆盖，所以循环raidoDoms，反之循环labelDoms
-          labelDoms.forEach((item, index) => {
-            item.removeEventListener("click", function () {
-              const labelDom = labelDoms[index];
-              labelDom.click();
-            });
-            item.addEventListener("click", function () {
-              const labelDom = labelDoms[index];
-              labelDom.click();
-            });
-          });
-        });
+        //   //获取radio 级联带单选框时使用
+        //   // const radioDoms = document.querySelectorAll('.el-cascader-node .el-radio')
+        //   //由于label是被radio覆盖，所以循环raidoDoms，反之循环labelDoms
+        //   labelDoms.forEach((item, index) => {
+        //     item.removeEventListener("click", function () {
+        //       const labelDom = labelDoms[index];
+        //       labelDom.click();
+        //     });
+        //     item.addEventListener("click", function () {
+        //       const labelDom = labelDoms[index];
+        //       labelDom.click();
+        //     });
+        //   });
+        // });
       },
       // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
       getRowKey1(row) {
@@ -4198,10 +4198,11 @@
               })
               .then(() => {
                 // 切换隧道配置信息时，联动大类查询
-                that.displayControl(
-                  that.selectBigType.index.toString(),
-                  that.selectBigType.bigType.toString()
-                );
+                // that.displayControl(
+                //   that.selectBigType.index.toString(),
+                //   that.selectBigType.bigType.toString()
+                // );
+                that.displayControl(0,"全部设备");
               });
 
             if (res.upList != undefined) {
@@ -4452,7 +4453,7 @@
 
       /* 选择隧道*/
       setTunnel(item, index) {
-        // console.log(item,"选择隧道")
+        console.log(item,"选择隧道")
         this.tunnelLang =
           Number(item.endPileNum) - Number(item.startPileNum) + 10;
         // console.log(Number(item.endPileNum),Number(item.startPileNum),"隧道长度111")

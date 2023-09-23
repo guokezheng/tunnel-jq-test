@@ -69,6 +69,12 @@ public class SdEnhancedLightingConfigServiceImpl implements ISdEnhancedLightingC
     @Override
     public SdEnhancedLightingConfig insertSdEnhancedLightingConfig(SdEnhancedLightingConfig sdEnhancedLightingConfig)
     {
+        SdEnhancedLightingConfig sdEnhancedLightingConfig1 = new SdEnhancedLightingConfig();
+        sdEnhancedLightingConfig1.setTunnelId(sdEnhancedLightingConfig.getTunnelId());
+        List<SdEnhancedLightingConfig> sdEnhancedLightingConfigs = sdEnhancedLightingConfigMapper.selectSdEnhancedLightingConfigList(sdEnhancedLightingConfig1);
+        if(sdEnhancedLightingConfigs.size()>0){
+            throw new RuntimeException("该隧道已存在，不可重复新增！");
+        }
         sdEnhancedLightingConfigMapper.insertSdEnhancedLightingConfig(sdEnhancedLightingConfig);
         return sdEnhancedLightingConfig;
     }

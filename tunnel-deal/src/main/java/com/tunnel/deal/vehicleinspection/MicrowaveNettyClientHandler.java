@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.Threads;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
@@ -13,11 +14,14 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
+import com.tunnel.business.domain.event.SdStrategy;
+import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
+import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
 import com.tunnel.business.utils.util.RadixUtil;
@@ -41,6 +45,7 @@ import java.math.RoundingMode;
 import java.net.InetSocketAddress;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -65,6 +70,9 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
     private SdDeviceDataMapper sdDeviceDataMapper =  SpringUtils.getBean(SdDeviceDataMapper.class);
 
     private static Map<String,Thread[]> threadArrsMap = new HashMap<>();
+
+    @Autowired
+    private SdStrategyRlMapper sdStrategyRlMapper;
 
     /**
      * Redis缓存工具类
@@ -471,8 +479,25 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                     //定时原有亮度值
                     String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
                     Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
-                    if(nowLuminanceRange1 == null || nowLuminanceRange1 != 70){
-                        nowLuminanceRange1 = 70;
+
+                    //获取设备id 下 所有运行状态为已运行的定时任务
+                    List<SdStrategyRl> sdStrategyRls = sdStrategyRlMapper.selectSdStrategyREquipments(sdDevices.getEqId());
+
+                    // 获取当前系统时间
+                    LocalTime currentTime = LocalTime.now();
+                    // 使用Stream筛选出距离当前时间最近且小于当前时间的时间
+                    SdStrategyRl sdStrategyRl = sdStrategyRls.stream()
+                            .filter(time -> LocalTime.parse(time.getControlTime()).isBefore(currentTime))
+                            .max((e1, e2) -> LocalTime.parse(e1.getControlTime()).compareTo(LocalTime.parse(e2.getControlTime())))
+                            .orElse(null);
+
+                    if(sdStrategyRl == null || StringUtils.isEmpty(sdStrategyRl.getStateNum())){
+                        sdStrategyRl = new SdStrategyRl();
+                        sdStrategyRl.setStateNum("30");
+                    }
+
+                    if(nowLuminanceRange1 == null || nowLuminanceRange1 != Integer.parseInt(sdStrategyRl.getStateNum())){
+                        nowLuminanceRange1 = Integer.parseInt(sdStrategyRl.getStateNum());
                         //后期根据当前  控制策略 定时任务 中  每个段 亮度值进行赋值
                         //设备状态
                         Map param = new HashMap();

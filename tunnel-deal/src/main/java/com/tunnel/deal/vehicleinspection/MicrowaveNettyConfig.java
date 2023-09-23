@@ -70,7 +70,7 @@ public class MicrowaveNettyConfig {
 
                     List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
                     List<SdDevices> collecttunnelId =  null;
-                    if(active.equals("wzbprod") || active.equals("dev") ){
+                    if(active.equals("wzbprod") ){
                         collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-JiNan-WenZuBei-MJY")).collect(Collectors.toList());
                     }else if(active.equals("ytsprod")){
                         collecttunnelId = devicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-SZS")

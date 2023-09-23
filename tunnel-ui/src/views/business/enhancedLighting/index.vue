@@ -201,7 +201,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6">
+          <el-col :span="12">
             <el-form-item label="开启调光模式" prop="isStatus">
               <el-tooltip
                 :content="form.isStatus == 1 ? '开启' : '关闭'"
@@ -218,23 +218,23 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="开启车流量模式" prop="isTrafficVolume">
-              <el-tooltip
-                :content="form.isTrafficVolume == 1 ? '开启' : '关闭'"
-                placement="top"
-              >
-                <el-switch
-                  v-model="form.isTrafficVolume"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  :active-value="1"
-                  :inactive-value="0"
-                >
-                </el-switch>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="6">-->
+<!--            <el-form-item label="开启车流量模式" prop="isTrafficVolume">-->
+<!--              <el-tooltip-->
+<!--                :content="form.isTrafficVolume == 1 ? '开启' : '关闭'"-->
+<!--                placement="top"-->
+<!--              >-->
+<!--                <el-switch-->
+<!--                  v-model="form.isTrafficVolume"-->
+<!--                  active-color="#13ce66"-->
+<!--                  inactive-color="#ff4949"-->
+<!--                  :active-value="1"-->
+<!--                  :inactive-value="0"-->
+<!--                >-->
+<!--                </el-switch>-->
+<!--              </el-tooltip>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
           <el-col :span="12">
             <el-form-item
               label="最小亮度值"
@@ -260,118 +260,118 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="最大车流量(辆)" prop="maxTrafficFlow">
-              <el-input
-                v-model="form.maxTrafficFlow"
-                placeholder="请输入最大车流量"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="响应时长(毫秒)"
-              prop="respondTime"
-              v-if="form.modeType != 0"
-            >
-              <el-input
-                v-model="form.respondTime"
-                placeholder="请输入响应时长 单位：秒s"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="调光最大区间" prop="maxLuminanceRange">
-              <el-input
-                v-model="form.maxLuminanceRange"
-                placeholder="请输入调光最大区间"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="调光最小区间" prop="minLuminanceRange">
-              <el-input
-                v-model="form.minLuminanceRange"
-                placeholder="请输入调光最小区间"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div
-          v-if="form.modeType != 1"
-          style="max-height: 40vh; overflow-y: auto; overflow-x: hidden"
-        >
-          <el-form-item
-            v-for="(item, index) in timeSlotList"
-            :key="item.key"
-            :label="'定时区间' + (index + 1)"
-          >
-            <el-row :gutter="15">
-              <el-col :span="4" style="padding-left: 0px">
-                <el-select
-                  v-model="item.eqIds"
-                  placeholder="请选择控制段"
-                  width="80px"
-                >
-                  <el-option
-                    v-for="eqInfo in eqIdList"
-                    :key="eqInfo.value"
-                    :label="eqInfo.name"
-                    :value="eqInfo.value"
-                  >
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-select
-                  v-model="item.direction"
-                  placeholder="请选择路段方向"
-                >
-                  <el-option
-                    v-for="dict in directionOptions"
-                    :key="dict.value"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-time-picker
-                  placeholder="选择时间"
-                  v-model="item.startTime"
-                  style="width: 100%"
-                ></el-time-picker>
-              </el-col>
-              <el-col :span="4">
-                <el-time-picker
-                  placeholder="选择时间"
-                  v-model="item.endTime"
-                  style="width: 100%"
-                ></el-time-picker>
-              </el-col>
-              <el-col :span="4">
-                <el-input placeholder="亮度" v-model="item.value"></el-input>
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  type="primary"
-                  @click="addTimeSlot"
-                  icon="el-icon-plus"
-                  v-if="index != timeSlotList.length - 1 || index == 0"
-                ></el-button>
-                <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  @click="delTimeSlot(item)"
-                  v-if="index == timeSlotList.length - 1 && index != 0"
-                ></el-button>
-              </el-col>
-            </el-row>
-          </el-form-item>
-        </div>
+<!--        <el-row>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="最大车流量(辆)" prop="maxTrafficFlow">-->
+<!--              <el-input-->
+<!--                v-model="form.maxTrafficFlow"-->
+<!--                placeholder="请输入最大车流量"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item-->
+<!--              label="响应时长(毫秒)"-->
+<!--              prop="respondTime"-->
+<!--              v-if="form.modeType != 0"-->
+<!--            >-->
+<!--              <el-input-->
+<!--                v-model="form.respondTime"-->
+<!--                placeholder="请输入响应时长 单位：秒s"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
+<!--        <el-row>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="调光最大区间" prop="maxLuminanceRange">-->
+<!--              <el-input-->
+<!--                v-model="form.maxLuminanceRange"-->
+<!--                placeholder="请输入调光最大区间"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="调光最小区间" prop="minLuminanceRange">-->
+<!--              <el-input-->
+<!--                v-model="form.minLuminanceRange"-->
+<!--                placeholder="请输入调光最小区间"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
+<!--        <div-->
+<!--          v-if="form.modeType != 1"-->
+<!--          style="max-height: 40vh; overflow-y: auto; overflow-x: hidden"-->
+<!--        >-->
+<!--          <el-form-item-->
+<!--            v-for="(item, index) in timeSlotList"-->
+<!--            :key="item.key"-->
+<!--            :label="'定时区间' + (index + 1)"-->
+<!--          >-->
+<!--            <el-row :gutter="15">-->
+<!--              <el-col :span="4" style="padding-left: 0px">-->
+<!--                <el-select-->
+<!--                  v-model="item.eqIds"-->
+<!--                  placeholder="请选择控制段"-->
+<!--                  width="80px"-->
+<!--                >-->
+<!--                  <el-option-->
+<!--                    v-for="eqInfo in eqIdList"-->
+<!--                    :key="eqInfo.value"-->
+<!--                    :label="eqInfo.name"-->
+<!--                    :value="eqInfo.value"-->
+<!--                  >-->
+<!--                  </el-option>-->
+<!--                </el-select>-->
+<!--              </el-col>-->
+<!--              <el-col :span="4">-->
+<!--                <el-select-->
+<!--                  v-model="item.direction"-->
+<!--                  placeholder="请选择路段方向"-->
+<!--                >-->
+<!--                  <el-option-->
+<!--                    v-for="dict in directionOptions"-->
+<!--                    :key="dict.value"-->
+<!--                    :label="dict.dictLabel"-->
+<!--                    :value="dict.dictValue"-->
+<!--                  />-->
+<!--                </el-select>-->
+<!--              </el-col>-->
+<!--              <el-col :span="4">-->
+<!--                <el-time-picker-->
+<!--                  placeholder="选择时间"-->
+<!--                  v-model="item.startTime"-->
+<!--                  style="width: 100%"-->
+<!--                ></el-time-picker>-->
+<!--              </el-col>-->
+<!--              <el-col :span="4">-->
+<!--                <el-time-picker-->
+<!--                  placeholder="选择时间"-->
+<!--                  v-model="item.endTime"-->
+<!--                  style="width: 100%"-->
+<!--                ></el-time-picker>-->
+<!--              </el-col>-->
+<!--              <el-col :span="4">-->
+<!--                <el-input placeholder="亮度" v-model="item.value"></el-input>-->
+<!--              </el-col>-->
+<!--              <el-col :span="2">-->
+<!--                <el-button-->
+<!--                  type="primary"-->
+<!--                  @click="addTimeSlot"-->
+<!--                  icon="el-icon-plus"-->
+<!--                  v-if="index != timeSlotList.length - 1 || index == 0"-->
+<!--                ></el-button>-->
+<!--                <el-button-->
+<!--                  type="danger"-->
+<!--                  icon="el-icon-delete"-->
+<!--                  @click="delTimeSlot(item)"-->
+<!--                  v-if="index == timeSlotList.length - 1 && index != 0"-->
+<!--                ></el-button>-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--          </el-form-item>-->
+<!--        </div>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitForm">确 定</el-button>

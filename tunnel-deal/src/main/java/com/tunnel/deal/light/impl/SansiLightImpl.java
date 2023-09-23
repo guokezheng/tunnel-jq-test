@@ -553,7 +553,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         //说明控制成功
         if(switchType==1&&brightnessType==1){
             //将获取到的照明实时数据更新到设备实时记录表中
-            getLightDeviceData(sdDevices,brightnessStr,eqDirection);
+            getLightDeviceData(sdDevices,brightnessStr,eqDirection,state);
         }
 
         logger.error("照明开关控制打印信息:switchType="+switchType+",brightnessType="+brightnessType);
@@ -573,17 +573,22 @@ public class SansiLightImpl implements Light , GeneralControlBean {
      * @param brightnessStr 照明亮度
      * @param direction 隧道方向
      */
-    private void getLightDeviceData(SdDevices sdDevices, String brightnessStr, String direction){
+    private void getLightDeviceData(SdDevices sdDevices, String brightnessStr, String direction, String state){
         //设备上线
         sdDevices.setEqStatus("1");
         devicesService.updateSdDevices(sdDevices);
-
+        //加强照明开关亮度
         Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+        Integer itemSwitchId = DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode();
         if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-            //基本照明
+            //基本照明亮度
             itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+            //基本照明开光
+            itemSwitchId = DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode();
         }
 
+
+        sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(itemSwitchId));
         sdDeviceDataService.updateDeviceData(sdDevices, brightnessStr, Long.valueOf(itemId));
 //        for (TunnelStepEnum tunnelStepEnum : TunnelStepEnum.values()) {
 //            String name = tunnelStepEnum.getName();

@@ -83,6 +83,9 @@ public class BoardController extends BaseController {
     @Qualifier("kafkaOneTemplate")
     private KafkaTemplate<String, String> kafkaOneTemplate;
 
+    //默认不准控制
+    private static int wjModelNum = 0;
+
 //    /**
 //     *
 //     * 1分钟检测一次情报板的状态
@@ -148,9 +151,6 @@ public class BoardController extends BaseController {
         if(device == null){
             return AjaxResult.error("设备不存在");
         }
-        /*if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
-            return AjaxResult.error("设备离线");
-        }*/
         List<String> paramsList = new ArrayList<String>();
         AjaxResult ajaxResult;
         try {
@@ -1218,6 +1218,9 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/commonControlBoard")
     public AjaxResult commonControlBoard(@RequestBody String objectData){
+        if(wjModelNum == 0){
+            return null;
+        }
         JSONObject jsonObject = JSONObject.parseObject(objectData);
         try {
             JSONArray parameters = jsonObject.getJSONArray("parameters");
@@ -1524,6 +1527,9 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/getRealTimeBoard")
     public AjaxResult getRealTimeBoard(String deviceId){
+        if(wjModelNum == 0){
+            return null;
+        }
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
         if(sdDevices == null || sdDevices.getAssociatedDeviceId() == null || "".equals(sdDevices.getAssociatedDeviceId())){
             return AjaxResult.error("设备不存在");
@@ -1673,5 +1679,16 @@ public class BoardController extends BaseController {
         }
 
         return ajaxResult;
+    }
+
+    /**
+     * 对外情报板开启关闭
+     * @param wjModel
+     * @return
+     */
+    @GetMapping("/setWjModel/{wjModel}")
+    public AjaxResult setWjModel(@PathVariable("wjModel") int wjModel){
+        wjModelNum = wjModel;
+        return AjaxResult.success();
     }
 }

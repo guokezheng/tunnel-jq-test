@@ -217,7 +217,8 @@ export default {
       },
       picUrl: require("@/assets/image/xfp.png"),
       noPicUrl: require("@/assets/image/noVideo.png"),
-      ckUrl: require("@/assets/image/ck2.png"),
+      ckUrl: ''
+
     };
   },
   created() {},
@@ -238,6 +239,12 @@ export default {
       await getDeviceById(this.eqInfo.equipmentId).then((res) => {
         console.log(res, "查询单选框弹窗信息");
         this.stateForm = res.data;
+        // 胡山 鸿蒙控制器: ck2 其他控制器: ck1
+        if(this.stateForm.tunnelId == 'JQ-JiNan-WenZuBei-MJY'){
+          this.ckUrl = require("@/assets/image/ck2.png")
+        }else{
+          this.ckUrl = require("@/assets/image/ck1.jpg")
+        }
         this.title = this.stateForm.eqName;
         if (this.eqInfo.clickEqType == 33) {
           this.getVideo();
@@ -277,6 +284,7 @@ export default {
       this.visible = false;
       this.cameraPlayer = false;
       this.picHandleClosee();
+      this.ckUrl = ''
     },
     picHandleClosee() {
       this.picVisible = false;

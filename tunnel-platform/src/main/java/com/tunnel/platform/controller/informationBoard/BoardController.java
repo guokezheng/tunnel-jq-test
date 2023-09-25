@@ -717,8 +717,11 @@ public class BoardController extends BaseController {
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(sdDevices.getAssociatedDeviceId());
             String protocolType = sdIotDevice.getProtocolName();
             List<String> deviceIdList = new ArrayList<>();
+            List<String> eqIdList = new ArrayList<>();
             for(int i = 0; i < deviceIds.length; i++){
-                deviceIdList.add(sdDevicesService.selectBoardSdDevicesById(deviceIds[i]).getAssociatedDeviceId().toString());
+                SdDevices sdDevices1 = sdDevicesService.selectBoardSdDevicesById(deviceIds[i]);
+                deviceIdList.add(sdDevices1.getAssociatedDeviceId().toString());
+                eqIdList.add(sdDevices1.getEqId());
             }
             //拼接内容
             StringBuffer content = new StringBuffer();
@@ -740,6 +743,13 @@ public class BoardController extends BaseController {
                     boardData.put("deviceIds",sdDevices.getAssociatedDeviceId());
                     boardData.put("parameters",parameters);
                     boardContentMap.put(sdDevices.getAssociatedDeviceId()+"",boardData);
+                    eqIdList.stream().forEach(item ->{
+                        SdDevices sdDevices1 = new SdDevices();
+                        sdDevices1.setEqId(item);
+                        sdDevices1.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                        sdDevices1.setEqStatusTime(new Date());
+                        sdDevicesService.updateSdDevices(sdDevices1);
+                    });
                 }
                 return ajaxResult;
             }else if(protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)){
@@ -784,7 +794,7 @@ public class BoardController extends BaseController {
                 boardData.put("deviceIds",sdDevices.getAssociatedDeviceId());
                 boardData.put("parameters",parameters);
                 boardContentMap.put(sdDevices.getAssociatedDeviceId()+"",boardData);
-                deviceIdList.stream().forEach(item ->{
+                eqIdList.stream().forEach(item ->{
                     SdDevices sdDevices1 = new SdDevices();
                     sdDevices1.setEqId(item);
                     sdDevices1.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());

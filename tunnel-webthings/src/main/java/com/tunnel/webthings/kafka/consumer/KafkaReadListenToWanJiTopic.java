@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
+import com.tunnel.business.domain.dataInfo.EventTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.SdEvent;
@@ -19,6 +20,7 @@ import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
@@ -38,6 +40,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -71,6 +74,9 @@ public class KafkaReadListenToWanJiTopic {
     @Autowired
     private SdTrafficImageMapper imageMapper;
 
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
+
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToWanJiTopic.class);
 
     /**
@@ -87,7 +93,7 @@ public class KafkaReadListenToWanJiTopic {
             //解析事件数据
             JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件数据
-            //saveEvent(objects);
+            saveEvent(objects);
         }
         //手动提交
         consumer.commitSync();
@@ -175,7 +181,7 @@ public class KafkaReadListenToWanJiTopic {
      */
     @KafkaListener(topics = {"wj_participants"}, containerFactory = "kafkaOneContainerFactoryTwo")
     public void topicParticipantsTwo(List<ConsumerRecord<String,Object>> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        for(ConsumerRecord<String,Object> item : record){
+        /*for(ConsumerRecord<String,Object> item : record){
             if(item.value() != null & item.value() != ""){
                 //解析车辆快照数据
                 JSONObject jsonObject = JSONObject.parseObject(item.value().toString());
@@ -198,7 +204,7 @@ public class KafkaReadListenToWanJiTopic {
                 //新增车辆快照数据
                 saveAnalysisCarsnapTwo(track,time,tunnelId,direction,timeStamp);
             }
-        }
+        }*/
         consumer.commitSync();
     }
 
@@ -251,8 +257,22 @@ public class KafkaReadListenToWanJiTopic {
                 }
                 //将事件推送到前端展示
                 eventSendWeb(jsonObject);
+                Long typeId = sdEvent.getEventTypeId();
+                if(typeId == 1L || typeId == 2L || typeId == 11L || typeId == 12L || typeId == 13L || typeId == 14L
+                || typeId == 18L || typeId == 19L || typeId == 20L){
+                    //如果是未处理状态改为处理中
+                    if(sdEvent.getEventState().equals(EventStateEnum.unprocessed.getCode())){
+                        sdEvent.setEventState(EventStateEnum.processing.getCode());
+                        sdEvent.setUpdateTime(DateUtils.getNowDate());
+                    }
+                    String[] split = sdEvent.getEventTitle().split(",");
+                    String eventTitle = getEventTitle(sdEvent);
+                    sdEvent.setEventTitle(split[0] + "," + eventTitle);
+                    noNullStringAttr(sdEvent);
+                    Map<String, Object> map = setEventData(sdEvent);
+                    radarEventServiceImpl.sendDataToOtherSystem(map);
+                }
             }
-
         }
     }
 
@@ -567,5 +587,97 @@ public class KafkaReadListenToWanJiTopic {
             return setCarsnapRedis(radarDetectData);
         }
         return null;
+    }
+
+    //将类对象里面的null数据以及date等进行转换
+    public static <T> T noNullStringAttr(T cls) {
+        Field[] fields = cls.getClass().getDeclaredFields();
+        if (fields == null || fields.length == 0) {
+            return cls;
+        }
+        for (Field field : fields) {
+            if ("String".equals(field.getType().getSimpleName()) || "Date".equals(field.getType().getSimpleName()) || "Long".equals(field.getType().getSimpleName())) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(cls);
+                    if (value == null) {
+                        field.set(cls, "");
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return cls;
+    }
+
+    //组装event数据
+    public Map<String, Object> setEventData(SdEvent sdEvent){
+        Map<String, Object> map = new HashMap<>();
+        map.put("endTime",sdEvent.getEndTime());
+        map.put("id",sdEvent.getId());
+        map.put("eventSource",sdEvent.getEventSource());
+        map.put("eventState",sdEvent.getEventState());
+        map.put("eventLongitude",sdEvent.getEventLongitude());
+        map.put("eventLatitude",sdEvent.getEventLatitude());
+        map.put("eventTypeId",sdEvent.getEventTypeId());
+        map.put("laneNo",sdEvent.getLaneNo());
+        map.put("passengerCarNum",sdEvent.getPassengerCarNum());
+        map.put("slightInjured",sdEvent.getSlightInjured());
+        map.put("smallCarNum",sdEvent.getSmallCarNum());
+        map.put("stakeNum",sdEvent.getStakeNum());
+        map.put("startTime",sdEvent.getStartTime());
+        map.put("tankerNum",sdEvent.getTankerNum());
+        map.put("truckNum",sdEvent.getTankerNum());
+        map.put("tunnelId",sdEvent.getTunnelId());
+        map.put("eventTitle",sdEvent.getEventTitle());
+        map.put("eventTime",sdEvent.getEventTime());
+        map.put("eventGrade",sdEvent.getEventGrade());
+        map.put("direction",sdEvent.getDirection());
+        map.put("eventDescription",sdEvent.getEventDescription());
+        map.put("currencyId",sdEvent.getCurrencyId());
+        map.put("flowId",sdEvent.getFlowId());
+        map.put("stakeEndNum",sdEvent.getStakeEndNum());
+        map.put("videoUrl",sdEvent.getVideoUrl());
+        map.put("createTime",sdEvent.getCreateTime());
+        map.put("updateBy",sdEvent.getUpdateBy());
+        map.put("updateTime",sdEvent.getUpdateTime());
+        map.put("remark",sdEvent.getRemark());
+        map.put("eventImgUrl",sdEvent.getEventImgUrl());
+        map.put("reviewRemark",sdEvent.getReviewRemark());
+        map.put("simplifyName",sdEvent.getSimplifyName());
+        map.put("tunnelName",sdEvent.getTunnelName());
+        return map;
+    }
+
+    /**
+     * 大脑标题
+     * @param sdEvent
+     * @return
+     */
+    public String getEventTitle(SdEvent sdEvent){
+        String title = "";
+        switch (sdEvent.getEventTypeId().toString()){
+            case "18" :
+                title = "行人/非机动车";
+            case "19" :
+                title = "行人/非机动车";
+            case "11" :
+                title = "其他";
+            case "1" :
+                title = "倒车";
+            case "14" :
+                title = "其他";
+            case "13" :
+                title = "其他";
+            case "2" :
+                title = "交通拥堵";
+            case "12" :
+                title = "交通事故";
+            case "20" :
+                title = "烟火";
+            default: title = sdEvent.getEventTitle().split(",")[1];
+        }
+        return title;
     }
 }

@@ -568,9 +568,19 @@ public class DataUtils {
 
     public static String dengEnContentToGb2312_CG(String content, String color) {
         try {
-            content.replaceAll("<r>","20");
-            content.replaceAll("<n>","0D 0A");
-            String reback = RadixUtil.wordToGb2312(content).toUpperCase();
+            content = content.replaceAll("<r>","");
+
+            String[] split = content.split("<n>");
+
+            String reback = "";
+            for(int i = 0; i < split.length; i++){
+                if(i == 0){
+                    reback = RadixUtil.wordToGb2312(split[i]).toUpperCase();
+                }else {
+                    reback = reback + " 0D 0A " + RadixUtil.wordToGb2312(split[i]).toUpperCase();
+                }
+
+            }
             String colorData = "03";
             switch (color){
                 case "255000000000":

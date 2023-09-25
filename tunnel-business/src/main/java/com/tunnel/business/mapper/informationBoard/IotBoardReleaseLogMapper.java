@@ -5,6 +5,7 @@ import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板内容发布日志Mapper接口
@@ -69,4 +70,6 @@ public interface IotBoardReleaseLogMapper
      * @return
      */
     IotBoardReleaseLog selectBoardContentList(@Param("deviceId") String deviceId);
+
+    Map<String, Object> getBoardContentData(@Param("deviceId") String deviceId);
 }

@@ -154,4 +154,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY
             brl.release_time DESC LIMIT 0,1
     </select>
+
+    <select id="getBoardContentData" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            brl.device_id AS deviceId,
+            brl.release_new_content AS content
+        FROM
+            iot_board_release_log brl
+        WHERE
+            1 = 1
+          AND brl.device_id = #{deviceId}
+        ORDER BY
+            brl.release_time DESC
+            LIMIT 1
+    </select>
 </mapper>

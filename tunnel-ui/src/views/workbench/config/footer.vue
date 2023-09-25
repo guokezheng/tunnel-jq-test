@@ -941,20 +941,20 @@ export default {
               videoStreaming(res.data[0].inlet).then((res) => {
                 // console.log(res, "入口视频");
                 if (res.code == 200 && res.data) {
-                  this.liveUrl1 = res.data.liveUrl;
-                  this.cameraPlayer1 = true;
+                  this.liveUrl3 = res.data.liveUrl;
+                  this.cameraPlayer3 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
-                  this.videoNoPic2 = true;
+                  this.videoNoPic1 = true;
                 }
               });
               videoStreaming(res.data[0].outlet).then((res) => {
                 if (res.code == 200 && res.data) {
-                  this.liveUrl2 = res.data.liveUrl;
-                  this.cameraPlayer2 = true;
+                  this.liveUrl4 = res.data.liveUrl;
+                  this.cameraPlayer4 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
-                  this.videoNoPic2 = true;
+                  this.videoNoPic1 = true;
                 }
               });
             }
@@ -981,20 +981,20 @@ export default {
               videoStreaming(res.data[0].inlet).then((res) => {
                 // console.log(res, "入口视频");
                 if (res.code == 200 && res.data) {
-                  this.liveUrl3 = res.data.liveUrl;
-                  this.cameraPlayer3 = true;
+                  this.liveUrl1 = res.data.liveUrl;
+                  this.cameraPlayer1 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
-                  this.videoNoPic1 = true;
+                  this.videoNoPic2 = true;
                 }
               });
               videoStreaming(res.data[0].outlet).then((res) => {
                 if (res.code == 200 && res.data) {
-                  this.liveUrl4 = res.data.liveUrl;
-                  this.cameraPlayer4 = true;
+                  this.liveUrl2 = res.data.liveUrl;
+                  this.cameraPlayer2 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
-                  this.videoNoPic1 = true;
+                  this.videoNoPic2 = true;
                 }
               });
             }

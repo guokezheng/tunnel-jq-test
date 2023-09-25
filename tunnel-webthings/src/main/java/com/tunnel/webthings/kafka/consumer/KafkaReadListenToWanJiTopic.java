@@ -383,7 +383,8 @@ public class KafkaReadListenToWanJiTopic {
             JSONObject radar = JSONObject.parseObject(participantList.get(i).toString());
             SdRadarDetectData radarDetectData = setRadarData(radar,tunnelId,direction,timeStamp);
             SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
-            detectDataMapper.insertSdRadarDetectData(radarDetectData);
+            //TODO 数据量过大暂时不存入数据库
+            //detectDataMapper.insertSdRadarDetectData(radarDetectData);
             if(StringUtils.isNotEmpty(radarDetectData.getVehicleLicense()) && StringUtils.isNotNull(radarDetectData.getVehicleLicense())){
                 //将数据推送至物联
                 //sendKafka(sdRadarDetectData);
@@ -596,7 +597,7 @@ public class KafkaReadListenToWanJiTopic {
             return cls;
         }
         for (Field field : fields) {
-            if ("String".equals(field.getType().getSimpleName()) || "Date".equals(field.getType().getSimpleName()) || "Long".equals(field.getType().getSimpleName())) {
+            if ("String".equals(field.getType().getSimpleName())) {
                 field.setAccessible(true);
                 try {
                     Object value = field.get(cls);

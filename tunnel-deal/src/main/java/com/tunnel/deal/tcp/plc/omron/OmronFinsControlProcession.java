@@ -353,6 +353,9 @@ public class OmronFinsControlProcession {
      * @return
      */
     public String getFinalData(String eqId,String data,String pointConfig){
+        if(pointConfig == null || "".equals(pointConfig)){
+            return data;
+        }
         JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
         //获取公式计算
         String formula = jsonConfig.getString("formula");

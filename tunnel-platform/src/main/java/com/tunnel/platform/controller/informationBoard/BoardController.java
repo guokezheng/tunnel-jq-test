@@ -572,18 +572,13 @@ public class BoardController extends BaseController {
                 List<JSONObject> list = new ArrayList<>();
                 for(int i = 0; i < objects.size(); i++){
                     JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
-                    if(protocolType.startsWith(IDeviceProtocol.GUANGDIAN) || protocolType.startsWith(IDeviceProtocol.DINGEN) || protocolType.startsWith(IDeviceProtocol.TONGZHOU) || protocolType.startsWith(IDeviceProtocol.DIANMING)){
+                    if(protocolType.startsWith(IDeviceProtocol.GUANGDIAN) || protocolType.startsWith(IDeviceProtocol.DINGEN) || protocolType.startsWith(IDeviceProtocol.TONGZHOU) || protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.SANSI)){
                         o = jsonObject1.get("ITEM" + String.format("%03d",i)).toString();
                         String s = o.replaceAll("\\[", "").replaceAll("]", "");
                         JSONObject jsonObject = JSONObject.parseObject(s);
                         if(protocolType.startsWith(IDeviceProtocol.DINGEN)){
                             jsonObject.put("CONTENT",jsonObject.getString("CONTENT").substring(1,jsonObject.getString("CONTENT").length()));
                         }
-                        list.add(jsonObject);
-                    }else if(protocolType.startsWith(IDeviceProtocol.SANSI)){
-                        o = jsonObject1.get("ITEM" + i).toString();
-                        String s = o.replaceAll("\\[", "").replaceAll("]", "");
-                        JSONObject jsonObject = JSONObject.parseObject(s);
                         list.add(jsonObject);
                     }
                 }

@@ -19,45 +19,59 @@
       <el-form
         ref="form"
         :model="stateForm"
-        label-width="90px"
+        label-width="80px"
         label-position="left"
         size="mini"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item label="隧道名称:" label-width="102px">
+          <el-col :span="12">
+            <el-form-item label="隧道名称:" >
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
 
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item label="所属方向:" label-width="102px">
+          <el-col :span="12">
+            <el-form-item label="所属方向:" >
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
 
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="12">
             <el-form-item label="设备厂商:" label-width="102px">
               {{ stateForm.supplierName }}
             </el-form-item>
+          </el-col> -->
+          <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
           </el-col>
-
-          <el-col :span="13">
+          <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
+            <el-form-item label="plcIP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item
               label="设备状态:"
               :style="{
@@ -72,7 +86,7 @@
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
-          <el-col :span="11" v-if="stateForm.eqType == 13">
+          <el-col :span="12" v-if="stateForm.eqType == 13">
             <el-form-item label="消防栓状态:">
               {{ stateForm.xfsStatus }}
             </el-form-item>
@@ -263,6 +277,7 @@ export default {
       frequencyMin: 1,
       fireMarkData: [],
       showTipe: false,
+      ipShow:false,
     };
   },
   watch: {
@@ -329,6 +344,12 @@ export default {
           form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
           form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
           this.stateForm = form
+          if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){ 
+            this.ipShow = true
+          }else{
+            this.ipShow = false
+          }
+          console.log(this.ipShow,"this.ipShow")
           // 查询设备当前状态 --------------------------------
           // getDevice(this.eqInfo.equipmentId).then((response) => {
           //   console.log(response, "查询设备当前状态");

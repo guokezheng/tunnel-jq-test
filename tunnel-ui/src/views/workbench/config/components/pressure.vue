@@ -18,42 +18,58 @@
       <el-form
         ref="form"
         :model="stateForm"
-        label-width="90px"
+        label-width="80px"
         label-position="left"
         size="mini"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="隧道名称:">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="所属方向:">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="12">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
+          </el-col> -->
+          <el-col :span="12" v-show="ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
           </el-col>
-          <el-col :span="13">
+          
+          <el-col :span="12" v-show="!ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="!ipShow">
+            <el-form-item label="plcIP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item
               label="设备状态:"
               :style="{
@@ -68,8 +84,8 @@
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item label="当前压力值:">
+          <el-col :span="12">
+            <el-form-item label="当前压力:">
               {{ nowData }}
             </el-form-item>
           </el-col>
@@ -107,6 +123,7 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
+      ipShow:false,
     };
   },
   created() {},
@@ -128,6 +145,11 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = res.data.eqName;
+          if(this.stateForm.tunnelId == 'JQ-JiNan-WenZuBei-MJY' || this.stateForm.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){
+            this.ipShow = true
+          }else{
+            this.ipShow = false
+          }
         });
         await getTodayYcylData(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "压力表折线图数据");

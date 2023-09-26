@@ -517,7 +517,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND device_id = #{deviceId}
     </select>
 
-
+    <select id="getTodayData" resultType="hashmap">
+        SELECT HOUR
+            ( timeData.TIME ) AS order_hour,
+            ROUND( ifnull( hisData.DATA, 0 ), 2 ) AS count
+        FROM
+            (
+            SELECT
+            DATE_FORMAT( DATE_SUB( DATE_FORMAT( NOW(), '%Y-%m-%d' ), INTERVAL ( -( @i := @i + 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS 'time'
+            FROM
+            (
+            SELECT
+            a
+            FROM
+            ( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+            JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+            ) AS b,(
+            SELECT
+            @i :=- 1
+            ) AS i
+            ) AS timeData
+            LEFT JOIN (
+            SELECT
+            ROUND( sum( ddr.`data` )/ count( ddr.id ), 2 ) AS DATA,
+            DATE_FORMAT( ddr.create_time, '%Y-%m-%d %H' ) AS DATE
+            FROM
+            sd_device_data_record ddr
+            WHERE
+            1 = 1
+            AND ddr.device_id = #{deviceId}
+            AND ddr.item_id = #{itemId}
+            AND DATE_FORMAT(ddr.create_time,'%Y-%m-%d') = DATE_FORMAT(#{today},'%Y-%m-%d')
+            GROUP BY
+            DATE
+            ) hisData ON timeData.TIME = hisData.DATE
+        WHERE
+            1 = 1
+    </select>
 
 
 </mapper>

@@ -8,8 +8,11 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
@@ -339,6 +342,8 @@ public class OmronFinsControlProcession {
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqId(eqId);
             sdDeviceDataService.updateDeviceData(sdDevices,data,Long.valueOf(itemId));
+            //储存历史数据
+            setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
             //设置设备在线
             devicesService.updateOnlineStatus(eqId,false);
         }
@@ -486,6 +491,8 @@ public class OmronFinsControlProcession {
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqId(eqId);
         sdDeviceDataService.updateDeviceData(sdDevices,data,Long.valueOf(itemId));
+        //储存历史数据
+        setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
         //设置设备在线
         devicesService.updateOnlineStatus(eqId,false);
     }
@@ -560,5 +567,34 @@ public class OmronFinsControlProcession {
             i += len;
         }
         return list;
+    }
+
+    /**
+     * 储存设备数据历史记录表
+     *
+     * @param deviceId
+     * @param data
+     * @param itemId
+     */
+    public void setDeviceDataRecord(String deviceId,String data,Long itemId){
+        Long co = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
+        Long vi = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
+        Long fengsu = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
+        Long fengxiang = Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode());
+        Long dongnei = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
+        Long dongwai = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
+        Long yuanchuan = Long.valueOf(DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
+        if(itemId == co || itemId == vi || itemId == fengsu || itemId == fengxiang
+                || itemId == dongnei || itemId == dongwai || itemId == yuanchuan){
+            SdDeviceDataRecord record = new SdDeviceDataRecord();
+            record.setDeviceId(deviceId);
+            record.setData(data);
+            record.setItemId(itemId);
+            record.setCreateTime(DateUtils.getNowDate());
+            //获取bean
+            SdDeviceDataRecordMapper bean = SpringUtils.getBean(SdDeviceDataRecordMapper.class);
+            //将数据存入历史记录表
+            bean.insertSdDeviceDataRecord(record);
+        }
     }
 }

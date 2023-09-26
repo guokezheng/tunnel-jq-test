@@ -93,7 +93,7 @@ public class IlluminanceMqttServiceImpl implements HongMengMqttService {
         //采集时间
         String collectTime = String.valueOf(jsonObject.get("collectTime"));
         //修改设备实时状态
-        sdDeviceDataService.updateDeviceData(sdDevices,illuminance, (long) DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
+        sdDeviceDataService.updateDeviceData(sdDevices,illuminance, (long) DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode(),true);
 
         String deviceId = sdDevices.getEqId();
         //设备掉线监测

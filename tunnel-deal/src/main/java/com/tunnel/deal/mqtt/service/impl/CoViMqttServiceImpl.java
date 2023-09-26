@@ -3,6 +3,7 @@ package com.tunnel.deal.mqtt.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
@@ -98,11 +99,11 @@ public class CoViMqttServiceImpl implements HongMengMqttService {
         //采集时间
         String collectTime = String.valueOf(jsonObject.get("collectTime"));
         //修改设备实时状态
-        sdDeviceDataService.updateDeviceData(sdDevices,co, (long) DevicesTypeItemEnum.CO.getCode());
-        sdDeviceDataService.updateDeviceData(sdDevices,vi, (long) DevicesTypeItemEnum.VI.getCode());
-
+        sdDeviceDataService.updateDeviceData(sdDevices,co, (long) DevicesTypeItemEnum.CO.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,vi, (long) DevicesTypeItemEnum.VI.getCode(),true);
 
         String deviceId = sdDevices.getEqId();
+
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
 

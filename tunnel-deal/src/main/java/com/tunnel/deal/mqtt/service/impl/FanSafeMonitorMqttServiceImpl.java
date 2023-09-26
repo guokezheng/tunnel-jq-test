@@ -113,12 +113,12 @@ public class FanSafeMonitorMqttServiceImpl implements HongMengMqttService {
         String shakeAlaramSystem = getShakeAlaram(shakeAlaram);
         String subsideSlopeAlaramSystem = getSubsideSlopeAlaram(subsideSlopeAlaram);
         //修改设备实时状态
-        sdDeviceDataService.updateDeviceData(sdDevices,shakeSpeed, (long) DevicesTypeItemEnum.ZHEN_DONG_SU_DU.getCode());
-        sdDeviceDataService.updateDeviceData(sdDevices,amplitude, (long) DevicesTypeItemEnum.ZHEN_DONG_FU_DU.getCode());
-        sdDeviceDataService.updateDeviceData(sdDevices,subside, (long) DevicesTypeItemEnum.CHEN_JIANG_ZHI.getCode());
-        sdDeviceDataService.updateDeviceData(sdDevices,slope, (long) DevicesTypeItemEnum.QING_XIE_ZHI.getCode());
-        sdDeviceDataService.updateDeviceData(sdDevices,shakeAlaramSystem, (long) DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode());
-        sdDeviceDataService.updateDeviceData(sdDevices,subsideSlopeAlaramSystem, (long) DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode());
+        sdDeviceDataService.updateDeviceData(sdDevices,shakeSpeed, (long) DevicesTypeItemEnum.ZHEN_DONG_SU_DU.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,amplitude, (long) DevicesTypeItemEnum.ZHEN_DONG_FU_DU.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,subside, (long) DevicesTypeItemEnum.CHEN_JIANG_ZHI.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,slope, (long) DevicesTypeItemEnum.QING_XIE_ZHI.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,shakeAlaramSystem, (long) DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,subsideSlopeAlaramSystem, (long) DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode(),true);
 
 
         String deviceId = sdDevices.getEqId();

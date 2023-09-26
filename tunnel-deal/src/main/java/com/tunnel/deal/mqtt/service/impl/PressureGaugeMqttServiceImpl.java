@@ -91,7 +91,7 @@ public class PressureGaugeMqttServiceImpl implements HongMengMqttService {
         String pressure = String.valueOf(jsonObject.get("pressure"));
         String collectTime = String.valueOf(jsonObject.get("collectTime"));
         //修改设备实时状态
-        sdDeviceDataService.updateDeviceData(sdDevices,pressure, (long) DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
+        sdDeviceDataService.updateDeviceData(sdDevices,pressure, (long) DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode(),true);
 
         String deviceId = sdDevices.getEqId();
         //设备掉线监测

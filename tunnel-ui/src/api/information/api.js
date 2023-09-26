@@ -69,3 +69,13 @@ export function selectVmsContent(query) {
     params: query
   })
 }
+
+
+// 9.23 情报板回读、关闭
+export function getBoardContentData(query) {
+  return request({
+    url: '/parser/board/getBoardContentData',
+    method: 'get',
+    params: query
+  })
+}

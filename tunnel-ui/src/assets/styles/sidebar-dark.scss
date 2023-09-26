@@ -709,7 +709,16 @@
       .el-tree {
         background: #004375 !important;
       }
-
+      .buttonsDeawer{
+        background: linear-gradient(90deg,
+              rgba(0, 172, 237, 0.8),
+              rgba(0, 121, 219, 0.8));
+      }
+      .zoomClass {
+        .el-input--medium .el-input__inner {
+          border: 1px solid #05afe3 !important;
+        }
+      }
       .zoomClass .input-with-select {
         .el-input-group__append {
           background: #05669d;
@@ -2911,8 +2920,27 @@
       .el-collapse-item__wrap {
         background: transparent;
       }
+      .downIcon >div{
+        background-image: url(../cloudControl/toLeft2.png);
+      }
+      .downIcon >div:hover{
+        background-image: url(../cloudControl/toLeft1.png);
+      }
     }
-
+    .infoButton{
+      .edit{
+        background-image: url(../cloudControl/edit2.png);
+      }
+      .edit:hover{
+        background-image: url(../cloudControl/edit1.png);
+      }
+      .del{
+        background-image: url(../cloudControl/edit4.png);
+      }
+      .del:hover{
+        background-image: url(../cloudControl/closeIcon1.png);
+      }
+    }
     .lineClass {
       width: 100%;
       height: 1px;
@@ -3990,7 +4018,7 @@
   }
 
   // 应急调度
-  .IssuedDialog{
+  .IssuedDialog,.yjBox{
      .phoneTable {
       .el-table__header-wrapper th{
         background-color: #03659E;
@@ -3998,6 +4026,9 @@
       tr{
         background-color: #05213E;
       }
+     }
+     .GDeviceBox .GDeviceCard{
+      background-color: #05213e;
      }
   }
   .dispatchLeft {

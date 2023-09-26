@@ -117,7 +117,7 @@
           <!--            <span>照明配置</span>-->
           <!--          </el-button>-->
           <el-button class="buttons" type="primary" size="mini" @click="batchManage"
-            v-hasPermi="['workbench:dialog:save']">
+            v-hasPermi="['workbench:dialog:save']" v-if="batchManageType == 1">
             <img src="../../../assets/icons/plcz.png" />
             <span>批量操作</span>
           </el-button>
@@ -443,6 +443,7 @@
                               'array'
                             )" :key="itm.associated_device_id" :style="{
                               color: getColorStyle(itm.COLOR),
+                              fontFamily:getFont(itm.FONT),
                             }" style="padding-top: 10px">{{ itm.CONTENT }}</span>
                         </div>
                       </div>
@@ -495,6 +496,7 @@
                               'array'
                             )" :key="itm.associated_device_id" :style="{
                               color: getColorStyle(itm.COLOR),
+                              fontFamily:getFont(itm.FONT),
                             }" style="padding-top: 10px">{{ itm.CONTENT }}</span>
                         </div>
                       </div>
@@ -2641,9 +2643,9 @@
 
       getBoardStyle(id, type, eqType) {
         if (this.boardObj[id]) {
-          if (JSON.parse(this.boardObj[id]).content) {
-            let content = JSON.parse(this.boardObj[id]).content;
-            let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
+          if (this.boardObj[id].parameters) {
+            let content = this.boardObj[id].parameters;
+            let devicePixel = this.boardObj[id].devicePixel;
             if (type == "width") {
               if (eqType && eqType == 16) {
                 return devicePixel.split("*")[1] / 2;
@@ -2661,14 +2663,11 @@
             let arr = "";
             let fontS = "";
             for (let i = 0; i < content.length; i++) {
-              var itemId = "ITEM" + this.formatNum(i, 3);
-              var con = content[i][itemId][0];
-              con.CONTENT = con.CONTENT.replace("<br>", " ").replace(
-                "&nbsp",
-                " "
-              );
+              // var itemId = "ITEM" + this.formatNum(i, 3);
+              var con = content[i];
+              con.CONTENT = con.CONTENT.replace("<br>", " ").replace("&nbsp"," ").replace("<n>"," ").replace("<r>"," ");
               array.push(con);
-              arr += con.CONTENT.replace("<br>", " ").replace("&nbsp", " ");
+              arr += con.CONTENT.replace("<br>", " ").replace("&nbsp", " ").replace("<n>"," ").replace("<r>"," ");
               arr += " ";
               fontS = Number(con.FONT_SIZE.substring(0, 2));
             }
@@ -2685,7 +2684,7 @@
               return array;
             }
           } else {
-            let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
+            let devicePixel = this.boardObj[id].devicePixel;
             if (type == "width") {
               if (eqType && eqType == 16) {
                 return devicePixel.split("*")[1] / 2;
@@ -2733,19 +2732,34 @@
       },
       // 转颜色
       getColorStyle(font) {
-        if (font == "黄色") {
+        if (font == "黄色" || font == '255255000000') {
           return "yellow";
-        } else if (font == "红色") {
+        } else if (font == "红色" || font == '255000000000') {
           return "red";
-        } else if (font == "绿色") {
+        } else if (font == "绿色" || font == "GreenYellow" || font == '000255000000') {
           return "#00FF00";
-        } else if (font == "蓝色") {
+        } else if (font == "蓝色" || font == '000000255000') {
           return "blue";
         } else {
           return font;
         }
       },
-
+        // 转字体
+      getFont(font) {
+        if (font == "KaiTi" || font == 'k') {
+          return "楷体";
+        } else if (font == "SimSun" || font == 's') {
+          return "宋体";
+        } else if (font == "SimHei" || font == 'h') {
+          return "黑体";
+        } else if (font == "FangSong" || font == 'f') {
+          return "仿宋";
+        } else if (font == "LiSu" || font == 'l') {
+          return "隶书";
+        } else {
+          return font;
+        }
+      },
       // 操作日志 搜索
       handleQueryOperationParam() {
         this.operationList2 = [];
@@ -4446,7 +4460,7 @@
         if (this.currentTunnel.id != null && this.currentTunnel.id != "") {
           addBoardContent(this.currentTunnel.id).then((res) => {
             // console.log(res,"情报板显示内容查询");
-            this.boardObj = res;
+            this.boardObj = res.data;
           });
         }
       },

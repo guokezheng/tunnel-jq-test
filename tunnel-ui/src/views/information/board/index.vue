@@ -228,6 +228,7 @@
     getBoardInfo,
     getBoardEditInfo,
     getIotBoardList,
+    getBoardContentData
   } from "@/api/information/api.js";
   import {
     uploadBoardEditInfo,
@@ -901,49 +902,73 @@
         this.loading = true;
         this.contentList = [];
         // 获取情报板修改页面信息
-        await getBoardEditInfo(deviceId).then((response) => {
-          console.log(response, "response");
-          if (response.code != 200) {
-            this.$message.error(`设备网络连接异常，请稍后重试`);
-            this.loading = false;
-            this.submitButton = false;
-            return;
+        const param = {
+          deviceId: deviceId
+        }
+        await getBoardContentData(param).then((res) => {
+          console.log(res, "onSubmit")
+          var contents = res.data.parameters;
+          console.log(contents, "onSubmit-----contents")
+          for (let i = 0; i < contents.length; i++) {
+            let item = contents[i]
+            item.COLOR = this.getColorStyle(item.COLOR);
+            item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
+            item.ID = i;
+            item.FONT = this.getFont(item.FONT)
+            this.contentList.push(item);
           }
-          if (response.data[0] == undefined) {
-            this.$message(response.msg);
-            return;
-          }
-
-          var parseObject = JSON.parse(response.data[0]);
-          console.log(parseObject, "parseObject")
-          var protocolType = parseObject.support.PROTOCOL_TYPE;
-          var contents = parseObject.content;
-          if (
-            typeof contents == "undefined" ||
-            typeof protocolType == "undefined"
-          ) {
-            this.$message(response.msg);
-            this.$forceUpdate();
-            this.loading = false;
-            return;
-          }
-          this.supplier = protocolType;
-          console.log(contents, "contents");
-          for (var i = 0; i < contents.length; i++) {
-            var content = contents[i];
-            var itemId = "ITEM" + this.formatNum(i, 3);
-            var con = content[itemId][0];
-            con.COLOR = this.getColorStyle(con.COLOR);
-            con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";
-            con.ID = i;
-
-            this.contentList.push(con);
-          }
-          console.log(this.contentList, "this.contentList");
-          this.submitButton = false;
+          console.log(this.contentList, "onSubmit-----this.contentList")
           this.loading = false;
-          this.$forceUpdate();
+          this.submitButton = false;
+          // this.rowDrop();
+        }).catch((e) => {
+          this.loading = false;
+          this.submitButton = false;
+
         });
+        // await getBoardEditInfo(deviceId).then((response) => {
+        //   console.log(response, "response");
+        //   if (response.code != 200) {
+        //     this.$message.error(`设备网络连接异常，请稍后重试`);
+        //     this.loading = false;
+        //     this.submitButton = false;
+        //     return;
+        //   }
+        //   if (response.data[0] == undefined) {
+        //     this.$message(response.msg);
+        //     return;
+        //   }
+
+        //   var parseObject = JSON.parse(response.data[0]);
+        //   console.log(parseObject, "parseObject")
+        //   var protocolType = parseObject.support.PROTOCOL_TYPE;
+        //   var contents = parseObject.content;
+        //   if (
+        //     typeof contents == "undefined" ||
+        //     typeof protocolType == "undefined"
+        //   ) {
+        //     this.$message(response.msg);
+        //     this.$forceUpdate();
+        //     this.loading = false;
+        //     return;
+        //   }
+        //   this.supplier = protocolType;
+        //   console.log(contents, "contents");
+        //   for (var i = 0; i < contents.length; i++) {
+        //     var content = contents[i];
+        //     var itemId = "ITEM" + this.formatNum(i, 3);
+        //     var con = content[itemId][0];
+        //     con.COLOR = this.getColorStyle(con.COLOR);
+        //     con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";
+        //     con.ID = i;
+
+        //     this.contentList.push(con);
+        //   }
+        //   console.log(this.contentList, "this.contentList");
+        //   this.submitButton = false;
+        //   this.loading = false;
+        //   this.$forceUpdate();
+        // });
 
         // 根据情报板id获取分辨率
         getBoardInfo(deviceId).then((res) => {
@@ -972,13 +997,13 @@
 
       // 转颜色
       getColorStyle(font) {
-        if (font == "黄色") {
+        if (font == "黄色" || font == '255255000000') {
           return "yellow";
-        } else if (font == "红色") {
+        } else if (font == "红色" || font == '255000000000') {
           return "red";
-        } else if (font == "绿色" || font == 'GreenYellow') {
+        } else if (font == "绿色" || font == "GreenYellow" || font == '000255000000') {
           return "#00FF00";
-        } else if (font == "蓝色") {
+        } else if (font == "蓝色" || font == '000000255000') {
           return "blue";
         } else {
           return font;
@@ -1071,12 +1096,16 @@
         }
       },
       getFont(font) {
-        if (font == "KaiTi") {
+        if (font == "KaiTi" || font == 'k') {
           return "楷体";
-        } else if (font == "Simsun") {
+        } else if (font == "SimSun" || font == 's') {
           return "宋体";
-        } else if (font == "SimHei") {
+        } else if (font == "SimHei" || font == 'h') {
           return "黑体";
+        } else if (font == "FangSong" || font == 'f') {
+          return "仿宋";
+        } else if (font == "LiSu" || font == 'l') {
+          return "隶书";
         } else {
           return font;
         }

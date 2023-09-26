@@ -227,7 +227,7 @@ export function batchControlDevice(data) {
 // 情报板显示内容定时查询
 export function addBoardContent(tunnelId) {
   return request({
-    url: 'parser/board/getWorkBenchBoardContent/'+tunnelId,
+    url: '/parser/board/getTimedReading/'+tunnelId,
     method: 'get',
   })
 }

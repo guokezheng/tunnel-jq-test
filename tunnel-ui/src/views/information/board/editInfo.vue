@@ -561,17 +561,25 @@ export default {
       this.itemPropertyMap = new HashMap();
       this.alignmentNum = 2
       this.dataForm = JSON.parse(JSON.stringify(this.boardEmitItem));
+      this.dataForm.COLOR = this.getColorValue(this.boardEmitItem.COLOR)
       console.log(this.dataForm,"this.dataForm")
       // this.dataForm.FONT = this.getFont(this.boardEmitItem.FONT)
       this.dataForm.CONTENT = JSON.parse(
         JSON.stringify(
-          this.boardEmitItem.CONTENT.replace("<br>", "\n").replace(/ /g, " ")
+          this.boardEmitItem.CONTENT.replace("<br>", "\n").replace(/ /g, " ").replace("<r><n>", "\n")
         )
       );
       this.dataForm.STAY = JSON.parse(
         JSON.stringify(Number(this.boardEmitItem.STAY) / 100)
       );
       this.getFontSizeList();
+    },
+    getColorValue(color){
+      if(color == '#00FF00'){
+        return '绿色'
+      }else{
+        return color
+      }
     },
     getFontSizeList() {
       getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) => {

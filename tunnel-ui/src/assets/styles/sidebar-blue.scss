@@ -724,12 +724,23 @@
   .dispatchWorkBench {
     .el-dialog {
       .el-tree {
-        background: #004375 !important;
+        background: #181a5b !important;
       }
-
+      .buttonsDeawer{
+        background: #00B0FF linear-gradient(90deg, rgba(132, 142, 245, 0.49) 0%, #0061F1 100%);
+      }
+      .zoomClass {
+        .el-input-number{
+          background: transparent !important;
+        }
+        .el-input__inner{
+          background: transparent !important;
+          border: 1px solid #00c8ff!important;
+        }
+      }
       .zoomClass .input-with-select {
         .el-input-group__append {
-          background: #05669d;
+          background: #00b0ff linear-gradient(90deg,rgba(132,142,245,.49),#0061f1);
           color: #00c8ff;
           border: 1px solid #00c8ff;
           border-left: transparent;
@@ -873,8 +884,8 @@
       }
 
       .el-input--medium .el-input__inner {
-        background: rgba($color: #14226F, $alpha: 0.74) !important;
-        border: none !important;
+        background: rgba($color: #14226F, $alpha: 0.74);
+        border: none ;
         color: #fff;
       }
 
@@ -936,7 +947,7 @@
 
       .el-input-number__increase,
       .el-input-number__decrease {
-        background: rgba($color: #14226F, $alpha: 0.74) !important;
+        background: rgba($color: #14226F, $alpha: 0.74);
         color: white !important;
         border: none;
 
@@ -3049,8 +3060,27 @@
       .el-collapse-item__wrap {
         background: transparent;
       }
+      .downIcon >div{
+        background-image: url(../cloudControl/toLeft0.png);
+      }
+      .downIcon >div:hover{
+        background-image: url(../cloudControl/toLeft1.png);
+      }
     }
-
+    .infoButton{
+      .edit{
+        background-image: url(../cloudControl/edit0.png);
+      }
+      .edit:hover{
+        background-image: url(../cloudControl/edit1.png);
+      }
+      .del{
+        background-image: url(../cloudControl/closeIcon0.png);
+      }
+      .del:hover{
+        background-image: url(../cloudControl/closeIcon1.png);
+      }
+    }
     .lineClass {
       width: 100%;
       height: 1px;
@@ -4154,14 +4184,17 @@
   }
 
   // 应急调度
-  .IssuedDialog{
+  .IssuedDialog,.yjBox{
      .phoneTable {
-      .el-table__header-wrapper th{
-        background-color: rgba($color: #2C3E91, $alpha: 0.8);
-      }
-      tr{
-        background-color: transparent;
-      }
+        .el-table__header-wrapper th{
+          background-color: rgba($color: #2C3E91, $alpha: 0.8);
+        }
+        tr{
+          background-color: transparent !important;
+        }
+     }
+     .GDeviceBox .GDeviceCard{
+      background-color: #182053;
      }
   }
   .dispatchLeft {

@@ -18,49 +18,49 @@
       <el-form
         ref="form"
         :model="stateForm"
-        label-width="90px"
+        label-width="80px"
         label-position="left"
         size="mini"
         style="padding: 15px; padding-top: 0px"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="隧道名称:">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="所属方向:">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="12">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item
               label="设备状态:"
               :style="{

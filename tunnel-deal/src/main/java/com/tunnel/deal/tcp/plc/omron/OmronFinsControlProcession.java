@@ -22,6 +22,7 @@ import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.plc.omron.fins.*;
 import com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask;
 import com.tunnel.deal.tcp.util.ByteBufUtil;
+import com.tunnel.deal.tcp.util.NumberSystemConvert;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -228,8 +229,8 @@ public class OmronFinsControlProcession {
         if(fEqIdList.size() == 0){
             return AjaxResult.error();
         }
-        /*List<String> fEqIdList = new ArrayList<>();
-        fEqIdList.add("JQ-WeiFang-MiaoZi-BJY-PLC-002");*/
+//        List<String> fEqIdList = new ArrayList<>();
+//        fEqIdList.add("JQ-WeiFang-YangTianShan-SZS-PLC-002");
 
 //        sendSinglePointCmd(fEqIdList,pointType);
 
@@ -306,17 +307,22 @@ public class OmronFinsControlProcession {
      */
     public void handleDeviceData(List<Map> pointList,String fEqId,String value,String minAddress,
                                  Integer cmdLength,String dataLength,String areaCode){
+
+        if(value == null || "".equals(value)){
+            System.out.println("获取的数据为空：value="+value+",deviceId="+fEqId+",minAddress="+minAddress);
+            return;
+        }
         Map<Integer,String> valueMap = new HashMap<>();
 
         List<String> list = new ArrayList<>();
-        if(FinsCmdValues.D_AREA_CODE.equals(areaCode)){
+//        if(FinsCmdValues.D_AREA_CODE.equals(areaCode)){
             //2个字节一个数据
-            list = ModbusCmdResolver.handleTwoBytesData(value);
-        }
-        if(FinsCmdValues.W_WORD_AREA_CODE.equals(areaCode)){
+//            list = ModbusCmdResolver.handleTwoBytesData(value);
+//        }
+//        if(FinsCmdValues.W_WORD_AREA_CODE.equals(areaCode)){
             //2个字节一个数据
             list = FinsCmdResolver.handleTwoBytesData(value);
-        }
+//        }
 
         // 配置的10进制地址直接转换
         Integer startAddress = Integer.valueOf(minAddress);
@@ -330,13 +336,24 @@ public class OmronFinsControlProcession {
             String address = itemMap.get("address") == null ? "" : itemMap.get("address").toString();
             String itemId = itemMap.get("itemId") == null ? "":itemMap.get("itemId").toString();
             String pointConfig = itemMap.get("pointConfig") == null ? "" : itemMap.get("pointConfig").toString();
+            String dataLengthStr = itemMap.get("dataLength") == null ? "":itemMap.get("dataLength").toString();
+            Integer addressNum = Integer.valueOf(address);
+            Integer dataLengthNum = Integer.valueOf(dataLengthStr);
             //原始数据
             if(address == null || "".equals(address)){
+                System.out.println("点位未配置地址address，eqId="+eqId);
                 continue;
             }
             String data = valueMap.get(Integer.valueOf(address));
+            if(data == null){
+                continue;
+            }
+            if(dataLengthNum == 2){
+                //模拟量，4个字节，2个寄存器地址，双字
+                data = data + valueMap.get(addressNum + 1);
+            }
 //            System.out.println("测试配置：pointConfig="+pointConfig+",eqId="+eqId);
-            data = getFinalData(eqId,data,pointConfig);
+            data = getFinalData(eqId,data,pointConfig,dataLengthStr);
 
             //存储实时数据
             SdDevices sdDevices = new SdDevices();
@@ -357,27 +374,45 @@ public class OmronFinsControlProcession {
      * @param pointConfig 点位配置
      * @return
      */
-    public String getFinalData(String eqId,String data,String pointConfig){
+    public String getFinalData(String eqId,String data,String pointConfig,String dataLength){
         if(pointConfig == null || "".equals(pointConfig)){
-            return data;
+            //五六七标目前数据解析共分为4种情况：
+            //前两种情况，pointConfig有数据，分为状态量配置（五六七标）、模拟量计算公式（七标模拟量,单字，dataLength为1）
+            //第三种情况，pointConfig有数据，五标风机、卷帘门、消防泵的反馈点位（状态量配置）是位代码，dataLength=2,functionCode=31
+            //第四种情况，pointConfig无数据，模拟量不需要计算（五六标模拟量需要做高低位转换CDAB，双字，浮点数，dataLength为2）
+
+           Integer dataLengthNum = Integer.valueOf(dataLength);
+           if(dataLengthNum == 2){
+               data = NumberSystemConvert.reverseHex(data);
+               Float dataNum = NumberSystemConvert.convertHexToFloat(data);
+
+               return String.valueOf(dataNum);
+           }
         }
         JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
         //获取公式计算
         String formula = jsonConfig.getString("formula");
         //formula:{divisor:'1000',multiple:'406.25',sub:'1625'}}
         if(formula != null && !"".equals(formula)){
+            //七标的模拟量，原始数据转为十进制，再参与公式计算
+            Integer num = Integer.parseInt(data,16);
+
             JSONObject formulaObject = JSONObject.parseObject(formula);
             BigDecimal divisor = formulaObject.getBigDecimal("divisor");
             BigDecimal multiple = formulaObject.getBigDecimal("multiple");
             BigDecimal sub = formulaObject.getBigDecimal("sub");
 
-            BigDecimal dValue = new BigDecimal(data);
+            BigDecimal dValue = new BigDecimal(num);
             dValue = dValue.divide(divisor,2,BigDecimal.ROUND_HALF_UP);
             if(multiple != null){
                 dValue = dValue.multiply(multiple);
             }
             if(sub != null){
                 dValue = dValue.subtract(sub);
+            }
+            if((dValue.compareTo(new BigDecimal(0)) < 0) && (dValue.compareTo(new BigDecimal(-0.01)) > 0)){
+                //如果数据小于0且大于-0.01,将数据视为0，避免COVI等模拟量计算数据为负数
+                dValue =  BigDecimal.ZERO;
             }
             dValue = dValue.setScale(2,BigDecimal.ROUND_HALF_UP);
 
@@ -482,10 +517,11 @@ public class OmronFinsControlProcession {
         //子设备ID
         String eqId = map.get("eqId") == null ? "" : map.get("eqId").toString();
         String itemId = map.get("itemId") == null ? "": map.get("itemId").toString();
+        String dataLength = map.get("dataLength") == null ? "" : map.get("dataLength").toString();
         //点位配置
         String pointConfig = map.get("pointConfig") == null ? "" : map.get("pointConfig").toString();
 
-        String data = getFinalData(eqId,value,pointConfig);
+        String data = getFinalData(eqId,value,pointConfig,dataLength);
 
         //存储实时数据
         SdDevices sdDevices = new SdDevices();

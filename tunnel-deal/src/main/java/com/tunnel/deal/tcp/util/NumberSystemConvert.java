@@ -36,6 +36,39 @@ public class NumberSystemConvert {
     }
 
     /**
+     * 32位高低字节转换：CDAB
+     * @param s
+     * @return
+     */
+    public static String reverseHex(String s){
+        if(s == null || "".equals(s)){
+            return "";
+        }
+        s = s.replaceAll(" ","");
+        if(s.length() == 8){
+            String start = s.substring(0,4);
+            String end = s.substring(4);
+            return end + start;
+        }
+      return "";
+    }
+
+
+
+
+//
+//    public static void main(String[] args) {
+//        String s = " F3 EE 42 AD";
+////        s = s.replaceAll(" ","");
+//        System.out.println(s);
+//        s = reverseHex(s);
+//        System.out.println("转换后的顺序："+s);
+//        Float num = convertHexToFloat(s);
+//        System.out.println(num);
+//    }
+
+
+    /**
      * 转换16进制用1位表示的整数
      * @param s
      * @return

@@ -150,10 +150,10 @@ public class VmsTask {
         }
     }
 
-    @PostConstruct
+    /*@PostConstruct
     public void init() {
         threadPoolTaskExecutor.execute(()->{
             getVmsData();
         });
-    }
+    }*/
 }

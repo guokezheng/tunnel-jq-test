@@ -576,13 +576,22 @@ public class BoardController extends BaseController {
                 for(int i = 0; i < objects.size(); i++){
                     JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
                     if(protocolType.startsWith(IDeviceProtocol.GUANGDIAN) || protocolType.startsWith(IDeviceProtocol.DINGEN) || protocolType.startsWith(IDeviceProtocol.TONGZHOU) || protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.SANSI)){
-                        o = jsonObject1.get("ITEM" + String.format("%03d",i)).toString();
-                        String s = o.replaceAll("\\[", "").replaceAll("]", "");
-                        JSONObject jsonObject = JSONObject.parseObject(s);
-                        if(protocolType.startsWith(IDeviceProtocol.DINGEN)){
-                            jsonObject.put("CONTENT",jsonObject.getString("CONTENT").substring(1,jsonObject.getString("CONTENT").length()));
+                        JSONArray jsonArray = JSONObject.parseArray(jsonObject1.get("ITEM" + String.format("%03d", i)).toString());
+                        for(int a = 0; a < jsonArray.size(); a++){
+                            JSONObject jsonObject2 = JSONObject.parseObject(jsonArray.get(a).toString());
+                            /*o = jsonObject2.get("ITEM" + String.format("%03d", i)).toString();
+                            String s = o.replaceAll("\\[", "").replaceAll("]", "");
+                            JSONObject jsonObject = JSONObject.parseObject(s);*/
+                            if(protocolType.startsWith(IDeviceProtocol.DINGEN)){
+                                String content1 = jsonObject2.getString("CONTENT");
+                                if(content1.contains("W")){
+                                    content1 = content1.substring(1, jsonObject2.getString("CONTENT").length());
+                                }
+                                jsonObject2.put("CONTENT",content1);
+                            }
+                            list.add(jsonObject2);
                         }
-                        list.add(jsonObject);
+
                     }
                 }
                 JSONObject jsonObject = new JSONObject();
@@ -733,7 +742,7 @@ public class BoardController extends BaseController {
                     content.append("\\").append("F").append(map.get("FONT")).append(map.get("FONT_SIZE")).append(map.get("FONT_SIZE"));
                     content.append("\\").append("T").append(map.get("COLOR"));
                     String boardContent = map.get("CONTENT").toString();
-                    content.append("\\").append("W").append(boardContent.replaceAll("<r><n>","\\\\A"));
+                    content.append("\\").append("W").append(boardContent);
                 }
                 AjaxResult ajaxResult = dingEnBoard(deviceIdList.stream().collect(Collectors.joining(",")), "", parameters,content);
                 if(ajaxResult.get("code").toString().equals("200")){

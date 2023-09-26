@@ -148,7 +148,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else {
             map.put("COnowData", null);
         }
-        List<Map<String, Double>> todayCOData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        List<Map<String, Double>> todayCOData = sdDeviceDataMapper.getTodayData(deviceId, itemId, today);
         itemId = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
         data.setItemId(Long.valueOf(itemId));
         devData = sdDeviceDataMapper.selectLastRecord(data);
@@ -162,7 +162,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else {
             map.put("VInowData", null);
         }
-        List<Map<String, Double>> todayVIData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        List<Map<String, Double>> todayVIData = sdDeviceDataMapper.getTodayData(deviceId, itemId, today);
         map.put("todayCOData", todayCOData);
         map.put("todayVIData", todayVIData);
         return map;
@@ -188,7 +188,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else {
             map.put("nowData", null);
         }
-        List<Map<String, Double>> todayFSData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        List<Map<String, Double>> todayFSData = sdDeviceDataMapper.getTodayData(deviceId, itemId, today);
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(deviceId);
         itemId = Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode());
@@ -224,7 +224,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             } else if (deviceData == null) {
                 today = simpleDateFormat.format(new Date());
             }
-            todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
+            todayLDData = sdDeviceDataMapper.getTodayData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
             map.put("todayLDInsideData", todayLDData);
             if (deviceData != null) {
                 map.put("nowData", deviceData.getData());
@@ -242,7 +242,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             } else if (deviceData == null) {
                 today = simpleDateFormat.format(new Date());
             }
-            todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
+            todayLDData = sdDeviceDataMapper.getTodayData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
             map.put("todayLDOutsideData", todayLDData);
             double num = 0;
             int count = 5;
@@ -510,7 +510,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else {
             map.put("nowData", null);
         }
-        List<Map<String, Double>> todayYcylData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        List<Map<String, Double>> todayYcylData = sdDeviceDataMapper.getTodayData(deviceId, itemId, today);
         map.put("todayYcylData", todayYcylData);
         return map;
     }

@@ -546,6 +546,9 @@ public class BoardController extends BaseController {
     //情报板回读
     public JSONObject getBoard(String deviceId){
         SdDevices sdDevices = sdDevicesService.selectBoardSdDevicesById(deviceId);
+        if(sdDevices == null){
+            return null;
+        }
         Object boardContent = boardContentMap.get(sdDevices.getAssociatedDeviceId().toString());
         AjaxResult ajaxResult;
         if(boardContent != null){

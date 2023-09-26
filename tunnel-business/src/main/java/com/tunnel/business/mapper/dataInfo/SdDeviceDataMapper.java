@@ -129,4 +129,6 @@ public interface SdDeviceDataMapper
      * @return
      */
     List<Map<String, Object>> getVmsData(@Param("deviceId") String deviceId);
+
+    List<Map<String, Double>> getTodayData(@Param("deviceId") String deviceId, @Param("itemId") Long itemId, @Param("today") String today);
 }

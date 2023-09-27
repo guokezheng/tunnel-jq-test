@@ -256,7 +256,7 @@ public class KafkaReadListenToWanJiTopic {
                     sdEventMapper.insertEventConfidence(sdEvent);
                 }
                 //将事件推送到前端展示
-                eventSendWeb(jsonObject);
+                /*eventSendWeb(jsonObject);*/
                 Long typeId = sdEvent.getEventTypeId();
                 if(typeId == 1L || typeId == 2L || typeId == 11L || typeId == 12L || typeId == 13L || typeId == 14L
                 || typeId == 18L || typeId == 19L || typeId == 20L){

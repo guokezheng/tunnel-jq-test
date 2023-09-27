@@ -567,6 +567,7 @@
         where
         TO_DAYS(A.event_time) = TO_DAYS(NOW())
         AND B.is_usable = '1'
+        AND B.prev_control_type = 0
         AND sdd.dict_type = 'sd_direction'
         <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
         <if test="params.deptId != null and params.deptId != ''">

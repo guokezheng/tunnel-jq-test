@@ -4374,7 +4374,7 @@
                             this.selectedIconList[j].num =
                               "CO:" +
                               parseFloat(deviceData.CO).toFixed(2) +
-                              "/PPM  VI:" +
+                              "PPM  VI:" +
                               parseFloat(deviceData.VI).toFixed(2) +
                               "M";
                           }

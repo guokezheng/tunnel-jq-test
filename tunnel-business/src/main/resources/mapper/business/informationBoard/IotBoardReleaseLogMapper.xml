@@ -163,6 +163,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             iot_board_release_log brl
         WHERE
             1 = 1
+          AND brl.release_status = '0'
           AND brl.device_id = #{deviceId}
         ORDER BY
             brl.release_time DESC

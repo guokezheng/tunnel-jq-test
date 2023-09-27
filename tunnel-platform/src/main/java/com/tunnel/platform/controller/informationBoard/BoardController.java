@@ -559,6 +559,10 @@ public class BoardController extends BaseController {
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(sdDevices.getAssociatedDeviceId());
             String protocolType = sdIotDevice.getProtocolName();
             if(boardContentData != null){
+                Object content2 = boardContentData.get("content");
+                if(content2 == null || "".equals(content2)){
+                    return null;
+                }
                 String content = boardContentData.get("content").toString();
                 String substring = "";
                 if(!protocolType.startsWith(IDeviceProtocol.SANSI)){
@@ -915,6 +919,7 @@ public class BoardController extends BaseController {
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "网络异常,发送失败");
                 }
                 iotBoardReleaseLog.setReleaseStatus("1");
+                iotBoardReleaseLog.setReleaseNewContent(content.toString());
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             }
         }

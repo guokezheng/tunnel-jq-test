@@ -581,19 +581,19 @@ export default {
         ],
         triggers: {
           deviceTypeId: [
-            { required: true, message: "请选择设备类型", trigger: "change" },
+            { required: true, message: "请选择设备类型", trigger: "blur" },
           ],
           deviceId: [
-            { required: true, message: "请选择设备名称", trigger: "change" },
+            { required: true, message: "请选择设备名称", trigger: "blur" },
           ],
           elementId: [
-            { required: true, message: "请选择数据项", trigger: "change" },
+            { required: true, message: "请选择数据项", trigger: "blur" },
           ],
           comparePattern: [
-            { required: true, message: "请选择运算符", trigger: "change" },
+            { required: true, message: "请选择运算符", trigger: "blur" },
           ],
           compareValue: [
-            { required: true, message: "请输入阈值", trigger: "change" },
+            { required: true, message: "请输入阈值", trigger: "blur" },
             {
               pattern: /^[0-9]\d*\.\d*|[0-9]\d*$/,
               message: "请输入数字，可输入小数",
@@ -684,7 +684,7 @@ export default {
     getListEventType() {
       let data = { prevControlType: "1" };
       listEventType(data).then((res) => {
-        debugger
+        // debugger
         let eventTypeList = []
         for (let i = 0; i <  res.rows.length; i++) {
           if(res.rows[i].eventType=="其他"||res.rows[i].eventType=="道路团雾"||res.rows[i].eventType=="大风"

@@ -27,9 +27,9 @@
       </el-col>
       <el-col :span="10">
         <el-form ref="loginQueryForm" :model="lightFilesModel" :inline="true" class="loginQueryFormClass"
-          label-width="100px" height="300px">
-          <el-row :gutter="24" style="clear:both; ">
-            <el-col :span="6">
+          label-width="70px" height="300px">
+          <el-row :gutter="24" style="clear:both; margin: 0;">
+            <el-col :span="5" v-hasPermi="['workbench:light:switch']"> 
               <el-form-item label="启用" align="center" prop="schedulerTime" class="el-form-item-data-type">
                 <template slot-scope="scope">
                   <el-switch v-model="lightFilesModel.isStatus" active-color="#13ce66" inactive-color="#ff4949"
@@ -38,7 +38,7 @@
                 </template>
               </el-form-item>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="9" style="padding-right: 0;">
               <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                 <el-select :disabled="tunnelDisabled" style="width: 100%" v-model="lightFilesModel.tunnelId"
                   placeholder="请选择隧道" clearable @change="lightChangeEvent">
@@ -47,7 +47,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="9" style="padding-right: 0;">
               <el-form-item label="隧道方向" prop="direction" class="el-form-item-data">
                 <el-input disabled style="width: 98%" v-model="
                     lightFilesModel.direction == '1' ? '潍坊方向' : '济南方向'
@@ -70,32 +70,52 @@
               </el-form-item>
             </el-col>
           </el-row>
-
-          <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
-            <el-col :span="24">
-              <el-form-item label="选择设备" v-for="(item, index) in lightFormItems" :key="index"
-                class="el-form-item-direction-Item">
-
-                <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 30%">
-                  <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
-                    :value="dict.dictValue" />
-                </el-select>
-                <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance">
-                </el-input>
-
-
-                <div class="buttonBox" style="width: 20% ;float: right;margin-left: 10px">
+          <div style="width: 100%;height: 250px;overflow: auto; ">
+            <el-row :gutter="24" style="clear:both;width: 100%; height: 60px;margin: 0;" 
+              v-for="(item, index) in lightFormItems" :key="index">
+              <el-col :span="9" style="padding-right: 0;">
+                <el-form-item label="选择设备" 
+                  class="el-form-item-direction-Item">
+                  <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 100%">
+                    <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
+                      :value="dict.dictValue" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9" style="padding-right: 4px;">
+                <el-form-item label="下修比例" 
+                  class="el-form-item-direction-Item">
+                  <el-input style="width: 100%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="5" style="padding-right: 0;">
+                <div class="buttonBox" style="float: right;margin-left: 10px">
                   <el-button class="delete" @click="deleteHandleUpdate(index)"></el-button>
                   <el-button class="add" @click="addHandleUpdate(index)"></el-button>
                 </div>
-              </el-form-item>
-            </el-col>
-            <!--                <el-col :span="4">-->
+              </el-col>   
+              <!-- <el-col :span="24">
+                <el-form-item label="选择设备" v-for="(item, index) in lightFormItems" :key="index"
+                  class="el-form-item-direction-Item">
 
-            <!--                  -->
-            <!--                </el-col>-->
-          </el-row>
+                  <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 30%">
+                    <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
+                      :value="dict.dictValue" />
+                  </el-select>
+                  <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
+                  <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance">
+                  </el-input>
+
+
+                  <div class="buttonBox" style="width: 20% ;float: right;margin-left: 10px">
+                    <el-button class="delete" @click="deleteHandleUpdate(index)"></el-button>
+                    <el-button class="add" @click="addHandleUpdate(index)"></el-button>
+                  </div>
+                </el-form-item>
+              </el-col> -->
+            </el-row>
+          </div>
+          
         </el-form>
       </el-col>
       <el-col :span="10" style="margin-top: 1%">
@@ -109,9 +129,9 @@
           </el-col>
         </el-row>
         <el-form ref="loginQueryFormWei" :model="lightFilesModelWei" :inline="true" class="loginQueryFormClass"
-          label-width="100px" style="margin-top: 5px" height="300px">
-          <el-row :gutter="24" style="clear:both; ">
-            <el-col :span="6">
+          label-width="70px" style="margin-top: 5px" height="300px">
+          <el-row :gutter="24" style="clear:both; margin: 0;">
+            <el-col :span="5" v-hasPermi="['workbench:light:switch']">
               <el-form-item label="启用" align="center" prop="schedulerTime" class="el-form-item-data-type">
                 <template slot-scope="scope">
                   <el-switch v-model="lightFilesModelWei.isStatus" active-color="#13ce66" inactive-color="#ff4949"
@@ -120,7 +140,7 @@
                 </template>
               </el-form-item>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="9" style="padding-right: 0;">
               <el-form-item label="隧道名称" prop="tunnelId" class="el-form-item-data">
                 <el-select :disabled="tunnelDisabled" style="width: 100%" v-model="lightFilesModelWei.tunnelId"
                   placeholder="请选择隧道" clearable @change="lightChangeEventWei">
@@ -129,7 +149,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="9" style="padding-right: 0;">
               <el-form-item label="隧道方向" prop="direction" class="el-form-item-data">
                 <el-input disabled style="width: 98%" v-model="
                 lightFilesModelWei.direction == '1' ? '潍坊方向' : '济南方向'
@@ -142,30 +162,33 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row :gutter="24" style="clear:both;overflow: auto; width: 100%; height: 250px;">
-            <el-col :span="24">
-              <el-form-item label="选择设备" v-for="(item, index) in lightFormItemsWei" :key="index"
+          <div style="width: 100%;height: 250px;overflow: auto; ">
+            <el-row :gutter="24" style="clear:both;width: 100%; height: 60px;margin: 0;"
+              v-for="(item, index) in lightFormItemsWei" :key="index">
+              <el-col :span="9" style="padding-right: 0;">
+                <el-form-item label="选择设备" 
+                  class="el-form-item-direction-Item">
+                  <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 100%">
+                    <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
+                      :value="dict.dictValue" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9" style="padding-right: 4px;">
+                <el-form-item label="下修比例" 
                 class="el-form-item-direction-Item">
-
-                <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 30%">
-                  <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
-                    :value="dict.dictValue" />
-                </el-select>
-                <span style="color: #fff;margin-left: 10px;font-weight: bold;">下修比例</span>
-                <el-input style="width: 30%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance">
-                </el-input>
-                <div class="buttonBox" style="width: 20% ;float: right;">
+                  <el-input style="width: 100%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="5" style="padding-right: 0;">
+                <div class="buttonBox" style="float: right;margin-left: 10px">
                   <el-button class="delete" @click="deleteHandleUpdateWei(index)"></el-button>
                   <el-button class="add" @click="addHandleUpdateWei(index)"></el-button>
                 </div>
-                <!--                </el-col>-->
-              </el-form-item>
-            </el-col>
-            <!--                <el-col :span="4">-->
-
-            <!--                  -->
-            <!--                </el-col>-->
-          </el-row>
+              </el-col>  
+            </el-row>
+          </div>
+          
         </el-form>
       </el-col>
     </el-row>
@@ -954,6 +977,7 @@
       },
       //光强 修改隧道名称查看不同隧道 光强照明配置
       lightChangeEvent(indextabs) {
+        console.log(this.lightFilesModel.tunnelId,this.lightFilesModel.direction,"indextabs")
         if (!!this.lightFilesModel.tunnelId && !!this.lightFilesModel.direction) {
           let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModel.tunnelId)
           // debugger
@@ -1167,15 +1191,18 @@
 
 </script>
 
-<style scoped>
+<style scoped >
+  .el-form--inline .el-form-item{
+    margin-right: 0;
+  }
   .el-form-item-data {
     .el-form-item__content {
-      width: 60%;
+      width: calc(100% - 70px);
     }
 
-    .el-form-item__label {
+    /* .el-form-item__label {
       width: 70px !important;
-    }
+    } */
   }
 
   .el-form-item-data-type {
@@ -1183,9 +1210,9 @@
       width: 30%;
     }
 
-    .el-form-item__label {
+    /* .el-form-item__label {
       width: 70px !important;
-    }
+    } */
   }
 
   .el-form-item-direction {
@@ -1193,15 +1220,15 @@
       width: 60%;
     }
 
-    .el-form-item__label {
+    /* .el-form-item__label {
       width: 70px !important;
-    }
+    } */
   }
 
   .el-form-item-direction-Item {
 
     .el-form-item__content {
-      width: 82%;
+      width: calc(100% - 70px);
     }
 
   }
@@ -1211,7 +1238,7 @@
     justify-content: space-around;
     align-items: center;
     height: 36px;
-
+    width: 100%;
     .delete,
     .add {
       width: 16px;

@@ -9,9 +9,9 @@
       <div class="left-content">
         <div data-v-6425604c="" class="content-header-one">
           <span data-v-6425604c="">策略分组</span>
-          <el-tree :data="dataTree" :props="defaultProps" style="margin-top: 40px; height: 0px"
-            :default-expanded-keys="checkDefault" :default-checked-keys="[0]" v-model="treeModel" default-expand-all
-            highlight-current @node-click="handleNodeClickLight">
+          <el-tree :data="dataTree" :props="defaultProps" style="margin-top: 40px; height: 0px" node-key="value"
+            :default-expanded-keys="[4]" :default-checked-keys="checkDefault" v-model="treeModel" default-expand-all
+            highlight-current @node-click="handleNodeClickLight" ref="tree">
           </el-tree>
         </div>
       </div>
@@ -304,26 +304,25 @@
     },
     data() {
       return {
-        checkDefault: ['0'],
         visibleSync: false,
         dataTree: [{
             label: "日常联控",
-            value: "4",
+            value: 4,
             children: [{
               label: "时序自动控制",
-              value: "0",
+              value: 0,
             }, ],
           },
           {
             label: "节能照明联控",
-            value: "5",
+            value: 5,
             children: [{
                 label: "亮度差联控照明",
-                value: "1",
+                value: 1,
               },
               {
                 label: "车流量联控照明",
-                value: "2",
+                value: 2,
               },
             ],
           },
@@ -421,6 +420,10 @@
     },
     created() {
       this.treeModel = '0'
+      this.$refs.tree.setCheckedNodes([{
+          value: 0,
+          label: '时序自动控制'
+        }]);
       // 日常策略
       this.getDicts("sd_strategy_type").then((response) => {
         this.strategyTypeOptions = response.data;

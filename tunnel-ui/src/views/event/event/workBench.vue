@@ -123,16 +123,30 @@
                         <img v-show="
                             item.eqType != '31' &&
                             item.eqType != '16' &&
-                            item.eqType != '36'
+                            item.eqType != '36' &&
+                            item.eqType != '29'
                           " v-for="(url, indexs) in item.url" style="position: absolute" :style="{
                             left: indexs * 14 + 'px',
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 2
+                              transform:
+                              (item.eqType == 23 &&
+                                item.eqDirection == 2 &&
+                                item.eqTunnelId == 'JQ-JiNan-WenZuBei-HSD') ||
+                              (item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
+                                item.eqDirection == 1 &&
+                                item.associated_device_id == 2)
                                 ? 'scale(-1,1)'
+                                : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
+                                  item.eqDirection == 2 &&
+                                  item.associated_device_id == 2
+                                ? 'scale(1,-1)'
+                                : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
+                                  item.eqDirection == 2 &&
+                                  item.associated_device_id == 1
+                                ? 'scale(-1,-1)'
                                 : '',
                           }" :width="item.iconWidth / 1.2 + 'px'" :height="item.iconHeight / 1.2 + 'px'"
                           :key="item.eqId + indexs" :src="url" :class="
@@ -201,6 +215,7 @@
                                 'array'
                               )" :key="itm.associated_device_id" :style="{
                                 color: getColorStyle(itm.COLOR),
+                                fontFamily:getFont(itm.FONT),
                               }" style="padding-top: 10px">{{ itm.CONTENT }}</span>
                           </div>
                         </div>
@@ -255,6 +270,7 @@
                                 'array'
                               )" :key="itm.associated_device_id" :style="{
                                 color: getColorStyle(itm.COLOR),
+                                fontFamily:getFont(itm.FONT),
                               }" style="padding-top: 10px">{{ itm.CONTENT }}</span>
                           </div>
                         </div>
@@ -503,7 +519,7 @@
     getDeviceDataAndState,
     getJlyTunnel,
     energyConsumptionDetection,
-    getBoardContent,
+    // getBoardContent,
     listTunnels1
   } from "@/api/equipment/tunnel/api.js";
   import {
@@ -820,10 +836,10 @@
         this.robotTimer = null;
         this.getDict();
         this.tunnelId = workBenchProp.tunnelId;
+        this.getBoardContent();
         this.tunnelName = workBenchProp.tunnelName;
         this.tunnelStationName = workBenchProp.tunnelStationName;
         this.visible = true;
-        this.getBoardContent();
         this.getEqTypeStateIcon();
         this.lightSwitchFunc();
         this.getDictList();
@@ -832,7 +848,7 @@
         this.timer = setInterval(() => {
           setTimeout(this.getRealTimeData, 0);
           setTimeout(this.getBoardContent, 0);
-        }, 1000 * 5);
+        }, 10000);
         window.addEventListener("click", this.otherClose);
         // if (this.$refs["divRoller"]) {
         //   console.log(111111111)
@@ -846,7 +862,7 @@
           this.robotShow = true
           this.robotTimer = setInterval(() => {
             this.robotPositon = this.$parent.robotPositon
-            console.log(this.robotPositon, "this.robotPositonsetInterval")
+            // console.log(this.robotPositon, "this.robotPositonsetInterval")
           }, 2000);
         } else {
           this.robotShow = false
@@ -1315,13 +1331,28 @@
       async getBoardContent() {
         if (this.tunnelId != null && this.tunnelId != "") {
           await addBoardContent(this.tunnelId).then((res) => {
-            //   console.log(res, "情报板显示内容查询");
+              console.log(res, "情报板显示内容查询");
             this.boardObj = res;
           });
         }
         this.$forceUpdate();
       },
-
+      // 转字体
+      getFont(font) {
+        if (font == "KaiTi" || font == 'k') {
+          return "楷体";
+        } else if (font == "SimSun" || font == 's') {
+          return "宋体";
+        } else if (font == "SimHei" || font == 'h') {
+          return "黑体";
+        } else if (font == "FangSong" || font == 'f') {
+          return "仿宋";
+        } else if (font == "LiSu" || font == 'l') {
+          return "隶书";
+        } else {
+          return font;
+        }
+      },
       // 模拟定时
       getRealTimeData() {
         getDeviceData({
@@ -1885,34 +1916,31 @@
       },
       getBoardStyle(id, type, eqType) {
         if (this.boardObj[id]) {
-          if (JSON.parse(this.boardObj[id]).content) {
-            let content = JSON.parse(this.boardObj[id]).content;
-            let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
+          if (this.boardObj[id].parameters) {
+            let content = this.boardObj[id].parameters;
+            let devicePixel = this.boardObj[id].devicePixel;
             if (type == "width") {
               if (eqType && eqType == 16) {
-                return devicePixel.split("*")[1] / 2 / 1.2;
+                return devicePixel.split("*")[1] / 2.4;
               } else if (eqType && eqType == 36) {
-                return devicePixel.split("*")[1] / 4 / 1.2;
+                return devicePixel.split("*")[1] / 4.8;
               }
             } else if (type == "height") {
               if (eqType && eqType == 16) {
-                return devicePixel.split("*")[0] / 2 / 1.2;
+                return devicePixel.split("*")[0] / 2.4;
               } else if (eqType && eqType == 36) {
-                return devicePixel.split("*")[0] / 4 / 1.2;
+                return devicePixel.split("*")[0] / 4.8;
               }
             }
             let array = [];
             let arr = "";
             let fontS = "";
+            console.log(content,"content")
             for (let i = 0; i < content.length; i++) {
-              var itemId = "ITEM" + this.formatNum(i, 3);
-              var con = content[i][itemId][0];
-              con.CONTENT = con.CONTENT.replace("<br>", " ").replace(
-                "&nbsp",
-                " "
-              );
+              var con = content[i];
+              con.CONTENT = con.CONTENT.replace("<br>", " ").replace("&nbsp"," ").replace("<r><n>"," ")
               array.push(con);
-              arr += con.CONTENT.replace("<br>", " ").replace("&nbsp", " ");
+              arr += con.CONTENT;
               arr += " ";
               fontS = Number(con.FONT_SIZE.substring(0, 2));
             }
@@ -1928,39 +1956,65 @@
             } else if (type == "array") {
               return array;
             }
-          } else {
-            let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
-            if (type == "width") {
-              if (eqType && eqType == 16) {
-                return devicePixel.split("*")[1] / 2 / 1.2;
-              } else if (eqType && eqType == 36) {
-                return devicePixel.split("*")[1] / 4 / 1.2;
-              }
-            } else if (type == "height") {
-              if (eqType && eqType == 16) {
-                return devicePixel.split("*")[0] / 2 / 1.2;
-              } else if (eqType && eqType == 36) {
-                return devicePixel.split("*")[0] / 4 / 1.2;
-              }
-            } else if (type == "content") {
-              return "山东高速欢迎您";
-            } else if (type == "fontSize") {
-              return 15 / 1.2;
-            } else if (type == "array") {
-              let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
-              return array;
-            }
-          }
-        } else {
+          } 
+          else {
           if (type == "width") {
             if (eqType && eqType == 16) {
-              return 24 / 1.2;
+              return 20;
             } else if (eqType && eqType == 36) {
               return 26;
             }
           } else if (type == "height") {
             if (eqType && eqType == 16) {
-              return 72 / 1.2;
+              return 60;
+            } else if (eqType && eqType == 36) {
+              return 160;
+            }
+          } else if (type == "content") {
+            return "山东高速欢迎您";
+          } else if (type == "fontSize") {
+            return 15 / 1.2;
+          } else if (type == "array") {
+            let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
+            return array;
+          } else if (type == "content") {
+            return "山东高速欢迎您";
+          }
+        }
+          // else {
+          //   let devicePixel = this.boardObj[id].devicePixel;
+          //   if (type == "width") {
+          //     if (eqType && eqType == 16) {
+          //       return devicePixel.split("*")[1] / 2 / 1.2;
+          //     } else if (eqType && eqType == 36) {
+          //       return devicePixel.split("*")[1] / 4 / 1.2;
+          //     }
+          //   } else if (type == "height") {
+          //     if (eqType && eqType == 16) {
+          //       return devicePixel.split("*")[0] / 2 / 1.2;
+          //     } else if (eqType && eqType == 36) {
+          //       return devicePixel.split("*")[0] / 4 / 1.2;
+          //     }
+          //   } else if (type == "content") {
+          //     return "山东高速欢迎您";
+          //   } else if (type == "fontSize") {
+          //     return 15 / 1.2;
+          //   } else if (type == "array") {
+          //     let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
+          //     return array;
+          //   }
+          // }
+        } 
+        else {
+          if (type == "width") {
+            if (eqType && eqType == 16) {
+              return 20;
+            } else if (eqType && eqType == 36) {
+              return 26;
+            }
+          } else if (type == "height") {
+            if (eqType && eqType == 16) {
+              return 60;
             } else if (eqType && eqType == 36) {
               return 160;
             }
@@ -2130,11 +2184,11 @@
         height: 100%;
         display: flex;
 
-        ::v-deep .zoomClass {
+        /* ::v-deep .zoomClass {
           .el-input--medium .el-input__inner {
             border: 1px solid #05afe3 !important;
           }
-        }
+        } */
 
         /* 显示编号*/
         .display-box {
@@ -2218,9 +2272,9 @@
           width: 1.6vw;
           height: 3vh;
           margin-left: 0.8vw;
-          background: linear-gradient(90deg,
+          /* background: linear-gradient(90deg,
               rgba(0, 172, 237, 0.8),
-              rgba(0, 121, 219, 0.8));
+              rgba(0, 121, 219, 0.8)); */
           // transform: translateY(-1px);
           display: flex;
           justify-content: center;

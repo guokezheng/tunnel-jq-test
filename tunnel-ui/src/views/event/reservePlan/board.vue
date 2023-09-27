@@ -376,6 +376,7 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
+      console.log(this.associatedDeviceId,"this.associatedDeviceId")
       if (this.associatedDeviceId) {
         getBoardContent(this.associatedDeviceId)
           .then((res) => {

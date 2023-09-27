@@ -3,7 +3,7 @@
     :visible.sync="visibleSync" width="80%" destroy-on-close append-to-body :lock-scroll="true"
     :before-close="closeLogin">
     <el-row :gutter="24" style="clear: both">
-      <el-col :span="3" style="float: right">
+      <el-col :span="3" style="float: right;width: 8.5%; ">
         <el-button size="mini" class="tableBlueButtton" @click="submitCatForm" v-hasPermi="['workbench:light:edit']">保存
         </el-button>
         <el-button size="mini" class="tableBlueButtton" @click="catHandleSave" v-hasPermi="['workbench:light:edit']">刷新
@@ -27,7 +27,7 @@
         <el-form ref="loginQueryForm" :model="catFilesModel" :inline="true" class="loginQueryFormClass"
           label-width="70px" height="300px">
           <el-row :gutter="20" style="clear: both">
-            <el-col :span="6">
+            <el-col :span="6" v-hasPermi="['workbench:light:switch']">
               <el-form-item label="状态" align="center" prop="schedulerTime" class="el-form-item-data-type">
                 <template slot-scope="scope">
                   <el-switch v-model="catFilesModel.isStatus" active-color="#13ce66" inactive-color="#ff4949"
@@ -47,7 +47,7 @@
             </el-col>
             <el-col :span="9">
               <el-form-item label="方向" prop="direction" class="el-form-item-data">
-                <el-input disabled style="width: 98%" v-model="
+                <el-input disabled style="width: 98%;text-align: center;" v-model="
                     catFilesModel.direction == '1' ? '潍坊方向' : '济南方向'
                   "></el-input>
                 <!-- <el-select
@@ -70,7 +70,7 @@
           </el-row>
 
           <el-row :gutter="24" style="clear: both; overflow: auto; width: 100%; height: 250px">
-            <el-col :span="24">
+            <el-col :span="24" style="padding-right: 0;">
               <el-form-item label="时间段" v-for="(item, index) in formItems" :key="index"
                 class="el-form-item-direction-Item">
                 <el-time-picker placeholder="选择开始时间" v-model="item.startTime" style="width: 25%"></el-time-picker>
@@ -78,7 +78,7 @@
                 <el-time-picker placeholder="选择结束时间" v-model="item.endTime" style="width: 25%; margin-left: 5px">
                 </el-time-picker>
                 <span style="color: #05aafd; margin-left: 10px; font-weight: bold">下修比例</span>
-                <el-input style="width: 15%; margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"
+                <el-input style="width: 20%; margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"
                   @change="beforeLuminanceEventWei"></el-input>
                 <div class="buttonBox" style="width: 15%; float: right">
                   <el-button class="delete" @click="deleteHandleUpdate(index)"></el-button>
@@ -92,7 +92,7 @@
 
       <el-col :span="11">
         <el-row :gutter="24" style="clear: both">
-          <el-col :span="6" style="float: right">
+          <el-col :span="6" style="float: right;width: 18.5%;">
             <el-button size="mini" class="tableBlueButtton" @click="submitCatFormWei"
               v-hasPermi="['workbench:light:edit']">保存</el-button>
             <el-button size="mini" class="tableBlueButtton" @click="catHandleSave"
@@ -102,7 +102,7 @@
         <el-form ref="loginQueryForm" :model="catFilesModelWei" :inline="true" class="loginQueryFormClass"
           label-width="70px" style="margin-top: 5px" height="300px">
           <el-row :gutter="24" style="clear: both">
-            <el-col :span="6">
+            <el-col :span="5" v-hasPermi="['workbench:light:switch']">
               <el-form-item label="状态" align="center" prop="schedulerTime" class="el-form-item-data-type">
                 <template slot-scope="scope">
                   <el-switch v-model="catFilesModelWei.isStatus" active-color="#13ce66" inactive-color="#ff4949"
@@ -146,7 +146,7 @@
           </el-row>
 
           <el-row :gutter="24" style="clear: both; overflow: auto; width: 100%; height: 250px">
-            <el-col :span="24">
+            <el-col :span="24" style="padding-right: 0;">
               <el-form-item label="时间段" v-for="(item, index) in formItemsWei" :key="index"
                 class="el-form-item-direction-Item">
                 <el-time-picker placeholder="选择开始时间" v-model="item.startTime" style="width: 25%"></el-time-picker>
@@ -154,7 +154,7 @@
                 <el-time-picker placeholder="选择结束时间" v-model="item.endTime" style="width: 25%; margin-left: 5px">
                 </el-time-picker>
                 <span style="color: #05aafd; margin-left: 10px; font-weight: bold">下修比例</span>
-                <el-input style="width: 15%; margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"
+                <el-input style="width: 20%; margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance"
                   @change="beforeLuminanceEventWei"></el-input>
                 <div class="buttonBox" style="width: 15%; float: right">
                   <el-button class="delete" @click="deleteHandleUpdateWei(index)"></el-button>
@@ -602,7 +602,8 @@
         let ds = this.getCatdate(currentDate); //今天
         let ds1 = this.getCatdate(twoDaysAgo); //历史
         let ds2 = this.getCatdate(threeDaysAgo); //昨天
-
+        this.catFilesModel.direction = "2";
+        this.catFilesModelWei.direction = "1";
         // debugger
         if (!!row) {
           //首次
@@ -650,7 +651,9 @@
           holes: 2,
         };
         //今天
+        console.log(json,"json")
         await analysisDataByTime(this.addDateRange(json, ds)).then((response) => {
+          console.log(response,"response")
           if (response.code == 200) {
             for (let i = 0; i < response.data.length; i++) {
               const randomNumber = Math.floor(Math.random() * 70);
@@ -1031,6 +1034,7 @@
       },
       //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
       catChangeEvent() {
+        console.log(this.catFilesModel.tunnelId,this.catFilesModel.direction,"1111")
         if (!!this.catFilesModel.tunnelId && !!this.catFilesModel.direction) {
           let tunnel = this.tunnelData.find(
             (tunnelItem) => tunnelItem.tunnelId == this.catFilesModel.tunnelId
@@ -1071,6 +1075,7 @@
       //车辆照明配置查询
       catListConfig(queryParams) {
         listConfig(queryParams).then((response) => {
+          console.log(response,"response车辆")
           if (response.rows.length > 0) {
             let rows = response.rows[0];
             this.catFilesModel.id = rows.id;
@@ -1197,12 +1202,15 @@
 </script>
 
 <style scoped>
+  .el-form--inline .el-form-item{
+    margin-right: 0;
+  }
   .buttonBox {
     display: flex;
     justify-content: space-around;
     align-items: center;
     height: 36px;
-
+    /* width: 100%; */
     .delete,
     .add {
       width: 16px;
@@ -1225,7 +1233,7 @@
 
   .el-form-item-data {
     .el-form-item__content {
-      width: 85%;
+      width: calc(100% - 70px);
     }
   }
 
@@ -1239,15 +1247,6 @@
     }
   }
 
-  .el-form-item-data {
-    .el-form-item__content {
-      width: 60%;
-    }
-
-    .el-form-item__label {
-      width: 70px !important;
-    }
-  }
 
   .el-form-item-direction-Item {
     .el-form-item__content {

@@ -778,7 +778,6 @@
             <!-- <el-card shadow="always"> -->
               <el-table
                 :data="GDeviceData.deviceList"
-                stripe
                 max-height="400"
                 class="phoneTable"
                 :fit="true"
@@ -870,7 +869,8 @@
             <el-table
               v-show="oneKeyList.length >= 1"
               :data="item.deviceList"
-              style="width: 100%" >
+              style="width: 100%" 
+              class="phoneTable">
               <el-table-column
                 prop="eqName"
                 label="设备名称"
@@ -1815,7 +1815,7 @@ export default {
         deviceId: 7,
       };
       await getWorkStagingRobot(param).then((res) => {
-        console.log(res, "机器人");
+        // console.log(res, "机器人");
         this.robotPositon = (
           (Number(res.data.position) / this.tunnelLang) *
           100
@@ -2278,13 +2278,13 @@ export default {
 /* ::v-deep .el-table tr {
   background: rgba(1, 46, 81, 0.7);
 } */
-::v-deep
+/* ::v-deep
   .el-table--striped
   .el-table__body
   tr.el-table__row--striped
   td.el-table__cell {
   background: rgba(1, 46, 81, 0.7);
-}
+} */
 .heightBox {
   padding-bottom: 2%;
 }
@@ -3102,7 +3102,7 @@ export default {
     /* border-right: 1px solid #03659e !important; */
   }
   .GDeviceCard {
-    background-color: #05213e;
+    /* background-color: #05213e; */
     margin-bottom: 10px;
   }
 }

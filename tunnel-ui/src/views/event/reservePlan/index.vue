@@ -1790,9 +1790,11 @@
         this.$refs["addform1"].validate((valid) => {
           if (valid) {
             if (this.loading) return;
+            console.log(this.reservePlanDrawForm,"this.reservePlanDrawForm")
             const param = {
               planName: this.reservePlanDrawForm.planName,
               tunnelId: this.reservePlanDrawForm.tunnelId,
+              id:this.reservePlanDrawForm.id,
             };
             checkPlanName(param).then((res) => {
               this.dloading = true;

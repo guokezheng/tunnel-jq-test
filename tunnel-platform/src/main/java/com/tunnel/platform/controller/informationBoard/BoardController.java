@@ -565,11 +565,12 @@ public class BoardController extends BaseController {
                 }
                 String content = boardContentData.get("content").toString();
                 String substring = "";
-                if(!protocolType.startsWith(IDeviceProtocol.SANSI)){
+                substring = content.substring(31,content.length());
+                /*if(!protocolType.startsWith(IDeviceProtocol.SANSI)){
                     substring = content.substring(31,content.length());
                 }else {
                     substring = content.substring(27,content.length());
-                }
+                }*/
                 String boardCon = DataUtils.itemContentToJson(substring, protocolType);
                 JSONArray objects = new JSONArray();
                 if(boardCon != null && !"".equals(boardCon) && boardCon.contains("[")){
@@ -775,22 +776,11 @@ public class BoardController extends BaseController {
                     String boardContent = map.get("CONTENT").toString();
                     content.append("\\").append("W").append(boardContent.replaceAll("<r><n>","\\\\A"));
                 }
-            }else if(protocolType.startsWith(IDeviceProtocol.GUANGDIAN)){
+            }else if(protocolType.startsWith(IDeviceProtocol.GUANGDIAN) || protocolType.startsWith(IDeviceProtocol.SANSI)){
                 content.append("[Playlist]<r><n>ITEM_NO=").append(parameters.size());
                 for(int i = 0; i < parameters.size(); i++){
                     Map<String, Object> map = (Map<String, Object>) parameters.get(i);
                     content.append("<r><n>ITEM").append(String.format("%03d",i)).append("=");
-                    content.append(map.get("STAY")).append(",").append(map.get("ACTION")).append(",");
-                    content.append(map.get("SPEED")).append(",").append("\\").append("C");
-                    content.append(map.get("COORDINATE")).append("\\").append("S00\\").append("c");
-                    content.append(map.get("COLOR")).append("\\").append("f").append(map.get("FONT"));
-                    content.append(map.get("FONT_SIZE")).append(map.get("FONT_SIZE")).append(map.get("CONTENT"));
-                }
-            }else {
-                content.append("[list]<r><n>ITEM_NO=").append(parameters.size());
-                for(int i = 0; i < parameters.size(); i++){
-                    Map<String, Object> map = (Map<String, Object>) parameters.get(i);
-                    content.append("<r><n>ITEM").append(i).append("=");
                     content.append(map.get("STAY")).append(",").append(map.get("ACTION")).append(",");
                     content.append(map.get("SPEED")).append(",").append("\\").append("C");
                     content.append(map.get("COORDINATE")).append("\\").append("S00\\").append("c");

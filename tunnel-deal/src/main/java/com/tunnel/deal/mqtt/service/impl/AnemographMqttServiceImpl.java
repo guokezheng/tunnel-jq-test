@@ -3,6 +3,7 @@ package com.tunnel.deal.mqtt.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
@@ -97,14 +98,26 @@ public class AnemographMqttServiceImpl implements HongMengMqttService {
         String windDirection = String.valueOf(jsonObject.get("windDirection"));
         //采集时间
         String collectTime = String.valueOf(jsonObject.get("collectTime"));
+
+        String eqDirection = DeviceDirectionEnum.JI_NAN.getName();
+
+        // 右洞反向   潍坊方向
+        // 左洞正向   潍坊方向
+        if( (!windDirection.equals("0") && sdDevices.getEqDirection().equals(DeviceDirectionEnum.JI_NAN.getCode())) ||
+            (windDirection.equals("0") && sdDevices.getEqDirection().equals(DeviceDirectionEnum.WEI_FANG.getCode()))
+        ){
+            eqDirection = DeviceDirectionEnum.WEI_FANG.getName();
+        }
+
         //修改设备实时状态
         sdDeviceDataService.updateDeviceData(sdDevices,windSpeed, (long) DevicesTypeItemEnum.FENG_SU.getCode(),true);
-        sdDeviceDataService.updateDeviceData(sdDevices,windDirection, (long) DevicesTypeItemEnum.FENG_XIANG.getCode(),true);
+        sdDeviceDataService.updateDeviceData(sdDevices,eqDirection, (long) DevicesTypeItemEnum.FENG_XIANG.getCode(),true);
 
         String deviceId = sdDevices.getEqId();
         //设备掉线监测
         hongMengMqttCommonService.setRedisCacheDeviceStatus(deviceId);
     }
+
 
     /**
      * 处理设备状态上报数据

@@ -259,6 +259,9 @@ public class SdEventController extends BaseController
         for (int i = 0; i < jlyTunnel.size(); i++) {
             tunnels[i] = jlyTunnel.get(i).getTunnelId();
         }
+        if(tunnels.length == 0){
+            return Result.success(0);
+        }
         return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum(tunnels));
     }
 

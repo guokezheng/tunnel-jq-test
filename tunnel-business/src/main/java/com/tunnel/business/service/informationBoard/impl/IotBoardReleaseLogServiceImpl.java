@@ -2,6 +2,7 @@ package com.tunnel.business.service.informationBoard.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.ServletUtils;
@@ -10,7 +11,9 @@ import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.domain.informationBoard.IotDeviceAccess;
 import com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper;
 import com.tunnel.business.mapper.informationBoard.IotDeviceAccessMapper;
+import com.tunnel.business.mapper.informationBoard.SdIotDeviceMapper;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
+import com.tunnel.business.utils.util.DataUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,9 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
     private IotBoardReleaseLogMapper iotBoardReleaseLogMapper;
     @Autowired
     private IotDeviceAccessMapper iotDeviceAccessMapper;
+
+    @Autowired
+    private SdIotDeviceMapper sdIotDeviceMapper;
 
     /**
      * 查询情报板内容发布日志
@@ -67,6 +73,8 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
         List<IotBoardReleaseLog> iotBoardReleaseLogs = iotBoardReleaseLogMapper.selectIotBoardReleaseLogList(iotBoardReleaseLog);
         List<IotDeviceAccess> iotDeviceAccesses = iotDeviceAccessMapper.selectIotDeviceAccessList(null);
         for (int i = 0;i < iotBoardReleaseLogs.size();i++) {
+            JSONObject jsonObject = new JSONObject();
+            JSONArray array = new JSONArray();
             IotBoardReleaseLog releaseLog = iotBoardReleaseLogs.get(i);
             String releaseNewContent = releaseLog.getReleaseNewContent();
             if (releaseNewContent == null || "".equals(releaseNewContent)) {
@@ -77,59 +85,33 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
                 releaseLog.setReleaseNewContent("历史记录获取异常");
                 continue;
             }
-            String[] items = releaseNewContent.split("ITEM");
-            if (items.length == 0) {
-                continue;
+            String protocolName = sdIotDeviceMapper.selectIotDeviceById(Long.valueOf(releaseLog.getDeviceId())).getProtocolName();
+            String boardCon = DataUtils.itemContentToJson(releaseNewContent, protocolName);
+            JSONArray objects = new JSONArray();
+            if(boardCon != null && !"".equals(boardCon) && boardCon.contains("[")){
+                objects = JSONObject.parseArray(boardCon);
             }
-            Long deviceId = Long.valueOf(releaseLog.getDeviceId());
-            JSONObject jsonObject = new JSONObject();
-            JSONArray array = new JSONArray();
-            for (int j = 0;j < items.length;j++) {
-                String item = items[j];
-                if (item.equals("") || item == null) {
-                    continue;
-                }
-                JSONObject itemObject = new JSONObject();
+            for(int e = 0; e < objects.size(); e++){
                 JSONArray itemArray = new JSONArray();
-                JSONObject object = new JSONObject();
-                String num = item.substring(0,item.indexOf("=") == -1 ? 0 : item.indexOf("="));
-                item = item.substring(item.indexOf("=") + 1 == -1 ? 0 : item.indexOf("=") + 1);
-                String stay = item.substring(0, item.indexOf(",") == -1 ? 0 : item.indexOf(","));
-                object.put("STAY", stay);
-                item = item.substring(item.indexOf(",") + 1 == -1 ? 0 : item.indexOf(",") + 1);
-                String action = item.substring(0, item.indexOf(",") == -1 ? 0 : item.indexOf(","));
-                object.put("ACTION", action);
-                item = item.substring(item.indexOf(",") + 1 == -1 ? 0 : item.indexOf(",") + 1);
-                String speed = item.substring(0, item.indexOf(",") == -1 ? 0 : item.indexOf(","));
-                object.put("SPEED", speed);
-                item = item.substring(item.indexOf("C") + 1 == -1 ? 0 : item.indexOf("C") + 1);
-                String coordinate = item.substring(0, 6);
-                object.put("COORDINATE", coordinate);
-                item = item.substring(item.indexOf("c") + 1 == -1 ? 0 : item.indexOf("c") + 1);
-                String color = item.substring(0, 12);
-                color = handleColor(color);
-                object.put("COLOR", color);
-                item = item.substring(item.indexOf("f") == -1 ? 0 : item.indexOf("f"));
-                String font = item.substring(1, 2);
-                font = handleFont(font);
-                object.put("FONT", font);
-                item = item.substring(2);
-                String fontSize = item.substring(0, 4);
-                object.put("FONT_SIZE", fontSize);
-                item = item.substring(4);
-                //item = item.replaceAll("<r><n>", "");
-                object.put("CONTENT", item);
-                object.put("STATE", "true");
-                for (int m = 0;m < iotDeviceAccesses.size();m++) {
-                    IotDeviceAccess iotDeviceAccess = iotDeviceAccesses.get(m);
-                    if (iotDeviceAccess.getDeviceId().longValue() == deviceId.longValue()
-                            && iotDeviceAccess.getDevicePixel() != null && !iotDeviceAccess.getDevicePixel().equals("")) {
-                        object.put("DEVICEPIXEL", iotDeviceAccess.getDevicePixel());
-                        releaseLog.setDevicePixel(iotDeviceAccess.getDevicePixel());
+                JSONObject itemObject = new JSONObject();
+                JSONObject jsonObject1 = JSONObject.parseObject(objects.get(e).toString());
+                String key = "ITEM" + String.format("%03d", e);
+                JSONArray jsonArray = JSONObject.parseArray(jsonObject1.get(key).toString());
+                for(int a = 0; a < jsonArray.size(); a++){
+                    JSONObject jsonObject2 = JSONObject.parseObject(jsonArray.get(a).toString());
+                    if(protocolName.startsWith("DINGEN")){
+                        String content1 = jsonObject2.getString("CONTENT");
+                        if(content1.contains("W")){
+                            content1 = content1.substring(1, jsonObject2.getString("CONTENT").length());
+                        }
+                        jsonObject2.put("CONTENT",content1);
                     }
+                    IotDeviceAccess iotDeviceAccess = iotDeviceAccessMapper.selectIotDeviceAccessById(Long.valueOf(releaseLog.getDeviceId()));
+                    jsonObject2.put("STATE", "true");
+                    jsonObject2.put("DEVICEPIXEL",iotDeviceAccess.getDevicePixel());
+                    itemArray.add(jsonObject2);
                 }
-                itemArray.add(object);
-                itemObject.put("ITEM" + num, itemArray);
+                itemObject.put(key, itemArray);
                 array.add(itemObject);
             }
             jsonObject.put("content", array);

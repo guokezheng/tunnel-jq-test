@@ -202,6 +202,7 @@ export default {
         this.$cache.local.set("manageStation", res.msg);
       });
       getConfigKey("sd.navigationBar").then((res) => {
+        console.log(res,"res")
         let sideTheme = "theme-blue";
         if (res.msg == "0") {
           sideTheme = "theme-dark";

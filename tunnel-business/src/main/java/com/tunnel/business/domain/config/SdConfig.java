@@ -26,6 +26,12 @@ public class SdConfig extends BaseEntity
     @Excel(name = "所属模块", dictType = "sd_config_module")
     private String configModule;
 
+
+    /** 隧道名称 */
+    @Excel(name = "隧道名称")
+    private String tunnelId;
+
+
     /** 页面名称 */
     @Excel(name = "页面名称")
     private String name;
@@ -39,6 +45,13 @@ public class SdConfig extends BaseEntity
     @Excel(name = "页面路径")
     private String url;
 
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
 
     public String getConfigModule() {
         return configModule;

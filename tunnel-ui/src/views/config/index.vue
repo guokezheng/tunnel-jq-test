@@ -46,11 +46,12 @@
       <!--      <el-table-column label="页面配置ID" align="center" prop="id"/>-->
       <el-table-column label="所属部门" align="center" prop="deptId" />
       <el-table-column
-        label="所属模块"
+        label="所属部门"
         align="center"
         prop="configModule"
         :formatter="configModuleFormat"
       />
+      <el-table-column label="隧道名称" align="center" prop="tunnelId" />
       <el-table-column label="页面名称" align="center" prop="name" />
       <el-table-column label="页面标识符" align="center" prop="code" />
       <el-table-column label="页面路径" align="center" prop="url" />
@@ -103,6 +104,7 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-form-item label="归属部门" prop="deptId">
           <treeselect
+            @select="getTunnel"
             v-model="form.deptId"
             :options="deptOptions"
             :disable-branch-nodes="true"
@@ -110,6 +112,20 @@
             placeholder="请选择归属部门"
             @input="changeParentDept"
           />
+        </el-form-item>
+        <el-form-item label="所属隧道" prop="eqTunnelId">
+          <el-select
+            v-model="form.tunnelId"
+            placeholder="请选择所属隧道"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in eqTunnelData"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="所属模块" prop="configModule">
           <el-select v-model="form.configModule" placeholder="请选择所属模块">
@@ -151,6 +167,7 @@ import {
 import { treeSelectYG1 } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "Config",
@@ -178,6 +195,8 @@ export default {
       configList: [],
       // 配置模块列表
       configModuleList: [],
+      //所属隧道
+      eqTunnelData: {},
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -209,13 +228,16 @@ export default {
           { required: true, message: "页面名称不能为空", trigger: "blur" },
           { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
+        tunnelId: [
+          { required: true, message: "所属隧道不能为空", trigger: "blur" },
+        ],
         code: [
           { required: true, message: "页面标识符不能为空", trigger: "blur" },
           { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         url: [
           { required: true, message: "页面路径不能为空", trigger: "blur" },
-          { max: 50, message: "最长输入50个字符", trigger: "blur" },
+          { max: 300, message: "最长输入300个字符", trigger: "blur" },
         ],
       },
     };
@@ -245,6 +267,15 @@ export default {
           self.lx_boxShow = false;
         }
       }
+    },
+    /** 所属隧道 */
+    getTunnel(obj) {
+      this.queryParams.deptId = obj.id;
+      console.log("this.queryParams",this.queryParams);
+      listTunnels(this.queryParams).then((response) => {
+        console.log(response.rows, "所属隧道列表");
+        this.eqTunnelData = response.rows;
+      });
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
@@ -308,6 +339,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.eqTunnelData = [];
       this.reset();
       this.getTreeselect();
       this.open = true;
@@ -315,6 +347,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.eqTunnelData = [];
       this.reset();
       const id = row.id || this.ids;
       getConfig(id).then((response) => {

@@ -359,10 +359,10 @@
             splicingBoard(param).then((res) => {
               this.$modal.msgSuccess("发布成功");
             }).catch((res) => {
-              this.$message({
-                type: "info",
-                message: res.msg,
-              });
+              // this.$message({
+              //   type: "info",
+              //   message: res.msg,
+              // });
             });
             // let parameters = []
             // parameters.push(obj)

@@ -45,6 +45,9 @@ router.beforeEach((to, from, next) => {
           "code":to.query.code,
           "asideCollapse":to.query.asideCollapse
         }).then(() => {
+          getConfigKey("sd.moduleSwitch").then((res) => {
+            cache.local.set("manageStation", res.msg);
+          });
           getConfigKey("sd.navigationBar").then((res) => {
             let sideTheme = "theme-blue";
             if (res.msg == "0") {
@@ -80,6 +83,9 @@ router.beforeEach((to, from, next) => {
 
       //测试环境的单点登录
       store.dispatch("LoginTest").then(() => {
+        getConfigKey("sd.moduleSwitch").then((res) => {
+          cache.local.set("manageStation", res.msg);
+        });
         getConfigKey("sd.navigationBar").then((res) => {
           let sideTheme = "theme-blue";
           if (res.msg == "0") {

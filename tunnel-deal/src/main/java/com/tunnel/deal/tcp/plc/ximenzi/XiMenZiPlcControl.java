@@ -460,7 +460,7 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             deviceDataService.updateDeviceData(sdDevices, result,itemId);
 
             //储存历史数据
-            setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
+            setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
             //设置设备在线
             sdDevicesService.updateOnlineStatus(eqId,false);
             }

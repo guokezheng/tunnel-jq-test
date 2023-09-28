@@ -4,7 +4,8 @@ import { Message } from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
-
+import { getConfigKey } from "@/api/system/config";
+import cache from './plugins/cache'
 NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login','/auth-redirect', '/bind', '/register']
@@ -40,12 +41,40 @@ router.beforeEach((to, from, next) => {
     // 没有token
     if(to.path === '/login' && to.query.code !== "" && typeof to.query.code !== "undefined"){
       //正式环境的单点登录
-
         store.dispatch("Login1",{
           "code":to.query.code,
           "asideCollapse":to.query.asideCollapse
         }).then(() => {
-          next({ path: '/' })
+          getConfigKey("sd.moduleSwitch").then((res) => {
+            cache.local.set("manageStation", res.msg);
+          });
+          getConfigKey("sd.navigationBar").then((res) => {
+            let sideTheme = "theme-blue";
+            if (res.msg == "0") {
+              sideTheme = "theme-dark";
+            } else {
+              sideTheme = "theme-blue";
+            }
+            cache.local.set("navigationBar", res.msg);
+            store.dispatch("settings/changeSetting", {
+              key: "sideTheme",
+              value: sideTheme,
+            });
+            cache.local.set(
+              "layout-setting",
+              `{
+                "topNav":${store.state.settings.topNav},
+                "tagsView":${store.state.settings.tagsView},
+                "weatherView":${store.state.settings.weatherView},
+                "fixedHeader":${store.state.settings.fixedHeader},
+                "sidebarLogo":${store.state.settings.sidebarLogo},
+                "dynamicTitle":${store.state.settings.dynamicTitle},
+                "sideTheme":"${sideTheme}",
+                "theme":"${store.state.settings.theme}"
+              }`
+            );
+            next({ path: '/' })
+          });
         }).catch(() => {
           next(`/login?redirect=${to.fullPath}`)// 否则全部重定向到登录页
       })
@@ -54,12 +83,42 @@ router.beforeEach((to, from, next) => {
 
       //测试环境的单点登录
       store.dispatch("LoginTest").then(() => {
-        next({ path: '/' })
+        getConfigKey("sd.moduleSwitch").then((res) => {
+          cache.local.set("manageStation", res.msg);
+        });
+        getConfigKey("sd.navigationBar").then((res) => {
+          let sideTheme = "theme-blue";
+          if (res.msg == "0") {
+            sideTheme = "theme-dark";
+          } else {
+            sideTheme = "theme-blue";
+          }
+          cache.local.set("navigationBar", res.msg);
+          store.dispatch("settings/changeSetting", {
+            key: "sideTheme",
+            value: sideTheme,
+          });
+          cache.local.set(
+            "layout-setting",
+            `{
+              "topNav":${store.state.settings.topNav},
+              "tagsView":${store.state.settings.tagsView},
+              "weatherView":${store.state.settings.weatherView},
+              "fixedHeader":${store.state.settings.fixedHeader},
+              "sidebarLogo":${store.state.settings.sidebarLogo},
+              "dynamicTitle":${store.state.settings.dynamicTitle},
+              "sideTheme":"${sideTheme}",
+              "theme":"${store.state.settings.theme}"
+            }`
+          );
+          next({ path: '/' })
+        });
       }).catch(() => {
         next(`/login?redirect=${to.fullPath}`)// 否则全部重定向到登录页
       })
     } else{
       if (whiteList.indexOf(to.path) !== -1) {
+        console.log("88888")
         // 在免登录白名单，直接进入
         next()
       }else{

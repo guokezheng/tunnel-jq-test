@@ -1338,6 +1338,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null and eqType !=''">
                 and eq_type = #{eqType}
             </if>
+            <if test="eqTunnelId != null and eqTunnelId != ''">
+                and eq_tunnel_id = #{eqTunnelId}
+            </if>
         </where>
         GROUP BY
             eq_id,

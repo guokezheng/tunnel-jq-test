@@ -384,7 +384,7 @@ public class KafkaReadListenToWanJiTopic {
             SdRadarDetectData radarDetectData = setRadarData(radar,tunnelId,direction,timeStamp);
             SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
             //TODO 数据量过大暂时不存入数据库
-            //detectDataMapper.insertSdRadarDetectData(radarDetectData);
+            detectDataMapper.insertSdRadarDetectData(radarDetectData);
             if(StringUtils.isNotEmpty(radarDetectData.getVehicleLicense()) && StringUtils.isNotNull(radarDetectData.getVehicleLicense())){
                 //将数据推送至物联
                 //sendKafka(sdRadarDetectData);

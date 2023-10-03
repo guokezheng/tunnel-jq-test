@@ -108,7 +108,6 @@ public class HongMengMqttTask {
         });
     }
 
-    @Scheduled(cron="0/10 * * * * ?")
     public void selectHongMengDeviceStatus(){
         List<SdDevices> hongMengDeviceList = selectHongMengDeviceList();
         List<String> onList = new ArrayList<>();

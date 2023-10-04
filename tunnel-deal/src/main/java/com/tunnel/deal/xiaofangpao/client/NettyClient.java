@@ -38,19 +38,14 @@ public class NettyClient {
         private static NettyClient instance = new NettyClient();
     }
 
-    public void init(int times){
-        this.reconnectTimes = times;
-        start();
-        connect();
-    }
-
     private EventLoopGroup workerGroup = new NioEventLoopGroup(1);
     private int port = 8001;
     private String host="10.168.69.3";
 
     private Bootstrap bootstrap;
 
-    public void start()  {
+    public void init(int times){
+        this.reconnectTimes = times;
 
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.KE_DA_LI_AN.getCode());
@@ -70,6 +65,13 @@ public class NettyClient {
 
         host = url[1].replaceAll("/","");
         port = Integer.parseInt(url[2]);
+
+        start();
+        connect();
+    }
+
+
+    public void start()  {
 
         bootstrap = new Bootstrap();
         // 客户端不需要处理连接 所以一个线程组就够了

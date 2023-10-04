@@ -294,7 +294,7 @@ public class FireMonitorDataParse {
         String start = "40 40";
 
         // 控制单元
-        String commend0 = " 08 00 01 06 " + toHex(second) + " " + toHex(minute) + " " + toHex(hour) + " " + toHex(day) + " " +  toHex(month) + " " + toHex(Integer.parseInt(year.substring(2)));
+        String commend0 = " 02 00 01 06 " + toHex(second) + " " + toHex(minute) + " " + toHex(hour) + " " + toHex(day) + " " +  toHex(month) + " " + toHex(Integer.parseInt(year.substring(2)));
         String commend1= " 00 00 00 00 00 00 00 00 00 00 00 00";
         String commend2 = " 24 00 02" ;
 
@@ -302,7 +302,7 @@ public class FireMonitorDataParse {
         String content =  " 3C 01 01 02";
         // 授权码
         String code = getAscii("6E6017A7145935A0EFFE1714FBAA2848");
-        String num = " " + makeChecksum((commend0 + commend1 + commend2).replaceAll(" ",""));
+        String num = " " + makeChecksum((commend0 + commend1 + commend2 + content + code).replaceAll(" ",""));
         // 结束字符
         String end = " 23 23";
 
@@ -342,7 +342,9 @@ public class FireMonitorDataParse {
     }
 
     public static void main(String[] args) {
+        System.out.println(getValidCode());
 
+       // System.out.println(makeChecksum("02 00 01 06 01 02 11 04 0A 17 00 00 00 00 00 00 00 00 00 00 00 00 24 00 02").replaceAll(" ",""));
         //System.out.println(getCode());
         // 16 转 10
         //System.out.println(Integer.parseInt("40",16));

@@ -858,6 +858,7 @@ export default {
       height: 3vh;
       line-height: 3vh;
       padding: 0 0.6vw;
+      font-size: 0.7vw;
     }
 }
 ::v-deep .el-card__body {

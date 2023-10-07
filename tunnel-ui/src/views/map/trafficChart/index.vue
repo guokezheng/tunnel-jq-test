@@ -23,10 +23,12 @@
         userQueryParams: {
           userName: this.$store.state.user.name,
         },
-        url:''
+        url:'',
+        currentTunnel:''
       };
     },
     created() {
+      this.currentTunnel = this.$cache.local.get("currentTunnel")
       this.getDeptId()
     },
     methods: {
@@ -36,11 +38,13 @@
           this.userDeptId = response.rows[0].deptId;
           this.getConfigPage()
         });
+
       },
       getConfigPage(){
         const params = {
           deptId:this.userDeptId,
           code:'trafficChart',
+          tunnelId:JSON.parse(this.currentTunnel).tunnelId
         }
         configPage(params).then((res)=>{
           console.log(res,"trafficChart")

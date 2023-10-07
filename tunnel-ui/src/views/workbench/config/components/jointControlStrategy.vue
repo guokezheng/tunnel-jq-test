@@ -420,10 +420,10 @@
     },
     created() {
       this.treeModel = '0'
-      this.$refs.tree.setCheckedNodes([{
-          value: 0,
-          label: '时序自动控制'
-        }]);
+      // this.$refs.tree.setCheckedNodes([{
+      //     value: 0,
+      //     label: '时序自动控制'
+      //   }]);
       // 日常策略
       this.getDicts("sd_strategy_type").then((response) => {
         this.strategyTypeOptions = response.data;
@@ -564,7 +564,7 @@
               }
             }
           }
-          this.$forceUpdate();
+          // this.$forceUpdate();
         });
       },
       //车辆任务列表
@@ -980,6 +980,9 @@
       show: Boolean,
     },
     watch: {
+      "treeModel":function(newVal,oldVal){
+        console.log(newVal,"newVal")
+      },
       checkDefault: {
         handler(newVal, oldVal) {
           // // // debugger

@@ -2036,7 +2036,6 @@
       },
     },
     created() {
-      // debugger
       //小车运行渲染定时任务
       clearInterval(this.timerCat);
       window.clearInterval(this.robotTimer);

@@ -492,7 +492,7 @@
         queryParams.pageSize = 999;
         queryParams.strategyType = 1;
         queryParams.strategyGroup = 1;
-        queryParams.timingType = 0;
+        // queryParams.timingType = 0;
         if (data == "resetQuery") {
           this.queryParams = {};
         }

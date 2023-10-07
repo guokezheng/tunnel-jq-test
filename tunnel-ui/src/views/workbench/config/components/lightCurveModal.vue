@@ -29,8 +29,8 @@
         <el-form ref="loginQueryForm" :model="lightFilesModel" :inline="true" class="loginQueryFormClass"
           label-width="70px" height="300px">
           <el-row :gutter="24" style="clear:both; margin: 0;">
-            <el-col :span="5" v-hasPermi="['workbench:light:switch']"> 
-              <el-form-item label="启用" align="center" prop="schedulerTime" class="el-form-item-data-type">
+            <el-col :span="5" v-hasPermi="['workbench:light:switch']">
+              <el-form-item label="启用"  label-width="50px" align="center" prop="schedulerTime" class="el-form-item-data-type">
                 <template slot-scope="scope">
                   <el-switch v-model="lightFilesModel.isStatus" active-color="#13ce66" inactive-color="#ff4949"
                     active-value="0" inactive-value="1" @change="changeCattate()">
@@ -71,10 +71,10 @@
             </el-col>
           </el-row>
           <div style="width: 100%;height: 250px;overflow: auto; ">
-            <el-row :gutter="24" style="clear:both;width: 100%; height: 60px;margin: 0;" 
+            <el-row :gutter="24" style="clear:both;width: 100%; height: 60px;margin: 0;"
               v-for="(item, index) in lightFormItems" :key="index">
               <el-col :span="9" style="padding-right: 0;">
-                <el-form-item label="选择设备" 
+                <el-form-item label="选择设备"
                   class="el-form-item-direction-Item">
                   <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 100%">
                     <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
@@ -83,7 +83,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="9" style="padding-right: 4px;">
-                <el-form-item label="下修比例" 
+                <el-form-item label="下修比例"
                   class="el-form-item-direction-Item">
                   <el-input style="width: 100%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance" />
                 </el-form-item>
@@ -93,7 +93,7 @@
                   <el-button class="delete" @click="deleteHandleUpdate(index)"></el-button>
                   <el-button class="add" @click="addHandleUpdate(index)"></el-button>
                 </div>
-              </el-col>   
+              </el-col>
               <!-- <el-col :span="24">
                 <el-form-item label="选择设备" v-for="(item, index) in lightFormItems" :key="index"
                   class="el-form-item-direction-Item">
@@ -115,7 +115,7 @@
               </el-col> -->
             </el-row>
           </div>
-          
+
         </el-form>
       </el-col>
       <el-col :span="10" style="margin-top: 1%">
@@ -132,7 +132,7 @@
           label-width="70px" style="margin-top: 5px" height="300px">
           <el-row :gutter="24" style="clear:both; margin: 0;">
             <el-col :span="5" v-hasPermi="['workbench:light:switch']">
-              <el-form-item label="启用" align="center" prop="schedulerTime" class="el-form-item-data-type">
+              <el-form-item label="启用"   label-width="50px" align="center" prop="schedulerTime" class="el-form-item-data-type">
                 <template slot-scope="scope">
                   <el-switch v-model="lightFilesModelWei.isStatus" active-color="#13ce66" inactive-color="#ff4949"
                     active-value="0" inactive-value="1">
@@ -166,7 +166,7 @@
             <el-row :gutter="24" style="clear:both;width: 100%; height: 60px;margin: 0;"
               v-for="(item, index) in lightFormItemsWei" :key="index">
               <el-col :span="9" style="padding-right: 0;">
-                <el-form-item label="选择设备" 
+                <el-form-item label="选择设备"
                   class="el-form-item-direction-Item">
                   <el-select clearable v-model="item.lightParagraph" placeholder="请选择设备" style="width: 100%">
                     <el-option v-for="dict in lightParagraphList" :key="dict.value" :label="dict.dictLabel"
@@ -175,7 +175,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="9" style="padding-right: 4px;">
-                <el-form-item label="下修比例" 
+                <el-form-item label="下修比例"
                 class="el-form-item-direction-Item">
                   <el-input style="width: 100%;margin-left: 5px" placeholder="请输入下修比例" v-model="item.beforeLuminance" />
                 </el-form-item>
@@ -185,10 +185,10 @@
                   <el-button class="delete" @click="deleteHandleUpdateWei(index)"></el-button>
                   <el-button class="add" @click="addHandleUpdateWei(index)"></el-button>
                 </div>
-              </el-col>  
+              </el-col>
             </el-row>
           </div>
-          
+
         </el-form>
       </el-col>
     </el-row>
@@ -801,9 +801,15 @@
               ).then((response) => {
                 let list1 = response.rows;
                 list1 = this.lightDatafiler(list1)
-                for (let i = 0; i < list1.length; i++) {
-                  //前天
-                  this.yDataLight.push(list1[i].data)
+
+                if(list1.length>0){
+                  //昨天光强
+                  for (let i = 0; i < list1.length; i++) {
+                    //前天
+                    this.yDataLight.push(list1[i].data)
+                  }
+                }else{
+                  this.yDataLight = []
                 }
               });
               dataLogInfoLineList(
@@ -812,10 +818,15 @@
                 // debugger
                 let list1 = response.rows;
                 list1 = this.lightDatafiler(list1)
-                //昨天光强
-                for (let i = 0; i < list1.length; i++) {
-                  this.yDataLight1.push(list1[i].data)
+                if(list1.length>0){
+                  //昨天光强
+                  for (let i = 0; i < list1.length; i++) {
+                    this.yDataLight1.push(list1[i].data)
+                  }
+                }else{
+                  this.yDataLight1 = []
                 }
+
               });
               dataLogInfoLineList(
                 this.addDateRange(this.queryParamsLight, ds)
@@ -824,9 +835,15 @@
                 let list1 = response.rows;
                 list1 = this.lightDatafiler(list1)
                 //今天
-                for (let i = 0; i < list1.length; i++) {
-                  // this.XDataLight.push(list1[i].createTime)
-                  this.yDataLight2.push(list1[i].data)
+
+
+                if(list1.length>0){
+                  for (let i = 0; i < list1.length; i++) {
+                    // this.XDataLight.push(list1[i].createTime)
+                    this.yDataLight2.push(list1[i].data)
+                  }
+                }else{
+                  this.yDataLight2 = []
                 }
                 setTimeout(() => {
                   this.$nextTick(() => {
@@ -977,6 +994,7 @@
       },
       //光强 修改隧道名称查看不同隧道 光强照明配置
       lightChangeEvent(indextabs) {
+        debugger
         console.log(this.lightFilesModel.tunnelId,this.lightFilesModel.direction,"indextabs")
         if (!!this.lightFilesModel.tunnelId && !!this.lightFilesModel.direction) {
           let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModel.tunnelId)

@@ -189,6 +189,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 SdDevices devices = new SdDevices();
                 devices.setExternalSystemId(systemId);
                 devices.setExternalDeviceId(sn);
+
+                if(!devices.getEqTunnelId().equals("JQ-JiNan-WenZuBei-MJY")){
+                    devices.setQueryPointAddress(address);
+                }
+
                 // 火灾报警  1左洞 2右洞
                 // 隧道平台  1右洞 2左洞
                 if(loop.equals("2")){
@@ -264,6 +269,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     devData.setUpdateTime(new Date());
                     sdDeviceDataMapper.updateSdDeviceData(devData);
                    // sendData.pushDevicesDataNowTime(devData);
+                }
+
+                // 设备故障不产生事件
+                if (alarmType.contains("故障")) {
+                    return;
                 }
                 //存储事件到事件表
                 SdEvent sdEvent = new SdEvent();
@@ -437,29 +447,29 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 //                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "on");
 //            }
 
-            List<SdDevices> fireComponentsList = sdDevicesMapper.selectDevicesListByExternalSystemId(fireComponentDevice);
-            for (int j = 0; j < fireComponentsList.size(); j++) {
-                SdDevices fireComponent = fireComponentsList.get(j);
-                if ("1".equals(isAlarm)) {
-                    //当前主机已经断开链接，没有必要存储无用的设备状态信息
-                    SdDeviceData data = new SdDeviceData();
-                    data.setDeviceId(fireComponent.getEqId());
-                    List<SdDeviceData> sdDeviceData = sdDeviceDataMapper.selectSdDeviceDataList(data);
-                    for (int z = 0;z < sdDeviceData.size();z++) {
-                        Long id = sdDeviceData.get(z).getId();
-                        sdDeviceDataMapper.deleteSdDeviceDataById(id);
-                    }
-                } else {
-                    //添加正常数据到device_data
-                    if (fireComponent.getEqType().longValue() == DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode().longValue()) {
-                        saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
-                    } else if (fireComponent.getEqType().longValue() == DevicesTypeEnum.SHOU_BAO.getCode().longValue()) {
-                        saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
-                    } else if (fireComponent.getEqType().longValue() == DevicesTypeEnum.HUO_YAN_TAN_CE_QI.getCode().longValue()) {
-                        saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode());
-                    }
+        List<SdDevices> fireComponentsList = sdDevicesMapper.selectDevicesListByExternalSystemId(fireComponentDevice);
+        for (int j = 0; j < fireComponentsList.size(); j++) {
+            SdDevices fireComponent = fireComponentsList.get(j);
+            if ("1".equals(isAlarm)) {
+                //当前主机已经断开链接，没有必要存储无用的设备状态信息
+                SdDeviceData data = new SdDeviceData();
+                data.setDeviceId(fireComponent.getEqId());
+                List<SdDeviceData> sdDeviceData = sdDeviceDataMapper.selectSdDeviceDataList(data);
+                for (int z = 0;z < sdDeviceData.size();z++) {
+                    Long id = sdDeviceData.get(z).getId();
+                    sdDeviceDataMapper.deleteSdDeviceDataById(id);
                 }
-                //声光报警器数据推送到万基
+            } else {
+                //添加正常数据到device_data
+                if (fireComponent.getEqType().longValue() == DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode().longValue()) {
+                    saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
+                } else if (fireComponent.getEqType().longValue() == DevicesTypeEnum.SHOU_BAO.getCode().longValue()) {
+                    saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
+                } else if (fireComponent.getEqType().longValue() == DevicesTypeEnum.HUO_YAN_TAN_CE_QI.getCode().longValue()) {
+                    saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode());
+                }
+            }
+            //声光报警器数据推送到万基
 //                Map<String, Object> map = new HashMap<>();
 //                map.put("deviceId", fireComponent.getEqId());
 //                map.put("deviceType", fireComponent.getEqType());
@@ -468,7 +478,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 //                jsonObject.put("alarmSource", "0");
 //                map.put("deviceData", jsonObject);
 //                radarEventService.sendBaseDeviceStatus(map);
-            }
+        }
 //        }
     }
 

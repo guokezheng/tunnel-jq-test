@@ -1,8 +1,12 @@
 package com.tunnel.deal.mqtt.task;
 
 import com.ruoyi.common.core.redis.RedisCache;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
@@ -12,10 +16,14 @@ import com.zc.common.constant.RedisKeyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * describe: 鸿蒙控制器-Mqtt-定时任务类
@@ -45,6 +53,9 @@ public class HongMengMqttTask {
 
     @Autowired
     private ISdDevicesService devicesService;
+
+    @Autowired
+    private SdDevicesMapper devicesMapper;
 
     /**
      * 在线时间检测控制时间，定时任务传入方便修改
@@ -97,6 +108,36 @@ public class HongMengMqttTask {
         });
     }
 
+    public void selectHongMengDeviceStatus(){
+        List<SdDevices> hongMengDeviceList = selectHongMengDeviceList();
+        List<String> onList = new ArrayList<>();
+        List<String> offList = new ArrayList<>();
+        hongMengDeviceList.stream().forEach(item -> {
+            boolean reachable = true;
+            try {
+                reachable = InetAddress.getByName(item.getIp()).isReachable(100);
+                if(reachable != true){
+                    List<String> collect = devicesMapper.getDevicesListByFEqId(item.getEqId()).stream().map(SdDevices::getEqId).collect(Collectors.toList());
+                    offList.addAll(collect);
+                    devicesMapper.updateSdDevicesBatch(item.getEqId(),DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+                }else {
+                    List<String> collect = devicesMapper.getDevicesListByFEqId(item.getEqId()).stream().map(SdDevices::getEqId).collect(Collectors.toList());
+                    onList.addAll(collect);
+                    devicesMapper.updateSdDevicesBatch(item.getEqId(),DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        //更新设备状态
+        if(offList.size() > 0){
+            devicesMapper.updateDeviceStatusBatch(offList,DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+        }
+        if(onList.size() > 0){
+            devicesMapper.updateDeviceStatusBatch(onList,DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+        }
+    }
+
     /**
      * 获取所有配置MQTT对应协议的鸿蒙控制器设备信息
      * @return
@@ -114,6 +155,30 @@ public class HongMengMqttTask {
             //查询协议对应的设备
             SdDevices queryDevices = new SdDevices();
             queryDevices.setProtocolId(sdDevicesProtocol.getId());
+            devicesList = sdDevicesService.selectDevicesByProtocol(queryDevices);
+        }
+        return devicesList;
+    }
+
+    /**
+     * 获取所有配置MQTT对应协议的鸿蒙控制器
+     * @return
+     */
+    public List<SdDevices> selectHongMengDeviceList(){
+        List<SdDevices> devicesList = new ArrayList<>();
+        //协议标识
+        String protocolCode = DeviceProtocolCodeEnum.HONGMENG_MQTT_PROTOCOL_CODE.getCode();
+        SdDevicesProtocol sdDevicesProtocol = new SdDevicesProtocol();
+        sdDevicesProtocol.setProtocolCode(protocolCode);
+        //查询对应协议
+        List<SdDevicesProtocol> protocolList = sdDevicesProtocolService.selectSdDevicesProtocolList(sdDevicesProtocol);
+        if(protocolList != null && protocolList.size() > 0){
+            sdDevicesProtocol = protocolList.get(0);
+            //查询协议对应的设备
+            SdDevices queryDevices = new SdDevices();
+            queryDevices.setProtocolId(sdDevicesProtocol.getId());
+            queryDevices.setEqType(DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
+            queryDevices.setEqTunnelId(TunnelEnum.HU_SHAN.getCode());
             devicesList = sdDevicesService.selectDevicesByProtocol(queryDevices);
         }
         return devicesList;

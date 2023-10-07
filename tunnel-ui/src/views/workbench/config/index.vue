@@ -167,23 +167,23 @@
             </div>
           </el-col>
 
-          <el-col :span="12">
+          <el-col :span="12" v-hasPermi="['workbench:deawer:switch']">
             <div class="drawerItem zoomClass">
               <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{ fluctuateSwitch == 0 ? "照明图标显示" : "照明图标显示" }}
               </p>
-              <el-switch v-model="fluctuateSwitch" class="switchStyle" @change="fluctuateChange" v-hasPermi="['workbench:deawer:switch']"></el-switch>
+              <el-switch v-model="fluctuateSwitch" class="switchStyle" @change="fluctuateChange" ></el-switch>
             </div>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-hasPermi="['workbench:deawer:switch']">
             <div class="drawerItem zoomClass">
               <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{ fluctuateSwitch1 == 0 ? "照明图标关" : "照明图标关" }}
               </p>
-              <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1" v-hasPermi="['workbench:deawer:switch']"></el-switch>
+              <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1" ></el-switch>
             </div>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-hasPermi="['workbench:deawer:switch']">
             <div class="drawerItem zoomClass">
               <p
                 class="zoom-title"
@@ -195,7 +195,7 @@
                 v-model="wjmodel"
                 class="switchStyle"
                 @change="wjModelChange"
-                v-hasPermi="['workbench:deawer:switch']"
+                
               ></el-switch>
             </div>
           </el-col>
@@ -2036,7 +2036,6 @@
       },
     },
     created() {
-      // debugger
       //小车运行渲染定时任务
       clearInterval(this.timerCat);
       window.clearInterval(this.robotTimer);
@@ -2962,9 +2961,8 @@
       },
       // 筛选设备名称
       screenEqNameButton(treeNodeClick) {
-        console.log("筛选设备名称");
         let that = this;
-        if (this.screenEqName) {
+        if (this.screenEqName ) {
           let bigType = "";
           let param = document.getElementsByClassName("vehicleLane");
           for (var i = 0; i < this.selectedIconList.length; i++) {
@@ -3695,8 +3693,10 @@
             mouseDownScrollPosition.scrollLeft + dragMoveDiff.x;
           scrollContainer.scrollTop =
             mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
-          if (scrollContainer.scrollLeft > 0 || scrollContainer.scrollLeft > 0) {
+          if (scrollContainer.scrollLeft > 0 || scrollContainer.scrollTop > 0) {
             this.resetCanvasFlag = true;
+          }else{
+            this.resetCanvasFlag = false;
           }
         };
         document.onmouseup = (e) => {

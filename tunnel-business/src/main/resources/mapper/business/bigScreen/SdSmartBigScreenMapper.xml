@@ -621,7 +621,8 @@
     <select id="getTunnelVehicleSpeed" resultType="hashmap">
         SELECT
             ls.tunnel_id AS tunnelId,
-            ROUND( ROUND( sum( ls.speed )/ 2, 2 )/ 3, 2 ) AS speed
+            -- ROUND( ROUND( sum( ls.speed )/ 2, 2 )/ 3, 2 ) AS speed
+            ROUND( sum( ls.speed )/ count( ls.id ), 2 ) AS speed
         FROM
             sd_lane_statistics ls
         WHERE

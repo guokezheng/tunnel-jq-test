@@ -1,5 +1,5 @@
 <template>
-    <!-- 设备检测 -->
+    <!-- 重点车辆 -->
     <div style="height: calc(100% + 4vh)">
       <iframe
         name="tuniframe"
@@ -23,10 +23,12 @@
         userQueryParams: {
           userName: this.$store.state.user.name,
         },
-        url:''
+        url:'',
+        currentTunnel:''
       };
     },
     created() {
+      this.currentTunnel = this.$cache.local.get("currentTunnel")
       this.getDeptId()
     },
     methods: {
@@ -41,6 +43,7 @@
         const params = {
           deptId:this.userDeptId,
           code:'emphasisCars',
+          tunnelId:JSON.parse(this.currentTunnel).tunnelId
         }
         configPage(params).then((res)=>{
           console.log(res,"emphasisCars")

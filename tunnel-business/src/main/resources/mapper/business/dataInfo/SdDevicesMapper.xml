@@ -143,6 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
             <if test="isMonitor != null ">and a.is_monitor = #{isMonitor}</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
+            <if test="queryPointAddress != null  and queryPointAddress != ''">and a.query_point_address = #{queryPointAddress}</if>
             <if test="commProtocol != null and commProtocol !=''">
                 and a.comm_protocol = #{commProtocol}
             </if>
@@ -1337,6 +1338,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null and eqType !=''">
                 and eq_type = #{eqType}
             </if>
+            <if test="eqTunnelId != null and eqTunnelId != ''">
+                and eq_tunnel_id = #{eqTunnelId}
+            </if>
         </where>
         GROUP BY
             eq_id,
@@ -1413,7 +1417,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             A.mac as mac,
             A.protocol_id as protocolId
         FROM
-            sd_devices A
+        sd_devices_mca A
                 LEFT JOIN sd_tunnels C ON A.eq_tunnel_id = C.tunnel_id
         WHERE
             A.eq_type = 47
@@ -1515,7 +1519,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AA.eq_direction,
             AA.pile
         from
-            sd_devices AA
+            sd_devices_mca AA
                 inner join
             (
                 select
@@ -1523,7 +1527,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     eq_direction,
                     eq_type
                 from
-                    sd_devices
+                    sd_devices_mca
                 where
                     mac = #{mac}) BB
 
@@ -1548,7 +1552,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AA.external_device_id as `group`,
             DD.system_url as ipAndPort
         from
-            sd_devices AA
+            sd_devices_mca AA
             left join external_system DD on AA.external_system_id  = DD.id
                 inner join
             (
@@ -1557,7 +1561,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     eq_direction,
                     eq_type
                 from
-                    sd_devices
+                    sd_devices_mca
                 where
                     mac = #{mac}) BB
 
@@ -1574,7 +1578,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select
             AA.eq_id
         from
-            sd_devices AA
+        sd_devices_mca AA
                 inner join
             (
                 select
@@ -1582,7 +1586,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     eq_direction,
                     eq_type
                 from
-                    sd_devices
+        sd_devices_mca
                 where
                     mac = #{mac}) BB
 

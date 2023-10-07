@@ -391,6 +391,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
             if( code == HttpStatus.SUCCESS){
                 controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
             }
+            commonControlService.addOperationLog(map,sdDevices,"",controlState);
         } else {
             //模拟控制
             controlState = analogControl(map,sdDevices);

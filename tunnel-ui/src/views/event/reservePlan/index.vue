@@ -1245,6 +1245,8 @@
       resetReservePlanDrawForm() {
         (this.reservePlanDrawForm = {
           planTypeId: null, //事件类型
+          direction:null,
+          eventGrade:null,
           planName: null, //预案名称
           category: null, //预案类别
           planDescription: null, //预案描述
@@ -1893,6 +1895,7 @@
                 this.multipleSelectionIds = [];
               }
               this.dloading = false;
+              this.resetReservePlanDrawForm()
               this.$nextTick(() => {
                 this.$refs["addform1"].resetFields();
               });
@@ -1916,7 +1919,7 @@
       },
       /** 新增按钮操作 **/
       handleAdd() {
-        this.resetReservePlanDrawForm();
+        // this.resetReservePlanDrawForm();
         this.title = "新增预案";
         this.planChangeSink = "add";
         this.dialogFormVisible = true;

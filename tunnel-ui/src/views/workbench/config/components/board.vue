@@ -335,6 +335,12 @@
             type: "warning",
           })
           .then(() => {
+            const loading = this.$loading({
+              lock: true,
+              text: 'Loading',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
             const objAll = {};
             objAll.deviceIds = this.eqInfo.equipmentId;
             let that = this
@@ -358,11 +364,13 @@
             console.log(param, "param")
             splicingBoard(param).then((res) => {
               this.$modal.msgSuccess("发布成功");
+              loading.close();
             }).catch((res) => {
-              this.$message({
-                type: "info",
-                message: res.msg,
-              });
+              loading.close();
+              // this.$message({
+              //   type: "info",
+              //   message: res.msg,
+              // });
             });
             // let parameters = []
             // parameters.push(obj)

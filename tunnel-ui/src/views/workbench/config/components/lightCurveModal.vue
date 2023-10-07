@@ -791,79 +791,117 @@
               let ds = this.getdate(currentDate) //当前
               let ds1 = this.getdate(twoDaysAgo) //前天
               let ds2 = this.getdate(threeDaysAgo) //昨天
-              // debugger
+              debugger
               let todayDate = ds[0].split(" ")[0]
-              this.XDataLight = this.generateTimeList(todayDate)
-              this.XDataLightOne = this.XDataLight
-              //查询济南光照曲线
-              dataLogInfoLineList(
-                this.addDateRange(this.queryParamsLight, ds1)
-              ).then((response) => {
-                let list1 = response.rows;
-                list1 = this.lightDatafiler(list1)
 
-                if(list1.length>0){
-                  //昨天光强
-                  for (let i = 0; i < list1.length; i++) {
-                    //前天
-                    this.yDataLight.push(list1[i].data)
-                  }
-                }else{
-                  this.yDataLight = []
-                }
-              });
+              //查询济南光照曲线
+              // dataLogInfoLineList(
+              //   this.addDateRange(this.queryParamsLight, ds1)
+              // ).then((response) => {
+              //   let list1 = response.rows;
+              //   list1 = this.lightDatafiler(list1)
+              //
+              //   if(list1.length>0){
+              //     //昨天光强
+              //     for (let i = 0; i < list1.length; i++) {
+              //       //前天
+              //       this.yDataLight.push(list1[i].data)
+              //     }
+              //   }else{
+              //     this.yDataLight = []
+              //   }
+              // });
+              // dataLogInfoLineList(
+              //   this.addDateRange(this.queryParamsLight, ds2)
+              // ).then((response) => {
+              //   // debugger
+              //   let list1 = response.rows;
+              //   list1 = this.lightDatafiler(list1)
+              //   if(list1.length>0){
+              //     //昨天光强
+              //     for (let i = 0; i < list1.length; i++) {
+              //       this.yDataLight1.push(list1[i].data)
+              //     }
+              //   }else{
+              //     this.yDataLight1 = []
+              //   }
+              //
+              // });
+
+              let ds3 = []
+              ds3.push(ds1[0])
+              ds3.push(ds[1])
               dataLogInfoLineList(
-                this.addDateRange(this.queryParamsLight, ds2)
+                this.addDateRange(this.queryParamsLight, ds3)
               ).then((response) => {
-                // debugger
+                debugger
                 let list1 = response.rows;
                 list1 = this.lightDatafiler(list1)
-                if(list1.length>0){
-                  //昨天光强
-                  for (let i = 0; i < list1.length; i++) {
+                //重新组装数据
+                // for (let i=list1.length-1;i>=0;i--){
+                for (let i = 0; i < list1.length; i++) {
+                  if(list1[i].createTime.indexOf(ds2[0].split(" ")[0])>-1){
                     this.yDataLight1.push(list1[i].data)
                   }
-                }else{
-                  this.yDataLight1 = []
-                }
-
-              });
-              dataLogInfoLineList(
-                this.addDateRange(this.queryParamsLight, ds)
-              ).then((response) => {
-                // debugger
-                let list1 = response.rows;
-                list1 = this.lightDatafiler(list1)
-                //今天
-
-
-                if(list1.length>0){
-                  for (let i = 0; i < list1.length; i++) {
-                    // this.XDataLight.push(list1[i].createTime)
-                    this.yDataLight2.push(list1[i].data)
+                  if(list1[i].createTime.indexOf(ds1[0].split(" ")[0])>-1){
+                    this.yDataLight.push(list1[i].data)
                   }
-                }else{
-                  this.yDataLight2 = []
+                  if(list1[i].createTime.indexOf(ds[0].split(" ")[0])>-1){
+                    this.yDataLight2.push(list1[i].data)
+                    this.XDataLight.push(list1[i].createTime)
+                  }
                 }
+                console.log(this.yDataLight1)
+                console.log( this.yDataLight)
+                console.log( this.yDataLight2)
+                console.log( this.XDataLight)
+                let sd = [2,1,4,45,32,2]
+                console.log(sd.reverse())
+                this.XDataLight = this.XDataLight.sort()
+                console.log( this.XDataLight)
+               //   this.yDataLight2.reverse()
+               //   this.yDataLight.reverse()
+               // this.yDataLight1.reverse()
+                console.log(this.yDataLight1)
+                console.log( this.yDataLight)
+                console.log( this.yDataLight2)
+                console.log( this.XDataLight)
+                // this.XDataLight = this.generateTimeList(todayDate)
+                this.XDataLightOne = this.XDataLight
+                debugger
+
+                // list1 = this.lightDatafiler(this.yDataLight2)
+
+
+                // if(list1.length>0){
+                //   for (let i = 0; i < list1.length; i++) {
+                //     // this.XDataLight.push(list1[i].createTime)
+                //     this.yDataLight2.push(list1[i].data)
+                //   }
+                // }else{
+                //   this.yDataLight2 = []
+                // }
                 setTimeout(() => {
                   this.$nextTick(() => {
 
                     let mathList = []
-                    if (this.yDataLight.length > 0) {
-                      var max = this.yDataLight.sort(function (a, b) {
+                    let yDataLight1 = JSON.parse(JSON.stringify(this.yDataLight))
+                    if (yDataLight1.length > 0) {
+                      var max = yDataLight1.sort(function (a, b) {
                         return b - a;
                       })[0];
                       mathList.push(max)
                     }
-
-                    if (this.yDataLight1.length > 0) {
-                      var max1 = this.yDataLight1.sort(function (a, b) {
+                    let yDataLight2 = JSON.parse(JSON.stringify(this.yDataLight1))
+                    if (yDataLight2.length > 0) {
+                      var max1 = yDataLight2.sort(function (a, b) {
                         return b - a;
                       })[0];
                       mathList.push(max1)
                     }
-                    if (this.yDataLight2.length > 0) {
-                      var max2 = this.yDataLight2.sort(function (a, b) {
+                    let yDataLight3 = JSON.parse(JSON.stringify(this.yDataLight2))
+                    if (yDataLight3.length > 0) {
+                      var max2 = yDataLight3.sort(function (a, b) {
                         return b - a;
                       })[0];
                       mathList.push(max2)
@@ -880,58 +918,74 @@
                 }, 500);
               });
 
-              //查询潍坊光照曲线
+              // //查询潍坊光照曲线
+              // dataLogInfoLineList(
+              //   this.addDateRange(this.queryParamsLight1, ds1)
+              // ).then((response) => {
+              //   let list1 = response.rows;
+              //   list1 = this.lightDatafiler(list1)
+              //   for (let i = 0; i < list1.length; i++) {
+              //     //前天
+              //     this.yDataLightOne.push(list1[i].data)
+              //   }
+              // });
+              // dataLogInfoLineList(
+              //   this.addDateRange(this.queryParamsLight1, ds2)
+              // ).then((response) => {
+              //   // debugger
+              //   let list1 = response.rows;
+              //   list1 = this.lightDatafiler(list1)
+              //   //昨天光强
+              //   for (let i = 0; i < list1.length; i++) {
+              //     this.yDataLightOne1.push(list1[i].data)
+              //   }
+              // });
+
               dataLogInfoLineList(
-                this.addDateRange(this.queryParamsLight1, ds1)
-              ).then((response) => {
-                let list1 = response.rows;
-                list1 = this.lightDatafiler(list1)
-                for (let i = 0; i < list1.length; i++) {
-                  //前天
-                  this.yDataLightOne.push(list1[i].data)
-                }
-              });
-              dataLogInfoLineList(
-                this.addDateRange(this.queryParamsLight1, ds2)
+                this.addDateRange(this.queryParamsLight1, ds3)
               ).then((response) => {
                 // debugger
                 let list1 = response.rows;
                 list1 = this.lightDatafiler(list1)
-                //昨天光强
+                //重新组装数据
                 for (let i = 0; i < list1.length; i++) {
-                  this.yDataLightOne1.push(list1[i].data)
+                  if(list1[i].createTime.indexOf(ds2[0].split(" ")[0])>-1){
+                    this.yDataLightOne1.push(list1[i].data)
+                  }
+                  if(list1[i].createTime.indexOf(ds1[0].split(" ")[0])>-1){
+                    this.yDataLightOne.push(list1[i].data)
+                  }
+                  if(list1[i].createTime.indexOf(ds[0].split(" ")[0])>-1){
+                    this.yDataLightOne2.push(list1[i].data)
+                  }
                 }
-              });
-              dataLogInfoLineList(
-                this.addDateRange(this.queryParamsLight1, ds)
-              ).then((response) => {
-                // debugger
-                let list1 = response.rows;
-                list1 = this.lightDatafiler(list1)
+                console.log(this.yDataLightOne1)
+                console.log( this.yDataLightOne)
+                console.log( this.yDataLightOne2)
+                list1 = this.lightDatafiler(this.yDataLightOne2)
                 //今天
-                for (let i = 0; i < list1.length; i++) {
-                  // this.XDataLightOne.push(list1[i].createTime)
-                  this.yDataLightOne2.push(list1[i].data)
-                }
+
                 // debugger
                 setTimeout(() => {
                   this.$nextTick(() => {
                     let mathList = []
-                    if (this.yDataLightOne.length > 0) {
-                      var max = this.yDataLightOne.sort(function (a, b) {
+                    let yDataLightOne1 = JSON.parse(JSON.stringify(this.yDataLightOne))
+                    if (yDataLightOne1.length > 0) {
+                      var max = yDataLightOne1.sort(function (a, b) {
                         return b - a;
                       })[0];
                       mathList.push(max)
                     }
-
-                    if (this.yDataLightOne1.length > 0) {
-                      var max1 = this.yDataLightOne1.sort(function (a, b) {
+                    let yDataLightOne2 = JSON.parse(JSON.stringify(this.yDataLightOne1))
+                    if (yDataLightOne2.length > 0) {
+                      var max1 = yDataLightOne2.sort(function (a, b) {
                         return b - a;
                       })[0];
                       mathList.push(max1)
                     }
-                    if (this.yDataLightOne2.length > 0) {
-                      var max2 = this.yDataLightOne2.sort(function (a, b) {
+                    let yDataLightOne3 = JSON.parse(JSON.stringify(this.yDataLightOne2))
+                    if (yDataLightOne3.length > 0) {
+                      var max2 = yDataLightOne3.sort(function (a, b) {
                         return b - a;
                       })[0];
                       mathList.push(max2)

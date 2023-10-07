@@ -647,7 +647,10 @@
     }
 
     .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
-      background-color: #042D5F !important;
+      background-color: #083D7D !important;
+    }
+    .el-tree-node__content:hover {
+      background-color: #083D7D !important;
     }
   }
 
@@ -744,7 +747,11 @@
 
     }
   }
-
+  .workbench-boardDialog{
+    .el-dialog__body{
+      max-height: unset !important;
+    }
+  }
   .el-dialog {
     background-color: #00152B !important;
     border-bottom: solid 2px white;
@@ -1062,7 +1069,7 @@
       }
 
       .el-tree-node__content:hover {
-        background: rgba(0, 0, 0, 0.1) !important;
+        background: rgba(0, 0, 0, 0.1);
 
       }
 

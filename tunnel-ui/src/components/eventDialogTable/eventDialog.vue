@@ -913,8 +913,8 @@ export default {
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       this.manageStationSelect = newVal;
-      this.queryParams.tunnelId = newVal;
-      this.queryParams.eventTypeId = "";
+      // this.queryParams.tunnelId = newVal;
+      // this.queryParams.eventTypeId = "";
       this.getTunnelLane();
     },
   },

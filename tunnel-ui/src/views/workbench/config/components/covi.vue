@@ -108,7 +108,7 @@
       </el-radio-group>
       <div id="co" v-show="tab == 'co'" style="margin-bottom: 10px"></div>
       <div id="vi" v-show="tab == 'vi'" style="margin-bottom: 10px"></div>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer">
         <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
@@ -404,7 +404,7 @@ export default {
 #co,
 #vi {
   width: 100%;
-  height: 150px;
+  height: 200px;
   background: #fff;
   div {
     width: 100%;

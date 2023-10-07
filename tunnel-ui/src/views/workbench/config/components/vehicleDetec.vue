@@ -112,7 +112,7 @@
         </el-table>
       </div>
       <div id="trend" v-show="tab == 'trend'" style="margin-bottom: 10px"></div>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer">
         <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>

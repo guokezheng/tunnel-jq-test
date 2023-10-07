@@ -763,7 +763,11 @@
 
     }
   }
-
+  .workbench-boardDialog{
+    .el-dialog__body{
+      max-height: unset !important;
+    }
+  }
   .el-dialog {
     background-color: #100A43 !important;
     border-bottom: solid 2px white;
@@ -1848,7 +1852,7 @@
         color: #fff;
       }
     }
-
+    
     .infoBoardButton {
       .el-radio-button{
         margin-left: 6px;

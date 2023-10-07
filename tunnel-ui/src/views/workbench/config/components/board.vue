@@ -868,6 +868,9 @@
     .el-dialog {
       left: 28%;
     }
+    .el-dialog__body{
+      max-height: unset !important;
+    }
   }
 
   .boardRightBox {
@@ -990,7 +993,6 @@
     }
   }
 
-  // }
   .infoBox {
     width: 783px;
     height: 550px;

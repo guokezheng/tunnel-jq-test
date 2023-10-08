@@ -184,7 +184,7 @@ export default {
   mounted() {
     // 当前导航栏子元素数量
     const childrenLength = this.$refs.currentNav.$el["childElementCount"];
-    console.log(childrenLength,"childrenLengthchildrenLength")
+    // console.log(childrenLength,"childrenLengthchildrenLength")
     // 导航栏菜单
     if (childrenLength > 6) {
       this.style = "width:149.2px;";
@@ -197,7 +197,7 @@ export default {
 
     this.wrapWith  = childrenLength * 149.2; //总长度
     let wrap = this.$refs.scroll.$refs.wrap;
-    console.log(Math.abs(wrap.scrollLeft),"Math.abs(wrap.scrollLeft)")
+    // console.log(Math.abs(wrap.scrollLeft),"Math.abs(wrap.scrollLeft)")
     let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
     this.rightIcon = rollWidth - 149.2 < wrap.offsetWidth ? false : true;
 
@@ -253,15 +253,15 @@ export default {
       }else if(flag == 'right'){
         wrap.scrollLeft = wrap.scrollLeft + 149.2;
       }
-      console.log(Math.abs(wrap.scrollLeft),"scrollLeft")
-      console.log(Math.abs(wrap.offsetWidth),"offsetWidth")
+      // console.log(Math.abs(wrap.scrollLeft),"scrollLeft")
+      // console.log(Math.abs(wrap.offsetWidth),"offsetWidth")
 
-      console.log(this.wrapWith,"this.wrapWith")
+      // console.log(this.wrapWith,"this.wrapWith")
 
       let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
 
-      console.log(rollWidth,"rollWidth")
-      console.log(Math.abs(rollWidth - 149.2),"rollWidth- 149.2")
+      // console.log(rollWidth,"rollWidth")
+      // console.log(Math.abs(rollWidth - 149.2),"rollWidth- 149.2")
 
       this.rightIcon = Math.abs(rollWidth - 149.2) < wrap.offsetWidth ? false : true;
       this.leftIcon = wrap.scrollLeft == 0 ? false : true;

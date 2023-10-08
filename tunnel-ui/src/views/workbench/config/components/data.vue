@@ -130,7 +130,7 @@
         <el-row v-if="eqInfo.clickEqType == 42">
           <el-col :span="13">
             <el-form-item label="液位:">
-              {{ stateForm2.level }} <span style="padding-left: 5px" v-show="stateForm2.level">m³</span>
+              {{ stateForm2.level }} <span style="padding-left: 5px" v-show="stateForm2.level">m</span>
             </el-form-item>
           </el-col>
           <!-- <el-col :span="13">

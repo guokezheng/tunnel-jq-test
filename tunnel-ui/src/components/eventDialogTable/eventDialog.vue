@@ -1021,7 +1021,7 @@ export default {
           swiperTop.activeIndex = 0;
         }
       });
-      this.getEventList();
+      // this.getEventList();
       if (item.stakeNum) {
         let stake = "";
 
@@ -1315,11 +1315,11 @@ export default {
     },
 
     // 处置记录
-    getEventList() {
-      eventFlowList({ eventId: this.eventForm.id }).then((res) => {
-        this.eventWarnList = res.rows;
-      });
-    },
+    // getEventList() {
+      // eventFlowList({ eventId: this.eventForm.id }).then((res) => {
+      //   this.eventWarnList = res.rows;
+      // });
+    // },
     getReservePlanData() {
       this.ReservePlanList = [];
       this.eventFormDetail.currencyId = "";

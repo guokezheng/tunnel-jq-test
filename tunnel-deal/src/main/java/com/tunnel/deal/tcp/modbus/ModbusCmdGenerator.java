@@ -10,6 +10,28 @@ import com.tunnel.deal.tcp.util.StringUtil;
  */
 public class ModbusCmdGenerator {
 
+    /**
+     * 读取功能码01
+     * @param deviceAddress
+     * @param serial
+     * @param startAddress
+     * @param dataLength
+     * @return
+     */
+    public static String getReadOneCommand(String deviceAddress,String serial,String startAddress,String dataLength){
+        //    00 01 00 00 00 06 01 01 00 02 00 08（0002起始地址、0008读取数量）
+        String command = "";
+        ModbusReadSend send = new ModbusReadSend();
+        send.setSerial(serial);
+        send.setDeviceAddress(getDeviceAddress(deviceAddress));
+        send.setFunctionCode(ModbusFunctionCode.CODE_ONE);
+        send.setStartAddress(getHexByte(Integer.valueOf(startAddress)));
+        send.setAddressNum(getHexByte(Integer.valueOf(dataLength)));
+        command = send.getReadRecv();
+
+        return command;
+    }
+
 
     /**
      * 读取功能码02
@@ -75,27 +97,27 @@ public class ModbusCmdGenerator {
         return command;
     }
 
-//    /**
-//     * 写入功能码05
-//     * @param deviceAddress
-//     * @param serial
-//     * @param writeAddress
-//     * @param writeData
-//     * @return
-//     */
-//    public static String getWriteFiveCommand(String deviceAddress,String serial,String writeAddress,String writeData){
-////        0A 0A 00 00 00 06 01 05 00 10 FF 00（0010写入地址、FF00开、0000关）
-//        String command = "";
-//        ModbusWriteSend send = new ModbusWriteSend();
-//        send.setSerial(serial);
-//        send.setDeviceAddress(getDeviceAddress(deviceAddress));
-//        send.setFunctionCode(ModbusFunctionCode.CODE_FIVE);
-//        send.setWriteAddress(getHexByte(Integer.valueOf(writeAddress)));
-//        send.setWriteData(getHexByte(Integer.valueOf(writeData)));
-//        command = send.getWriteSend();
-//
-//        return command;
-//    }
+    /**
+     * 写入功能码05
+     * @param deviceAddress
+     * @param serial
+     * @param writeAddress
+     * @param writeData
+     * @return
+     */
+    public static String getWriteFiveCommand(String deviceAddress,String serial,String writeAddress,String writeData){
+//        0A 0A 00 00 00 06 01 05 00 10 FF 00（0010写入地址、FF00开、0000关）
+        String command = "";
+        ModbusWriteSend send = new ModbusWriteSend();
+        send.setSerial(serial);
+        send.setDeviceAddress(getDeviceAddress(deviceAddress));
+        send.setFunctionCode(ModbusFunctionCode.CODE_FIVE);
+        send.setWriteAddress(getHexByte(Integer.valueOf(writeAddress)));
+        send.setWriteData(getHexByte(Integer.valueOf(writeData)));
+        command = send.getWriteSend();
+
+        return command;
+    }
 
     /**
      * 写入功能码06

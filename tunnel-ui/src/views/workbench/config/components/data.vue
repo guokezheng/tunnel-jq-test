@@ -116,13 +116,14 @@
         <el-row v-if="eqInfo.clickEqType == 41">
           <el-col :span="13">
             <el-form-item label="温度:" label-width="90px">
-              {{ stateForm2.slope }}
-              <span v-show="stateForm2.temperature">°</span>
+
+              {{ stateForm.temperature }} <span v-show="stateForm.temperature">℃</span>
+
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="湿度:" label-width="90px">
-              {{ stateForm2.slope }} <span v-show="stateForm2.humidity">°</span>
+              {{ stateForm.humidity }} <span v-show="stateForm.humidity">%</span>
             </el-form-item>
           </el-col>
         </el-row>

@@ -96,6 +96,8 @@ public enum DevicesTypeItemEnum {
 
     MEN_JIA_CONTENT(104, "门架式情报板内容"),    //门架式情报板内容
 
+    SHUI_JIN_LEVEL(105,"水浸液位"),
+
 
     // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性
     // 1000 巡检机器人  对应devicesType 29

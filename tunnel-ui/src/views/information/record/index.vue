@@ -445,7 +445,15 @@ export default {
       this.loading = true;
       this.boxShow = false;
       let contents = [];
-
+      if (this.$cache.local.get("manageStation") == "1") {
+        console.log(this.$cache.local.get(
+          "manageStationSelect"
+        ),"manageStationSelect")
+        this.queryParams.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
+      }
+      console.log(this.queryParams,"this.queryParams")
       listRecord(this.queryParams).then((response) => {
         console.log(response.rows, "发送记录表格");
 

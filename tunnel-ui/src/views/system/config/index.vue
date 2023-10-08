@@ -412,14 +412,17 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.config_boxShow == true) {
-          self.config_boxShow = false;
+      if (self.config_boxShow == true) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.config_boxShow == true) {
+            self.config_boxShow = false;
+          }
         }
       }
+      
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);

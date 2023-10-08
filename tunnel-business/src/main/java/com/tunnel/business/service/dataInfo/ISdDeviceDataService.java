@@ -95,6 +95,13 @@ public interface ISdDeviceDataService {
      */
     AjaxResult getFanSafeData(String deviceId);
 
+    /**
+     * 获取水浸实时数据
+     * @param deviceId
+     * @return
+     */
+    AjaxResult getLevelData(String deviceId);
+
     List<Map<String, String>> dataLogInfoLineList(SdDeviceData sdDeviceData);
 
     /**

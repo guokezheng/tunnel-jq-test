@@ -110,6 +110,9 @@ public class ModbusCmd {
         String command  = "";
         //获取完整的发送指令
         switch (functionCode){
+            case ModbusFunctionCode.CODE_ONE:
+                command =  ModbusCmdGenerator.getReadOneCommand("",hexSerial,address,dataLength);
+                break;
             case ModbusFunctionCode.CODE_TWO:
                 command =  ModbusCmdGenerator.getReadTwoCommand("",hexSerial,address,dataLength);
                 break;
@@ -118,6 +121,9 @@ public class ModbusCmd {
                 break;
             case ModbusFunctionCode.CODE_FOUR:
                 command = ModbusCmdGenerator.getReadFourCommand("",hexSerial,address,dataLength);
+                break;
+            case ModbusFunctionCode.CODE_FIVE:
+                command = ModbusCmdGenerator.getWriteFiveCommand("",hexSerial,address,dataLength);
                 break;
             case ModbusFunctionCode.CODE_SIX:
                 command = ModbusCmdGenerator.getWriteSixCommand("",hexSerial,address,writeData);

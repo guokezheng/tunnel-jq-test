@@ -687,8 +687,11 @@ export default {
         // debugger
         let eventTypeList = []
         for (let i = 0; i <  res.rows.length; i++) {
-          if(res.rows[i].eventType=="其他"||res.rows[i].eventType=="道路团雾"||res.rows[i].eventType=="大风"
-          ||res.rows[i].eventType=="大雾"||res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+          // if(res.rows[i].eventType=="其他"||res.rows[i].eventType=="道路团雾"||res.rows[i].eventType=="大风"
+          // ||res.rows[i].eventType=="大雾"||res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+          //   eventTypeList.push(res.rows[i])
+          // }
+          if(res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
             eventTypeList.push(res.rows[i])
           }
         }

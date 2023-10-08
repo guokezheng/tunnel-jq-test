@@ -291,6 +291,16 @@ public class SdDeviceDataController extends BaseController
         return sdDeviceDataService.getFanSafeData(deviceId);
     }
 
+    /**
+     * 获取水浸传感器实时数据
+     * @param deviceId
+     * @return
+     */
+    @GetMapping(value = "/getLevelData/{deviceId}")
+    public AjaxResult getLevelData(@PathVariable("deviceId") String deviceId){
+        return sdDeviceDataService.getLevelData(deviceId);
+    }
+
 
     /**
      * 查询设备列表

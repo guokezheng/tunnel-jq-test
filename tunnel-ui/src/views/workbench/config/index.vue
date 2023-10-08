@@ -373,7 +373,8 @@
                               item.eqTunnelId == 'JQ-JiNan-WenZuBei-HSD') ||
                             (item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                               item.eqDirection == 1 &&
-                              item.associated_device_id == 2)
+                              item.associated_device_id == 2)||(item.eqType == 25 &&
+                              item.eqDirection == 1)
                               ? 'scale(-1,1)'
                               : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                                 item.eqDirection == 2 &&
@@ -581,7 +582,7 @@
       <!-- <div class="siblings"> -->
       <div class="eqTypeListClass">
         <div type="info" size="small" v-for="(item, index) in dictList" :key="item.raw.dictCode" :label="item.label"
-          :value="index" @click="displayControl(index, item.label)" class="leftButtonS">
+          :value="index" @click="displayControl(item.value, item.label)" class="leftButtonS">
           <div>{{ item.label }}</div>
         </div>
       </div>
@@ -2537,7 +2538,7 @@
         } else {
           this.treeShow = false;
           this.screenEqName = data.label;
-          this.screenEqNameButton("treeNodeClick");
+          this.screenEqNameButton();
         }
       },
       changeStrategyState(row) {
@@ -2960,7 +2961,7 @@
         this.$forceUpdate();
       },
       // 筛选设备名称
-      screenEqNameButton(treeNodeClick) {
+      screenEqNameButton() {
         let that = this;
         if (this.screenEqName ) {
           let bigType = "";
@@ -2968,7 +2969,6 @@
           for (var i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
             if (item.eqName == this.screenEqName) {
-              // console.log(item.eqName,"item.eqName")
               bigType = item.bigType;
               this.showTooltipIndex = i;
               this.showScreenEqName = true;
@@ -3029,12 +3029,15 @@
               this.resetCanvasFlag = true;
             }
           }
+          console.log(bigType,"bigType")
           if (bigType.includes("0")) {
             this.displayControl(0, "全部设备");
           } else {
+            console.log(this.dictList,"this.dictList")
             for (let itm of this.dictList) {
               if (bigType == itm.value) {
-                this.displayControl(bigType, item.label);
+                console.log(bigType, itm.label,"111111")
+                this.displayControl(bigType, itm.label);
               }
             }
           }
@@ -3307,13 +3310,13 @@
             let arr = [];
             this.checkData(this.siteList[0], arr);
           })
-          .then(() => {
-            if (this.manageStation == "1") {
-              // console.log("this.deptId3333");
-              let arr = ["YG118", "YG11801", "YG1180103"];
-              this.changeSite(arr);
-            }
-          });
+          // .then(() => {
+            // if (this.manageStation == "1") {
+            //   // console.log("this.deptId3333");
+            //   let arr = ["YG118", "YG11801", "YG1180103"];
+            //   this.changeSite(arr);
+            // }
+          // });
       },
 
       checkData(obj, arr) {
@@ -4353,6 +4356,7 @@
                     "39",
                     "48",
                     "41",
+                    "42",
                     "47",
                   ];
 
@@ -5523,11 +5527,11 @@
     font-size: 12px;
     height: 32px;
     align-items: center;
-    margin-right: 10px;
+    margin: 0 10px;
     border-radius: 3px;
     color: white;
     text-align: center;
-
+    
     >div {
       width: 50px;
       height: 20px;

@@ -3,6 +3,7 @@ package com.tunnel.deal.tcp.client.config;
 import com.tunnel.deal.mca.task.McaTask;
 import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask;
+import com.tunnel.deal.tcp.plc.ximenzi.task.WZBXiMenZiPlcTask;
 import com.tunnel.deal.tcp.plc.ximenzi.task.XiMenZiPlcTask;
 import com.tunnel.deal.warninglightstrip.WarningLightStripTask;
 import com.zc.common.core.ThreadPool.ThreadPool;
@@ -33,6 +34,9 @@ public class ClientApplicationRunner implements ApplicationRunner {
     @Autowired
     private XiMenZiPlcTask xiMenZiPlcTask;
 
+    @Autowired
+    private WZBXiMenZiPlcTask wzbXiMenZiPlcTask;
+
 
 
 //    /**
@@ -55,6 +59,7 @@ public class ClientApplicationRunner implements ApplicationRunner {
                 warningLightStripTask.connect();
                 omronFinsTask.connect();
                 xiMenZiPlcTask.connect();
+                wzbXiMenZiPlcTask.connect();
             } catch (Exception e) {
                 e.printStackTrace();
             }

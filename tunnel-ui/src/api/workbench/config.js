@@ -240,6 +240,14 @@ export function getFanSafeData(tunnelId) {
   })
 }
 
+// 查询水浸传感器实时数据
+export function getLevelData(tunnelId) {
+  return request({
+    url: '/system/data/getLevelData/'+tunnelId,
+    method: 'get',
+  })
+}
+
 // 微波车检表格
 export function getStatisticsNewList(query) {
   return request({

@@ -100,11 +100,15 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div class="lineClass"></div>
       </el-form>
       <el-radio-group v-model="tab" style="margin: 0 0 10px">
         <el-radio-button label="co">风速风向实时趋势</el-radio-button>
       </el-radio-group>
       <div id="feng" style="margin-bottom: 10px"></div>
+      <div class="dialog-footer">
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -342,6 +346,11 @@ export default {
 }
 ::v-deep .el-radio-button {
   margin: 0 15px;
+}
+.el-row {
+  margin-bottom: -10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 #feng {
   width: 100%;

@@ -544,6 +544,15 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
     @Override
+    public AjaxResult getLevelData(String deviceId) {
+        List<SdDeviceData> deviceDataList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.SHUI_JIN_LEVEL.getCode()), deviceId);
+        //封装到mqp
+        Map<String, String> map = new HashMap<>();
+        map.put("level",deviceDataList.size() == 0 ? "" : deviceDataList.get(0).getData());
+        return AjaxResult.success(map);
+    }
+
+    @Override
     public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
         String deviceId = sdDeviceData.getDeviceId();
 

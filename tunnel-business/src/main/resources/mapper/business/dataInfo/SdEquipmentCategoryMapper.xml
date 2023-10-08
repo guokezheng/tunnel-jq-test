@@ -173,15 +173,8 @@
         left join sd_devices d on et.type_id = d.eq_type
         <where>
             1 = 1
-            <if test="tunnelIds != null">
-                and d.eq_tunnel_id in
-                <foreach collection="tunnelIds" item="tunnelId" open="(" separator="," close=")">
-                    #{tunnelId}
-                </foreach>
-            </if>
         </where>
         group by ec.id
-        having count(d.eq_id) > 0
 
         union
 
@@ -190,15 +183,8 @@
         left join sd_devices d on et.type_id = d.eq_type
         <where>
             1 = 1
-            <if test="null != tunnelIds">
-                and d.eq_tunnel_id in
-                <foreach collection="tunnelIds" item="tunnelId" open="(" separator="," close=")">
-                    #{tunnelId}
-                </foreach>
-            </if>
         </where>
         group by et.type_id
-        having count(d.eq_type) > 0
     </select>
     <select id="getCategoryTypeDeviceList" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
 

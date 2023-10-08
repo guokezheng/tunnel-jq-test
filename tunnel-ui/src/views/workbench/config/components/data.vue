@@ -126,9 +126,14 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- 42:液位传感器 -->
+        <!-- 42:水浸液位传感器 -->
         <el-row v-if="eqInfo.clickEqType == 42">
           <el-col :span="13">
+            <el-form-item label="液位:">
+              {{ stateForm2.level }} <span style="padding-left: 5px" v-show="stateForm2.level">m³</span>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="13">
             <el-form-item label="电流Ia:">
               {{ stateForm.ia }} <span style="padding-left: 5px">I</span>
             </el-form-item>
@@ -157,7 +162,7 @@
             <el-form-item label="电压Uac:">
               {{ stateForm.vc }} <span style="padding-left: 5px">V</span>
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
       </el-form>
     </el-dialog>
@@ -168,6 +173,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框
 import {
   controlWarningLightStripDevice,
   getFanSafeData,
+  getLevelData
 } from "@/api/workbench/config.js"; //提交控制信息
 import { getStateByData } from "@/api/equipment/eqTypeState/api.js"; //查询单选框弹窗信息
 
@@ -199,7 +205,7 @@ export default {
       if (this.eqInfo.equipmentId) {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-          console.log(res, "查询单选框弹窗信息");
+          console.log(res, "查询单选框弹窗信息111");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           // this.stateForm2.lampType = res.data.eqStatus
@@ -207,7 +213,12 @@ export default {
         });
         if (this.eqInfo.clickEqType == 48) {
           await getFanSafeData(this.eqInfo.equipmentId).then((res) => {
-            console.log(res, "风机");
+            console.log(res, "风机内外振动仪");
+            this.stateForm2 = res.data;
+          });
+        }else if(this.eqInfo.clickEqType == 42){
+          await getLevelData(this.eqInfo.equipmentId).then((res) => {
+            console.log(res, "水浸传感器");
             this.stateForm2 = res.data;
           });
         }

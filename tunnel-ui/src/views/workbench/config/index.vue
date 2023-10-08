@@ -373,7 +373,8 @@
                               item.eqTunnelId == 'JQ-JiNan-WenZuBei-HSD') ||
                             (item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                               item.eqDirection == 1 &&
-                              item.associated_device_id == 2)
+                              item.associated_device_id == 2)||(item.eqType == 25 &&
+                              item.eqDirection == 1)
                               ? 'scale(-1,1)'
                               : item.eqTunnelId != 'JQ-JiNan-WenZuBei-HSD' &&
                                 item.eqDirection == 2 &&

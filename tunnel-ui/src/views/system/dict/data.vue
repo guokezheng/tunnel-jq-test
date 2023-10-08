@@ -366,11 +366,14 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
-          self.boxShow = false;
+      if (self.boxShow == true){
+        if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+          if (self.boxShow == true){
+            self.boxShow = false;
+          }
         }
       }
+      
     },
     /** 查询字典类型详细 */
     getType(dictId) {

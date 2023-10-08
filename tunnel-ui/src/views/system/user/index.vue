@@ -647,14 +647,17 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.user_boxShow == true) {
-          self.user_boxShow = false;
+      if (self.user_boxShow == true) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.user_boxShow == true) {
+            self.user_boxShow = false;
+          }
         }
       }
+      
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);

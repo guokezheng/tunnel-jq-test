@@ -462,14 +462,17 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.dict_boxShow == true) {
-          self.dict_boxShow = false;
+      if (self.dict_boxShow == true) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.dict_boxShow == true) {
+            self.dict_boxShow = false;
+          }
         }
       }
+      
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);

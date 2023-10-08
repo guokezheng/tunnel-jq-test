@@ -184,10 +184,10 @@ export default {
   mounted() {
     // 当前导航栏子元素数量
     const childrenLength = this.$refs.currentNav.$el["childElementCount"];
-    // console.log(childrenLength,"childrenLengthchildrenLength")
+    console.log(childrenLength,"childrenLengthchildrenLength")
     // 导航栏菜单
     if (childrenLength > 6) {
-      this.style = "width:147.77px;";
+      this.style = "width:149.2px;";
     } else {
       this.style = "width:20%;";
     }
@@ -195,10 +195,11 @@ export default {
 
     // 初始化
 
-    this.wrapWith  = childrenLength * 147.77; //总长度
+    this.wrapWith  = childrenLength * 149.2; //总长度
     let wrap = this.$refs.scroll.$refs.wrap;
+    console.log(Math.abs(wrap.scrollLeft),"Math.abs(wrap.scrollLeft)")
     let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
-    this.rightIcon = rollWidth - 147.77 < wrap.offsetWidth ? false : true;
+    this.rightIcon = rollWidth - 149.2 < wrap.offsetWidth ? false : true;
 
   },
   async created() {
@@ -246,16 +247,23 @@ export default {
       // }
     },
     moveMethod(flag){
-    // console.log(this.wrapWith,"总长度")
       let wrap = this.$refs.scroll.$refs.wrap;
-      console.log(wrap.scrollLeft,"可视区域")
       if(flag == 'left'){
-        wrap.scrollLeft = wrap.scrollLeft - 147.77;
+        wrap.scrollLeft = wrap.scrollLeft - 149.2;
       }else if(flag == 'right'){
-        wrap.scrollLeft = wrap.scrollLeft + 147.77;
+        wrap.scrollLeft = wrap.scrollLeft + 149.2;
       }
+      console.log(Math.abs(wrap.scrollLeft),"scrollLeft")
+      console.log(Math.abs(wrap.offsetWidth),"offsetWidth")
+
+      console.log(this.wrapWith,"this.wrapWith")
+
       let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
-      this.rightIcon = rollWidth - 147.77 < wrap.offsetWidth ? false : true;
+
+      console.log(rollWidth,"rollWidth")
+      console.log(Math.abs(rollWidth - 149.2),"rollWidth- 149.2")
+
+      this.rightIcon = Math.abs(rollWidth - 149.2) < wrap.offsetWidth ? false : true;
       this.leftIcon = wrap.scrollLeft == 0 ? false : true;
 
     },

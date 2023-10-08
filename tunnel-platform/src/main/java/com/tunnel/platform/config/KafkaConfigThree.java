@@ -38,6 +38,9 @@ public class KafkaConfigThree {
     @Value("${spring.kafka.huawei.producer.buffer-memory}")
     private Integer bufferMemory;
 
+    @Value("${spring.kafka.huawei.consumer.max-poll-records}")
+    private String maxPollRecordes;
+
 
     @Bean
     public KafkaTemplate<String, String> kafkaThreeTemplate() {
@@ -106,6 +109,8 @@ public class KafkaConfigThree {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000000);
+        props.put("max.poll.records", maxPollRecordes);
+        props.put("session.timeout.ms", 30000);
         return props;
     }
 }

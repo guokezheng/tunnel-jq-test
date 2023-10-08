@@ -112,20 +112,20 @@
               <!--              <span class="diagonal-text-no" v-if="item.strategyState==1">未生效</span>-->
               <!--              <span class="diagonal-text-yes"  v-if="item.strategyState==0">已生效</span>-->
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">名称</el-col>
-                <el-col :span="20" class="elcolNameOne" v-html="item.strategyName"></el-col>
+                <el-col :span="5" class="elcolName">名称</el-col>
+                <el-col :span="19" class="elcolNameOne" :title="item.strategyName"  v-html="item.strategyName"></el-col>
               </el-row>
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">隧道</el-col>
-                <el-col :span="20" class="elcolNameOne" v-html="
+                <el-col :span="5" class="elcolName">隧道</el-col>
+                <el-col :span="19" class="elcolNameOne" v-html="
                     !!item.tunnels
                       ? item.tunnels.tunnelName + item.fx
                       : '' + item.fx
                   "></el-col>
               </el-row>
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">状态</el-col>
-                <el-col :span="20" class="elcolNameOne">
+                <el-col :span="5" class="elcolName">状态</el-col>
+                <el-col :span="19" class="elcolNameOne">
                   <el-switch v-model="item.strategyState" active-color="#13ce66" inactive-color="#ff4949"
                     active-value="0" inactive-value="1" v-hasPermi="['workbench:light:switch']"
                     @change="changeStrategyState(item)">
@@ -137,12 +137,12 @@
               <!--                <el-col :span="20" class="elcolNameOne"  v-html="item.createBy"></el-col>-->
               <!--              </el-row>-->
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">时序</el-col>
-                <el-col :span="20" class="elcolNameOne" v-html="item.execTime + '开'"></el-col>
+                <el-col :span="5" class="elcolName">时序</el-col>
+                <el-col :span="19" class="elcolNameOne" v-html="item.execTime + '开'"></el-col>
               </el-row>
               <el-row :gutter="24">
-                <el-col :span="4" class="elcolName">指令</el-col>
-                <el-col :span="20" class="elcolNameOne" v-html="'含控制指令' + item.slist.length + '条'">
+                <el-col :span="5" class="elcolName">指令</el-col>
+                <el-col :span="19" class="elcolNameOne" v-html="'含控制指令' + item.slist.length + '条'">
                 </el-col>
               </el-row>
               <!--            <el-row :gutter="24">-->
@@ -1114,6 +1114,9 @@
 
   .elcolNameOne {
     margin: 10px 0px 0px -15px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   /*.content-centre div{*/

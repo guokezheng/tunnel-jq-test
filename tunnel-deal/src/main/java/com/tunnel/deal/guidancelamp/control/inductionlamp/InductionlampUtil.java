@@ -246,6 +246,8 @@ public class InductionlampUtil {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            client.stop();
         }
         client.stop();
         return null;
@@ -308,6 +310,8 @@ public class InductionlampUtil {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            client.stop();
         }
         client.stop();
         return null;
@@ -368,6 +372,8 @@ public class InductionlampUtil {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            client.stop();
         }
         client.stop();
         return null;
@@ -427,6 +433,8 @@ public class InductionlampUtil {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            client.stop();
         }
         client.stop();
         return null;

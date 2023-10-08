@@ -12,6 +12,7 @@ export const singleCat = {
   methods: {
     //实时车辆开关
     carShowChange(val) {
+      debugger
       let tunnelItems = null;
       if(!!this.tunnelItem){
         tunnelItems = this.tunnelItem
@@ -38,7 +39,9 @@ export const singleCat = {
       //车辆实际距离入口距离
       var carKm = eventIndex.distance;
       //计算
+      debugger
       let imgId =  document.getElementById("config-img-id")
+      console.log(imgId)
       //上
       let topHigh = 73/580
       //上道
@@ -138,6 +141,7 @@ export const singleCat = {
         let Mileage = math.divide(
           math.subtract(+tunnel.endPileNum - +tunnel.startPileNum) / 1000
         );
+        debugger
         this.tunnelKm = Mileage;
         if (Mileage <= 1.3) {
           var length = +1300;

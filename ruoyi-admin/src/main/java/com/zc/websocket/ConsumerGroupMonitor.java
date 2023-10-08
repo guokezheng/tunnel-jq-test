@@ -33,7 +33,10 @@ public class ConsumerGroupMonitor {
     public void checkConsumerGroup() {
         StreamInfo.XInfoGroups groups = redisTemplate.opsForStream().groups(RedisStreamConstants.WebSocketCatDirectional.KEY);
         int i = groups.groupCount();
-        if(i==0){
+        Long pendingMessages = redisTemplate.opsForStream().size(RedisStreamConstants.WebSocketCatDirectional.KEY);
+
+        System.out.println("未消费的消息数量：" + pendingMessages);
+        if(i==0||pendingMessages>2000){
             redisStream.subscription(
                     RedisStreamConstants.WebSocketCatDirectional.KEY,
                     RedisStreamConstants.WebSocketCatDirectional.GROUP,
@@ -43,5 +46,4 @@ public class ConsumerGroupMonitor {
 //        StreamInfo.XInfoGroups groups1 = redisTemplate.opsForStream().groups(RedisStreamConstants.WebSocketCatDirectional.GROUP);
         System.out.print(groups);
     }
-
 }

@@ -181,7 +181,7 @@ public class KafkaReadListenToWanJiTopic {
      */
     @KafkaListener(topics = {"wj_participants"}, containerFactory = "kafkaOneContainerFactoryTwo")
     public void topicParticipantsTwo(List<ConsumerRecord<String,Object>> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        /*for(ConsumerRecord<String,Object> item : record){
+        for(ConsumerRecord<String,Object> item : record){
             if(item.value() != null & item.value() != ""){
                 //解析车辆快照数据
                 JSONObject jsonObject = JSONObject.parseObject(item.value().toString());
@@ -199,12 +199,12 @@ public class KafkaReadListenToWanJiTopic {
                 //转分钟
                 Long minutes = (time2 / 1000) / 60;
                 if(minutes>3){
-                    continue;
+                    break;
                 }
                 //新增车辆快照数据
                 saveAnalysisCarsnapTwo(track,time,tunnelId,direction,timeStamp);
             }
-        }*/
+        }
         consumer.commitSync();
     }
 
@@ -543,7 +543,7 @@ public class KafkaReadListenToWanJiTopic {
             jsonObject.put("time",time);
             //保存车辆快照数据
             Map map = saveRadarDataTwo(jsonObject,tunnelId,direction,timeStamp);
-            if(StringUtils.isNotEmpty(map)&&!"0".equals(map.get("distance"))){
+            if(StringUtils.isNotEmpty(map)&&!"0".equals(map.get("distance"))&&!map.get("vehicleLicense").equals("默A00000")){
                 list.add(map);
             }
         }

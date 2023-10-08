@@ -34,6 +34,8 @@ public class KafkaConfigOne {
     private Integer batchSize;
     @Value("${spring.kafka.wanji.producer.buffer-memory}")
     private Integer bufferMemory;
+    @Value("${spring.kafka.wanji.consumer.max-poll-records}")
+    private String maxPollRecordes;
 
 
     @Bean
@@ -100,6 +102,10 @@ public class KafkaConfigOne {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
         props.put(ConsumerConfig.GROUP_ID_CONFIG,groupIdTwo);
+        props.put("max.poll.records", maxPollRecordes);
+        props.put("session.timeout.ms", 30000);
+//        props.put("security.protocol", consumerSecurityProtocol);
+
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000000);

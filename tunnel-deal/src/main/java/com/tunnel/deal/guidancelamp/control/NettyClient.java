@@ -150,20 +150,33 @@ public class NettyClient {
     //动态创建连接
     public void startDynamicString() throws InterruptedException {
         //发起异步连接请求，绑定连接端口和host信息
-        final ChannelFuture future = bootstrap.connect(host, port).sync();
-        future.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture arg0) throws Exception {
-                if (future.isSuccess()) {
-                    log.info("连接服务器成功");
-                } else {
-                    log.error("连接服务器失败");
-                    future.cause().printStackTrace();
-                    group.shutdownGracefully(); //关闭线程组
+        try{
+            final ChannelFuture future = bootstrap.connect(host, port).sync();
+            future.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture arg0) throws Exception {
+                    if (future.isSuccess()) {
+                        log.info("连接服务器成功");
+                    } else {
+                        log.error("连接服务器失败");
+                        future.cause().printStackTrace();
+                        group.shutdownGracefully(); //关闭线程组
+                    }
                 }
-            }
-        });
-        this.channel = future.channel();
+            });
+            this.channel = future.channel();
+        }catch(Exception e){
+            log.error("连接服务器失败");
+
+            group.shutdownGracefully(); //关闭线程组
+        }finally {
+
+            // 关闭EventLoopGroup，释放掉所有资源，包括创建的线程
+            group.shutdownGracefully().sync();
+        }
+
+
+
     }
 
     /**

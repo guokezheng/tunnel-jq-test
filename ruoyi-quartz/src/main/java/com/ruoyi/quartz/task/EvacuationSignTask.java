@@ -1,6 +1,7 @@
 package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 疏散标志定时任务调度
@@ -38,12 +40,31 @@ public class EvacuationSignTask {
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
     private static ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
 
+    @Value("${spring.profiles.active}")
+    private String active;
+
     public void handle() {
         //定时获取疏散当前状态
         Long evacuationSignTypeId = Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode());
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(evacuationSignTypeId);
+
         List<SdDevices> evacuationSignDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
+        if(active.equals("wzbprod") ){
+            evacuationSignDevicesList = evacuationSignDevicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-JiNan-WenZuBei-MJY")).collect(Collectors.toList());
+        }else if(active.equals("ytsprod")){
+            evacuationSignDevicesList = evacuationSignDevicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-SZS")
+                    ||devices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-YTS")).collect(Collectors.toList());
+        }else if(active.equals("thprod")){
+            evacuationSignDevicesList = evacuationSignDevicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-ZiBo-TaiHe-PDS")
+                    ||devices.getEqTunnelId().equals("JQ-ZiBo-TaiHe-QFL")).collect(Collectors.toList());
+        }else if(active.equals("mzprod")){
+            evacuationSignDevicesList = evacuationSignDevicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-MiaoZi-BJY")
+                    ||devices.getEqTunnelId().equals("JQ-WeiFang-MiaoZi-WCL")).collect(Collectors.toList());
+        }else if(active.equals("jlyprod")){
+            evacuationSignDevicesList = evacuationSignDevicesList.stream().filter(devices -> devices.getEqTunnelId().equals("JQ-WeiFang-JiuLongYu-JJL")
+                    ||devices.getEqTunnelId().equals("JQ-WeiFang-JiuLongYu-MAS")||devices.getEqTunnelId().equals("JQ-WeiFang-JiuLongYu-HSD")).collect(Collectors.toList());
+        }
         for (int i = 0;i < evacuationSignDevicesList.size();i++) {
             SdDevices devices = evacuationSignDevicesList.get(i);
             if (devices.getIp() == null && devices.getPort() == null
@@ -220,11 +241,15 @@ public class EvacuationSignTask {
         //查询子设备集合
         SdDevices dev = new SdDevices();
         dev.setFEqId(sdDevices.getEqId());
+        //获取子设备
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
         try {
+            //当前状态查询
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
+            //状态入库
             String state = handleDeviceStatus(sdDevices, codeMap);
             if (state != "" && state.equals("1")) {
+                //推送物联中台kafka内容
                 saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 //更新子设备的状态
                 if (!list.isEmpty()) {
@@ -233,7 +258,9 @@ public class EvacuationSignTask {
                         saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                     }
                 }
+                //获取当前运行模式
                 codeMap = InductionlampUtil.getNowRunMode(ip, port);
+                //状态入库
                 state = handleDeviceStatus(sdDevices, codeMap);
                 String code = "";
                 if (state != "" && state.equals("1")) {
@@ -253,6 +280,7 @@ public class EvacuationSignTask {
                 }
                 //当前不管是什么模式，都需要查询报警标点
                 codeMap = InductionlampUtil.getNowevacuationSignStatus(ip, port);
+                //更新状态
                 handleDeviceStatus(sdDevices, codeMap);
                 //此处仅处理获取到的标号信息
                 //FIRE=255表示所有疏散标志全开灯，表示当前隧道状态为正常状态

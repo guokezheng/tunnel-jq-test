@@ -162,14 +162,14 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         sdDevicesMapper.updateSdDevices(dev);
 
 //        //周期统计数据
-//        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
-//            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-//        }
-//        //单车数据
-//        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
-//            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-//        }
-//
+        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
+            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+        }
+        //单车数据
+        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
+            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+        }
+
         //单车数据
         //增加  模式功能。根据选择不同模式 。做出响应策略。
         // 当前模式为自动模式时，根据过车信息来进行控制，当前加强照明。实现车来灯亮，车走灯灭

@@ -397,8 +397,8 @@ public class SdEventController extends BaseController
         //隧道终点桩号
         Integer tunnelPile = Integer.valueOf(sdTunnels.getEndPileNum());
         //计算距离
-        //Integer distance = tunnelPile - eventPile;
-        Integer distance = 2256;
+        Integer distance = tunnelPile - eventPile;
+        //Integer distance = 2256;
         //查询地址
         ExternalSystem system = new ExternalSystem();
         system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());

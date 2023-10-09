@@ -129,10 +129,10 @@
             <img src="../../../assets/icons/tbhy.png" />
             <span>图标含义</span>
           </el-button>
-          <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
+          <!-- <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
             <img src="../../../assets/icons/czrz.png" />
             <span>操作日志</span>
-          </el-button>
+          </el-button> -->
         </div>
       </div>
       <div class="buttonsDeawer" @click="isDrawer()">
@@ -1790,7 +1790,7 @@
         hostIP: null,
         userDeptId: null,
         tunnelQueryParams: {
-          deptId: "",
+          deptId: [],
         },
         deptId: "",
         userQueryParams: {
@@ -2295,18 +2295,18 @@
       cascaderHandleChange() {
         // console.log(1);
         // console.log(this.siteList, "siteList");
-        let handleText = "";
-        for (let item of this.siteList) {
-          if (this.tunnelQueryParams.deptId == item.id) {
-            handleText = item.label;
-          } else {
-            for (let itm of item.children) {
-              if (this.tunnelQueryParams.deptId == itm.id) {
-                handleText = itm.label;
-              }
-            }
-          }
-        }
+        // let handleText = "";
+        // for (let item of this.siteList) {
+        //   if (this.tunnelQueryParams.deptId == item.id) {
+        //     handleText = item.label;
+        //   } else {
+        //     for (let itm of item.children) {
+        //       if (this.tunnelQueryParams.deptId == itm.id) {
+        //         handleText = itm.label;
+        //       }
+        //     }
+        //   }
+        // }
 
         // console.log(handleText, "handleText");
         // 事件监听实现懒加载选择任意一级
@@ -3336,6 +3336,7 @@
       changeSite(index) {
         console.log(index, "index");
         if (index) {
+          this.tunnelQueryParams.deptId = []
           // 判断是否有缓存的管理站id
           // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
           // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
@@ -3343,17 +3344,17 @@
           // 4. get到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
           if (!this.$cache.local.get("deptId")) {
             if (!this.tunnelQueryParams.deptId) {
-              this.tunnelQueryParams.deptId = index[index.length - 1];
+              this.tunnelQueryParams.deptId = index;
             } else {
-              this.tunnelQueryParams.deptId = index[index.length - 1];
+              this.tunnelQueryParams.deptId = index;
               this.$cache.local.set("deptId", this.tunnelQueryParams.deptId);
             }
           } else {
             if (!this.tunnelQueryParams.deptId) {
               this.tunnelQueryParams.deptId = this.$cache.local.get("deptId");
             } else {
-              this.tunnelQueryParams.deptId = index[index.length - 1];
-              this.$cache.local.set("deptId", index[index.length - 1]);
+              this.tunnelQueryParams.deptId = index;
+              this.$cache.local.set("deptId", index);
             }
           }
           this.$forceUpdate();
@@ -3949,7 +3950,10 @@
       /* 查询隧道列表 */
       getTunnelList() {
         // debugger
-        listTunnels(this.tunnelQueryParams).then((response) => {
+        var tunnelQueryParams2 = {
+          deptId: this.tunnelQueryParams.deptId[this.tunnelQueryParams.deptId.length - 1]
+        }
+        listTunnels(tunnelQueryParams2).then((response) => {
           // console.log(response, "查询隧道列表");
           if (!response.rows[0]) {
             this.tunnelList = [];

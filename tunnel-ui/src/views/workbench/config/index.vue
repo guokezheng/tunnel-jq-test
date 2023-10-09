@@ -864,6 +864,7 @@
     </el-dialog>
     <com-video class="comClass" ref="videoRef"></com-video>
     <com-light class="comClass" ref="lightRef"></com-light>
+    <com-control class="comClass" ref="controlRef"></com-control>
     <com-covi class="comClass" ref="coviRef"></com-covi>
     <com-data class="comClass" ref="dataRef"></com-data>
     <com-wind class="comClass" ref="windRef"></com-wind>
@@ -1268,7 +1269,8 @@
   import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
   import contentBatchEdit from "@/views/workbench/config/content-batch-edit"; //批量编辑
   import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
-  import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
+  import comLight from "@/views/workbench/config/components/light"; //照明弹窗
+  import comControl from "@/views/workbench/config/components/control"; //各种带单选框的弹窗
   import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
   import comBright from "@/views/workbench/config/components/bright"; //亮度检测器等只有基本信息的弹窗
   import comWind from "@/views/workbench/config/components/wind"; //风速风向弹窗
@@ -1405,6 +1407,7 @@
       comFooter, //底部echarts
       comXfp,
       jointControlStrategy,
+      comControl
     },
 
     data() {
@@ -3090,6 +3093,7 @@
         this.mouseoversImplement = true;
         this.$refs.videoRef.handleClosee();
         this.$refs.lightRef.handleClosee();
+        this.$refs.controlRef.handleClosee();
         this.$refs.coviRef.handleClosee();
         this.$refs.dataRef.handleClosee();
         this.$refs.windRef.handleClosee();
@@ -3950,7 +3954,7 @@
       getTunnelList() {
         // debugger
         listTunnels(this.tunnelQueryParams).then((response) => {
-          // console.log(response, "查询隧道列表");
+          console.log(response, "查询隧道列表");
           if (!response.rows[0]) {
             this.tunnelList = [];
             return false;
@@ -4356,7 +4360,6 @@
                     "39",
                     "48",
                     "41",
-                    "42",
                     "47",
                   ];
 
@@ -4720,11 +4723,11 @@
                 this.eqTypeDialogList
               );
             } else if (
-              [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 31, 45, 49].includes(
+              [1, 2, 3, 4, 6, 8, 10, 12, 13, 30, 31, 45, 49].includes(
                 item.eqType
               )
             ) {
-              this.$refs.lightRef.init(
+              this.$refs.controlRef.init(
                 this.eqInfo,
                 this.brandList,
                 this.directionList,
@@ -4807,6 +4810,14 @@
             } else if (item.eqType == 33 || item.eqType == 47) {
               // 智能消防炮
               this.$refs.xfpRef.init(
+                this.eqInfo,
+                this.brandList,
+                this.directionList,
+                this.eqTypeDialogList
+              );
+            }else if (item.eqType == 7 || item.eqType == 9) {
+              // 照明
+              this.$refs.lightRef.init(
                 this.eqInfo,
                 this.brandList,
                 this.directionList,

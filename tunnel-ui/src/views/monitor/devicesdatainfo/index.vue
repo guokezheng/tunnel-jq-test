@@ -306,7 +306,8 @@
           <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
-        <pagination
+        <div style="height: 33px;">
+          <pagination
           v-show="total > 0 && this.searchValue == '1'"
           :total="total"
           :page.sync="queryParams.pageNum"
@@ -334,6 +335,8 @@
           :limit.sync="queryParams3.pageSize"
           @pagination="getList"
         />
+        </div>
+       
       </div>
       <div v-show="echartShow">
         <div

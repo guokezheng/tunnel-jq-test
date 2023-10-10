@@ -1086,16 +1086,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectZdyDevice" resultType="sdDevices">
         SELECT
             d.eq_id,
-            d.eq_name,
-            d1.eq_id,
-            d1.eq_name
+            d.eq_name
         FROM
             sd_devices d
-                LEFT JOIN sd_devices d1 ON d.f_eq_id = d1.f_eq_id
         WHERE
             1 = 1
           AND d.eq_id = #{deviceId}
-          AND d1.eq_type = #{eqType}
+          AND d.eq_type = #{eqType}
+
     </select>
 
     <select id="getDeviceByAssociationDeviceId" parameterType="Long" resultMap="SdDevicesResult">
@@ -1392,8 +1390,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             A.mac as mac,
             B.protocol_id as protocolId
         FROM
-            sd_devices A
-                LEFT JOIN sd_devices B ON A.eq_id = B.f_eq_id
+                sd_devices_mca A
+                LEFT JOIN sd_devices_mca B ON A.eq_id = B.f_eq_id
                 LEFT JOIN sd_tunnels C ON B.eq_tunnel_id = C.tunnel_id
         WHERE
             A.eq_type = 47

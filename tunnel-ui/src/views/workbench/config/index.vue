@@ -129,10 +129,10 @@
             <img src="../../../assets/icons/tbhy.png" />
             <span>图标含义</span>
           </el-button>
-          <!-- <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
+          <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
             <img src="../../../assets/icons/czrz.png" />
             <span>操作日志</span>
-          </el-button> -->
+          </el-button>
         </div>
       </div>
       <div class="buttonsDeawer" @click="isDrawer()">
@@ -864,6 +864,7 @@
     </el-dialog>
     <com-video class="comClass" ref="videoRef"></com-video>
     <com-light class="comClass" ref="lightRef"></com-light>
+    <com-control class="comClass" ref="controlRef"></com-control>
     <com-covi class="comClass" ref="coviRef"></com-covi>
     <com-data class="comClass" ref="dataRef"></com-data>
     <com-wind class="comClass" ref="windRef"></com-wind>
@@ -1268,7 +1269,8 @@
   import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
   import contentBatchEdit from "@/views/workbench/config/content-batch-edit"; //批量编辑
   import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
-  import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
+  import comLight from "@/views/workbench/config/components/light"; //照明弹窗
+  import comControl from "@/views/workbench/config/components/control"; //各种带单选框的弹窗
   import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
   import comBright from "@/views/workbench/config/components/bright"; //亮度检测器等只有基本信息的弹窗
   import comWind from "@/views/workbench/config/components/wind"; //风速风向弹窗
@@ -1405,6 +1407,7 @@
       comFooter, //底部echarts
       comXfp,
       jointControlStrategy,
+      comControl
     },
 
     data() {
@@ -1790,7 +1793,7 @@
         hostIP: null,
         userDeptId: null,
         tunnelQueryParams: {
-          deptId: [],
+          deptId: "",
         },
         deptId: "",
         userQueryParams: {
@@ -2295,18 +2298,18 @@
       cascaderHandleChange() {
         // console.log(1);
         // console.log(this.siteList, "siteList");
-        // let handleText = "";
-        // for (let item of this.siteList) {
-        //   if (this.tunnelQueryParams.deptId == item.id) {
-        //     handleText = item.label;
-        //   } else {
-        //     for (let itm of item.children) {
-        //       if (this.tunnelQueryParams.deptId == itm.id) {
-        //         handleText = itm.label;
-        //       }
-        //     }
-        //   }
-        // }
+        let handleText = "";
+        for (let item of this.siteList) {
+          if (this.tunnelQueryParams.deptId == item.id) {
+            handleText = item.label;
+          } else {
+            for (let itm of item.children) {
+              if (this.tunnelQueryParams.deptId == itm.id) {
+                handleText = itm.label;
+              }
+            }
+          }
+        }
 
         // console.log(handleText, "handleText");
         // 事件监听实现懒加载选择任意一级
@@ -3090,6 +3093,7 @@
         this.mouseoversImplement = true;
         this.$refs.videoRef.handleClosee();
         this.$refs.lightRef.handleClosee();
+        this.$refs.controlRef.handleClosee();
         this.$refs.coviRef.handleClosee();
         this.$refs.dataRef.handleClosee();
         this.$refs.windRef.handleClosee();
@@ -3336,7 +3340,6 @@
       changeSite(index) {
         console.log(index, "index");
         if (index) {
-          this.tunnelQueryParams.deptId = []
           // 判断是否有缓存的管理站id
           // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
           // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
@@ -3344,17 +3347,17 @@
           // 4. get到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
           if (!this.$cache.local.get("deptId")) {
             if (!this.tunnelQueryParams.deptId) {
-              this.tunnelQueryParams.deptId = index;
+              this.tunnelQueryParams.deptId = index[index.length - 1];
             } else {
-              this.tunnelQueryParams.deptId = index;
+              this.tunnelQueryParams.deptId = index[index.length - 1];
               this.$cache.local.set("deptId", this.tunnelQueryParams.deptId);
             }
           } else {
             if (!this.tunnelQueryParams.deptId) {
               this.tunnelQueryParams.deptId = this.$cache.local.get("deptId");
             } else {
-              this.tunnelQueryParams.deptId = index;
-              this.$cache.local.set("deptId", index);
+              this.tunnelQueryParams.deptId = index[index.length - 1];
+              this.$cache.local.set("deptId", index[index.length - 1]);
             }
           }
           this.$forceUpdate();
@@ -3950,11 +3953,8 @@
       /* 查询隧道列表 */
       getTunnelList() {
         // debugger
-        var tunnelQueryParams2 = {
-          deptId: this.tunnelQueryParams.deptId[this.tunnelQueryParams.deptId.length - 1]
-        }
-        listTunnels(tunnelQueryParams2).then((response) => {
-          // console.log(response, "查询隧道列表");
+        listTunnels(this.tunnelQueryParams).then((response) => {
+          console.log(response, "查询隧道列表");
           if (!response.rows[0]) {
             this.tunnelList = [];
             return false;
@@ -4360,7 +4360,6 @@
                     "39",
                     "48",
                     "41",
-                    "42",
                     "47",
                   ];
 
@@ -4724,11 +4723,11 @@
                 this.eqTypeDialogList
               );
             } else if (
-              [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 31, 45, 49].includes(
+              [1, 2, 3, 4, 6, 8, 10, 12, 13, 30, 31, 45, 49].includes(
                 item.eqType
               )
             ) {
-              this.$refs.lightRef.init(
+              this.$refs.controlRef.init(
                 this.eqInfo,
                 this.brandList,
                 this.directionList,
@@ -4811,6 +4810,14 @@
             } else if (item.eqType == 33 || item.eqType == 47) {
               // 智能消防炮
               this.$refs.xfpRef.init(
+                this.eqInfo,
+                this.brandList,
+                this.directionList,
+                this.eqTypeDialogList
+              );
+            }else if (item.eqType == 7 || item.eqType == 9) {
+              // 照明
+              this.$refs.lightRef.init(
                 this.eqInfo,
                 this.brandList,
                 this.directionList,

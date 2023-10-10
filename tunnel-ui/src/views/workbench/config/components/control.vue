@@ -1,151 +1,253 @@
 <template>
-  <div style="width: 100%; height: 100%">
-    <el-dialog v-dialogDrag class="workbench-dialog" :title="title" width="450px" append-to-body :visible="visible"
-      :before-close="handleClosee" :close-on-click-modal="false" :modal="false">
-      <div class="dialogStyleBox">
-        <div class="dialogLine"></div>
-        <div class="dialogCloseButton"></div>
-      </div>
-      <el-tabs class="videoTabs" v-model="active">
-        <el-tab-pane label="详细信息" name="information">
-          <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini">
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="设备类型:">
-                  {{ stateForm.typeName }}
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="隧道名称:">
-                  {{ stateForm.tunnelName }}
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="12">
-                <el-form-item label="位置桩号:">
-                  {{ stateForm.pile }}
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="所属方向:">
-                  {{ getDirection(stateForm.eqDirection) }}
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="12">
-                <el-form-item label="所属机构:">
-                  {{ stateForm.deptName }}
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="设备状态:" :style="{
-                color:
-                  stateForm.eqStatus == '1'
-                    ? 'yellowgreen'
-                    : stateForm.eqStatus == '2'
-                    ? 'white'
-                    : 'red',
-              }">
-                  {{ geteqType(stateForm.eqStatus) }}
+    <div style="width: 100%; height: 100%">
+      <el-dialog
+        v-dialogDrag
+        class="workbench-dialog"
+        :title="title"
+        width="450px"
+        append-to-body
+        :visible="visible"
+        :before-close="handleClosee"
+        :close-on-click-modal="false"
+        :modal="false"
+      >
+        <div class="dialogStyleBox">
+          <div class="dialogLine"></div>
+          <div class="dialogCloseButton"></div>
+        </div>
+  
+        <el-form
+          ref="form"
+          :model="stateForm"
+          label-width="80px"
+          label-position="left"
+          size="mini"
+        >
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="设备类型:">
+                {{ stateForm.typeName }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="隧道名称:" >
+                {{ stateForm.tunnelName }}
+              </el-form-item>
+            </el-col>
+  
+            <el-col :span="12">
+              <el-form-item label="位置桩号:">
+                {{ stateForm.pile }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="所属方向:" >
+                {{ getDirection(stateForm.eqDirection) }}
+              </el-form-item>
+            </el-col>
+  
+            <el-col :span="12">
+              <el-form-item label="所属机构:">
+                {{ stateForm.deptName }}
+              </el-form-item>
+            </el-col>
+            <!-- <el-col :span="12">
+              <el-form-item label="设备厂商:" label-width="102px">
+                {{ stateForm.supplierName }}
+              </el-form-item>
+            </el-col> -->
+            <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && ipShow">
+              <el-form-item label="控制器IP:" >
+                {{ stateForm.f_ip }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
+              <el-form-item label="控制器IP:" >
+                {{ stateForm.ip }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
+              <el-form-item label="plcIP:" >
+                {{ stateForm.f_ip }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                label="设备状态:"
+                :style="{
+                  color:
+                    stateForm.eqStatus == '1'
+                      ? 'yellowgreen'
+                      : stateForm.eqStatus == '2'
+                      ? 'white'
+                      : 'red',
+                }"
+              >
+                {{ geteqType(stateForm.eqStatus) }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="stateForm.eqType == 13">
+              <el-form-item label="消防栓状态:">
+                {{ stateForm.xfsStatus }}
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <div class="lineClass"></div>
+          <div style="margin-top: 10px">
+            <el-form-item label="配置状态:">
+              <div class="wrap">
+                <el-radio-group
+                  v-for="(item, index) in eqTypeStateList"
+                  :key="index"
+                  v-model="stateForm.state"
+                  style="display: flex; flex-direction: column"
+                  @change="$forceUpdate()"
+                >
+                  <el-radio
+                    v-if="stateForm.eqType == item.type && item.control == 1"
+                    class="el-radio flex-row"
+                    :label="item.state"
+                    style="align-items: center"
+                    :class="[
+                      String(stateForm.state) == String(item.state)
+                        ? 'el-radio-selcted'
+                        : '',
+                    ]"
+                  >
+                    <el-row
+                      class="flex-row"
+                      v-if="
+                        stateForm.eqDirection == '1' &&
+                        (stateForm.eqType == 1 || stateForm.eqType == 2)
+                      "
+                    >
+                      <img
+                        :width="iconWidth"
+                        :height="iconHeight"
+                        :src="item.url[0]"
+                      />
+                      <img
+                        :width="iconWidth"
+                        :height="iconHeight"
+                        :src="item.url[1]"
+                        v-if="item.url[1]"
+                      />
+                      <div style="margin: 0 0 0 10px; display: inline-block">
+                        {{ item.name }}
+                      </div>
+                    </el-row>
+                    <el-row
+                      class="flex-row"
+                      v-if="
+                        stateForm.eqDirection == '2' &&
+                        (stateForm.eqType == 1 || stateForm.eqType == 2)
+                      "
+                    >
+                      <img
+                        :width="iconWidth"
+                        :height="iconHeight"
+                        :src="item.url[1]"
+                        v-if="item.url.length > 1"
+                      />
+                      <img
+                        :width="iconWidth"
+                        :height="iconHeight"
+                        :src="item.url[0]"
+                      />
+                      <div style="margin: 0 0 0 10px; display: inline-block">
+                        {{ item.name }}
+                      </div>
+                    </el-row>
+                    <el-row
+                      class="flex-row"
+                      v-if="stateForm.eqType != 1 && stateForm.eqType != 2"
+                    >
+                      <img
+                        :width="iconWidth"
+                        :height="iconHeight"
+                        :src="item.url[0]"
+                        :style="{width:clickEqType == 31?'110px':'auto'}"
+                      />
+  
+                      <div style="margin: 0 0 0 10px; display: inline-block">
+                        {{ item.name }}
+                      </div>
+                    </el-row>
+                  </el-radio>
+                </el-radio-group>
+              </div>
+            </el-form-item>
+            <!-- 加强照明：7  基本照明：9 疏散标志：30 诱导灯：31 警示灯带：45 -->
+            <el-row v-show="clickEqType == 30">
+              <el-col :span="11">
+                <el-form-item v-show="showTipe == true" label-width="10px">
+                  <span style="color: red; font-weight: bold"
+                    >当前地址为报警点位</span
+                  >
                 </el-form-item>
               </el-col>
             </el-row>
-            <!-- <div class="lineClass"></div> -->
-            <div style="margin-top: 10px">
-              <el-form-item label="配置状态:">
-                <div class="wrap">
-                  <el-radio-group v-for="(item, index) in eqTypeStateList" :key="index" v-model="stateForm.state"
-                    style="display: flex; flex-direction: column" @change="$forceUpdate()">
-                    <el-radio v-if="stateForm.eqType == item.type && item.control == 1" class="el-radio flex-row"
-                      :label="item.state" style="align-items: center" :class="[
-                    String(stateForm.state) == String(item.state)
-                      ? 'el-radio-selcted'
-                      : '',
-                  ]">
-                      <el-row class="flex-row" v-if="
-                      stateForm.eqDirection == '1' &&
-                      (stateForm.eqType == 1 || stateForm.eqType == 2)
-                    ">
-                        <img :width="iconWidth" :height="iconHeight" :src="item.url[0]" />
-                        <img :width="iconWidth" :height="iconHeight" :src="item.url[1]" v-if="item.url[1]" />
-                        <div style="margin: 0 0 0 10px; display: inline-block">
-                          {{ item.name }}
-                        </div>
-                      </el-row>
-                      <el-row class="flex-row" v-if="
-                      stateForm.eqDirection == '2' &&
-                      (stateForm.eqType == 1 || stateForm.eqType == 2)
-                    ">
-                        <img :width="iconWidth" :height="iconHeight" :src="item.url[1]" v-if="item.url.length > 1" />
-                        <img :width="iconWidth" :height="iconHeight" :src="item.url[0]" />
-                        <div style="margin: 0 0 0 10px; display: inline-block">
-                          {{ item.name }}
-                        </div>
-                      </el-row>
-                      <el-row class="flex-row" v-if="stateForm.eqType != 1 && stateForm.eqType != 2">
-                        <img :width="iconWidth" :height="iconHeight" :src="item.url[0]"
-                          :style="{width:clickEqType == 31?'110px':'auto'}" />
-
-                        <div style="margin: 0 0 0 10px; display: inline-block">
-                          {{ item.name }}
-                        </div>
-                      </el-row>
-                    </el-radio>
-                  </el-radio-group>
-                </div>
-              </el-form-item>
-
-              <el-row style="margin-top: 10px" v-show="[7, 9].includes(this.clickEqType)">
-                <el-col :span="15">
-                  <el-form-item label="亮度调整">
-                    <el-slider v-model="stateForm.brightness" :max="100" :min="brightnessMin" class="sliderClass"
-                      :disabled="!stateForm.brightness"></el-slider>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9">
-                  <span style="padding-left: 10px; line-height: 30px">{{ stateForm.brightness }} %</span>
-                </el-col>
-              </el-row>
-              <div slot="footer" style="margin-top: 10px" class="dialog-footer">
-                <el-button @click="handleOK()" class="submitButton" v-hasPermi="['workbench:dialog:save']">执 行
-                </el-button>
-                <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
-              </div>
+            <el-row
+              style="margin-top: 10px"
+              v-show="[7, 9, 30, 31].includes(this.clickEqType)"
+            >
+              <el-col :span="15">
+                <el-form-item label="亮度调整">
+                  <el-slider
+                    v-model="stateForm.brightness"
+                    :max="100"
+                    :min="brightnessMin"
+                    class="sliderClass"
+                    :disabled="!stateForm.brightness"
+                  ></el-slider>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9" >
+                <span style="padding-left: 10px; line-height: 30px"
+                  >{{ stateForm.brightness }} %</span
+                >
+              </el-col>
+            </el-row>
+            <el-row v-show="(this.clickEqType == 30 && stateForm.state == 5) || (this.clickEqType == 31)" style="margin-top: 10px" >
+              <el-col :span="15">
+                <el-form-item label="闪烁频率:">
+                  <el-slider
+                    v-model="stateForm.frequency"
+                    :max="100"
+                    :min="frequencyMin"
+                    class="sliderClass"
+                    :disabled="!stateForm.frequency"
+                  ></el-slider>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9" >
+                <span style="padding-left: 10px; line-height: 30px"
+                  >{{ stateForm.frequency }} m/s</span
+                >
+              </el-col>
+            </el-row>
+            <div slot="footer" style="margin-top: 10px" class="dialog-footer">
+              <el-button
+                @click="handleOK()"
+                class="submitButton"
+                v-hasPermi="['workbench:dialog:save']"
+                >执 行</el-button
+              >
+              <el-button class="closeButton" @click="handleClosee()"
+                >取 消</el-button
+              >
             </div>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="演示视频" name="video">
-          <video
-          src="http://10.7.179.15:7080/video/lightingVideo.mp4"
-          controls
-          muted
-          loop
-          autoplay
-          fluid
-          style="width: 100%;"
-        ></video>
-        </el-tab-pane>
-
-      </el-tabs>
-
-    </el-dialog>
-  </div>
-</template>
-
-<script>
-  import {
-    getDeviceById
-  } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
-  import {
-    getType
-  } from "@/api/equipment/type/api.js"; //查询设备图标宽高
-  import {
-    getDevice,
-    setBrightness
-  } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
-  import {
-    getStateByData
-  } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
+          </div>
+        </el-form>
+      </el-dialog>
+    </div>
+  </template>
+  
+    <script>
+  import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
+  import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
+  import { getDevice, setBrightness } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+  import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
   import {
     controlDevice,
     controlWarningLightStripDevice,
@@ -153,7 +255,7 @@
     controlEvacuationSignDevice,
     controlGuidanceLampDevice
   } from "@/api/workbench/config.js"; //提交控制信息
-
+  
   export default {
     data() {
       return {
@@ -175,36 +277,35 @@
         frequencyMin: 1,
         fireMarkData: [],
         showTipe: false,
-        ipShow: false,
-        active: 'information'
+        ipShow:false,
       };
     },
     watch: {
       "stateForm.state": function (newVal, oldVal) {
-        if ([7, 9].includes(this.clickEqType)) {
-          // 基础照明、加强照明  state == 1 开启  state == 2  关闭
-          if (newVal == "1" && this.stateForm.brightness == 0) {
+        if([7, 9].includes(this.clickEqType)){
+        // 基础照明、加强照明  state == 1 开启  state == 2  关闭
+          if(newVal == "1" && this.stateForm.brightness == 0){
             this.stateForm.brightness = 1;
             this.brightnessMin = 1;
             this.frequencyMin = 1;
-          } else if (newVal == "2" || newVal == '') {
+          }else if(newVal == "2" || newVal == ''){
             this.stateForm.brightness = 0;
             this.brightnessMin = 0;
           }
-        } else if ([30, 31].includes(this.clickEqType)) {
-          // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
-          // 诱导灯 state == 1 关闭 state == 2 同步单山 state == 3 逆向流水
-          if (newVal == "1" || newVal == '') {
+        }else if([30, 31].includes(this.clickEqType)){
+           // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
+           // 诱导灯 state == 1 关闭 state == 2 同步单山 state == 3 逆向流水
+           if (newVal == "1" || newVal == '') {
             this.stateForm.brightness = 0;
             this.stateForm.frequency = 0;
             this.brightnessMin = 0;
             this.frequencyMin = 0
           } else if (newVal != "1") {
-            if (this.stateForm.brightness == 0) {
+            if(this.stateForm.brightness == 0){
               this.brightnessMin = 1;
               this.stateForm.brightness = 1;
             }
-            if (this.stateForm.frequency == 0) {
+            if(this.stateForm.frequency == 0){
               this.frequencyMin = 1
               this.stateForm.frequency = 1;
             }
@@ -240,31 +341,30 @@
             console.log(res, "查询单选框弹窗信息");
             form = JSON.parse(JSON.stringify(res.data));
             this.title = form.eqName;
-            form.frequency = typeof (form.frequency) == "string" ? Number(form.frequency) : form.frequency;
-            form.brightness = typeof (form.brightness) == "string" ? Number(form.brightness) : form.brightness;
+            form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
+            form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
             this.stateForm = form
-            if (res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD') {
+            if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){ 
               this.ipShow = true
-            } else {
+            }else{
               this.ipShow = false
             }
-            console.log(this.ipShow, "this.ipShow")
+            console.log(this.ipShow,"this.ipShow")
             // 查询设备当前状态 --------------------------------
             // getDevice(this.eqInfo.equipmentId).then((response) => {
             //   console.log(response, "查询设备当前状态");
             //   this.stateForm.state = response.data.state;
-            this.getEqTypeStateIcon();
+              this.getEqTypeStateIcon();
             // });
             if (this.eqInfo.clickEqType == 30) {
-              this.fireMarkData = [{
-                label: "设置为报警点位",
-                value: this.stateForm.query_point_address,
-              }, ];
+              this.fireMarkData = [
+                {
+                  label: "设置为报警点位",
+                  value: this.stateForm.query_point_address,
+                },
+              ];
               if (this.stateForm.query_point_address == this.stateForm.fireMark) {
-                this.fireMarkData.push({
-                  label: "清除报警点位",
-                  value: "255"
-                });
+                this.fireMarkData.push({ label: "清除报警点位", value: "255" });
                 this.showTipe = true;
               } else {
                 this.showTipe = false;
@@ -292,7 +392,7 @@
           console.log(response, "查询设备状态图标");
           list = response.rows;
         });
-
+  
         that.eqTypeStateList = [];
         for (let i = 0; i < list.length; i++) {
           let iconUrl = [];
@@ -302,7 +402,7 @@
               iconUrl.push(img);
             }
           }
-
+  
           that.eqTypeStateList.push({
             type: list[i].stateTypeId,
             state: list[i].deviceState,
@@ -314,7 +414,7 @@
         console.log(that.eqTypeStateList, "that.eqTypeStateList");
         this.visible = true;
       },
-
+  
       getDirection(num) {
         for (var item of this.directionList) {
           if (item.dictValue == num) {
@@ -339,7 +439,7 @@
       },
       handleOK() {
         let that = this;
-
+  
         // 警示灯带
         if (this.eqInfo.clickEqType == 45) {
           const loading = this.$loading({
@@ -361,7 +461,7 @@
               this.$modal.msgError("操作失败");
             }
             loading.close();
-          }).catch(() => {
+          }).catch(()=>{
             loading.close();
           });
           // 消防水泵:13 潜水深井泵:49
@@ -389,7 +489,7 @@
               this.$modal.msgError(msg);
             }
             loading.close();
-          }).catch(() => {
+          }).catch(()=>{
             loading.close();
           });
         } else if (this.stateForm.eqType == 30) {
@@ -405,18 +505,18 @@
             brightness: this.stateForm.brightness, //疏散标志亮度
             frequency: this.stateForm.frequency, //疏散标志频率
             fireMark: // 关闭传0 常亮传255 报警传3
-              this.stateForm.state == "1" ?
-              "0" :
-              this.stateForm.state == "2" ?
-              "255" :
-              "3",
+              this.stateForm.state == "1"
+                ? "0"
+                : this.stateForm.state == "2"
+                ? "255"
+                : "3",
           };
           this.$modal.msgSuccess("指令下发中，请稍后。");
           controlEvacuationSignDevice(param).then((response) => {
             console.log(response, "提交控制");
             loading.close();
             this.$modal.msgSuccess("操作成功");
-          }).catch(() => {
+          }).catch(()=>{
             loading.close();
           });
         } else if (this.stateForm.eqType == 31) {
@@ -432,14 +532,14 @@
             brightness: this.stateForm.brightness, //诱导灯亮度
             frequency: this.stateForm.frequency, //诱导灯频率
             eqType: this.stateForm.eqType,
-
+  
           };
           this.$modal.msgSuccess("指令下发中，请稍后。");
           controlGuidanceLampDevice(param).then((response) => {
             console.log(response, "提交控制");
             loading.close();
             this.$modal.msgSuccess("操作成功");
-          }).catch(() => {
+          }).catch(()=>{
             loading.close();
           });
         } else {
@@ -470,9 +570,9 @@
               this.$modal.msgSuccess("下发成功");
             }
             loading.close();
-          }).catch(() => {
+          }).catch(()=>{
             loading.close();
-
+  
           });
         }
         this.visible = false;
@@ -483,20 +583,17 @@
       },
     },
   };
-
-</script>
-
-<style lang="scss" scoped>
+  </script>
+  
+    <style lang="scss" scoped>
   .videoTabs {
-    padding: 0;
+    padding: 0 15px;
   }
-
   .el-row {
     margin-bottom: -10px;
     display: flex;
     flex-wrap: wrap;
   }
-
   .el-radio-selcted {
     padding: 5px 300px 5px 20px;
     margin: 2px 0px;
@@ -504,15 +601,13 @@
     border-radius: 4px;
     background-color: #455d79;
   }
-
+  
   .el-radio-button--medium .el-radio-button__inner {
     padding: 5px 10px;
   }
-
   ::v-deep .el-radio__label {
     height: 40px !important;
   }
-
   .flex-row {
     display: flex;
     flex-direction: row;
@@ -520,23 +615,19 @@
     height: 40px;
     align-items: center;
   }
-
   .el-radio {
     width: 240px;
     height: 40px;
     line-height: 40px;
   }
-
   ::v-deep.sliderClass {
     .el-slider__runway {
       width: 100%;
       margin: 12px 0;
     }
-
     .el-slider__bar {
       background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
     }
-
     .el-slider__button {
       width: 10px;
       height: 10px;
@@ -544,9 +635,8 @@
       background-color: #ff9300;
     }
   }
-
   ::v-deep .el-dialog {
     pointer-events: auto !important;
   }
-
-</style>
+  </style>
+  

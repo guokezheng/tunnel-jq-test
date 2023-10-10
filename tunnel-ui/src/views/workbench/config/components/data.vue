@@ -78,35 +78,35 @@
         ></div>
         <!-- 48：风机内外震动   -->
         <el-row v-if="eqInfo.clickEqType == 48">
-          <el-col :span="13">
+          <el-col :span="13" v-if="stateForm2.shakeSpeed">
             <el-form-item label="振动速度值:" label-width="90px">
               {{ stateForm2.shakeSpeed }}
               <span v-show="stateForm2.shakeSpeed">mm/s</span>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="11" v-if="stateForm2.amplitude">
             <el-form-item label="振动幅度值:" label-width="90px">
               {{ stateForm2.amplitude }}
               <span v-show="stateForm2.amplitude">μm</span>
             </el-form-item>
           </el-col>
-          <el-col :span="13">
+          <el-col :span="13" v-if="stateForm2.subside">
             <el-form-item label="沉降值:" label-width="90px">
               {{ stateForm2.subside }}
               <span v-show="stateForm2.subside">mm</span>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="11" v-if="stateForm2.slope">
             <el-form-item label="倾斜值:" label-width="90px">
               {{ stateForm2.slope }} <span v-show="stateForm2.slope">°</span>
             </el-form-item>
           </el-col>
-          <el-col :span="13">
+          <el-col :span="13" v-if="stateForm2.shakeAlaram">
             <el-form-item label="振动告警:" label-width="90px">
               {{ getshakeAlaram(stateForm2.shakeAlaram) }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="11" v-if="stateForm2.subsideSlopeAlaram">
             <el-form-item label="沉降倾斜告警:" label-width="100px">
               {{ getsubsideSlopeAlaram(stateForm2.subsideSlopeAlaram) }}
             </el-form-item>

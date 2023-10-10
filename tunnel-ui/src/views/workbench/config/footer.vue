@@ -69,11 +69,11 @@
             </div>
             <div class="item2 item">
               <div>{{ faultNum }}</div>
-              <div>设备故障数</div>
+              <div>设备离线数</div>
             </div>
             <div class="item3 item">
               <div>{{ failureRate }}%</div>
-              <div>故障率</div>
+              <div>离线率</div>
             </div>
           </div>
           <div id="deviceChart"></div>
@@ -1949,7 +1949,7 @@ export default {
           },
           series: [
             {
-              name: "故障率",
+              name: "离线率",
               type: "bar",
               stack: "total",
               label: {

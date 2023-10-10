@@ -262,7 +262,7 @@ export default {
         console.log(res, "文件列表");
         this.fileNamesList = res.data;
       });
-      this.getDicts("radio_file_list").then((data) => {
+      this.getDicts("ld_radio_file_list").then((data) => {
         this.radioFileList = data.data;
         console.log(this.radioFileList,"this.radioFileList")
       });

@@ -43,7 +43,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="所属隧道" prop="tunnelId">
+        <!-- <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="queryParams.tunnelId"
             placeholder="请选择所属隧道"
@@ -58,7 +58,7 @@
               :value="item.tunnelId"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="发布状态" prop="publishStatus">
           <el-select
             v-model="queryParams.publishStatus"
@@ -1202,6 +1202,7 @@ export default {
   },
   data() {
     return {
+      manageStatin: this.$cache.local.get("manageStation"),
       eqType2: "",
       search2Value: "",
       boxShow1: false,
@@ -1391,7 +1392,7 @@ export default {
     };
   },
   created() {
-    this.getList();
+    // this.getList();
     this.getTunnel();
     this.getTreeSelect();
     this.getEqType();
@@ -1617,6 +1618,7 @@ export default {
       listTunnels(this.queryParams).then((response) => {
         console.log(response.rows, "所属隧道列表");
         this.eqTunnelData = response.rows;
+        this.getList();
       });
     },
     /*获取当前登录人*/
@@ -1869,6 +1871,12 @@ export default {
     /** 查询巡查任务列表 */
     getList() {
       this.loading = true;
+      console.log(this.addDateRange(this.queryParams, this.dateRange),'巡查任务列表接口参数');
+      if (this.manageStatin == "1") {
+        this.queryParams.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        )
+      }
       listList(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
           console.log(response.rows, "发布状态列表");
@@ -2422,6 +2430,10 @@ export default {
         // this.$refs.multipleTable1.clearSelection();
         this.dialogSelection = [];
       },
+    },
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
     },
     isShow2: {
       handler(val) {

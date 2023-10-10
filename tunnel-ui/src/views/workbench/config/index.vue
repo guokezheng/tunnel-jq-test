@@ -1139,7 +1139,7 @@
         <el-table-column label="策略类型" align="center" prop="strategyType" :formatter="strategyTypeFormatEvent"
           v-if="strategyActive == 'yujing'" />
 
-        <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip="true">
+        <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip="true" width="250">
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
               {{ item }}
@@ -4354,6 +4354,7 @@
                     "19",
                     "20",
                     "21",
+                    "22",
                     "23",
                     "24",
                     "25",
@@ -4362,12 +4363,12 @@
                     "32",
                     "33",
                     "35",
-                    "22",
-                    "40",
                     "39",
-                    "48",
+                    "40",
                     "41",
+                    "42",
                     "47",
+                    "48",
                   ];
 
                   if (arr.includes(deviceData.eqType)) {

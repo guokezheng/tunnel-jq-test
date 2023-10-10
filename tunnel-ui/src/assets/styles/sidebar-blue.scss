@@ -3160,8 +3160,8 @@
 
       // width: 240px;
       &:hover {
-        background-color: #0A6591;
-        border: solid 1px #01AAFD;
+        background-color: rgba($color: #4a75c3, $alpha: 0.3);
+        border: solid 1px rgba($color: #4a75c3, $alpha: 0.3);
         //  width: 240px;
       }
     }
@@ -3169,8 +3169,8 @@
     .el-radio-selcted {
       padding: 5px 220px 5px 20px;
       color: #fff;
-      background-color: #0A6591;
-      border: solid 1px #01AAFD;
+      background-color: rgba($color: #4a75c3, $alpha: 0.5);
+      border: solid 1px #4a75c3;
     }
 
     /*select选择框的背景颜色*/
@@ -3817,37 +3817,41 @@
       font-size: 0.5vw;
     }
 
+    .switchStyle .is-checked .el-switch__core {
+      background: rgb(57, 173, 255);
+      border-color: rgb(57, 173, 255);
+    }
     .switchStyle .el-switch__core:after {
-      background: #0a88bd;
+      background: #fff;
+      border-color: #fff;
     }
+    // .is-checked .el-switch__core:after {
+    //   background: #00C8FF !important;
+    // }
 
-    .is-checked .el-switch__core:after {
-      background: #00C8FF !important;
-    }
+    // .switchStyle .el-switch__core {
+    //   background: linear-gradient(2deg, #00070D, #005AA8);
+    //   border: solid 1px #0a88bd !important;
+    // }
 
-    .switchStyle .el-switch__core {
-      background: linear-gradient(2deg, #00070D, #005AA8);
-      border: solid 1px #0a88bd !important;
-    }
+    // .switchStyle .el-switch.is-checked .el-switch__core {
+    //   background-color: #0a88bd !important;
+    //   border: solid 1px #0a88bd !important;
+    // }
 
-    .switchStyle .el-switch.is-checked .el-switch__core {
-      background-color: #0a88bd !important;
-      border: solid 1px #0a88bd !important;
-    }
-
-    .display-box .el-switch__core:after {
-      background: #00c8ff;
-    }
+    // .display-box .el-switch__core:after {
+    //   background: #00c8ff;
+    // }
   }
 
   .switchStyle {
     .el-switch__core:after {
-      background: #00C8FF;
+      background: #fff;
     }
 
-    .el-switch__core {
-      background: linear-gradient(2deg, #00070D, #005AA8);
-      border: solid 1px #0a88bd !important;
+    .is-checked .el-switch__core {
+      background: rgb(57, 173, 255);
+      border: solid 1px rgb(57, 173, 255) !important;
     }
 
     .display-box .el-switch__core:after {
@@ -3939,17 +3943,17 @@
       background: linear-gradient(177deg, #00ACED, #0079DB);
     }
 
-    .el-switch__core {
-      background: linear-gradient(177deg, #00070D, #005AA8);
-      border: 1px solid #005E96;
+    .is-checked .el-switch__core {
+      background: rgb(57, 173, 255);
+      border: 1px solid rgb(57, 173, 255);
     }
-
+    .is-checked 
     .ledLighting .is-checked .el-switch__core:after {
       background: #00C8FF;
     }
 
     .ledLighting .el-switch__core:after {
-      background: #3F88B5;
+      background: #fff;
     }
 
     ::-webkit-scrollbar-thumb {

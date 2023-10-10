@@ -125,9 +125,9 @@
               >
                 <el-option
                   v-for="item in fileNamesList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.fileUrl"
+                  :label="item.name"
+                  :value="item.fileUrl"
                 />
               </el-select>
             </el-form-item>

@@ -84,16 +84,16 @@
               <span v-show="stateForm2.shakeSpeed">mm/s</span>
             </el-form-item>
           </el-col>
-          <el-col :span="11" v-if="stateForm2.amplitude">
-            <el-form-item label="振动幅度值:" label-width="90px">
-              {{ stateForm2.amplitude }}
-              <span v-show="stateForm2.amplitude">μm</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="13" v-if="stateForm2.subside">
+          <el-col :span="11" v-if="stateForm2.subside">
             <el-form-item label="沉降值:" label-width="90px">
               {{ stateForm2.subside }}
               <span v-show="stateForm2.subside">mm</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="13" v-if="stateForm2.amplitude">
+            <el-form-item label="振动幅度值:" label-width="90px">
+              {{ stateForm2.amplitude }}
+              <span v-show="stateForm2.amplitude">μm</span>
             </el-form-item>
           </el-col>
           <el-col :span="11" v-if="stateForm2.slope">
@@ -109,6 +109,11 @@
           <el-col :span="11" v-if="stateForm2.subsideSlopeAlaram">
             <el-form-item label="沉降倾斜告警:" label-width="100px">
               {{ getsubsideSlopeAlaram(stateForm2.subsideSlopeAlaram) }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="13" v-if="stateForm2.alaram">
+            <el-form-item label="告警:" label-width="90px">
+              {{ stateForm2.alaram }}
             </el-form-item>
           </el-col>
         </el-row>

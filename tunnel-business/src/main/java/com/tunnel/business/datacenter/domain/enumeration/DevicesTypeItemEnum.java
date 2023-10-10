@@ -79,6 +79,7 @@ public enum DevicesTypeItemEnum {
     QING_XIE_ZHI(79, "倾斜值"),
     ZHEN_DONG_GAO_JING(80, "振动告警"),
     CHEN_JIANG_QING_XIE_GAO_JING(81, "沉降倾斜告警"),
+    FENG_JI_GAO_JING(82, "告警"),
     WEN_DU_CHUANGAN(89, "温度"),    //温度传感器
     SHI_DU_CHUANGAN(90, "湿度"),   //湿度传感器
     SHEN_SHUI_BENG(91, "深水泵"),    //深水泵状态 关闭D0=0；开启D0=1
@@ -97,6 +98,9 @@ public enum DevicesTypeItemEnum {
     MEN_JIA_CONTENT(104, "门架式情报板内容"),    //门架式情报板内容
 
     SHUI_JIN_LEVEL(105,"水浸液位"),
+
+
+
 
 
     // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性

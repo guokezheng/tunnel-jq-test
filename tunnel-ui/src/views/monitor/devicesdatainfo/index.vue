@@ -232,7 +232,7 @@
             width="68"
             align="center"
           ></el-table-column>
-          <el-table-column label="设备编码" align="center" prop="eqId" />
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
           <el-table-column label="设备名称" align="center" prop="eqName" />
           <el-table-column label="所属隧道" align="center" prop="tunnelName" />
           <el-table-column label="管理机构" align="center" prop="deptName" />
@@ -270,7 +270,7 @@
             width="68"
             align="center"
           ></el-table-column>
-          <el-table-column label="设备编码" align="center" prop="eqId" />
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
           <el-table-column label="设备名称" align="center" prop="eqName" />
           <el-table-column label="所属隧道" align="center" prop="tunnelName" />
           <el-table-column label="管理机构" align="center" prop="deptName" />
@@ -297,7 +297,7 @@
             width="68"
             align="center"
           ></el-table-column>
-          <el-table-column label="设备编码" align="center" prop="eqId" />
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
           <el-table-column label="设备名称" align="center" prop="eqName" />
           <el-table-column label="所属隧道" align="center" prop="tunnelName" />
           <el-table-column label="管理机构" align="center" prop="deptName" />

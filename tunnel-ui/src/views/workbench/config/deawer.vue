@@ -752,8 +752,16 @@ export default {
         }
       });
     },
+    // 父组件调用子组件的方法关闭三个弹框
+    close_three_dialogs_event () {
+      // console.log('shifoudiaotong');
+      this.drawerA = false;
+      this.drawerB = false;
+      this.drawerCVisible = false;
+    },
     //抽屉
     isDrawerA() {
+      this.$emit('close_dialogs_event', false);
       this.drawerA = !this.drawerA;
       this.drawerB = false;
       this.drawerCVisible = false;
@@ -776,6 +784,7 @@ export default {
       this.$forceUpdate();
     },
     isDrawerB() {
+      this.$emit('close_dialogs_event', false);
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
@@ -794,6 +803,7 @@ export default {
       }
     },
     isDrawerC() {
+      this.$emit('close_dialogs_event', false);
       this.drawerCVisible = !this.drawerCVisible;
       this.drawerA = false;
       this.drawerB = false;

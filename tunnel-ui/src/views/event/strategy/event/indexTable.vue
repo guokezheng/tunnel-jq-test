@@ -48,7 +48,7 @@
             :model="queryParams"
             label-width="75px"
           >
-            <el-form-item label="隧道名称" prop="tunnelId">
+            <!-- <el-form-item label="隧道名称" prop="tunnelId">
               <el-select
                 v-model="queryParams.tunnelId"
                 placeholder="请选择隧道"
@@ -62,7 +62,7 @@
                   :value="item.tunnelId"
                 />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="方向" prop="direction">
               <el-select
                 v-model="queryParams.direction"
@@ -643,6 +643,7 @@ export default {
   },
   data() {
     return {
+      manageStatin: this.$cache.local.get("manageStation"),
       tableKey:0,
       allLoading: {
         lock: true,
@@ -806,7 +807,7 @@ export default {
     };
   },
   created() {
-    this.getList(); //查询控制策略
+    // this.getList(); //查询控制策略
     this.getTunnels(); //获取隧道
     this.getListEventType()
     
@@ -1256,7 +1257,9 @@ export default {
     /** 查询隧道列表 */
     getTunnels() {
       listTunnels().then((response) => {
+        console.log(response,'隧道列表');
         this.tunnelData = response.rows;
+        this.getList()
       });
     },
     /** 查询设备类型列表 */
@@ -1321,9 +1324,16 @@ export default {
     },
     /** 查询控制策略列表 */
     getList() {
-      console.log( this.queryParams,"this.queryParams" )
+      console.log( this.queryParams,this.$cache.local.get(
+          "manageStationSelect"
+        ),"this.queryParams" )
       this.loading = true;
       this.queryParams.strategyGroup = this.activeName == 'one' ? '1' : '2'
+      if (this.manageStatin == "1") {
+        this.queryParams.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        )
+      }
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         console.log(this.strategyList, 'this.strategyListthis.strategyListthis.strategyListthis.strategyList')
@@ -1583,7 +1593,10 @@ export default {
         this.$refs.tableFile1.clearSelection()
       }
     },
-
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+    },
     tableType:{
       handler(val){
         console.log(val,"tableTypetableTypetableTypetableTypetableTypetableTypetableTypetableType")

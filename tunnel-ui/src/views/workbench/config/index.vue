@@ -588,7 +588,7 @@
       </div>
 
       <!-- 右侧侧窗 -->
-      <com-deawer class="topNavRightDeawer" ref="deawerRef"></com-deawer>
+      <com-deawer class="topNavRightDeawer" @close_dialogs_event="close_dialogs_event" ref="deawerRef"></com-deawer>
 
       <!--配置区域-->
       <com-footer class="footer" ref="footerRef"></com-footer>
@@ -2269,6 +2269,11 @@
     },
 
     methods: {
+      // 关闭小的一键控制弹框
+      close_dialogs_event (data) {
+        // console.log(data,'这是子传父');
+        this.buttonsDeawer = data
+      },
       // // 演示用测控执行器
       // openActuatorCKDialog(){
       //   let param = {
@@ -2339,7 +2344,9 @@
       getRowKey2(row) {
         return row.id;
       },
+      // 一键控制小弹框的显示与隐藏
       isDrawer() {
+        this.$refs.deawerRef.close_three_dialogs_event()
         this.buttonsDeawer = !this.buttonsDeawer;
       },
       //拆分拼接数据

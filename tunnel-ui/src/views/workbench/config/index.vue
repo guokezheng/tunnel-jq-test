@@ -129,10 +129,10 @@
             <img src="../../../assets/icons/tbhy.png" />
             <span>图标含义</span>
           </el-button>
-          <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
+          <!-- <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
             <img src="../../../assets/icons/czrz.png" />
             <span>操作日志</span>
-          </el-button>
+          </el-button> -->
         </div>
       </div>
       <div class="buttonsDeawer" @click="isDrawer()">

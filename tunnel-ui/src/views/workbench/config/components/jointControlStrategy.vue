@@ -126,7 +126,7 @@
               <el-row :gutter="24">
                 <el-col :span="4" class="elcolName">状态</el-col>
                 <el-col :span="20" class="elcolNameOne">
-                  <el-switch v-model="item.strategyState" active-color="#13ce66" inactive-color="#ff4949"
+                  <el-switch v-model="item.strategyState" active-color="rgb(57, 173, 255)" inactive-color="rgb(204, 204, 204)"
                     active-value="0" inactive-value="1" v-hasPermi="['workbench:light:switch']"
                     @change="changeStrategyState(item)">
                   </el-switch>

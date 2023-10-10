@@ -1728,7 +1728,7 @@ export default {
         grid: {
           top: "24%",
           bottom: "13%",
-          left: "10%",
+          left: "14%",
           right: "10%",
         },
         xAxis: [
@@ -2282,7 +2282,7 @@ export default {
   }
 
   .footMiniBox {
-    width: 19.5%;
+    width: 19.45%;
     height: 100%;
     overflow: hidden;
     // background-image: url(../../../assets/cloudControl/footer_bg.png);

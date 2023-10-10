@@ -129,10 +129,10 @@
             <img src="../../../assets/icons/tbhy.png" />
             <span>图标含义</span>
           </el-button>
-          <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
+          <!-- <el-button class="buttons" type="primary" size="mini" @click="operationLogPage">
             <img src="../../../assets/icons/czrz.png" />
             <span>操作日志</span>
-          </el-button>
+          </el-button> -->
         </div>
       </div>
       <div class="buttonsDeawer" @click="isDrawer()">
@@ -588,7 +588,7 @@
       </div>
 
       <!-- 右侧侧窗 -->
-      <com-deawer class="topNavRightDeawer" ref="deawerRef"></com-deawer>
+      <com-deawer class="topNavRightDeawer" @close_dialogs_event="close_dialogs_event" ref="deawerRef"></com-deawer>
 
       <!--配置区域-->
       <com-footer class="footer" ref="footerRef"></com-footer>
@@ -1139,7 +1139,7 @@
         <el-table-column label="策略类型" align="center" prop="strategyType" :formatter="strategyTypeFormatEvent"
           v-if="strategyActive == 'yujing'" />
 
-        <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip="true">
+        <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip="true" width="250">
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
               {{ item }}
@@ -2272,6 +2272,11 @@
     },
 
     methods: {
+      // 关闭小的一键控制弹框
+      close_dialogs_event (data) {
+        // console.log(data,'这是子传父');
+        this.buttonsDeawer = data
+      },
       // // 演示用测控执行器
       // openActuatorCKDialog(){
       //   let param = {
@@ -2342,7 +2347,9 @@
       getRowKey2(row) {
         return row.id;
       },
+      // 一键控制小弹框的显示与隐藏
       isDrawer() {
+        this.$refs.deawerRef.close_three_dialogs_event()
         this.buttonsDeawer = !this.buttonsDeawer;
       },
       //拆分拼接数据
@@ -4347,6 +4354,7 @@
                     "19",
                     "20",
                     "21",
+                    "22",
                     "23",
                     "24",
                     "25",
@@ -4355,12 +4363,12 @@
                     "32",
                     "33",
                     "35",
-                    "22",
-                    "40",
                     "39",
-                    "48",
+                    "40",
                     "41",
+                    "42",
                     "47",
+                    "48",
                   ];
 
                   if (arr.includes(deviceData.eqType)) {

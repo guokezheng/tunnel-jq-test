@@ -69,11 +69,11 @@
             </div>
             <div class="item2 item">
               <div>{{ faultNum }}</div>
-              <div>设备故障数</div>
+              <div>设备离线数</div>
             </div>
             <div class="item3 item">
               <div>{{ failureRate }}%</div>
-              <div>故障率</div>
+              <div>离线率</div>
             </div>
           </div>
           <div id="deviceChart"></div>
@@ -1728,7 +1728,7 @@ export default {
         grid: {
           top: "24%",
           bottom: "13%",
-          left: "10%",
+          left: "14%",
           right: "10%",
         },
         xAxis: [
@@ -1949,7 +1949,7 @@ export default {
           },
           series: [
             {
-              name: "故障率",
+              name: "离线率",
               type: "bar",
               stack: "total",
               label: {
@@ -2282,7 +2282,7 @@ export default {
   }
 
   .footMiniBox {
-    width: 19.5%;
+    width: 19.45%;
     height: 100%;
     overflow: hidden;
     // background-image: url(../../../assets/cloudControl/footer_bg.png);

@@ -532,6 +532,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         List<SdDeviceData> zhenGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode()), sdDevices.getEqId());
         //沉降倾斜告警
         List<SdDeviceData> chenQingGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode()), sdDevices.getEqId());
+        //风机告警
+        List<SdDeviceData> fengJiGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.FENG_JI_GAO_JING.getCode()), sdDevices.getEqId());
         //封装到mqp
         Map<String, String> map = new HashMap<>();
         map.put("shakeSpeed",suDuList.size() == 0 ? "" : suDuList.get(0).getData());
@@ -540,6 +542,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         map.put("slope",qingXieList.size() == 0 ? "" : qingXieList.get(0).getData());
         map.put("shakeAlaram",zhenGaoJingList.size() == 0 ? "" : zhenGaoJingList.get(0).getData());
         map.put("subsideSlopeAlaram",chenQingGaoJingList.size() == 0 ? "" : chenQingGaoJingList.get(0).getData());
+        map.put("alaram",fengJiGaoJingList.size() == 0 ? "" : fengJiGaoJingList.get(0).getData());
         return AjaxResult.success(map);
     }
 

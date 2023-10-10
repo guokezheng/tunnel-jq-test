@@ -208,8 +208,13 @@ export default {
     //   "this.$cache.local.get('manageStationSelect')"
     // );
     await getJlyTunnel().then((res) => {
+      console.log(res,"getJlyTunnel")
       this.manageStationList = res.data;
       var test = window.location.href;
+      console.log(test,"test")
+      console.log(this.$cache.local.get(
+          "manageStationSelect",
+        ),"1111111111111")
       if (test.substr(test.length - 1, 1) == "1") {
         this.$store.dispatch(
           "manage/changeTunnelId",
@@ -221,10 +226,12 @@ export default {
         );
         this.manageStationSelect = "JQ-WeiFang-JiuLongYu-JJL";
       } else if (test.substr(test.length - 1, 1) == "2") {
-        // console.log("马鞍山隧道");
         this.changeNavSelect("JQ-WeiFang-JiuLongYu-MAS");
         this.manageStationSelect = "JQ-WeiFang-JiuLongYu-MAS";
       } else {
+        if(this.$cache.local.get("manageStationSelect")){
+          this.manageStationSelect = this.$cache.local.get("manageStationSelect")
+        }else{
         // if (
         //   this.$cache.local.get("manageStationSelect") ==
         //   "JQ-WeiFang-JiuLongYu-HSD"
@@ -234,6 +241,7 @@ export default {
           this.manageStationSelect = res.data[0].tunnelId;
           this.$cache.local.set("manageStationSelect", res.data[0].tunnelId);
         // }
+        }
       }
     });
   },

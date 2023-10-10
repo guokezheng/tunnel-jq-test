@@ -688,7 +688,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = "";
+          this.queryParams.ids = [];
         });
     },
   },

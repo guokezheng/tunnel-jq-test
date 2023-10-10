@@ -37,7 +37,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="所属隧道" prop="tunnelId">
+        <!-- <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="queryParams.tunnelId"
             placeholder="请选择所属隧道"
@@ -51,7 +51,7 @@
               :value="item.tunnelId"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="发布状态" prop="faultStatus">
           <el-select
             v-model="queryParams.faultStatus"

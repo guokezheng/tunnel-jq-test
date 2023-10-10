@@ -1277,6 +1277,8 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     public List<String[]> setReviewMap(SdEvent manualReview){
         List<String[]> list = new ArrayList<>();
+        list.add(new String[]{"影响车道",manualReview.getLaneNo()});
+        list.add(new String[]{"影响方向",manualReview.getDirection()});
         list.add(new String[]{"当事目标",manualReview.getConfidenceList()});
         list.add(new String[]{"影响描述",manualReview.getEventDescription()});
         list.add(new String[]{"预估类型",manualReview.getEventTypeName()});

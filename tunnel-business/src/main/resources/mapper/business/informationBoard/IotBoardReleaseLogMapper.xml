@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="releaseIp"    column="release_ip"    />
         <result property="tunnelName"    column="tunnel_name"    />
         <result property="direction"    column="direction"    />
+        <result property="devicePixel"    column="device_pixel"    />
     </resultMap>
 
     <sql id="selectIotBoardReleaseLogVo">
@@ -30,11 +31,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectIotBoardReleaseLogList" parameterType="IotBoardReleaseLog" resultMap="IotBoardReleaseLogResult">
         select a.id, a.device_id, IFNULL(a.device_name,b.eq_name) as device_name, a.release_old_content, a.release_new_content, a.release_by, a.release_time,
         if(a.release_status is null, "1",a.release_status) release_status, a.release_dept_name, a.release_dept_id,
-        a.release_user_name, a.release_user_id, b.pile, c.tunnel_name, d.dict_label direction ,a.release_ip
+        a.release_user_name, a.release_user_id, b.pile, c.tunnel_name, d.dict_label direction ,a.release_ip, ba.device_pixel
         from iot_board_release_log a
         left join sd_devices b on a.device_id = b.associated_device_id
         left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
         left join sys_dict_data d on d.dict_value = b.eq_direction and d.dict_type = "sd_direction"
+        left join iot_board_access ba on a.device_id = ba.device_id
         <where>
             <if test="deviceId != null  and deviceId != ''"> and a.device_id = #{deviceId}</if>
             <if test="tunnelId != null  and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>

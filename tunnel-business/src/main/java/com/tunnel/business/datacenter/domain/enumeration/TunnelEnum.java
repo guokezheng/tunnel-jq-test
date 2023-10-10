@@ -10,7 +10,7 @@ public enum TunnelEnum {
 
     HU_SHAN("JQ-JiNan-WenZuBei-MJY", "胡山隧道"),
     HANG_SHAN_DONG("JQ-WeiFang-JiuLongYu-HSD", "杭山东隧道"),
-    JIN_JIA_LOU("JQ-WeiFang-JiuLongYu-JJL", "金佳楼隧道"),
+    JIN_JIA_LOU("JQ-WeiFang-JiuLongYu-JJL", "金家楼隧道"),
     MA_AN_SHAN("JQ-WeiFang-JiuLongYu-MAS", "马鞍山隧道"),
     TAI_HE_SHAN("JQ-WeiFang-MiaoZi-BJY", "泰和山隧道"),
     TIAN_CI_SHAN("JQ-WeiFang-MiaoZi-WCL", "天赐山隧道"),

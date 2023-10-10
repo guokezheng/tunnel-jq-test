@@ -93,7 +93,7 @@ public class KafkaReadListenToWanJiTopic {
             //解析事件数据
             JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件数据
-            //saveEvent(objects);
+            saveEvent(objects);
         }
         //手动提交
         consumer.commitSync();
@@ -123,7 +123,7 @@ public class KafkaReadListenToWanJiTopic {
             //解析事件数据
             JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件图片视频数据
-            //saveEventImage(objects);
+            saveEventImage(objects);
         }
         //手动提交
         consumer.commitSync();

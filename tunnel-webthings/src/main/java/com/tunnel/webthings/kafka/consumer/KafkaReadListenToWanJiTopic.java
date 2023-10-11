@@ -6,13 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
-import com.tunnel.business.domain.dataInfo.EventTypeEnum;
-import com.tunnel.business.domain.dataInfo.SdTunnels;
-import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
@@ -23,7 +19,6 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
-import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
 import com.zc.websocket.bo.ChannelProperty;
@@ -37,15 +32,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.concurrent.*;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
 
@@ -76,6 +71,12 @@ public class KafkaReadListenToWanJiTopic {
 
     @Autowired
     private RadarEventServiceImpl radarEventServiceImpl;
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToWanJiTopic.class);
 
@@ -258,9 +259,9 @@ public class KafkaReadListenToWanJiTopic {
                 }
                 //将事件推送到前端展示
                 /*eventSendWeb(jsonObject);*/
-                Long typeId = sdEvent.getEventTypeId();
+                /*Long typeId = sdEvent.getEventTypeId();
                 if(typeId == 1L || typeId == 2L || typeId == 11L || typeId == 12L || typeId == 13L || typeId == 14L
-                || typeId == 18L || typeId == 19L || typeId == 20L){
+                        || typeId == 18L || typeId == 19L || typeId == 20L){
                     //如果是未处理状态改为处理中
                     if(sdEvent.getEventState().equals(EventStateEnum.unprocessed.getCode())){
                         sdEvent.setEventState(EventStateEnum.processing.getCode());
@@ -271,8 +272,12 @@ public class KafkaReadListenToWanJiTopic {
                     sdEvent.setEventTitle(split[0] + "," + eventTitle);
                     noNullStringAttr(sdEvent);
                     Map<String, Object> map = setEventData(sdEvent);
-                    radarEventServiceImpl.sendDataToOtherSystem(map);
-                }
+                    //向物联推送事件
+                    threadPoolTaskExecutor.execute(()->{
+                        sendWlEvent(map);;
+                    });
+                    //radarEventServiceImpl.sendDataToOtherSystem(map);
+                }*/
             }
         }
     }
@@ -615,9 +620,11 @@ public class KafkaReadListenToWanJiTopic {
 
     //组装event数据
     public Map<String, Object> setEventData(SdEvent sdEvent){
+        String number = TunnelEnum.getNumber(sdEvent.getTunnelId());
+        String keyId = number + String.format("%011d",sdEvent.getId());
         Map<String, Object> map = new HashMap<>();
         map.put("endTime",sdEvent.getEndTime());
-        map.put("id",sdEvent.getId());
+        map.put("id",keyId);
         map.put("eventSource",sdEvent.getEventSource());
         map.put("eventState",sdEvent.getEventState());
         map.put("eventLongitude",sdEvent.getEventLongitude());
@@ -627,7 +634,7 @@ public class KafkaReadListenToWanJiTopic {
         map.put("passengerCarNum",sdEvent.getPassengerCarNum());
         map.put("slightInjured",sdEvent.getSlightInjured());
         map.put("smallCarNum",sdEvent.getSmallCarNum());
-        map.put("stakeNum",sdEvent.getStakeNum());
+        map.put("stakeNum",sdEvent.getStakeNum().replaceAll("Z","").replaceAll("Y",""));
         map.put("startTime",sdEvent.getStartTime());
         map.put("tankerNum",sdEvent.getTankerNum());
         map.put("truckNum",sdEvent.getTankerNum());
@@ -681,5 +688,39 @@ public class KafkaReadListenToWanJiTopic {
             default: title = sdEvent.getEventTitle().split(",")[1];
         }
         return title;
+    }
+
+    /**
+     * 推送物联事件
+     * @param map
+     */
+    public void sendWlEvent(Map<String, Object> map){
+        Executor executor = Executors.newSingleThreadExecutor();
+        CompletionService<Object> completionService = new ExecutorCompletionService<>(executor);
+        Future<?> future = completionService.submit(new Callable<Object>() {
+            public Object call() throws Exception {
+                // 这里是要执行的方法
+                radarEventServiceImpl.sendDataToOtherSystem(map);
+                return 1;
+            }
+        });
+
+        // 获取执行结果
+        try {
+            Object result = completionService.poll(3000L, TimeUnit.MILLISECONDS);
+            if (result == null) {
+                //System.out.println("超时了，结束该方法的执行");
+                log.error("推送物联事件超时{}",JSON.toJSONString(map));
+                future.cancel(true);
+            } else {
+                // 方法执行完毕，处理执行结果
+                //System.out.println("方法执行完毕，结果：" + result.toString());
+                log.info("推送物联事件成功{}",JSON.toJSONString(map));
+            }
+        } catch (InterruptedException e) {
+            //System.out.println("出现异常，结束该方法的执行");
+            log.error("推送物联事件出现异常{}",JSON.toJSONString(map));
+            future.cancel(true);
+        }
     }
 }

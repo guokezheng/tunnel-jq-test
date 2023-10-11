@@ -329,7 +329,6 @@ public class RadarTask {
         }
     }
 
-    @Scheduled(fixedRate = 30000)
     public void getCarVolume(){
         List<Map<String, String>> list = new ArrayList<>();
         String path = "/flow/today";

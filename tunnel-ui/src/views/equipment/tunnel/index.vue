@@ -1182,6 +1182,10 @@ export default {
     /** 查询隧道列表 */
     getList() {
       this.loading = true;
+      console.log(this.manageStatin,"this.manageStatin")
+      console.log(this.$cache.local.get(
+          "manageStationSelect"
+        ),"this.$cache.local.get('manageStationSelect')")
       if (this.manageStatin == "1") {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"

@@ -528,9 +528,9 @@
                           ">
                           {{ item.num }}
                         </span>
-                        <span v-if="selectBigType.index == 4">
+                        <!-- <span v-if="selectBigType.index == 4">
                           {{ item.electricity }}
-                        </span>
+                        </span> -->
                       </label>
                       <label style="color: #f2a520" class="labelClass labelClass9" v-if="item.eqType == 9">
                         <span v-if="
@@ -542,10 +542,11 @@
                           {{ item.electricity }}
                         </span>
                       </label>
-                      <label style="color: #f2a520" class="labelClass labelClass9"
+                      <!-- 风机 -->
+                      <!-- <label style="color: #f2a520" class="labelClass labelClass9"
                         v-if="item.eqType == 10 && selectBigType.index == 4">
                         {{ item.electricity }}
-                      </label>
+                      </label> -->
                     </div>
                     <!-- 桩号 -->
                     <input :class="[

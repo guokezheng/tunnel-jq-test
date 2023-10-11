@@ -31,10 +31,20 @@ export function vehicleMonitoringInRecent24Hours(data) {
     data: data
   })
 }
-// 车辆监测数据 
+// 车辆监测数据 九龙峪
 export function getHoursTrafficVolume(query) {
   return request({
     url: '/eventWarning/getHoursTrafficVolume',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 车辆监测数据 除九龙峪
+export function getCarNumber(query) {
+  return request({
+    url: '/eventWarning/getCarNumber',
     method: 'get',
     params: query
   })

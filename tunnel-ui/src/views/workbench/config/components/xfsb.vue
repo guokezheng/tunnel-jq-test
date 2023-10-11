@@ -178,7 +178,7 @@ import { setControlDeviceByParam } from "@/api/workbench/config.js"; //提交控
 
 export default {
   props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
- 
+
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -287,9 +287,9 @@ export default {
     },
     handleOK() {
       const param = {
-        eqId: this.stateForm.eqId, //设备id
-        data: this.stateForm.state,
-        comType: "omron",
+        devId: this.stateForm.eqId, //设备id
+        state: this.stateForm.state,
+        // comType: "omron",
       };
       setControlDeviceByParam(param).then((res)=>{
         console.log("消防栓控制成功",res)

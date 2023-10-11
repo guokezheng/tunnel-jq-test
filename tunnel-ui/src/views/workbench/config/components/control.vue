@@ -15,7 +15,7 @@
           <div class="dialogLine"></div>
           <div class="dialogCloseButton"></div>
         </div>
-  
+
         <el-form
           ref="form"
           :model="stateForm"
@@ -34,7 +34,7 @@
                 {{ stateForm.tunnelName }}
               </el-form-item>
             </el-col>
-  
+
             <el-col :span="12">
               <el-form-item label="位置桩号:">
                 {{ stateForm.pile }}
@@ -45,7 +45,7 @@
                 {{ getDirection(stateForm.eqDirection) }}
               </el-form-item>
             </el-col>
-  
+
             <el-col :span="12">
               <el-form-item label="所属机构:">
                 {{ stateForm.deptName }}
@@ -168,7 +168,7 @@
                         :src="item.url[0]"
                         :style="{width:clickEqType == 31?'110px':'auto'}"
                       />
-  
+
                       <div style="margin: 0 0 0 10px; display: inline-block">
                         {{ item.name }}
                       </div>
@@ -242,7 +242,7 @@
       </el-dialog>
     </div>
   </template>
-  
+
     <script>
   import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
   import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
@@ -255,7 +255,7 @@
     controlEvacuationSignDevice,
     controlGuidanceLampDevice
   } from "@/api/workbench/config.js"; //提交控制信息
-  
+
   export default {
     data() {
       return {
@@ -344,7 +344,7 @@
             form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
             form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
             this.stateForm = form
-            if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){ 
+            if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){
               this.ipShow = true
             }else{
               this.ipShow = false
@@ -392,7 +392,7 @@
           console.log(response, "查询设备状态图标");
           list = response.rows;
         });
-  
+
         that.eqTypeStateList = [];
         for (let i = 0; i < list.length; i++) {
           let iconUrl = [];
@@ -402,7 +402,7 @@
               iconUrl.push(img);
             }
           }
-  
+
           that.eqTypeStateList.push({
             type: list[i].stateTypeId,
             state: list[i].deviceState,
@@ -414,7 +414,7 @@
         console.log(that.eqTypeStateList, "that.eqTypeStateList");
         this.visible = true;
       },
-  
+
       getDirection(num) {
         for (var item of this.directionList) {
           if (item.dictValue == num) {
@@ -439,7 +439,7 @@
       },
       handleOK() {
         let that = this;
-  
+
         // 警示灯带
         if (this.eqInfo.clickEqType == 45) {
           const loading = this.$loading({
@@ -476,9 +476,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
           const param = {
-            eqId: this.stateForm.eqId, //设备id
-            data: this.stateForm.state,
-            comType: "omron",
+            devId: this.stateForm.eqId, //设备id
+            state: this.stateForm.state,
+            // comType: "omron",
           };
           setControlDeviceByParam(param).then((res) => {
             console.log("消防栓控制成功", res);
@@ -532,7 +532,7 @@
             brightness: this.stateForm.brightness, //诱导灯亮度
             frequency: this.stateForm.frequency, //诱导灯频率
             eqType: this.stateForm.eqType,
-  
+
           };
           this.$modal.msgSuccess("指令下发中，请稍后。");
           controlGuidanceLampDevice(param).then((response) => {
@@ -572,7 +572,7 @@
             loading.close();
           }).catch(()=>{
             loading.close();
-  
+
           });
         }
         this.visible = false;
@@ -584,7 +584,7 @@
     },
   };
   </script>
-  
+
     <style lang="scss" scoped>
   .videoTabs {
     padding: 0 15px;
@@ -601,7 +601,7 @@
     border-radius: 4px;
     background-color: #455d79;
   }
-  
+
   .el-radio-button--medium .el-radio-button__inner {
     padding: 5px 10px;
   }
@@ -639,4 +639,3 @@
     pointer-events: auto !important;
   }
   </style>
-  

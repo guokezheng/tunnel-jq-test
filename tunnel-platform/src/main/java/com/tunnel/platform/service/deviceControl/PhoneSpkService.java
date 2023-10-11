@@ -485,6 +485,7 @@ public class PhoneSpkService {
 
         int status = 0;
         if(phoneSpeak == null){
+            map.put("systemUrl",systemUrl);
             status = ldPhoneSpeak.playVoice(map,new SdDevices());
         }else {
             status = phoneSpeak.playVoice(systemUrl, map);

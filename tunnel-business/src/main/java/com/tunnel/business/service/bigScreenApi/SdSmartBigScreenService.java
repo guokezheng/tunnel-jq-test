@@ -173,10 +173,17 @@ public interface SdSmartBigScreenService {
 
     /**
      * 预警统计
-     * @param baseTime
+     * @param
      * @param type
      * @param deptId
      * @return
      */
     AjaxResult getWarningStatistics(String type,String deptId);
+
+    /**
+     * 统计当日车流量
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getCarNumber(String tunnelId);
 }

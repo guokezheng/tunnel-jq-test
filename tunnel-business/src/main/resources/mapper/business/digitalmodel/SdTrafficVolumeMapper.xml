@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.digitalmodel.SdTrafficVolumeMapper">
+
+    <resultMap type="SdTrafficVolume" id="trafficVolumeResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="direction"    column="direction"    />
+        <result property="carNumber"    column="car_number"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficVolume">
+        select id, tunnel_id, create_by, create_time, update_by, update_time, direction, car_number from sd_traffic_volume
+    </sql>
+
+    <select id="selectSdEventTypeList" parameterType="SdEventType" resultMap="trafficVolumeResult">
+        <include refid="selectSdTrafficVolume"/>
+        <where>
+            <if test="direction != null  and direction != ''">and direction = #{direction} </if>
+            <if test="tunnelId != null  and tunnelId != ''">and tunnel_id =#{tunnelId}</if>
+            <if test="id != null  and id != ''">and id = #{id}</if>
+        </where> order by create_time desc
+    </select>
+
+    <select id="selectSdTrafficVolumeById" parameterType="Long" resultMap="trafficVolumeResult">
+        <include refid="selectSdTrafficVolume"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdTrafficVolume" parameterType="sdTrafficVolume" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_traffic_volume(
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="direction != null">direction,</if>
+            <if test="carNumber != null">car_number,</if>
+            <if test="originalData != null">original_data,</if>
+         	create_time
+ 		)values(
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="carNumber != null">#{carNumber},</if>
+            <if test="originalData != null">#{originalData},</if>
+            sysdate()
+         )
+    </insert>
+
+    <update id="updateSdTrafficVolume" parameterType="SdEventType">
+        update sd_traffic_volume
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="carNumber != null">car_number = #{carNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTrafficVolumeById" parameterType="Long">
+        delete from sd_traffic_volume where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTrafficVolumeByIds" parameterType="String">
+        delete from sd_traffic_volume where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkData" resultType="int" parameterType="sdEventType">
+        select
+            count(*)
+        from
+            sd_event_type
+        where
+            1=1
+        <if test="id != null and id != 0">
+            AND id <![CDATA[ <> ]]> #{id}
+        </if>
+        <if test="eventType != null and eventType != ''">
+            AND event_type = #{eventType}
+        </if>
+        <if test="simplifyName != null and simplifyName != ''">
+            AND simplify_name = #{simplifyName}
+        </if>
+        <if test="prevControlType != null and prevControlType != ''">
+            AND prev_control_type = #{prevControlType}
+        </if>
+    </select>
+
+    <select id="selectCarNumber" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            max( tv.original_data ) AS originalData,
+            tv.direction,
+            max( tv.create_time ) AS create_time
+        FROM
+            sd_traffic_volume tv
+        WHERE
+            1 = 1
+          AND tv.tunnel_id = #{tunnelId}
+        GROUP BY
+            tv.direction
+        ORDER BY
+            tv.direction ASC
+            LIMIT 2
+    </select>
+</mapper>

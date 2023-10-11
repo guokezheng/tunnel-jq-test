@@ -7,11 +7,14 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
+import com.tunnel.business.datacenter.domain.enumeration.WjCarVolumeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.domain.event.SdRadarDetectDataTemporary;
+import com.tunnel.business.domain.event.SdTrafficVolume;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
+import com.tunnel.business.mapper.digitalmodel.SdTrafficVolumeMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.zc.common.core.kafka.kafkaTool;
@@ -24,9 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -60,6 +67,16 @@ public class RadarTask {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Value("${wj_carVolume}")
+    private String glzName;
+
+    @Resource(name = "HttpTemplate")
+    private RestTemplate template;
+
+    @Autowired
+    private SdTrafficVolumeMapper volumeMapper;
+
 
     public static  List<SdRadarDetectData> sdRadarDetectDatalist = null;
     public static  List<SdRadarDetectData> sdRadarDetectDatalist1 = null;
@@ -312,4 +329,86 @@ public class RadarTask {
         }
     }
 
+    @Scheduled(fixedRate = 30000)
+    public void getCarVolume(){
+        List<Map<String, String>> list = new ArrayList<>();
+        String path = "/flow/today";
+        Map<String, String > map = new HashMap<>();
+        if("wzb".equals(glzName)){
+            map.put("tunnelId",WjCarVolumeEnum.HU_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.HU_SHAN.getName() + path);
+            list.add(map);
+        }else if("th".equals(glzName)){
+            map.put("tunnelId",WjCarVolumeEnum.QING_FENG_LING.getCode());
+            map.put("url",WjCarVolumeEnum.QING_FENG_LING.getName() + path);
+            list.add(map);
+            map.put("tunnelId",WjCarVolumeEnum.PAN_DING_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.PAN_DING_SHAN.getName() + path);
+            list.add(map);
+        }else if("mz".equals(glzName)){
+            map.put("tunnelId",WjCarVolumeEnum.TAI_HE_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.TAI_HE_SHAN.getName() + path);
+            list.add(map);
+            map.put("tunnelId",WjCarVolumeEnum.TIAN_CI_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.TIAN_CI_SHAN.getName() + path);
+            list.add(map);
+        }else if("jly".equals(glzName)){
+            map.put("tunnelId",WjCarVolumeEnum.MA_AN_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.MA_AN_SHAN.getName() + path);
+            list.add(map);
+            map.put("tunnelId",WjCarVolumeEnum.JIN_JIA_LOU.getCode());
+            map.put("url",WjCarVolumeEnum.JIN_JIA_LOU.getName() + path);
+            list.add(map);
+        }else if("yts".equals(glzName)){
+            map.put("tunnelId",WjCarVolumeEnum.SHUANG_ZI_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.SHUANG_ZI_SHAN.getName() + path);
+            list.add(map);
+            map.put("tunnelId",WjCarVolumeEnum.YANG_TIAN_SHAN.getCode());
+            map.put("url",WjCarVolumeEnum.YANG_TIAN_SHAN.getName() + path);
+            list.add(map);
+        }
+        for(Map<String, String> item : list){
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(item.get("url"));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+            ResponseEntity<Map> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, Map.class);
+            HashMap<String, Object> body = (HashMap<String, Object>)exchange.getBody();
+            if("success".equals(body.get("status").toString())){
+                List<Map<String, Object>> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
+                Map<String, Object> data = (Map<String, Object> )body.get("data");
+                String up = "";
+                String down = "";
+                for(Map<String, Object> objectMap : mapList){
+                    if("1".equals(objectMap.get("direction").toString())){
+                        Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                        Integer newData = Integer.valueOf(data.get("up").toString());
+                        up = (newData - oldData) + "";
+                    }else {
+                        Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                        Integer newData = Integer.valueOf(data.get("down").toString());
+                        down = (newData - oldData) + "";
+                    }
+                }
+                setTrafficVolumeData(item.get("tunnelId"),"1",up == "" ? "0" : up,data.get("up").toString());
+                setTrafficVolumeData(item.get("tunnelId"),"2",down == "" ? "0" : down,data.get("down").toString());
+            }
+        }
+    }
+
+    /**
+     * 存入车流量
+     * @param tunnelId
+     * @param direction
+     * @param carNumber
+     */
+    public void setTrafficVolumeData(String tunnelId,String direction,String carNumber,String originalData){
+        SdTrafficVolume sdTrafficVolume = new SdTrafficVolume();
+        sdTrafficVolume.setTunnelId(tunnelId);
+        sdTrafficVolume.setDirection(direction);
+        sdTrafficVolume.setCarNumber(carNumber);
+        sdTrafficVolume.setOriginalData(originalData);
+        volumeMapper.insertSdTrafficVolume(sdTrafficVolume);
+    }
 }

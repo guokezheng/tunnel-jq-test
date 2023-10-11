@@ -80,6 +80,7 @@ public enum DevicesTypeItemEnum {
     ZHEN_DONG_GAO_JING(80, "振动告警"),
     CHEN_JIANG_QING_XIE_GAO_JING(81, "沉降倾斜告警"),
     FENG_JI_GAO_JING(82, "告警"),
+    FENG_JI_MO_SHI(83, "模式"),
     WEN_DU_CHUANGAN(89, "温度"),    //温度传感器
     SHI_DU_CHUANGAN(90, "湿度"),   //湿度传感器
     SHEN_SHUI_BENG(91, "深水泵"),    //深水泵状态 关闭D0=0；开启D0=1

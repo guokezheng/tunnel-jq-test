@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.protocol.SdDevicePointPlcMapper">
 
     <resultMap type="SdDevicePointPlc" id="SdDevicePointPlcResult">
@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPointMapByFEqId" resultType="java.util.Map">
         SELECT d.f_eq_id fEqId,p.eq_id eqId,p.function_code functionCode,p.data_length dataLength,p.address,p.address_index addressIndex,
-        p.point_config pointConfig,p.item_id itemId,d.f_eq_type fEqType
+        p.point_config pointConfig,p.item_id itemId,d.f_eq_type fEqType,d.eq_tunnel_id eqTunnelId,d.eq_type eqType
         FROM sd_device_point_plc p
         left join sd_devices  d on p.eq_id = d.eq_id
         where p.is_reserved = #{pointType}
@@ -169,7 +169,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="functionCode != null">function_code,</if>
             <if test="dataLength != null">data_length,</if>
             <if test="functionJson != null">function_json,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
             <if test="eqType != null">#{eqType},</if>
@@ -187,7 +187,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="functionCode != null">#{functionCode},</if>
             <if test="dataLength != null">#{dataLength},</if>
             <if test="functionJson != null">#{functionJson},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSdDevicePointPlc" parameterType="SdDevicePointPlc">

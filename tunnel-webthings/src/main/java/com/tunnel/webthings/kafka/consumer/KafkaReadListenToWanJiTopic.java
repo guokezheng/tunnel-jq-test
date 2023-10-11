@@ -181,6 +181,7 @@ public class KafkaReadListenToWanJiTopic {
      */
     @KafkaListener(topics = {"wj_participants"}, containerFactory = "kafkaOneContainerFactoryTwo")
     public void topicParticipantsTwo(List<ConsumerRecord<String,Object>> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info(record.size()+"-----------------");
         for(ConsumerRecord<String,Object> item : record){
             if(item.value() != null & item.value() != ""){
                 //解析车辆快照数据
@@ -198,7 +199,7 @@ public class KafkaReadListenToWanJiTopic {
                 long time2 = time1 - time;
                 //转分钟
                 Long minutes = (time2 / 1000) / 60;
-                if(minutes>3){
+                if(minutes>3||track==null){
                     break;
                 }
                 //新增车辆快照数据

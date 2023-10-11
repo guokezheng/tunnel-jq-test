@@ -2,6 +2,7 @@ package com.tunnel.business.strategy.domain;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -39,7 +40,13 @@ public class DefaultType implements DeviceDataStrategyService {
      */
     @Override
     public void getDeviceData(Map<String, String> devices, SdDeviceData data) {
-        devices.put("state", data.getData());
+        if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.FENG_JI_STATUS.getCode()) {
+            devices.put("state", data.getData());
+        } else if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.FENG_JI_MO_SHI.getCode()) {
+            devices.put("autoState", data.getData());
+        }else{
+            devices.put("state", data.getData());
+        }
     }
 
     /**

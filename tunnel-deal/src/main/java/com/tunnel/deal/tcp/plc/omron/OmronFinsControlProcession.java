@@ -37,6 +37,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -324,12 +325,12 @@ public class OmronFinsControlProcession {
 
         List<String> list = new ArrayList<>();
 //        if(FinsCmdValues.D_AREA_CODE.equals(areaCode)){
-            //2个字节一个数据
+        //2个字节一个数据
 //            list = ModbusCmdResolver.handleTwoBytesData(value);
 //        }
 //        if(FinsCmdValues.W_WORD_AREA_CODE.equals(areaCode)){
-            //2个字节一个数据
-            list = FinsCmdResolver.handleTwoBytesData(value);
+        //2个字节一个数据
+        list = FinsCmdResolver.handleTwoBytesData(value);
 //        }
 
         // 配置的10进制地址直接转换
@@ -338,7 +339,6 @@ public class OmronFinsControlProcession {
             valueMap.put(startAddress,list.get(i));
             startAddress ++;
         }
-
         for(Map itemMap : pointList){
             String eqId = itemMap.get("eqId") == null ? "" : itemMap.get("eqId").toString();
             String address = itemMap.get("address") == null ? "" : itemMap.get("address").toString();
@@ -352,28 +352,136 @@ public class OmronFinsControlProcession {
                 System.out.println("点位未配置地址address，eqId="+eqId);
                 continue;
             }
-            String data = valueMap.get(Integer.valueOf(address));
-            if(data == null){
-                continue;
-            }
-            if(dataLengthNum == 2){
-                //模拟量，4个字节，2个寄存器地址，双字
-                data = data + valueMap.get(addressNum + 1);
-            }
+            String data = "";
+            if(!(("JQ-WeiFang-JiuLongYu-JJL".equals(itemMap.get("eqTunnelId"))||"JQ-WeiFang-JiuLongYu-MAS".equals(itemMap.get("eqTunnelId"))
+            )&&"48".equals(itemMap.get("eqType").toString()))){
+                data = valueMap.get(Integer.valueOf(address));
+                if(data == ""||data ==null){
+                    continue;
+                }
+                if(dataLengthNum == 2){
+                    //模拟量，4个字节，2个寄存器地址，双字
+                    data = data + valueMap.get(addressNum + 1);
+                }
 //            System.out.println("测试配置：pointConfig="+pointConfig+",eqId="+eqId);
-            data = getFinalData(eqId,data,pointConfig,dataLengthStr);
+                data = getFinalData(eqId,data,pointConfig,dataLengthStr);
 
-            //存储实时数据
-            SdDevices sdDevices = new SdDevices();
-            sdDevices.setEqId(eqId);
-            sdDeviceDataService.updateDeviceData(sdDevices,data,Long.valueOf(itemId));
-            //储存历史数据
-            setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
-            //设置设备在线
-            devicesService.updateOnlineStatus(eqId,false);
+                //存储实时数据
+                dataSave(eqId,data,itemId);
+
+            }else{
+                //报文拼接
+                String sumDraugh = "";
+                //读addressNums位拼接报文
+                Integer addressNums = Integer.parseInt(address);
+                for(int i = 0 ; i<=dataLengthNum-1; i++){
+                    data = valueMap.get(Integer.valueOf(addressNums));
+                    if(data == null||"0000".equals(data)){
+                        continue;
+                    }
+                    //不足4位补0
+                    if(data.length()!=4){
+                        data = String.format("%04d", Integer.parseInt(data));
+                    }
+                    sumDraugh = sumDraugh+data;
+                    addressNums = addressNums+1;
+                }
+                //说明设备故障
+                if(sumDraugh.length()!=20){
+                    if("76".equals(itemId)){
+                        dataSave(eqId,"0.00","80");
+                        //速度浮点数数值保存
+                        dataSave(eqId,"0.00","76");
+                        //幅度浮点数数值保存
+                        dataSave(eqId,"0.00","77");
+                    }
+                    //沉降值  倾斜值
+                    if("78".equals(itemId)){
+                        dataSave(eqId,"0.00","81");
+                        //沉降浮点数数值保存
+                        dataSave(eqId,"0.00","78");
+                        //倾斜度浮点数数值保存
+                        dataSave(eqId,"0.00","79");
+                    }
+                    continue;
+                }
+                //风机解析入库
+                draughtAnalysis( itemId, sumDraugh,  eqId);
+            }
         }
     }
 
+    /**
+     * 风机解析入库
+     * @param itemId
+     * @param sumDraugh
+     * @param eqId
+     */
+    private void draughtAnalysis(String itemId,String sumDraugh, String eqId){
+        //风机振动振动传感器数据组装解析
+        //速度浮点数数值
+        String draughtSpeed = "";
+        //幅度浮点数数值
+        String draughtRange = "";
+        //沉降浮点数数值
+        String draughtDrop = "";
+        //倾斜度浮点数数值
+        String draughtAngle = "";
+        //振动速度值  振动幅度值
+        if("76".equals(itemId)){
+            draughtSpeed = sumDraugh.substring(2, 10);
+            draughtRange = sumDraugh.substring(11, 18);
+            //转浮点小数
+            draughtSpeed = NumberSystemConvert.reverseHex(draughtSpeed);
+            Float draughtSpeedFloat = NumberSystemConvert.convertHexToFloat(draughtSpeed);
+            draughtRange = NumberSystemConvert.reverseHex(draughtRange);
+            Float draughtRangeFloat = NumberSystemConvert.convertHexToFloat(draughtRange);
+            //振动速度 大于7.1要预警
+            if (draughtSpeedFloat >   7.1) {
+                //速度浮点数数值保存  0正常1报警 2危险
+                dataSave(eqId,"1","80");
+            }else{
+                dataSave(eqId,"0","80");
+            }
+            //速度浮点数数值保存
+            dataSave(eqId,draughtSpeedFloat.toString(),"76");
+            //幅度浮点数数值保存
+            dataSave(eqId,draughtRangeFloat.toString(),"77");
+        }
+        //沉降值  倾斜值
+        if("78".equals(itemId)){
+            draughtDrop = sumDraugh.substring(2, 10);
+            draughtAngle = sumDraugh.substring(11, 18);
+            //转浮点小数
+            draughtDrop = NumberSystemConvert.reverseHex(draughtDrop);
+            Float draughtDropFloat = NumberSystemConvert.convertHexToFloat(draughtDrop);
+            draughtAngle = NumberSystemConvert.reverseHex(draughtAngle);
+            Float draughtAngleFloat = NumberSystemConvert.convertHexToFloat(draughtAngle);
+            //沉降 倾斜报警
+            if(draughtDropFloat<-8 ||draughtAngleFloat<0.1){//低限位报警
+                dataSave(eqId,"1","81");
+            }else if(draughtDropFloat>8 || draughtAngleFloat>1){//搞限位报警
+                dataSave(eqId,"1","81");
+            }else{
+                dataSave(eqId,"0","81");
+            }
+
+            dataSave(eqId, draughtDropFloat.toString(),"78");
+            //倾斜度浮点数数值保存
+            dataSave(eqId,draughtAngleFloat.toString(),"79");
+
+        }
+    }
+    private void dataSave(String eqId,String data ,String itemId){
+        //存储实时数据
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqId(eqId);
+        sdDeviceDataService.updateDeviceData(sdDevices,data,Long.valueOf(itemId));
+        //储存历史数据
+        setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
+        //设置设备在线
+        devicesService.updateOnlineStatus(eqId,false);
+    }
 
     /**
      * 根据公式计算或者状态匹配，获得最终的数据
@@ -389,13 +497,13 @@ public class OmronFinsControlProcession {
             //第三种情况，pointConfig有数据，五标风机、卷帘门、消防泵的反馈点位（状态量配置）是位代码，dataLength=2,functionCode=31
             //第四种情况，pointConfig无数据，模拟量不需要计算（五六标模拟量需要做高低位转换CDAB，双字，浮点数，dataLength为2）
 
-           Integer dataLengthNum = Integer.valueOf(dataLength);
-           if(dataLengthNum == 2){
-               data = NumberSystemConvert.reverseHex(data);
-               Float dataNum = NumberSystemConvert.convertHexToFloat(data);
+            Integer dataLengthNum = Integer.valueOf(dataLength);
+            if(dataLengthNum == 2){
+                data = NumberSystemConvert.reverseHex(data);
+                Float dataNum = NumberSystemConvert.convertHexToFloat(data);
 
-               return String.valueOf(dataNum);
-           }
+                return String.valueOf(dataNum);
+            }
         }
         JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
         //获取公式计算

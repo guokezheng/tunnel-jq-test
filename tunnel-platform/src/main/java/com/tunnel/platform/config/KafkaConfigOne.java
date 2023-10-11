@@ -59,7 +59,7 @@ public class KafkaConfigOne {
         factory.setConsumerFactory(consumerFactoryTwo());
         factory.setConcurrency(3);
         factory.setBatchListener(true);
-        factory.getContainerProperties().setPollTimeout(3000);
+        factory.getContainerProperties().setPollTimeout(1000);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }
@@ -108,7 +108,7 @@ public class KafkaConfigOne {
 
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000000);
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 3000);
         return props;
     }
 }

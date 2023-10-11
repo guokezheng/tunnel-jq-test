@@ -376,9 +376,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
           const param = {
-            eqId: this.stateForm.eqId, //设备id
-            data: this.stateForm.state,
-            comType: "omron",
+            devId: this.stateForm.eqId, //设备id
+            state: this.stateForm.state,
+            // comType: "omron",
           };
           setControlDeviceByParam(param).then((res) => {
             console.log("消防栓控制成功", res);

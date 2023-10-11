@@ -82,6 +82,7 @@
             </if>
             ${params.dataScope}
         </where>
+        order by t.order_num asc
     </select>
 
     <select id="selectSdTunnelsList1" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -107,6 +108,7 @@
             <if test="ids != null and ids != ''"> and FIND_IN_SET(t.tunnel_id,#{ids}) > 0</if>
             ${params.dataScope}
         </where>
+        order by t.order_num asc
     </select>
 
     <select id="selectTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -378,6 +380,7 @@
             d.dept_id = #{deptId}
             OR d.dept_id IN ( SELECT dept_id FROM sys_dept WHERE 1 = 1 AND FIND_IN_SET( #{deptId}, ancestors ) > 0 ))
         </if>
+        order by t.order_num asc
     </select>
 
     <select id="selectAllSdTunnelsList" resultMap="SdTunnelsResult">

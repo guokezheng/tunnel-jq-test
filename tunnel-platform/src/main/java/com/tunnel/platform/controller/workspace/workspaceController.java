@@ -848,16 +848,17 @@ public class workspaceController extends BaseController {
         if (CollectionUtils.isEmpty(params)) {
             return AjaxResult.error("控制设备参数为空");
         }
-        //获取当前传输数据协议类型
-        if ( params.get("comType") == null ||  params.get("comType").toString().equals("")) {
-            return AjaxResult.error("未指定设备通讯类型");
-        } else if ( params.get("data") == null || params.get("data").toString().equals("")) {
+//        //获取当前传输数据协议类型
+//        if ( params.get("comType") == null ||  params.get("comType").toString().equals("")) {
+//            return AjaxResult.error("未指定设备通讯类型");
+//        } else
+        if ( params.get("state") == null || params.get("state").toString().equals("")) {
             return AjaxResult.error("未指定设备需要变更的状态信息");
-        } else if (params.get("eqId") == null || params.get("eqId").toString().equals("")) {
+        } else if (params.get("devId") == null || params.get("devId").toString().equals("")) {
             return AjaxResult.error("未指定设备id");
         }
 
-        String devId = params.get("eqId").toString();
+        String devId = params.get("devId").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         Integer  controlState = 0;
         //设备控制

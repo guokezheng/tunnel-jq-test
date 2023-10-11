@@ -1793,7 +1793,7 @@
         hostIP: null,
         userDeptId: null,
         tunnelQueryParams: {
-          deptId: "",
+          deptId: [],
         },
         deptId: "",
         userQueryParams: {
@@ -2303,18 +2303,18 @@
       cascaderHandleChange() {
         // console.log(1);
         // console.log(this.siteList, "siteList");
-        let handleText = "";
-        for (let item of this.siteList) {
-          if (this.tunnelQueryParams.deptId == item.id) {
-            handleText = item.label;
-          } else {
-            for (let itm of item.children) {
-              if (this.tunnelQueryParams.deptId == itm.id) {
-                handleText = itm.label;
-              }
-            }
-          }
-        }
+        // let handleText = "";
+        // for (let item of this.siteList) {
+        //   if (this.tunnelQueryParams.deptId == item.id) {
+        //     handleText = item.label;
+        //   } else {
+        //     for (let itm of item.children) {
+        //       if (this.tunnelQueryParams.deptId == itm.id) {
+        //         handleText = itm.label;
+        //       }
+        //     }
+        //   }
+        // }
 
         // console.log(handleText, "handleText");
         // 事件监听实现懒加载选择任意一级
@@ -3354,17 +3354,17 @@
           // 4. get到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
           if (!this.$cache.local.get("deptId")) {
             if (!this.tunnelQueryParams.deptId) {
-              this.tunnelQueryParams.deptId = index[index.length - 1];
+              this.tunnelQueryParams.deptId = index;
             } else {
-              this.tunnelQueryParams.deptId = index[index.length - 1];
+              this.tunnelQueryParams.deptId = index;
               this.$cache.local.set("deptId", this.tunnelQueryParams.deptId);
             }
           } else {
             if (!this.tunnelQueryParams.deptId) {
               this.tunnelQueryParams.deptId = this.$cache.local.get("deptId");
             } else {
-              this.tunnelQueryParams.deptId = index[index.length - 1];
-              this.$cache.local.set("deptId", index[index.length - 1]);
+              this.tunnelQueryParams.deptId = index;
+              this.$cache.local.set("deptId", index);
             }
           }
           this.$forceUpdate();
@@ -3960,7 +3960,10 @@
       /* 查询隧道列表 */
       getTunnelList() {
         // debugger
-        listTunnels(this.tunnelQueryParams).then((response) => {
+        var tunnelQueryParams2 = {
+          deptId: this.tunnelQueryParams.deptId[this.tunnelQueryParams.deptId.length - 1]
+        }
+        listTunnels(tunnelQueryParams2).then((response) => {
           console.log(response, "查询隧道列表");
           if (!response.rows[0]) {
             this.tunnelList = [];

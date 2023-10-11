@@ -255,7 +255,7 @@ public class OmronFinsControlProcession {
         List<String> functionCodeList = new ArrayList<>();
         functionCodeList.add(areaCode);
         //根据父设备ID、点位类型筛选最小点位、最大点位
-        List<Map> pointList = devicePointPlcService.selectDevicePointByGroup(fEqIdList,functionCodeList,String.valueOf(pointType));
+        List<Map> pointList = devicePointPlcService.selectDevicePointByGroupNum(fEqIdList,functionCodeList,String.valueOf(pointType));
         for (Map map : pointList){
             sendDdwPointCmd(map,functionCodeList,pointType,areaCode);
         }
@@ -270,6 +270,14 @@ public class OmronFinsControlProcession {
         String maxAddress = map.get("maxAddress") == null ? "" : map.get("maxAddress").toString();
         //地址长度
         String dataLength = map.get("dataLength") == null ? "" : map.get("dataLength").toString();
+
+
+        if(minAddress.contains(".")){
+            minAddress = minAddress.substring(0,minAddress.indexOf("."));
+        }
+        if(maxAddress.contains(".")){
+            maxAddress = maxAddress.substring(0,maxAddress.indexOf("."));
+        }
 
         //计算读取指令的地址长度, 最大 + 地址长度 - 最小
         //比如：最大0026，地址长度=2，最小=0024，实际读取指令长度= （0026 + 2 - 1） - （0024 - 1） = 4

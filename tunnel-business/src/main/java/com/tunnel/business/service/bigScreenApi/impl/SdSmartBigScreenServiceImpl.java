@@ -320,8 +320,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         map.put("faultNum",faultNum);
         BigDecimal dev = new BigDecimal(devNum);
         BigDecimal fault = new BigDecimal(faultNum);
-        BigDecimal divide = fault.divide(dev,5,BigDecimal.ROUND_DOWN);
-        BigDecimal multiply = divide.multiply(new BigDecimal(100)).setScale(1,BigDecimal.ROUND_HALF_UP);
+        BigDecimal divide = new BigDecimal(0);
+        BigDecimal multiply = new BigDecimal(0);
+        if(fault.compareTo(new BigDecimal(0)) != 0){
+            divide = fault.divide(dev,5,BigDecimal.ROUND_DOWN);
+            multiply = divide.multiply(new BigDecimal(100)).setScale(1,BigDecimal.ROUND_HALF_UP);
+        }
         map.put("failureRate",multiply);
         map.put("list",devList);
         return AjaxResult.success(map);

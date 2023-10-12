@@ -483,13 +483,17 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     @Override
     public AjaxResult getCarNumber(String tunnelId) {
         List<Map<String, Object>> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
-        List<String> list = new ArrayList<>();
+        List<String> cllList = new ArrayList<>();
+        List<String> ztsList = new ArrayList<>();
         for(Map<String,Object> item : mapList){
-            list.add(item.get("originalData").toString());
+            cllList.add(item.get("originalData").toString());
+            String redisKry = "carVolume:" + tunnelId + ":" + item.get("direction").toString();
+            ztsList.add(redisCache.getCacheObject(redisKry) == null ? "0" : redisCache.getCacheObject(redisKry).toString());
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("cllData",list);
-        map.put("ztsData","");
+        map.put("cllData",cllList);
+
+        map.put("ztsData",ztsList);
         return AjaxResult.success(map);
     }
 

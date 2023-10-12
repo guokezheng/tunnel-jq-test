@@ -10,16 +10,19 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.domain.SysLogininfor;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
+import com.tunnel.business.domain.energyManagement.ElectricityData;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
+import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,9 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -278,7 +279,28 @@ public class SdDeviceDataController extends BaseController
     @GetMapping(value = "/energyConsumptionDetection/{tunnelId}")
     public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
     {
-        return AjaxResult.success(sdDeviceDataService.energyConsumptionDetection(tunnelId));
+        EnergySjfxElectricityService bean = SpringUtils.getBean(EnergySjfxElectricityService.class);
+        List<String> list = new ArrayList<>();
+        list.add(tunnelId);
+
+        Date baseTime = new java.sql.Timestamp(DateUtils.getNowDate().getTime());
+
+        try {
+            //日报
+            List<List<ElectricityData>> dayList = bean.getElectricityReportList(list, baseTime, 0, "1", null);
+            //月报
+            List<List<ElectricityData>> monthList = bean.getElectricityReportList(list, baseTime, 1, "1", null);
+            //年报
+            List<List<ElectricityData>> yearList = bean.getElectricityReportList(list, baseTime, 2, "1", null);
+            Map<String, Object> map = new HashMap<>();
+            map.put("day",dayList.get(0));
+            map.put("month",monthList.get(0));
+            map.put("year",yearList.get(0));
+            return AjaxResult.success(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        //return AjaxResult.success(sdDeviceDataService.energyConsumptionDetection(tunnelId));
     }
 
     /**

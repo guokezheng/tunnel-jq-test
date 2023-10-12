@@ -76,3 +76,5 @@ spring:
       properties:
         max.poll.interval.ms: 1000000
 
+#万集车流量
+wj_carVolume: wzb

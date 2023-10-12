@@ -40,3 +40,6 @@ device:
   hongmeng:
     #非正式环境使用地址，修改地址信息避免推送测试数据
     url: http://100.70.187.28:60400/qxsd-iot
+
+#万集车流量
+wj_carVolume: wzb

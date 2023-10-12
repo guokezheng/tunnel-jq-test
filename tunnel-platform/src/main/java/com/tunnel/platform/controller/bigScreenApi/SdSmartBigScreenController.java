@@ -325,5 +325,13 @@ public class SdSmartBigScreenController extends BaseController {
         return sdSmartBigScreenService.getWarningStatistics(type,deptId);
     }
 
-
+    /**
+     * 当日车流量
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getCarNumber")
+    public AjaxResult getCarNumber(@RequestParam String tunnelId){
+        return sdSmartBigScreenService.getCarNumber(tunnelId);
+    }
 }

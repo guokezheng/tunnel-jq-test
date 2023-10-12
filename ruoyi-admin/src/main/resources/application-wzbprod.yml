@@ -25,7 +25,7 @@ spring:
       #正式环境部署地址
       bootstrap-servers: 10.166.139.204:9092,10.166.139.205:9092,10.166.139.206:9092
     huawei:
-      bootstrap-servers: 10.7.187.29:9092
+      bootstrap-servers: 100.7.187.29:9092
       # 消费者
       consumer:
         # 消费者组
@@ -90,3 +90,6 @@ mqtt:
   timeout: 10000
   #20s
   keepalive: 20
+
+#万集车流量
+wj_carVolume: wzb

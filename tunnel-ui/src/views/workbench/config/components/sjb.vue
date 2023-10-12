@@ -250,9 +250,9 @@ export default {
     },
     handleOK() {
       const param = {
-        eqId: this.stateForm.eqId, //设备id
-        data: this.stateForm.state,
-        comType: "omron",   //后期做成  点击设备查询设备详情信息   并且附带当前设备通讯协议类型。
+        devId: this.stateForm.eqId, //设备id
+        state: this.stateForm.state,
+        // comType: "omron",   //后期做成  点击设备查询设备详情信息   并且附带当前设备通讯协议类型。
       };
       setControlDeviceByParam(param).then((res)=>{
         console.log("潜水深井泵控制成功",res)

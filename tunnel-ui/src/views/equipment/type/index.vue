@@ -627,10 +627,6 @@ export default {
       this.ids = selection.map((item) => item.typeId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
-      console.log(selection, "selection");
-      console.log(this.ids, "this.ids");
-      console.log(this.single, "this.single");
-      console.log(this.multiple, "this.multiple");
     },
 
     /** 导出按钮操作 */
@@ -688,7 +684,7 @@ export default {
       let that = this;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
-      if ((this.fileList = [])) {
+      if ((this.fileList == [])) {
         this.fileData.append("file", null); // append增加数据
       }
       this.fileData.append("typeName", this.form.typeName); //类型名称
@@ -710,7 +706,7 @@ export default {
               this.open = false;
               that.$refs.tableFile.clearSelection();
               this.getList();
-            });
+            })
           } else {
             addType(this.fileData).then((response) => {
               this.$modal.msgSuccess("新增成功");
@@ -737,7 +733,6 @@ export default {
         .then(() => {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
-          console.log();
         })
         .catch(function () {
           that.$refs.tableFile.clearSelection();

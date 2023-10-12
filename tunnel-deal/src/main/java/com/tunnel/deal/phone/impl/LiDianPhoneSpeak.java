@@ -22,6 +22,8 @@ import com.tunnel.deal.phone.PhoneSpeak;
 import com.zc.common.core.secret.smutil.SecretUtil;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.catalina.manager.util.SessionUtils;
+import org.apache.commons.codec.binary.Hex;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +31,9 @@ import javax.annotation.PostConstruct;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +64,16 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
 
+    private DatagramSocket socket;
+
+    public void socketInfo(){
+        try {
+            socket = new DatagramSocket(6116);
+        } catch (SocketException e) {
+            e.getMessage();
+        }
+    }
+
     @Override
     public int playVoice(Map<String, Object> map, SdDevices sdDevices) {
         /*
@@ -70,7 +84,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             List<String> devices = (List<String>) map.get("spkDeviceIds");
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(devices.get(0));
             String eqDirection = sdDevices1.getEqDirection();
-            InetAddress address = InetAddress.getByName("10.7.179.4");
+            InetAddress address = InetAddress.getByName(map.get("systemUrl").toString());
             int port = 6117;//定义端口类型
             //主机地址
             String spkAddr = "1";
@@ -86,15 +100,23 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             //状态
             String status = map.get("loopStatus").toString();
             String file = fileNames.get(0);
-            byte[] data= ("@"+spkAddr+"@"+groupNumber+"@"+file+status).getBytes(StandardCharsets.US_ASCII);
+            String ajsj = "@"+spkAddr+"@"+groupNumber+"@"+file+status;
+            char[] chars = ajsj.toCharArray();
+            //String hexString = "";
+            List<Integer> list = new ArrayList<>();
+            for(int i = 0; i < chars.length; i++){
+                list.add((int) chars[i]);
+                list.add(0);
+                //hexString += Integer.toHexString((int) chars[i]) + " 00 ";
+            }
+            byte[] data= new byte[list.size()];
+            for(int i = 0; i < list.size(); i++){
+                data[i] = (byte)(int)list.get(i);
+            }
             //2.创建数据报，包含发送的数据信息
             DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
-            //3.创建DatagramSocket对象
-            DatagramSocket socket = new DatagramSocket(port);
             //4.向服务器端发送数据报
             socket.send(packet);
-            //5.关闭资源
-            socket.close();
             return 1;
         }catch (Exception e){
             e.getMessage();
@@ -149,15 +171,14 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
 
     @PostConstruct
     public void init() {
+        socketInfo();
         runThread();
     }
 
     public void runThread() {
         new Thread() {
             public void run() {
-                DatagramSocket socket = null;
                 try{
-                    socket = new DatagramSocket(6116);
                     while(true){
                         /*
                          * 接收服务器端响应的数据
@@ -191,35 +212,9 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
                         }
                     }
                 }catch (Exception e){
-                    socket.close();
                     e.printStackTrace();
                 }
             }
         }.start();
-        /*DatagramSocket socket = null;
-        try{
-            socket = new DatagramSocket(6116);
-            while(true){
-                *//*
-                 * 接收服务器端响应的数据
-                 *//*
-                //1.创建数据报，用于接收服务器端响应的数据
-                byte[] data2 = new byte[1024];
-                DatagramPacket packet2 = new DatagramPacket(data2, data2.length);
-                //2.接收服务器响应的数据
-                socket.receive(packet2);
-                //3.读取数据
-                String reply = new String(data2, 0, packet2.getLength());
-
-                String str = reply.replaceAll("\\*", "").replaceAll("&", "");
-                List<String> list = Arrays.asList(str.split("@"));
-                String insturct = list.get(2);
-                String offOrOn = list.get(3);
-                socket.close();
-            }
-        }catch (Exception e){
-            socket.close();
-            e.printStackTrace();
-        }*/
     }
 }

@@ -68,3 +68,6 @@ sso:
 #欧姆龙PLC通信的服务IP
 plc:
   server: 10.7.200.14
+
+#万集车流量
+wj_carVolume: yts

@@ -15,6 +15,7 @@ import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.digitalmodel.SdTrafficVolumeMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Autowired
     private SdTrafficImageMapper imageMapper;
+
+    @Autowired
+    private SdTrafficVolumeMapper trafficVolumeMapper;
 
     @Override
     public Map<String, Object> getEventWarning(String tunnelId) {
@@ -474,6 +478,19 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
             mapList.add(map);
         }
         return AjaxResult.success(mapList);
+    }
+
+    @Override
+    public AjaxResult getCarNumber(String tunnelId) {
+        List<Map<String, Object>> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
+        List<String> list = new ArrayList<>();
+        for(Map<String,Object> item : mapList){
+            list.add(item.get("originalData").toString());
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("cllData",list);
+        map.put("ztsData","");
+        return AjaxResult.success(map);
     }
 
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){

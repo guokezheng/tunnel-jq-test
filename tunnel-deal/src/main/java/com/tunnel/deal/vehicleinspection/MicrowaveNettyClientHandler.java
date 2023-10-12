@@ -163,12 +163,12 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
 //        //周期统计数据
         if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
-            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId(),dev.getEqDirection());
         }
         //单车数据
-        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
-            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-        }
+//        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
+//            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+//        }
 
         //单车数据
         //增加  模式功能。根据选择不同模式 。做出响应策略。
@@ -200,7 +200,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
     }
 
-    private static void dataAnalySis(String firstContent, String id, String tunnelId) {
+    private static void dataAnalySis(String firstContent, String id, String tunnelId,String eqDirection) {
         String strArr[] = firstContent.split("FFF9");
 //		List<SdMicrowavePeriodicStatistics> list = new ArrayList<SdMicrowavePeriodicStatistics>();
         for(int i=0;i<strArr.length;i++){
@@ -252,6 +252,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                 data.setAvgHeadway(avgHeadway.toString());
                 data.setAvgSpeed(avgSpeed);
                 data.setAvgOccupancy(avgOccupancy.toString());
+                data.setEqDirection(eqDirection);
                 SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).insertSdMicrowavePeriodicStatistics(data);
 //            	list.add(data);
             }

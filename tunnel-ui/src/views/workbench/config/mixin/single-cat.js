@@ -254,10 +254,18 @@ export const singleCat = {
         //通过实际距离  计算小车在页面位置
         event[i] = this.carBackCount(event[i],true)
         //判断边框  超出则删除数据
-        if(math.add(math.multiply(+carKm * this.proportion) + 190)>1480 || math.add(math.multiply(+carKm * this.proportion) + 200)>1480){
-          this.carList.delete(event[i].vehicleLicense);
-          continue
+        if(event[i].tunnelId=="JQ-JiNan-WenZuBei-MJY"){
+          if(math.add(math.multiply(+carKm * this.proportion) )>this.tunnelLength || math.add(math.multiply(+carKm * this.proportion))>this.tunnelLength){
+            this.carList.delete(event[i].vehicleLicense);
+            continue
+          }
+        }else {
+          if(math.add(math.multiply(+carKm * this.proportion) + 190)>this.tunnelLength || math.add(math.multiply(+carKm * this.proportion) + 200)>this.tunnelLength){
+            this.carList.delete(event[i].vehicleLicense);
+            continue
+          }
         }
+
         //车辆类型 判定车颜色
         if(event[i].vehicleType == "40"){//危化车
           event[i].background = "red";

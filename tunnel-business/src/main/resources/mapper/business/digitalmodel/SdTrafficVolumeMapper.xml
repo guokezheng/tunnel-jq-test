@@ -107,6 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             1 = 1
           AND tv.tunnel_id = #{tunnelId}
+          AND DATE_FORMAT( tv.create_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
         GROUP BY
             tv.direction
         ORDER BY

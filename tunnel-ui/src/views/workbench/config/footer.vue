@@ -473,6 +473,7 @@
         componentTimer: null,
         maxCanSee: 6, //maxCanSee代表可视范围内的最大完整数据条数
         tableLineHeight: 29, //tableLineHeight代表列表中一行的高度
+        timer:0,
       };
     },
     computed: {
@@ -526,16 +527,30 @@
         this.directionList = data.data;
       });
     },
+    beforeDestroy(){
+      clearInterval(this.timer);
+    },
     methods: {
       init(tunnelId) {
         // console.log(tunnelId, "tunnelId");
         this.tunnelId = tunnelId;
         // setTimeout(() => {
         this.getWarnList();
+        
         this.getVehicleMonitoring()
-        setInterval(()=>{
-          this.getVehicleMonitoring()
-        },300000)
+        this.timer = 0;
+        let that = this
+        this.timer = setInterval(function(){ 
+          var currentdate = new Date();  
+          if(currentdate.getMinutes() % 5 == 0 && currentdate.getSeconds() == 0) {
+            setTimeout(() => {
+              that.getVehicleMonitoring()
+            }, 2000);
+          }
+        }, 1000);
+        // setInterval(()=>{
+        //   this.getVehicleMonitoring()
+        // },300000)
         // }, 2000);
         this.vehicleEcharts();
         // this.specialVehicleEcharts()
@@ -550,8 +565,8 @@
         };
         getCarNumber(param).then((res)=>{
           console.log(res,"除九龙峪外的车辆监测")
-          let yData1 = res.data.cllData
-          let yData2 = []
+          let yData1 = res.data.cllData.length>0?res.data.cllData:[0,0]
+          let yData2 = res.data.ztsData.length>0?res.data.ztsData:[0,0]
           this.$nextTick(()=>{
             this.initVehicleMonitoring(yData1,yData2)
           })
@@ -1216,8 +1231,6 @@
         newPromise.then(() => {
           var vehicleMonitoring = echarts.init(document.getElementById("vehicleMonitoring"));
           let xData = ['济南方向', '潍坊方向']
-          // let yData = [100, 80]
-          let yData2 = [0, 0]
 
           let option = {
             legend: {

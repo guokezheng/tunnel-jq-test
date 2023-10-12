@@ -341,6 +341,7 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.QING_FENG_LING.getCode());
             map.put("url",WjCarVolumeEnum.QING_FENG_LING.getName() + path);
             list.add(map);
+            map = new HashMap<>();
             map.put("tunnelId",WjCarVolumeEnum.PAN_DING_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.PAN_DING_SHAN.getName() + path);
             list.add(map);
@@ -348,6 +349,7 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.TAI_HE_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.TAI_HE_SHAN.getName() + path);
             list.add(map);
+            map = new HashMap<>();
             map.put("tunnelId",WjCarVolumeEnum.TIAN_CI_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.TIAN_CI_SHAN.getName() + path);
             list.add(map);
@@ -355,6 +357,7 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.MA_AN_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.MA_AN_SHAN.getName() + path);
             list.add(map);
+            map = new HashMap<>();
             map.put("tunnelId",WjCarVolumeEnum.JIN_JIA_LOU.getCode());
             map.put("url",WjCarVolumeEnum.JIN_JIA_LOU.getName() + path);
             list.add(map);
@@ -362,6 +365,7 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.SHUANG_ZI_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.SHUANG_ZI_SHAN.getName() + path);
             list.add(map);
+            map = new HashMap<>();
             map.put("tunnelId",WjCarVolumeEnum.YANG_TIAN_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.YANG_TIAN_SHAN.getName() + path);
             list.add(map);

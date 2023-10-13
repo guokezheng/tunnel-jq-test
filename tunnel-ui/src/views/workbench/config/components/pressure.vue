@@ -69,6 +69,7 @@
           <el-col :span="12">
             <el-form-item label="当前压力:">
               {{ nowData }}
+              <span v-show="nowData">Mpa</span>
             </el-form-item>
           </el-col>
         </el-row>

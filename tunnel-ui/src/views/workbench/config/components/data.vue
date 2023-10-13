@@ -23,40 +23,40 @@
         size="mini"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="隧道名称:">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
 
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="所属方向:">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
 
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
 
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item
               label="设备状态:"
               :style="{
@@ -69,6 +69,21 @@
               }"
             >
               {{ geteqType(stateForm.eqStatus) }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && !ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && !ipShow">
+            <el-form-item label="plcIP:" >
+              {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -194,6 +209,7 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
+      ipShow:false
     };
   },
   created() {},
@@ -227,6 +243,11 @@ export default {
             console.log(res, "水浸传感器");
             this.stateForm2 = res.data;
           });
+        }
+        if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){
+          this.ipShow = true
+        }else{
+          this.ipShow = false
         }
       } else {
         this.$modal.msgWarning("没有设备Id");

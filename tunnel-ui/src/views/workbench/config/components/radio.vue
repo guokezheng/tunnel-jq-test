@@ -235,7 +235,8 @@ export default {
       directionList: [],
       brandOne: false,
       brandTwo: false,
-      radioFileList:[]
+      radioFileList:[],
+      brandDataId:""
     };
   },
   watch:{
@@ -258,14 +259,17 @@ export default {
       const param = {
         deviceId: this.eqInfo.equipmentId,
       };
-      getAudioFileList(param).then((res) => {
-        console.log(res, "文件列表");
-        this.fileNamesList = res.data;
-      });
-      this.getDicts("ld_radio_file_list").then((data) => {
-        this.radioFileList = data.data;
-        console.log(this.radioFileList,"this.radioFileList")
-      });
+      if(this.brandDataId != "0060"){
+        this.getDicts("ld_radio_file_list").then((data) => {
+          this.radioFileList = data.data;
+          console.log(this.radioFileList,"this.radioFileList")
+        });
+      }else {
+        getAudioFileList(param).then((res) => {
+          console.log(res, "文件列表");
+          this.fileNamesList = res.data;
+        });
+      }
     },
     // 查设备详情
     async getMessage() {
@@ -273,6 +277,7 @@ export default {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
+          this.brandDataId = res.data.brandId;
           if (res.data.brandId != "0060") {
             this.brandOne = false;
             this.brandTwo = true;

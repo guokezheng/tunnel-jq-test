@@ -90,11 +90,13 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             String spkAddr = "1";
             //组号
             String groupNumber = null;
-            if("1".equals(eqDirection)){
+            /*if("1".equals(eqDirection)){
                 groupNumber = "2";
             }else {
                 groupNumber = "1";
-            }
+            }*/
+            String eqTunnelId = sdDevices1.getEqTunnelId();
+            groupNumber = getGroupData(eqTunnelId, eqDirection);
             //文件名称
             List<String> fileNames = (List<String>) map.get("fileNames");
             //状态
@@ -122,6 +124,38 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             e.getMessage();
             return 0;
         }
+    }
+
+    /**
+     * 获取组号
+     * @param eqTunnelId
+     * @param eqDirection
+     * @return
+     */
+    public  String getGroupData(String eqTunnelId, String eqDirection){
+        String groupNumber = "";
+        if(TunnelEnum.HU_SHAN.getCode().equals(eqTunnelId)){
+            if("1".equals(eqDirection)){
+                groupNumber = "2";
+            }else {
+                groupNumber = "1";
+            }
+        }
+        if(TunnelEnum.PAN_DING_SHAN.getCode().equals(eqTunnelId)){
+            if("1".equals(eqDirection)){
+                groupNumber = "2";
+            }else {
+                groupNumber = "1";
+            }
+        }
+        if(TunnelEnum.QING_FENG_LING.getCode().equals(eqTunnelId)){
+            if("1".equals(eqDirection)){
+                groupNumber = "4";
+            }else {
+                groupNumber = "3";
+            }
+        }
+        return groupNumber;
     }
 
     /**

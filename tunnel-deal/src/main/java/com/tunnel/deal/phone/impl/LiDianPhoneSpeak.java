@@ -108,6 +108,9 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             List<Integer> list = new ArrayList<>();
             for(int i = 0; i < chars.length; i++){
                 list.add((int) chars[i]);
+                if(TunnelEnum.YANG_TIAN_SHAN.getCode().equals(eqTunnelId) || TunnelEnum.SHUANG_ZI_SHAN.getCode().equals(eqTunnelId)){
+                    continue;
+                }
                 list.add(0);
                 //hexString += Integer.toHexString((int) chars[i]) + " 00 ";
             }
@@ -149,6 +152,20 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             }
         }
         if(TunnelEnum.QING_FENG_LING.getCode().equals(eqTunnelId)){
+            if("1".equals(eqDirection)){
+                groupNumber = "4";
+            }else {
+                groupNumber = "3";
+            }
+        }
+        if(TunnelEnum.YANG_TIAN_SHAN.getCode().equals(eqTunnelId)){
+            if("1".equals(eqDirection)){
+                groupNumber = "2";
+            }else {
+                groupNumber = "1";
+            }
+        }
+        if(TunnelEnum.SHUANG_ZI_SHAN.getCode().equals(eqTunnelId)){
             if("1".equals(eqDirection)){
                 groupNumber = "4";
             }else {

@@ -212,7 +212,35 @@ public class OmronFinsControlProcession {
 //                    sdDevicesService.updateOfflineStatus(deviceId,true);
             return AjaxResult.error("设备指令发送报错");
         }
+
+        if(pointConfig.contains("timeDelay")){
+            //如果点位配置了延时执行
+            delayExecute(sourceAddress,destinationAddress,portNum,area,address,bitAddress,writeLength,stateJson);
+        }
+
         return ajaxResult;
+    }
+
+
+    /**
+     * 延时执行
+     */
+    public void delayExecute(String sourceAddress,String destinationAddress,Integer portNum,String area,String address,String bitAddress,String writeLength,JSONObject stateJson){
+//{"stateConfig":[{"state":"1","text":"开启","value":"01","timeDelay":"4","timeUnit":"second","delayValue":"00"},{"state":"0","text":"关闭","value":"02","timeDelay":"1","timeUnit":"second","delayValue":"00"}],"area":"B1","address":"5","writeLength":"1"}
+        String timeDelay = stateJson.getString("timeDelay");
+        //默认单位是秒
+        String timeUnit = stateJson.getString("timeUnit");
+        String delayValue = stateJson.getString("delayValue");
+        Integer timeDelayNum = Integer.valueOf(timeDelay) * 1000;
+        sleep(timeDelayNum);
+        String command = FinsCmdGenerator.getUdpControlCommand(sourceAddress,destinationAddress,area,address,bitAddress,writeLength,delayValue);
+        try {
+            String s = UdpClient(destinationAddress, portNum, command);
+            JSONObject jsonObject = udpCommandParse(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public AjaxResult OmRead(){
@@ -356,7 +384,7 @@ public class OmronFinsControlProcession {
             if(!(("JQ-WeiFang-JiuLongYu-JJL".equals(itemMap.get("eqTunnelId"))||"JQ-WeiFang-JiuLongYu-MAS".equals(itemMap.get("eqTunnelId"))
             )&&"48".equals(itemMap.get("eqType").toString()))){
                 data = valueMap.get(Integer.valueOf(address));
-                if(data == ""||data ==null){
+                if("".equals(data) ||data ==null){
                     continue;
                 }
                 if(dataLengthNum == 2){
@@ -376,33 +404,11 @@ public class OmronFinsControlProcession {
                 Integer addressNums = Integer.parseInt(address);
                 for(int i = 0 ; i<=dataLengthNum-1; i++){
                     data = valueMap.get(Integer.valueOf(addressNums));
-                    if(data == null||"0000".equals(data)){
-                        continue;
-                    }
-                    //不足4位补0
-                    if(data.length()!=4){
-                        data = String.format("%04d", Integer.parseInt(data));
-                    }
                     sumDraugh = sumDraugh+data;
                     addressNums = addressNums+1;
                 }
                 //说明设备故障
-                if(sumDraugh.length()!=20){
-                    if("76".equals(itemId)){
-                        dataSave(eqId,"0.00","80");
-                        //速度浮点数数值保存
-                        dataSave(eqId,"0.00","76");
-                        //幅度浮点数数值保存
-                        dataSave(eqId,"0.00","77");
-                    }
-                    //沉降值  倾斜值
-                    if("78".equals(itemId)){
-                        dataSave(eqId,"0.00","81");
-                        //沉降浮点数数值保存
-                        dataSave(eqId,"0.00","78");
-                        //倾斜度浮点数数值保存
-                        dataSave(eqId,"0.00","79");
-                    }
+                if(sumDraugh.length()!=20||sumDraugh.indexOf("null")>-1){
                     continue;
                 }
                 //风机解析入库
@@ -430,7 +436,7 @@ public class OmronFinsControlProcession {
         //振动速度值  振动幅度值
         if("76".equals(itemId)){
             draughtSpeed = sumDraugh.substring(2, 10);
-            draughtRange = sumDraugh.substring(11, 18);
+            draughtRange = sumDraugh.substring(10, 18);
             //转浮点小数
             draughtSpeed = NumberSystemConvert.reverseHex(draughtSpeed);
             Float draughtSpeedFloat = NumberSystemConvert.convertHexToFloat(draughtSpeed);
@@ -451,7 +457,7 @@ public class OmronFinsControlProcession {
         //沉降值  倾斜值
         if("78".equals(itemId)){
             draughtDrop = sumDraugh.substring(2, 10);
-            draughtAngle = sumDraugh.substring(11, 18);
+            draughtAngle = sumDraugh.substring(10, 18);
             //转浮点小数
             draughtDrop = NumberSystemConvert.reverseHex(draughtDrop);
             Float draughtDropFloat = NumberSystemConvert.convertHexToFloat(draughtDrop);
@@ -501,8 +507,9 @@ public class OmronFinsControlProcession {
             if(dataLengthNum == 2){
                 data = NumberSystemConvert.reverseHex(data);
                 Float dataNum = NumberSystemConvert.convertHexToFloat(data);
-
-                return String.valueOf(dataNum);
+                BigDecimal dValue = new BigDecimal(dataNum);
+                dValue = dValue.setScale(2,BigDecimal.ROUND_HALF_UP);
+                return String.valueOf(dValue);
             }
         }
         JSONObject jsonConfig = JSONObject.parseObject(pointConfig);

@@ -199,60 +199,81 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         //更新当前设备 连接时间。
         MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
     }
+    private static String dataAnalysis(String str, Integer number, Integer numberTwo,String type){
+        String totalNum = null ;
+        if( type=="1"|| type=="2"|| type=="3"|| type=="4"){//总车流量
+            //判断是单个数字的不需要解析
+            if(str.substring(number, numberTwo).replaceAll("0+$", "").length()==1&&
+                    !str.substring(number, numberTwo).replaceAll("0+$", "").matches("\\d+")){
+                totalNum = str.substring(number, numberTwo).replaceAll("0+$", "");
+            }else{
+                if(StringUtils.isNotNull(str.substring(number, numberTwo).replaceAll("0+$", ""))
+                        &&str.substring(number, numberTwo).replaceAll("0+$", "").length()>0){
+                    totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo).replaceAll("0+$", ""));
+                }else{
+                    totalNum = "";
+                }
+
+            }
+        }else{
+            String isNull= str.substring(number, numberTwo);
+            if(StringUtils.isNotNull(isNull)){
+                totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo));// 总车流量
+            }else{
+                totalNum = "";// 总车流量
+            }
+        }
+        return  totalNum;
+    }
 
     private static void dataAnalySis(String firstContent, String id, String tunnelId,String eqDirection) {
-        String strArr[] = firstContent.split("FFF9");
+        String strArr[] = firstContent.split("fff9");
 //		List<SdMicrowavePeriodicStatistics> list = new ArrayList<SdMicrowavePeriodicStatistics>();
         for(int i=0;i<strArr.length;i++){
             String str = strArr[i];
             if(str.length()>4){
                 str = "FFF9" + str;
-/*    			String xxt = str.substring(0, 2); // 信息头
-    			String bsf = str.substring(2, 4); // 标识符
-    			String sjcd = str.substring(4, 6);// 数据长度
-    			String time = str.substring(6, 14);// 时间
-				//按位截取=======================================
-*/    			String roadId = RadixUtil.hexToDecimal(str.substring(14, 16)); // 车道号
-                String totalNum = RadixUtil.hexToDecimal(str.substring(16, 20));// 总车流量
-                String smallNum = RadixUtil.hexToDecimal(str.substring(20, 24)); // 小车流量
-                String mediumNum = RadixUtil.hexToDecimal(str.substring(24, 28)); // 中车流量
-                String largeNum = RadixUtil.hexToDecimal(str.substring(28, 32)); // 大车流量
-                //String car4 = str.substring(32, 36);// 预留
-                //String car5 = str.substring(36, 40);
-                String avgSpeed = RadixUtil.hexToDecimal(str.substring(40, 42));// 平均车速
-                String smallSpeed = RadixUtil.hexToDecimal(str.substring(42, 44));//小车车速
-                String mediumSpeed = RadixUtil.hexToDecimal(str.substring(44, 46));//中型车车速
-                String largeSpeed = RadixUtil.hexToDecimal(str.substring(46, 48));//大型车车速
-                //String speed4 = str.substring(48, 50);//预留
-                //String speed5 = str.substring(50, 52);
-//    			String avgHeadway = str.substring(52, 56);//平均车间据
-                Object avgHeadway = new BigDecimal((double) Integer.parseInt(str.substring(52, 56), 16) / 10)
-                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
-//    			String avgLength = str.substring(56, 60);//平均车长
-                Object avgLength = new BigDecimal((double) Integer.parseInt(str.substring(56, 60), 16))
-                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
-//    			String avgOccupancy = RadixUtil.hexToDecimal(str.substring(60, 64)); // 平均压占率
-                Object avgOccupancy = new BigDecimal((double) Integer.parseInt(str.substring(60, 64), 16) / 10)
-                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
+                String totalNum = dataAnalysis(str, 19, 21,"1");
+                String smallNum = dataAnalysis(str, 23, 25,"2"); // 小型车
+                String mediumNum = dataAnalysis(str, 27, 29,"3");// 中型车
+                String largeNum = dataAnalysis(str, 31, 33,"4");// 大型车
+                String avgSpeed = dataAnalysis(str, 40, 42,"5");// 平均车速
+                String smallSpeed = dataAnalysis(str, 42, 44,"6");// 车速c0
+                String mediumSpeed = dataAnalysis(str, 44, 46,"7");// 车速c1
+                String largeSpeed = dataAnalysis(str, 46, 48,"8");// 车速c2
+                //平均车长
+                String avgLength = dataAnalysis(str, 56, 60,"7");// 平均车长
+                String avgHeadway = dataAnalysis(str, 52, 56,"8");// 平均车间距
+                String avgOccupancy = dataAnalysis(str, 60, 64,"7");// 平均压占率
+
+
 
                 Date nowDate = new Date();
                 SdMicrowavePeriodicStatistics data = new SdMicrowavePeriodicStatistics();//创建车流量对象
                 data.setDeviceId(id);//设备id
                 data.setTunnelId(tunnelId);
-                data.setLaneNo(Long.valueOf(roadId) + 1);//车道号
+                data.setLaneNo(Long.valueOf(i) );//车道号
                 data.setCreateTime(nowDate);
+                //总车辆
                 data.setTrafficFlowTotal(totalNum);
+                //小型车
                 data.setSmallVehicleNum(smallNum);
                 data.setSmallVehicleSpeed(smallSpeed);
+
                 data.setMidVehicleNum(mediumNum);
                 data.setMidVehicleSpeed(mediumSpeed);
+
                 data.setHeavyVehicleNum(largeNum);
                 data.setHeavyVehicleSpeed(largeSpeed);
+                //平均车长
                 data.setAvgLength(avgLength.toString());
+                //平均车间距
                 data.setAvgHeadway(avgHeadway.toString());
                 data.setAvgSpeed(avgSpeed);
+                //平均压占率
                 data.setAvgOccupancy(avgOccupancy.toString());
                 data.setEqDirection(eqDirection);
+                data.setVehicleSpeedReserve5(str);
                 SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).insertSdMicrowavePeriodicStatistics(data);
 //            	list.add(data);
             }

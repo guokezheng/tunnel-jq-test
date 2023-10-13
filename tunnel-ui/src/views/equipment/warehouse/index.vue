@@ -41,17 +41,19 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
+            :class="manageStatin == '1'?'formNoIcon':''"
           >
             <el-button
               slot="append"
               class="searchTable"
               @click="boxShow = !boxShow"
+              v-show="manageStatin == '0'"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div ref="cc" class="searchBox" v-show="boxShow">
+    <div ref="cc" class="searchBox" v-show="boxShow && manageStatin == '0'">
       <el-form
         ref="queryForm"
         :inline="true"

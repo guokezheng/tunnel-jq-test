@@ -1441,6 +1441,13 @@
             ],
           };
           vehicleMonitoring.setOption(option);
+          // 禁止echarts取消选中
+          vehicleMonitoring.on('legendselectchanged', function (params) {
+            vehicleMonitoring.setOption({
+              
+                legend:{selected:{[params.name]: true}}
+            })
+        });
           window.addEventListener("resize", function () {
             vehicleMonitoring.resize();
           });

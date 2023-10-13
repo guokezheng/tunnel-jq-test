@@ -33,7 +33,7 @@
         :model="querysParamsTab"
         label-width="75px"
       >
-        <el-form-item label="所属隧道" prop="tunnelId">
+        <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
           <el-select
             v-model="querysParamsTab.tunnelId"
             placeholder="请选择所属隧道"
@@ -1111,6 +1111,13 @@ export default {
     handleSelectionChange4(selection) {
       this.ids = selection.map((item) => item.createTime);
       this.multiple = !selection.length;
+    },
+  },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getListTab();
+      this.getTunnel(this.userDeptId);
     },
   },
 };

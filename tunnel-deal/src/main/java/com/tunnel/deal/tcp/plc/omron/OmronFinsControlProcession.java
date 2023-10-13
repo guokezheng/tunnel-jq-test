@@ -124,7 +124,7 @@ public class OmronFinsControlProcession {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, address, port);
             datagramSocket.send(datagramPacket);
             // 接收返回数据
-            byte[] receiveBuf = new byte[1024];
+            byte[] receiveBuf = new byte[2048];
             DatagramPacket receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
             datagramSocket.receive(receivePacket);
             int length = receivePacket.getLength();

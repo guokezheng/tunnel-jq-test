@@ -408,7 +408,7 @@ public class OmronFinsControlProcession {
         //振动速度值  振动幅度值
         if("76".equals(itemId)){
             draughtSpeed = sumDraugh.substring(2, 10);
-            draughtRange = sumDraugh.substring(11, 19);
+            draughtRange = sumDraugh.substring(10, 18);
             //转浮点小数
             draughtSpeed = NumberSystemConvert.reverseHex(draughtSpeed);
             Float draughtSpeedFloat = NumberSystemConvert.convertHexToFloat(draughtSpeed);
@@ -429,7 +429,7 @@ public class OmronFinsControlProcession {
         //沉降值  倾斜值
         if("78".equals(itemId)){
             draughtDrop = sumDraugh.substring(2, 10);
-            draughtAngle = sumDraugh.substring(11, 19);
+            draughtAngle = sumDraugh.substring(10, 18);
             //转浮点小数
             draughtDrop = NumberSystemConvert.reverseHex(draughtDrop);
             Float draughtDropFloat = NumberSystemConvert.convertHexToFloat(draughtDrop);

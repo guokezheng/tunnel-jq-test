@@ -376,33 +376,11 @@ public class OmronFinsControlProcession {
                 Integer addressNums = Integer.parseInt(address);
                 for(int i = 0 ; i<=dataLengthNum-1; i++){
                     data = valueMap.get(Integer.valueOf(addressNums));
-                    if(data == null||"0000".equals(data)){
-                        continue;
-                    }
-                    //不足4位补0
-                    if(data.length()!=4){
-                        data = String.format("%04d", Integer.parseInt(data));
-                    }
                     sumDraugh = sumDraugh+data;
                     addressNums = addressNums+1;
                 }
                 //说明设备故障
-                if(sumDraugh.length()!=20){
-                    if("76".equals(itemId)){
-                        dataSave(eqId,"0.00","80");
-                        //速度浮点数数值保存
-                        dataSave(eqId,"0.00","76");
-                        //幅度浮点数数值保存
-                        dataSave(eqId,"0.00","77");
-                    }
-                    //沉降值  倾斜值
-                    if("78".equals(itemId)){
-                        dataSave(eqId,"0.00","81");
-                        //沉降浮点数数值保存
-                        dataSave(eqId,"0.00","78");
-                        //倾斜度浮点数数值保存
-                        dataSave(eqId,"0.00","79");
-                    }
+                if(sumDraugh.length()!=20||sumDraugh.indexOf("null")>-1){
                     continue;
                 }
                 //风机解析入库
@@ -430,7 +408,7 @@ public class OmronFinsControlProcession {
         //振动速度值  振动幅度值
         if("76".equals(itemId)){
             draughtSpeed = sumDraugh.substring(2, 10);
-            draughtRange = sumDraugh.substring(11, 18);
+            draughtRange = sumDraugh.substring(11, 19);
             //转浮点小数
             draughtSpeed = NumberSystemConvert.reverseHex(draughtSpeed);
             Float draughtSpeedFloat = NumberSystemConvert.convertHexToFloat(draughtSpeed);
@@ -451,7 +429,7 @@ public class OmronFinsControlProcession {
         //沉降值  倾斜值
         if("78".equals(itemId)){
             draughtDrop = sumDraugh.substring(2, 10);
-            draughtAngle = sumDraugh.substring(11, 18);
+            draughtAngle = sumDraugh.substring(11, 19);
             //转浮点小数
             draughtDrop = NumberSystemConvert.reverseHex(draughtDrop);
             Float draughtDropFloat = NumberSystemConvert.convertHexToFloat(draughtDrop);

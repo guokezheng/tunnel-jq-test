@@ -142,6 +142,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                         event.setEndTime(new Date().toString());
                         sdEventMapper.updateSdEvent(event);
                     }
+                   // 模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02
 //                sdEvent.setEventTypeId(102L);
 //                sdEvents = sdEventMapper.selectSdEventList(sdEvent);
 //                for (int i = 0; i < sdEvents.size(); i++) {
@@ -161,6 +162,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             // 设备编码
             data = data.substring(data.indexOf("址") + 2);
             String sourceDevice = data.substring(0, data.indexOf(" "));*/
+                //模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02
                 String address = data.substring(0, data.indexOf("号"));
                 data = data.substring(data.indexOf("机") + 1);
                 // 左洞1 右洞2
@@ -190,9 +192,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 devices.setExternalSystemId(systemId);
                 devices.setExternalDeviceId(sn);
 
-                if(!devices.getEqTunnelId().equals("JQ-JiNan-WenZuBei-MJY")){
-                    devices.setQueryPointAddress(address);
-                }
+
 
                 // 火灾报警  1左洞 2右洞
                 // 隧道平台  1右洞 2左洞
@@ -211,6 +211,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 devices.setExternalDeviceId(sn);
                 devices.setEqStatus(state+"");
                 devices.setEqStatusTime(new Date());
+                devices.setQueryPointAddress(address);
                 sdDevicesMapper.updateSdDevicesByExternalDevIdAndDirection(devices);
 
 

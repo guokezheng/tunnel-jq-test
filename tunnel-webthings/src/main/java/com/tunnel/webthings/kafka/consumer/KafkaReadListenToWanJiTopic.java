@@ -100,16 +100,6 @@ public class KafkaReadListenToWanJiTopic {
         consumer.commitSync();
     }
 
-    @KafkaListener(topics = {"baseDeviceStatus"}, containerFactory = "kafkaOneContainerFactory")
-    public void baseDeviceStatus(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
-        log.info("监听到万集事件数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
-
-        }
-        //手动提交
-        consumer.commitSync();
-    }
-
     /**
      * 获取事件图片视频
      * @param record
@@ -125,6 +115,25 @@ public class KafkaReadListenToWanJiTopic {
             JSONObject objects = JSONObject.parseObject(record.value());
             //储存事件图片视频数据
             saveEventImage(objects);
+        }
+        //手动提交
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取车道统计数据
+     * @param record
+     * @param item
+     * @param consumer
+     * @throws Exception
+     */
+    @KafkaListener(topics = {"wj_lane_statistic_data"}, containerFactory = "kafkaOneContainerFactory")
+    public void topicLaneStatisticData(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
+        log.info("监听到万集车道统计数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析事件数据
+            JSONObject objects = JSONObject.parseObject(record.value());
+            saveLaneData(objects);
         }
         //手动提交
         consumer.commitSync();
@@ -397,6 +406,27 @@ public class KafkaReadListenToWanJiTopic {
                 setCarsnapRedis(radarDetectData);
             }
         }
+    }
+
+    /**
+     * 将车道统计数据存入redis
+     * @param jsonObject
+     */
+    public void saveLaneData(JSONObject jsonObject){
+        //方向
+        String direction = jsonObject.getString("direction");
+        //隧道id
+        String tunnelId = jsonObject.getString("tunnelId");
+        List<Map<String, Object>> mapList = (List<Map<String, Object>>)jsonObject.get("dataList");
+        //redisKey 命名规则 carVolume : 隧道id : 方向
+        String redisKey = "carVolume:" + tunnelId + ":" + direction;
+        Integer carNumber = 0;
+        if(mapList != null){
+            for(Map<String,Object> item : mapList){
+                carNumber = carNumber + Integer.valueOf(item.get("cars").toString());
+            }
+        }
+        redisCache.setCacheObject(redisKey,carNumber,30,TimeUnit.SECONDS);
     }
 
     /**

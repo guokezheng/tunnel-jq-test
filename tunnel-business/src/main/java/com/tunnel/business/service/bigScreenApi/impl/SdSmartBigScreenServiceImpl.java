@@ -320,8 +320,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         map.put("faultNum",faultNum);
         BigDecimal dev = new BigDecimal(devNum);
         BigDecimal fault = new BigDecimal(faultNum);
-        BigDecimal divide = fault.divide(dev,5,BigDecimal.ROUND_DOWN);
-        BigDecimal multiply = divide.multiply(new BigDecimal(100)).setScale(1,BigDecimal.ROUND_HALF_UP);
+        BigDecimal divide = new BigDecimal(0);
+        BigDecimal multiply = new BigDecimal(0);
+        if(fault.compareTo(new BigDecimal(0)) != 0){
+            divide = fault.divide(dev,5,BigDecimal.ROUND_DOWN);
+            multiply = divide.multiply(new BigDecimal(100)).setScale(1,BigDecimal.ROUND_HALF_UP);
+        }
         map.put("failureRate",multiply);
         map.put("list",devList);
         return AjaxResult.success(map);
@@ -483,13 +487,17 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     @Override
     public AjaxResult getCarNumber(String tunnelId) {
         List<Map<String, Object>> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
-        List<String> list = new ArrayList<>();
+        List<String> cllList = new ArrayList<>();
+        List<String> ztsList = new ArrayList<>();
         for(Map<String,Object> item : mapList){
-            list.add(item.get("originalData").toString());
+            cllList.add(item.get("originalData").toString());
+            String redisKry = "carVolume:" + tunnelId + ":" + item.get("direction").toString();
+            ztsList.add(redisCache.getCacheObject(redisKry) == null ? "0" : redisCache.getCacheObject(redisKry).toString());
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("cllData",list);
-        map.put("ztsData","");
+        map.put("cllData",cllList);
+
+        map.put("ztsData",ztsList);
         return AjaxResult.success(map);
     }
 

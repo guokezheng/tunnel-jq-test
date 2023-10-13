@@ -886,6 +886,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
                     if (map.get("data") != null) {
+                        if("远程".equals(map.get("data").toString()) || "就地".equals(map.get("data").toString())){
+                            continue;
+                        }
                         deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
                     } else {
                         deviceData.put("runStatus", 0);

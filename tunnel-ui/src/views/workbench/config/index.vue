@@ -6308,6 +6308,9 @@
 
     .el-input__suffix-inner {
       pointer-events: none !important;
+      i {
+        color: transparent;
+      }
     }
   }
 

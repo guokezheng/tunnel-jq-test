@@ -123,7 +123,7 @@ public class ModbusCmd {
                 command = ModbusCmdGenerator.getReadFourCommand("",hexSerial,address,dataLength);
                 break;
             case ModbusFunctionCode.CODE_FIVE:
-                command = ModbusCmdGenerator.getWriteFiveCommand("",hexSerial,address,dataLength);
+                command = ModbusCmdGenerator.getWriteFiveCommand("",hexSerial,address,writeData);
                 break;
             case ModbusFunctionCode.CODE_SIX:
                 command = ModbusCmdGenerator.getWriteSixCommand("",hexSerial,address,writeData);

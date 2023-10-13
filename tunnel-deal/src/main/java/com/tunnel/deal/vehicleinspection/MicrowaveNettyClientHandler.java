@@ -202,10 +202,13 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
     private static String dataAnalysis(String str, Integer number, Integer numberTwo,String type){
         String totalNum = null ;
         if( type=="1"|| type=="2"|| type=="3"|| type=="4"){//总车流量
-            if(str.substring(number, numberTwo).replaceAll("0+$", "").length()==1){
+            //判断是单个数字的不需要解析
+            if(str.substring(number, numberTwo).replaceAll("0+$", "").length()==1&&
+                    !str.substring(number, numberTwo).replaceAll("0+$", "").matches("\\d+")){
                 totalNum = str.substring(number, numberTwo).replaceAll("0+$", "");
             }else{
-                if(StringUtils.isNotNull(str.substring(number, numberTwo).replaceAll("0+$", ""))&&str.substring(number, numberTwo).replaceAll("0+$", "").length()>0){
+                if(StringUtils.isNotNull(str.substring(number, numberTwo).replaceAll("0+$", ""))
+                        &&str.substring(number, numberTwo).replaceAll("0+$", "").length()>0){
                     totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo).replaceAll("0+$", ""));
                 }else{
                     totalNum = "";

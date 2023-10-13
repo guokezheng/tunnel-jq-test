@@ -199,14 +199,27 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         //更新当前设备 连接时间。
         MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
     }
-    private static String dataAnalysis(String str, Integer number, Integer numberTwo){
+    private static String dataAnalysis(String str, Integer number, Integer numberTwo,String type){
         String totalNum = null ;
-//        boolean isNumeric = str.substring(number, numberTwo).replaceAll("0+$", "").matches("\\d+");
-//        if(!isNumeric){
-            totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo));// 总车流量
-//        }else{
-//            totalNum = str.substring(number, numberTwo).replaceAll("0+$", "");// 总车流量
-//        }
+        if( type=="1"|| type=="2"|| type=="3"|| type=="4"){//总车流量
+            if(str.substring(number, numberTwo).replaceAll("0+$", "").length()==1){
+                totalNum = str.substring(number, numberTwo).replaceAll("0+$", "");
+            }else{
+                if(StringUtils.isNotNull(str.substring(number, numberTwo).replaceAll("0+$", ""))&&str.substring(number, numberTwo).replaceAll("0+$", "").length()>0){
+                    totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo).replaceAll("0+$", ""));
+                }else{
+                    totalNum = "";
+                }
+
+            }
+        }else{
+            String isNull= str.substring(number, numberTwo);
+            if(StringUtils.isNotNull(isNull)){
+                totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo));// 总车流量
+            }else{
+                totalNum = "";// 总车流量
+            }
+        }
         return  totalNum;
     }
 
@@ -217,21 +230,19 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
             String str = strArr[i];
             if(str.length()>4){
                 str = "FFF9" + str;
-/*    			String xxt = str.substring(0, 2); // 信息头
-    			String bsf = str.substring(2, 4); // 标识符
-    			String sjcd = str.substring(4, 6);// 数据长度
-    			String time = str.substring(6, 14);// 时间
-				//按位截取=======================================
-//*/
+                String totalNum = dataAnalysis(str, 19, 21,"1");
+                String smallNum = dataAnalysis(str, 23, 25,"2"); // 小型车
+                String mediumNum = dataAnalysis(str, 27, 29,"3");// 中型车
+                String largeNum = dataAnalysis(str, 31, 33,"4");// 大型车
+                String avgSpeed = dataAnalysis(str, 40, 42,"5");// 平均车速
+                String smallSpeed = dataAnalysis(str, 42, 44,"6");// 车速c0
+                String mediumSpeed = dataAnalysis(str, 44, 46,"7");// 车速c1
+                String largeSpeed = dataAnalysis(str, 46, 48,"8");// 车速c2
+                //平均车长
+                String avgLength = dataAnalysis(str, 56, 60,"7");// 平均车长
+                String avgHeadway = dataAnalysis(str, 52, 56,"8");// 平均车间距
+                String avgOccupancy = dataAnalysis(str, 60, 64,"7");// 平均压占率
 
-                String totalNum = dataAnalysis(str, 19, 21);
-                String smallNum = dataAnalysis(str, 23, 25); // 一车道
-                String mediumNum = dataAnalysis(str, 27, 29);// 二车道
-                String largeNum = dataAnalysis(str, 31, 33);// 三车道
-                String avgSpeed = dataAnalysis(str, 40, 42);// 平均车速
-                String smallSpeed = dataAnalysis(str, 42, 44);// 车速c0
-                String mediumSpeed = dataAnalysis(str, 44, 46);// 车速c1
-                String largeSpeed = dataAnalysis(str, 46, 48);// 车速c2
 
 
                 Date nowDate = new Date();
@@ -251,11 +262,15 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
                 data.setHeavyVehicleNum(largeNum);
                 data.setHeavyVehicleSpeed(largeSpeed);
-//                data.setAvgLength(avgLength.toString());
-//                data.setAvgHeadway(avgHeadway.toString());
+                //平均车长
+                data.setAvgLength(avgLength.toString());
+                //平均车间距
+                data.setAvgHeadway(avgHeadway.toString());
                 data.setAvgSpeed(avgSpeed);
-//                data.setAvgOccupancy(avgOccupancy.toString());
+                //平均压占率
+                data.setAvgOccupancy(avgOccupancy.toString());
                 data.setEqDirection(eqDirection);
+                data.setVehicleSpeedReserve5(str);
                 SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).insertSdMicrowavePeriodicStatistics(data);
 //            	list.add(data);
             }

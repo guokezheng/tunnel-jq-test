@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="smallVehicleSpeed"    column="small_vehicle_speed"    />
         <result property="midVehicleSpeed"    column="mid_vehicle_speed"    />
         <result property="heavyVehicleSpeed"    column="heavy_vehicle_speed"    />
+        <result property="vehicleSpeedReserve5"    column="vehicle_speed_reserve5"    />
     </resultMap>
 
     <sql id="selectSdMicrowavePeriodicStatisticsVo">
@@ -78,6 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="smallVehicleSpeed != null">small_vehicle_speed,</if>
             <if test="midVehicleSpeed != null">mid_vehicle_speed,</if>
             <if test="heavyVehicleSpeed != null">heavy_vehicle_speed,</if>
+            <if test="vehicleSpeedReserve5 != null">vehicle_speed_reserve5,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -98,6 +100,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="smallVehicleSpeed != null">#{smallVehicleSpeed},</if>
             <if test="midVehicleSpeed != null">#{midVehicleSpeed},</if>
             <if test="heavyVehicleSpeed != null">#{heavyVehicleSpeed},</if>
+            <if test="vehicleSpeedReserve5 != null">#{vehicleSpeedReserve5},</if>
          </trim>
     </insert>
 

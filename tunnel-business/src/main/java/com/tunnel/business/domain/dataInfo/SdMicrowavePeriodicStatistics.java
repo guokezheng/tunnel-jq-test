@@ -82,6 +82,10 @@ public class SdMicrowavePeriodicStatistics extends BaseEntity
     @Excel(name = "大型车车速")
     private String heavyVehicleSpeed;
 
+    /** 车速预留 */
+    @Excel(name = "车速预留")
+    private String vehicleSpeedReserve5;
+
     public void setStatisticsId(Long statisticsId) 
     {
         this.statisticsId = statisticsId;
@@ -234,6 +238,15 @@ public class SdMicrowavePeriodicStatistics extends BaseEntity
     public String getHeavyVehicleSpeed() 
     {
         return heavyVehicleSpeed;
+    }
+
+
+    public String getVehicleSpeedReserve5() {
+        return vehicleSpeedReserve5;
+    }
+
+    public void setVehicleSpeedReserve5(String vehicleSpeedReserve5) {
+        this.vehicleSpeedReserve5 = vehicleSpeedReserve5;
     }
 
     @Override

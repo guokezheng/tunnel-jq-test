@@ -207,10 +207,12 @@ public class MqttInboundConfiguration {
                         String clientId = json.get("clientid").toString();
                         //设备上线
                         if(topic.contains("connected")){
+                            mcaLogger.info("MQTT clientId："+clientId+" 在线");
                             devicesService.updateOnlineStatus(clientId,true);
                         }
                         //设备下线
                         if(topic.contains("disconnected")){
+                            mcaLogger.info("MQTT clientId："+clientId+" 离线");
                             devicesService.updateOfflineStatus(clientId,true);
                         }
                     }

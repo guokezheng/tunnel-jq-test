@@ -194,8 +194,8 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
         //在线时间检测控制时间，定时任务传入方便修改
         Integer expireTime = HongMengMqttTask.onlineSecondInterval;
         if(expireTime == null){
-            //默认60秒
-            expireTime = 60;
+            //默认调整10分钟
+            expireTime = 600;
         }
         redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
     }

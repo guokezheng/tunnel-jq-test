@@ -141,4 +141,33 @@ public class ModbusCmdResolver {
 
         return list;
     }
+
+
+    /**
+     * 解析数据：1位表示一个数据，通常是状态量
+     * 将每个数字转换为整型，再转换为二进制
+     * @return
+     */
+    public static List<String> handleOneBitDataNew(String data){
+        List<String> list = new ArrayList<>();
+        //00 01 00 00 00 07 01 03 04 00 00 00 00
+        for(int i = 0; i < data.length(); ){
+            int len = 2;
+            String item = data.substring(i,i+len);
+            Integer itemNum = Integer.parseInt(item,16);
+            String bit = Integer.toBinaryString(itemNum);
+            Integer bitNum = Integer.parseInt(bit);
+            String result = String.format("%08d",bitNum);
+            //00001010
+            char[] array = result.toCharArray();
+            //逆序
+            for(int j = array.length - 1; j >= 0; j--){
+                char c = array[j];
+                list.add(String.valueOf(c));
+            }
+            i += len;
+        }
+
+        return list;
+    }
 }

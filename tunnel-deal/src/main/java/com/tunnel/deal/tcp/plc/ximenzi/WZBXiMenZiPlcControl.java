@@ -232,6 +232,12 @@ public class WZBXiMenZiPlcControl implements GeneralControlBean, TcpClientGenera
 
         String functionCode = jsonObject.getString("functionCode");
         String readData = jsonObject.getString("readData");
+        if(ModbusFunctionCode.CODE_ONE.equals(functionCode)){
+//            Integer readDataNum = Integer.parseInt(readData,16);
+//            String s = Integer.toBinaryString(readDataNum);
+            List<String> list = ModbusCmdResolver.handleOneBitDataNew(readData);
+            jsonObject.put("data",list);
+        }
         if(ModbusFunctionCode.CODE_TWO.equals(functionCode)){
 
             Integer num = Integer.parseInt(readData,16);
@@ -295,6 +301,11 @@ public class WZBXiMenZiPlcControl implements GeneralControlBean, TcpClientGenera
 
 
         switch (functionCode){
+            case ModbusFunctionCode.CODE_ONE:
+                //实时数据
+                List<String> dataResult = Obj2ListUtil.objToList(data,String.class);
+                getFunctionOneData(pointList,dataResult,address);
+                break;
             case ModbusFunctionCode.CODE_TWO:
 //                getFunctionTwoData(pointList, String.valueOf(data),address);
                 break;
@@ -303,10 +314,75 @@ public class WZBXiMenZiPlcControl implements GeneralControlBean, TcpClientGenera
                 //实时数据
                 List<String> dataList = Obj2ListUtil.objToList(data,String.class);
                 getFunctionThreeData(pointList,dataList,address);
+                break;
             default: break;
         }
 
     }
+
+    /**
+     * 功能码01的返回数据解析
+     * @param pointList
+     * @param dataList
+     * @param address
+     */
+    public void getFunctionOneData(List<SdDevicePointPlc> pointList,List<String> dataList,String address){
+        Map<Integer,String> valueMap = new HashMap<>();
+
+        //十六进制地址转换
+        Integer startAddress = Integer.valueOf(address,16);
+        for(int i = 0; i < dataList.size(); i++){
+            valueMap.put(startAddress,dataList.get(i));
+            startAddress ++;
+        }
+
+        //按父设备ID、功能码筛选设备点位表中的地址，按照点位地址从小到大的顺序，将list数据跟设备点位对应
+        // 将读取的数据保存到实时数据表中
+//        Integer addressCursor = Integer.valueOf(address);
+        for(int j = 0; j < pointList.size();  j++){
+            String result = "";
+            SdDevicePointPlc devicePointPlc = pointList.get(j);
+            //设备ID
+            String eqId = devicePointPlc.getEqId();
+            //设备类型数据项ID
+            Long itemId = devicePointPlc.getItemId();
+            //点位地址
+            Integer pointAddress = Integer.valueOf(devicePointPlc.getAddress());
+//            //点位长度
+            Integer dataLength = Integer.valueOf(devicePointPlc.getDataLength());
+            //实时数据
+            String data = valueMap.get(pointAddress);
+            if(data == null){
+                continue;
+            }
+            String pointConfig = devicePointPlc.getPointConfig();
+            if(pointConfig != null && !"".equals(pointConfig)){
+                //状态映射
+                JSONArray jsonArray = JSONArray.parseArray(pointConfig);
+                String state = "";
+                for(Object obj : jsonArray){
+                    JSONObject jsonObject = (JSONObject) obj;
+                    String pointValue = jsonObject.getString("value");
+                    if(data.equals(pointValue)){
+                        state = jsonObject.getString("state");
+                        System.out.println("实时数据状态：stateJson="+jsonObject+",eqId="+eqId);
+                        break;
+                    }
+                }
+                result = state;
+            }
+            //更新实时数据
+            SdDevices sdDevices = new SdDevices();
+            sdDevices.setEqId(eqId);
+            deviceDataService.updateDeviceData(sdDevices, result,itemId);
+
+            //储存历史数据
+            setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
+            //设置设备在线
+            sdDevicesService.updateOnlineStatus(eqId,false);
+        }
+    }
+
 
     /**
      * 功能码03、04返回数据解析

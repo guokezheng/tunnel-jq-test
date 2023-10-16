@@ -293,11 +293,11 @@ export default {
       };
       setControlDeviceByParam(param).then((res)=>{
         console.log("消防栓控制成功",res)
-        let msg = res.msg;
-        if(res.data == 1){
-          this.$modal.msgSuccess(msg);
-        }else{
-          this.$modal.msgError(msg);
+        // let msg = res.msg;
+        if (res.data == 1) {
+          this.$modal.msgSuccess("控制成功");
+        } else {
+          this.$modal.msgError("控制失败");
         }
       })
       this.$emit("dialogClose");

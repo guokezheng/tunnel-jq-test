@@ -868,7 +868,7 @@ public class workspaceController extends BaseController {
         }else{
             controlState = generalControlBean.controlDevices(params);
         }
-        return controlState==1 ?  AjaxResult.success("控制成功") : AjaxResult.error("控制失败");
+        return AjaxResult.success(controlState);
     }
 
     /**

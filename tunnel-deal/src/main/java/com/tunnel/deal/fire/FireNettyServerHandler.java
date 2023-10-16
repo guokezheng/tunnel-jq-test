@@ -139,7 +139,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     for (int i = 0; i < sdEvents.size(); i++) {
                         SdEvent event = sdEvents.get(i);
                         event.setEventState("1");
-                        event.setEndTime(new Date().toString());
+                        event.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
                         sdEventMapper.updateSdEvent(event);
                     }
                    // 模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02

@@ -250,7 +250,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             a.associated_device_id associatedDeviceId,
             a.external_device_id externalDeviceId,
             c.supplier_name supplierName,
-            COALESCE(BBB.ip,a.ip) as ip,
+            BBB.ip as mca_ip,
             AA.ip as f_ip
         from sd_devices a
          left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id

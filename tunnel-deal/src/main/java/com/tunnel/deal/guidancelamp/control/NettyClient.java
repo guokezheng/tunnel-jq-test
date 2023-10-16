@@ -167,16 +167,8 @@ public class NettyClient {
             this.channel = future.channel();
         }catch(Exception e){
             log.error("连接服务器失败");
-
             group.shutdownGracefully(); //关闭线程组
-        }finally {
-
-            // 关闭EventLoopGroup，释放掉所有资源，包括创建的线程
-            group.shutdownGracefully().sync();
         }
-
-
-
     }
 
     /**

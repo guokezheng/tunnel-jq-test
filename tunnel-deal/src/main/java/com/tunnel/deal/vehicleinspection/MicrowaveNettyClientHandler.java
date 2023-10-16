@@ -205,8 +205,10 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
             //判断是单个数字的不需要解析
             if(str.substring(number, numberTwo).replaceAll("0+$", "").length()==1&&
                     !str.substring(number, numberTwo).replaceAll("0+$", "").matches("\\d+")){
+
                 totalNum = str.substring(number, numberTwo).replaceAll("0+$", "");
             }else{
+
                 if(StringUtils.isNotNull(str.substring(number, numberTwo).replaceAll("0+$", ""))
                         &&str.substring(number, numberTwo).replaceAll("0+$", "").length()>0){
                     totalNum = RadixUtil.hexToDecimal(str.substring(number, numberTwo).replaceAll("0+$", ""));

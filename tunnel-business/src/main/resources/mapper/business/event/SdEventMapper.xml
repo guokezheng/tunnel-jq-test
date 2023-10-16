@@ -574,6 +574,7 @@
             AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
         </if>
         order by A.start_time desc
+        LIMIT 50
     </select>
 
     <!--根据事件id列表查询事件信息-->

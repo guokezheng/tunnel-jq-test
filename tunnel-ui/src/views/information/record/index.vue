@@ -37,7 +37,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="所属隧道" prop="tunnelId">
+        <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
           <el-select
             v-model="queryParams.tunnelId"
             placeholder="请选择所属隧道"
@@ -333,6 +333,7 @@ export default {
   dicts: ["sd_direction"],
   data() {
     return {
+      manageStatin: this.$cache.local.get("manageStation"),
       boxShow: false,
       listtt: [
         {
@@ -351,7 +352,7 @@ export default {
       ids: [],
 
       //所属隧道
-      tunnelList: {},
+      tunnelList: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -402,6 +403,13 @@ export default {
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnel();
+    },
+  },
   methods: {
     /** 所属隧道 */
     getTunnel() {
@@ -446,14 +454,11 @@ export default {
       this.boxShow = false;
       let contents = [];
       if (this.$cache.local.get("manageStation") == "1") {
-        console.log(this.$cache.local.get(
-          "manageStationSelect"
-        ),"manageStationSelect")
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
-      console.log(this.queryParams,"this.queryParams")
+      // console.log(this.queryParams,"this.queryParams")
       listRecord(this.queryParams).then((response) => {
         console.log(response.rows, "发送记录表格");
 

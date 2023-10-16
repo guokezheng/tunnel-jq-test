@@ -532,6 +532,7 @@
                           {{ item.electricity }}
                         </span> -->
                       </label>
+                      <!-- 基本照明 -->
                       <label style="color: #f2a520" class="labelClass labelClass9" v-if="item.eqType == 9">
                         <span v-if="
                             selectBigType.index == 0 || selectBigType.index == 6
@@ -541,6 +542,14 @@
                         <span v-if="selectBigType.index == 4">
                           {{ item.electricity }}
                         </span>
+                      </label>
+                      <!-- 水浸传感器 -->
+                      <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 42">
+                          {{ item.num }}
+                      </label>
+                      <!-- 温湿度传感器 -->
+                      <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 41">
+                        {{ item.num }}
                       </label>
                       <!-- 风机 -->
                       <!-- <label style="color: #f2a520" class="labelClass labelClass9"
@@ -1030,6 +1039,21 @@
                 :value="item.dictValue"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="事件类型" prop="eventType" >
+            <el-select
+              clearable
+              v-model="queryParams.eventType"
+              placeholder="请选择事件类型"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="dict in eventTypeList"
+                :key="dict.id"
+                :label="dict.eventType"
+                :value="dict.id"
+              />
+            </el-select>
+          </el-form-item>
           <!-- <el-form-item label="策略类型" prop="strategyType">
             <el-select
               v-model="queryParams.strategyType"
@@ -1293,6 +1317,7 @@
   import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
   import comDeawer from "@/views/workbench/config/deawer"; //右侧抽屉组件
   import comFooter from "@/views/workbench/config/footer"; //右侧抽屉组件
+  import { listEventType } from "@/api/event/eventType";
 
   import {
     getLocalIP
@@ -1567,6 +1592,8 @@
         eqTunnelData: {},
         // 设备方向字典
         directionOptions: [],
+        // 自动触发事件类型
+        eventTypeList:[],
         setoptions: {
           // 时间不能大于当前时间
           disabledDate(time) {
@@ -2097,6 +2124,7 @@
           this.directionOptions.push(item);
         });
       });
+      this.getListEventType()
     },
 
     watch: {
@@ -2273,6 +2301,24 @@
     },
 
     methods: {
+      getListEventType() {
+        let data = { prevControlType: "1" };
+        listEventType(data).then((res) => {
+          // debugger
+          let eventTypeList = []
+          for (let i = 0; i <  res.rows.length; i++) {
+            // if(res.rows[i].eventType=="其他"||res.rows[i].eventType=="道路团雾"||res.rows[i].eventType=="大风"
+            // ||res.rows[i].eventType=="大雾"||res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+            //   eventTypeList.push(res.rows[i])
+            // }
+            if(res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+              eventTypeList.push(res.rows[i])
+            }
+          }
+          this.eventTypeList = eventTypeList;
+          console.log(this.eventTypeList, "事件类型");
+        });
+      },
       // 关闭小的一键控制弹框
       close_dialogs_event (data) {
         // console.log(data,'这是子传父');
@@ -4381,7 +4427,7 @@
                       this.eqTypeStateList[k].stateType == "1" &&
                       this.eqTypeStateList[k].state == deviceData.eqStatus
                     ) {
-                      // if(deviceData.eqType == '23'){
+                      // if(deviceData.eqType == '41'){
                       //   console.log(deviceData,"deviceData11111111111")
                       // }
                       //取设备监测状态图标
@@ -4418,6 +4464,17 @@
                           if (deviceData.DNLD) {
                             this.selectedIconList[j].num =
                               parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                          }
+                        } else if(deviceData.eqType == 42){
+                          if (deviceData.level) {
+                            this.selectedIconList[j].num =
+                              parseFloat(deviceData.level).toFixed(2) + "m";
+                          }
+                        } else if(deviceData.eqType == 41){
+                          if (deviceData.temperature && deviceData.humidity) {
+                            this.selectedIconList[j].num = 
+                            "温度：" + deviceData.temperature +
+                            "湿度：" + deviceData.humidity
                           }
                         }
                       }
@@ -6310,8 +6367,8 @@
       pointer-events: none !important;
       i {
         color: transparent;
-      }
     }
+  }
   }
 
   // 机器人图片盒子

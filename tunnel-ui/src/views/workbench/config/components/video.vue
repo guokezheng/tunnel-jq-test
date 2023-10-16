@@ -109,7 +109,7 @@
           >
             <el-row>
               <el-col :span="13">
-                <el-form-item label="IP:">
+                <el-form-item label="设备IP:">
                   {{ stateForm.ip }}
                 </el-form-item>
               </el-col>

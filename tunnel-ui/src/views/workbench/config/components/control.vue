@@ -56,6 +56,11 @@
                 {{ stateForm.supplierName }}
               </el-form-item>
             </el-col> -->
+            <el-col :span="12" v-show="this.clickEqType == 45">
+              <el-form-item label="设备IP:" >
+                {{ stateForm.ip }}
+              </el-form-item>
+            </el-col>
             <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && ipShow">
               <el-form-item label="控制器IP:" >
                 {{ stateForm.f_ip }}
@@ -63,11 +68,16 @@
             </el-col>
             <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
               <el-form-item label="控制器IP:" >
-                {{ stateForm.ip }}
+                {{ stateForm.mca_ip }}
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
+            <el-col :span="12" v-show="[1,2,3,4,10,12,13].includes(this.clickEqType) && !ipShow">
               <el-form-item label="plcIP:" >
+                {{ stateForm.f_ip }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-show="[30,31,49].includes(this.clickEqType) && !ipShow">
+              <el-form-item label="主机IP:" >
                 {{ stateForm.f_ip }}
               </el-form-item>
             </el-col>
@@ -349,7 +359,7 @@
             }else{
               this.ipShow = false
             }
-            console.log(this.ipShow,"this.ipShow")
+            // console.log(this.ipShow,"this.ipShow")
             // 查询设备当前状态 --------------------------------
             // getDevice(this.eqInfo.equipmentId).then((response) => {
             //   console.log(response, "查询设备当前状态");

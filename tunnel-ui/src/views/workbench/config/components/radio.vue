@@ -23,40 +23,51 @@
         size="mini"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="隧道名称:">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="所属方向:">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="12">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
+          </el-col> -->
+          <!-- <el-col :span="12">
+            <el-form-item label="设备IP:" >
+              {{ stateForm.ip }}
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="12">
+            <el-form-item label="主机IP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
           </el-col>
+          <!-- <el-col :span="12" v-show="ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.f_ip }}
+            </el-form-item>
+          </el-col> -->
         </el-row>
         <el-row>
           <el-col :span="13">
@@ -236,7 +247,8 @@ export default {
       brandOne: false,
       brandTwo: false,
       radioFileList:[],
-      brandDataId:""
+      brandDataId:"",
+      ipShow:false,
     };
   },
   watch:{
@@ -285,6 +297,11 @@ export default {
             this.brandOne = true;
             this.brandTwo = false;
           }
+          if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){
+              this.ipShow = true
+            }else{
+              this.ipShow = false
+            }
           this.stateForm2.loopStatus = "";
           this.stateForm2.fileNames = '';
           this.stateForm = res.data;

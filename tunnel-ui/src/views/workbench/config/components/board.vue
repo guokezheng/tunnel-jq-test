@@ -111,7 +111,7 @@
               <el-tab-pane label="设备参数" name="videoParams">
                 <el-row>
                   <el-col :span="8">
-                    <el-form-item label="IP:">
+                    <el-form-item label="设备IP:">
                       {{ stateForm.ip }}
                     </el-form-item>
                   </el-col>
@@ -213,7 +213,8 @@
     getAllVmsTemplate,
     uploadBoardEditInfo,
     // getBoardContent,
-    splicingBoard
+    splicingBoard,
+    gantryVmsInfo
   } from "@/api/board/template";
   import boardData from "@/views/information/board/boardData.json";
   import editInfo from "@/views/information/board/editInfo";
@@ -341,37 +342,73 @@
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.7)'
             });
-            const objAll = {};
-            objAll.deviceIds = this.eqInfo.equipmentId;
-            let that = this
-            let newArr = this.contentList.map(function (item) {
-              let obj = {}
-              obj.STAY = item.STAY;
-              obj.ACTION = item.ACTION;
-              obj.SPEED = item.SPEED;
-              obj.COORDINATE = item.COORDINATE.replace("-", "0");
-              obj.COLOR = that.getColorValue(item.COLOR);
-              obj.FONT = that.getFontValue(item.FONT);
+            if(this.eqInfo.clickEqType == 16){
+              const objAll = {};
+              objAll.deviceIds = this.eqInfo.equipmentId;
+              let that = this
+              let newArr = this.contentList.map(function (item) {
+                let obj = {}
+                obj.STAY = item.STAY;
+                obj.ACTION = item.ACTION;
+                obj.SPEED = item.SPEED;
+                obj.COORDINATE = item.COORDINATE.replace("-", "0");
+                obj.COLOR = that.getColorValue(item.COLOR);
+                obj.FONT = that.getFontValue(item.FONT);
 
-              obj.FONT_SIZE = item.FONT_SIZE.substring(0, 2);
-              obj.CONTENT = item.CONTENT?item.CONTENT.replace(/\n|\r\n/g, "<r><n>"):'';
-              return obj
-            })
-            objAll.parameters = newArr
-            const param = {
-              objectData: JSON.stringify(objAll)
+                obj.FONT_SIZE = item.FONT_SIZE.substring(0, 2);
+                obj.CONTENT = item.CONTENT?item.CONTENT.replace(/\n|\r\n/g, "<r><n>"):'';
+                return obj
+              })
+              objAll.parameters = newArr
+              const param = {
+                objectData: JSON.stringify(objAll)
+              }
+              console.log(param, "param")
+              splicingBoard(param).then((res) => {
+                this.$modal.msgSuccess("发布成功");
+                loading.close();
+              }).catch((res) => {
+                loading.close();
+                // this.$message({
+                //   type: "info",
+                //   message: res.msg,
+                // });
+              });
+            }else{
+              const objAll = {};
+              objAll.deviceIds = this.eqInfo.equipmentId;
+              let that = this
+              let newArr = this.contentList.map(function (item) {
+                let obj = {}
+                obj.delay = item.STAY;
+                obj.showStyle = item.ACTION;
+                obj.speed = item.SPEED;
+                // obj.COORDINATE = item.COORDINATE.replace("-", "0");
+                obj.offsetx = item.COORDINATE.substring(0, 3);
+                obj.offsety = item.COORDINATE.substring(3, 6);
+                obj.wordSpace = 1;
+
+                obj.fontColor = that.getColorValue(item.COLOR);
+                obj.font = that.getFontValue(item.FONT);
+                obj.formatStyle = item.formatStyle;
+
+                obj.fontSize = item.FONT_SIZE.substring(0, 2);
+                obj.content = item.CONTENT.replace(/\n|\r\n/g, "<r><n>");
+                return obj
+              })
+              objAll.screenList = newArr
+              const param = {
+                objectData: JSON.stringify(objAll)
+              }
+              console.log(param, "param")
+              gantryVmsInfo(param).then((res)=>{
+                console.log(res,"res")
+                loading.close();
+              }).catch(() => {
+                loading.close();
+              })
             }
-            console.log(param, "param")
-            splicingBoard(param).then((res) => {
-              this.$modal.msgSuccess("发布成功");
-              loading.close();
-            }).catch((res) => {
-              loading.close();
-              // this.$message({
-              //   type: "info",
-              //   message: res.msg,
-              // });
-            });
+            
             // let parameters = []
             // parameters.push(obj)
 
@@ -565,6 +602,7 @@
       arrowLeft(item) {
         console.log(item, "item");
         var contentList = {
+          formatStyle:item.tcontents[0].formatStyle,
           FONT_SIZE: item.tcontents[0].fontSize + "px",
           COLOR: item.tcontents[0].fontColor,
           CONTENT: item.tcontents[0].content,

@@ -272,37 +272,36 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                    // sendData.pushDevicesDataNowTime(devData);
                 }
 
-                // 设备故障不产生事件
-                if (alarmType.contains("故障")) {
-                    return;
+                // 火警产生事件
+                if (alarmType.contains("火警")) {
+                    //存储事件到事件表
+                    SdEvent sdEvent = new SdEvent();
+                    sdEvent.setTunnelId(sdDevices.getEqTunnelId());
+                    sdEvent.setEventTypeId(eventTypeId);
+                    if (alarmType.contains("故障")) {
+                        sdEvent.setEventTitle(sourceDevice + "故障事件");
+                    } else {
+                        sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
+                    }
+                    sdEvent.setEventSource("3");
+                    sdEvent.setStartTime(DateUtils.getTime());
+                    //要改
+                    sdEvent.setEventState("3");
+                    //事件描述
+                    sdEvent.setEventDescription(alarmType);
+                    sdEvent.setStakeNum(sdDevices.getPile());
+                    if(sdEvent.getStakeNum().contains("ZK")){
+                        sdEvent.setDirection("2");
+                    }else{
+                        sdEvent.setDirection("1");
+                    }
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String time = formatter.format(new Date());
+                    sdEvent.setEventTime(dateZh(time));
+                    sdEvent.setCreateTime(dateZh(time));
+                    sdEventMapper.insertSdEvent(sdEvent);
+                    eventSendWeb(sdEvent);
                 }
-                //存储事件到事件表
-                SdEvent sdEvent = new SdEvent();
-                sdEvent.setTunnelId(sdDevices.getEqTunnelId());
-                sdEvent.setEventTypeId(eventTypeId);
-                if (alarmType.contains("故障")) {
-                    sdEvent.setEventTitle(sourceDevice + "故障事件");
-                } else {
-                    sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
-                }
-                sdEvent.setEventSource("3");
-                sdEvent.setStartTime(DateUtils.getTime());
-                //要改
-                sdEvent.setEventState("3");
-                //事件描述
-                sdEvent.setEventDescription(alarmType);
-                sdEvent.setStakeNum(sdDevices.getPile());
-                if(sdEvent.getStakeNum().contains("ZK")){
-                    sdEvent.setDirection("2");
-                }else{
-                    sdEvent.setDirection("1");
-                }
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String time = formatter.format(new Date());
-                sdEvent.setEventTime(dateZh(time));
-                sdEvent.setCreateTime(dateZh(time));
-                sdEventMapper.insertSdEvent(sdEvent);
-                eventSendWeb(sdEvent);
             } else {
                 log.error("当前报文格式异常，请检查设备！");
             }

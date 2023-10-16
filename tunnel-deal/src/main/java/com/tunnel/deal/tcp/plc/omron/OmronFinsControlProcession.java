@@ -1,5 +1,6 @@
 package com.tunnel.deal.tcp.plc.omron;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.ParameterException;
@@ -11,10 +12,12 @@ import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.deal.tcp.client.config.ChannelKey;
 import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
@@ -29,9 +32,13 @@ import io.netty.channel.ChannelFuture;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -68,6 +75,19 @@ public class OmronFinsControlProcession {
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     OmronFinsControlProcession(){
         OmronHandler omronHandler = new OmronHandler();
@@ -487,6 +507,22 @@ public class OmronFinsControlProcession {
         setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
         //设置设备在线
         devicesService.updateOnlineStatus(eqId,false);
+        //异步推送万集数据
+        threadPoolTaskExecutor.execute(()->{
+            pushWanJi(eqId);
+        });
+    }
+
+    /**
+     * 推送万集
+     * @param eqId
+     */
+    private void pushWanJi(String eqId){
+        SdDevices sdDevices = devicesService.selectSdDevicesById(eqId);
+        List<SdDevices> sdDevicesList =  new ArrayList<>();
+        sdDevicesList.add(sdDevices);
+        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
+        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
     }
 
     /**
@@ -646,14 +682,15 @@ public class OmronFinsControlProcession {
 
         String data = getFinalData(eqId,value,pointConfig,dataLength);
 
-        //存储实时数据
+        dataSave(eqId,data,itemId);
+        /*//存储实时数据
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqId(eqId);
         sdDeviceDataService.updateDeviceData(sdDevices,data,Long.valueOf(itemId));
         //储存历史数据
         setDeviceDataRecord(eqId,data,Long.valueOf(itemId));
         //设置设备在线
-        devicesService.updateOnlineStatus(eqId,false);
+        devicesService.updateOnlineStatus(eqId,false);*/
     }
 
     /**

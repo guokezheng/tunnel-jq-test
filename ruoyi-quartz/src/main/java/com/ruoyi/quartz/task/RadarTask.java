@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.task;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -383,19 +384,21 @@ public class RadarTask {
                 Map<String, Object> data = (Map<String, Object> )body.get("data");
                 String up = "";
                 String down = "";
-                for(Map<String, Object> objectMap : mapList){
-                    if("1".equals(objectMap.get("direction").toString())){
-                        Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
-                        Integer newData = Integer.valueOf(data.get("up").toString());
-                        up = (newData - oldData) + "";
-                    }else {
-                        Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
-                        Integer newData = Integer.valueOf(data.get("down").toString());
-                        down = (newData - oldData) + "";
+                if(data != null){
+                    for(Map<String, Object> objectMap : mapList){
+                        if("1".equals(objectMap.get("direction").toString())){
+                            Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                            Integer newData = Integer.valueOf(data.get("up").toString());
+                            up = (newData - oldData) + "";
+                        }else {
+                            Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                            Integer newData = Integer.valueOf(data.get("down").toString());
+                            down = (newData - oldData) + "";
+                        }
                     }
                 }
-                setTrafficVolumeData(item.get("tunnelId"),"1",up == "" ? "0" : up,data.get("up").toString());
-                setTrafficVolumeData(item.get("tunnelId"),"2",down == "" ? "0" : down,data.get("down").toString());
+                setTrafficVolumeData(item.get("tunnelId"),"1",up == "" ? "0" : up,data == null ? "0" : data.get("up").toString(), JSON.toJSONString(data));
+                setTrafficVolumeData(item.get("tunnelId"),"2",down == "" ? "0" : down,data == null ? "0" : data.get("down").toString(),JSON.toJSONString(data));
             }
         }
     }
@@ -406,12 +409,13 @@ public class RadarTask {
      * @param direction
      * @param carNumber
      */
-    public void setTrafficVolumeData(String tunnelId,String direction,String carNumber,String originalData){
+    public void setTrafficVolumeData(String tunnelId,String direction,String carNumber,String originalData, String yuanData){
         SdTrafficVolume sdTrafficVolume = new SdTrafficVolume();
         sdTrafficVolume.setTunnelId(tunnelId);
         sdTrafficVolume.setDirection(direction);
         sdTrafficVolume.setCarNumber(carNumber);
         sdTrafficVolume.setOriginalData(originalData);
+        sdTrafficVolume.setRemark(yuanData);
         volumeMapper.insertSdTrafficVolume(sdTrafficVolume);
     }
 }

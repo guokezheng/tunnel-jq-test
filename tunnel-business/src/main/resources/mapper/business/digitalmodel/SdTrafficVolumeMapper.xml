@@ -40,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="direction != null">direction,</if>
             <if test="carNumber != null">car_number,</if>
             <if test="originalData != null">original_data,</if>
+            <if test="remark != null">remark,</if>
          	create_time
  		)values(
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -47,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="direction != null">#{direction},</if>
             <if test="carNumber != null">#{carNumber},</if>
             <if test="originalData != null">#{originalData},</if>
+            <if test="remark != null">#{remark},</if>
             sysdate()
          )
     </insert>
@@ -61,6 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="direction != null">direction = #{direction},</if>
             <if test="carNumber != null">car_number = #{carNumber},</if>
+            <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
     </update>

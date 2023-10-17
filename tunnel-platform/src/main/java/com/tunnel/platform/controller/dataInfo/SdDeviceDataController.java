@@ -183,6 +183,7 @@ public class SdDeviceDataController extends BaseController
                 if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqType) || DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqType)){
                     itemMap.put("electricity",zhaoCount + "kW·h");
                 }
+                itemMap.put("unit",nullOrEn(deviceMap.get("unit")));
                 String itemCode = nullOrEn(deviceMap.get("itemCode"));
                 String data = nullOrEn(deviceMap.get("dataUnit"));
                 if(itemCode != null){
@@ -191,6 +192,7 @@ public class SdDeviceDataController extends BaseController
                 map.put(eqId,itemMap);
             }else{
                 Map<String,String> itemMap = map.get(eqId);
+                itemMap.put("unit",nullOrEn(deviceMap.get("unit")));
                 String itemCode = nullOrEn(deviceMap.get("itemCode"));
                 String data = nullOrEn(deviceMap.get("dataUnit"));
                 if(itemCode != null && data != null){

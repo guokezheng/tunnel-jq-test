@@ -21,49 +21,45 @@
         size="mini"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="隧道名称:">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="所属方向:">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="11">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备状态:"
             :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
               {{ geteqType(stateForm.eqStatus)}}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="消防泵状态:">
               {{ stateForm.xfsStatus}}
             </el-form-item>
@@ -293,11 +289,11 @@ export default {
       };
       setControlDeviceByParam(param).then((res)=>{
         console.log("消防栓控制成功",res)
-        let msg = res.msg;
-        if(res.data == 1){
-          this.$modal.msgSuccess(msg);
-        }else{
-          this.$modal.msgError(msg);
+        // let msg = res.msg;
+        if (res.data == 1) {
+          this.$modal.msgSuccess("控制成功");
+        } else {
+          this.$modal.msgError("控制失败");
         }
       })
       this.$emit("dialogClose");

@@ -537,7 +537,9 @@ public class BoardController extends BaseController {
                 board.put("devicePixel",iotDeviceAccess.getDevicePixel());
                 map.put(id,board);
             }else {
-                map.put(id,"");
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("devicePixel",iotDeviceAccess.getDevicePixel());
+                map.put(id,jsonObject);
             }
         }
         return AjaxResult.success(map);

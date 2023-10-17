@@ -1,5 +1,6 @@
 package com.tunnel.deal.tcp.plc.ximenzi;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
@@ -12,10 +13,12 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
@@ -29,8 +32,12 @@ import com.tunnel.deal.tcp.util.NumberSystemConvert;
 import com.tunnel.deal.tcp.util.Obj2ListUtil;
 import com.tunnel.deal.tcp.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -58,6 +65,18 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
     @Autowired
     private ISdDevicePointPlcService devicePointPlcService;
 
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Autowired
     private ModbusCmd modbusCmd;
@@ -463,7 +482,23 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
             //设置设备在线
             sdDevicesService.updateOnlineStatus(eqId,false);
-            }
+            //异步推送万集数据
+            threadPoolTaskExecutor.execute(()->{
+                pushWanJi(eqId);
+            });
+        }
+    }
+
+    /**
+     * 推送万集
+     * @param eqId
+     */
+    private void pushWanJi(String eqId){
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqId);
+        List<SdDevices> sdDevicesList =  new ArrayList<>();
+        sdDevicesList.add(sdDevices);
+        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
+        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
     }
 
     /**

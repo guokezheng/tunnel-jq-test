@@ -885,7 +885,11 @@ public class RadarEventServiceImpl implements RadarEventService {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null) {
+                    if("30".equals(f.getEqType().toString())){
+                        if("19".equals(map.get("itemId").toString())){
+                            deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                        }
+                    }else if (map.get("data") != null || !"".equals(map.get("data"))) {
                         if("远程".equals(map.get("data").toString()) || "就地".equals(map.get("data").toString())){
                             continue;
                         }
@@ -898,7 +902,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null) {
+                    if (map.get("data") != null || !"".equals(map.get("data"))) {
                         deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()) == 0 ? 1 : 0);
                     } else {
                         deviceData.put("runStatus", 0);
@@ -908,7 +912,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
-                    if (map.get("data") != null) {
+                    if (map.get("data") != null || !"".equals(map.get("data"))) {
                         deviceData.put("runDate", Double.parseDouble(map.get("data").toString()));
                     }
                     if (map.get("unit") != null) {

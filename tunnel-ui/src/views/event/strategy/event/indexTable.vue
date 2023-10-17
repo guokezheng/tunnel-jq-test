@@ -77,6 +77,21 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="事件类型" prop="eventType" v-if="tableType == 'zidong'">
+              <el-select
+                clearable
+                v-model="queryParams.eventType"
+                placeholder="请选择事件类型"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="dict in eventTypeList"
+                  :key="dict.id"
+                  :label="dict.eventType"
+                  :value="dict.id"
+                />
+              </el-select>
+            </el-form-item>
             <!-- <el-form-item label="策略类型" prop="strategyType">
               <el-select
                 v-model="queryParams.strategyType"
@@ -810,7 +825,6 @@ export default {
     // this.getList(); //查询控制策略
     this.getTunnels(); //获取隧道
     this.getListEventType()
-    
     // 预警策略
     this.getDicts("sys_common_event").then((response) => {
       this.strategyTypeEvent = response.data;
@@ -844,11 +858,24 @@ export default {
     document.removeEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    getListEventType(){
-      let data = {prevControlType: "1"};
-      listEventType(data).then(res => {
-        this.eventTypeList = res.rows;
-      })
+    // 自动触发事件类型
+    getListEventType() {
+      let data = { prevControlType: "1" };
+      listEventType(data).then((res) => {
+        // debugger
+        let eventTypeList = []
+        for (let i = 0; i <  res.rows.length; i++) {
+          // if(res.rows[i].eventType=="其他"||res.rows[i].eventType=="道路团雾"||res.rows[i].eventType=="大风"
+          // ||res.rows[i].eventType=="大雾"||res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+          //   eventTypeList.push(res.rows[i])
+          // }
+          if(res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+            eventTypeList.push(res.rows[i])
+          }
+        }
+        this.eventTypeList = eventTypeList;
+        console.log(this.eventTypeList, "事件类型");
+      });
     },
     // 点击某一行，将其选中(表格)
     handleRowClick(row, i, a) {
@@ -1610,7 +1637,7 @@ export default {
           this.tableKey = 1
         }else if(val=="zidong"){
           this.queryParams.strategyType = "2";
-          this.tableKey = 2
+          this.tableKey = 2;
         }
         //搜索
         this.handleQuery()

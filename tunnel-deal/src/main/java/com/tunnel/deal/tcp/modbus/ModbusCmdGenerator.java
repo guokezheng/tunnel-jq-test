@@ -113,7 +113,7 @@ public class ModbusCmdGenerator {
         send.setDeviceAddress(getDeviceAddress(deviceAddress));
         send.setFunctionCode(ModbusFunctionCode.CODE_FIVE);
         send.setWriteAddress(getHexByte(Integer.valueOf(writeAddress)));
-        send.setWriteData(getHexByte(Integer.valueOf(writeData)));
+        send.setWriteData(writeData);
         command = send.getWriteSend();
 
         return command;

@@ -13,19 +13,74 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="direction"    column="direction"    />
         <result property="carNumber"    column="car_number"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="carNum"    column="carNum"    />
     </resultMap>
 
     <sql id="selectSdTrafficVolume">
         select id, tunnel_id, create_by, create_time, update_by, update_time, direction, car_number from sd_traffic_volume
     </sql>
 
-    <select id="selectSdEventTypeList" parameterType="SdEventType" resultMap="trafficVolumeResult">
-        <include refid="selectSdTrafficVolume"/>
-        <where>
-            <if test="direction != null  and direction != ''">and direction = #{direction} </if>
-            <if test="tunnelId != null  and tunnelId != ''">and tunnel_id =#{tunnelId}</if>
-            <if test="id != null  and id != ''">and id = #{id}</if>
-        </where> order by create_time desc
+    <select id="selectSdTrafficVolumeList" parameterType="sdTrafficVolume" resultMap="trafficVolumeResult">
+        SELECT
+            tv.id,
+            tv.tunnel_id,
+            tv.direction,
+            sum( tv.car_number ) AS carNum,
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i:00' ) </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:00:00' ) </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d 00:00:00' ) </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m-01 00:00:00' ) </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y-01-01 00:00:00' ) </when>
+            </choose> AS create_time,
+            t.tunnel_name
+        FROM
+            sd_traffic_volume tv
+        LEFT JOIN sd_tunnels t on tv.tunnel_id = t.tunnel_id
+        WHERE
+            1 = 1
+        <if test="direction != null and direction != ''">and tv.direction = #{direction} </if>
+        <if test="tunnelId != null  and tunnelId != ''">and tv.tunnel_id =#{tunnelId}</if>
+        <if test="id != null  and id != ''">and tv.id = #{id}</if>
+        <if test="startDate != null and startDate != ''">
+            AND
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' ) <![CDATA[ >= ]]> DATE_FORMAT( #{startDate}, '%Y-%m-%d %H:%i' ) </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' ) <![CDATA[ >= ]]> DATE_FORMAT( #{startDate}, '%Y-%m-%d %H' ) </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT( #{startDate}, '%Y-%m-%d' ) </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' ) <![CDATA[ >= ]]> #{startDate} </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) <![CDATA[ >= ]]>  #{startDate} </when>
+            </choose>
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' ) <![CDATA[ <= ]]> DATE_FORMAT( #{endDate}, '%Y-%m-%d %H:%i' ) </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' ) <![CDATA[ <= ]]> DATE_FORMAT( #{endDate}, '%Y-%m-%d %H' ) </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( #{endDate}, '%Y-%m-%d' ) </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' ) <![CDATA[ <= ]]> #{endDate} </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) <![CDATA[ <= ]]> #{endDate} </when>
+            </choose>
+        </if>
+        GROUP BY
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' )  </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' )  </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' )  </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' )  </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) </when>
+            </choose>,
+            tv.direction,
+            tv.tunnel_id
+        ORDER BY
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' )  </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' )  </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' )  </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' )  </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) </when>
+            </choose> DESC
     </select>
 
     <select id="selectSdTrafficVolumeById" parameterType="Long" resultMap="trafficVolumeResult">
@@ -40,6 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="direction != null">direction,</if>
             <if test="carNumber != null">car_number,</if>
             <if test="originalData != null">original_data,</if>
+            <if test="remark != null">remark,</if>
          	create_time
  		)values(
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -47,6 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="direction != null">#{direction},</if>
             <if test="carNumber != null">#{carNumber},</if>
             <if test="originalData != null">#{originalData},</if>
+            <if test="remark != null">#{remark},</if>
             sysdate()
          )
     </insert>
@@ -61,6 +118,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="direction != null">direction = #{direction},</if>
             <if test="carNumber != null">car_number = #{carNumber},</if>
+            <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
     </update>
@@ -113,5 +171,68 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY
             tv.direction ASC
             LIMIT 2
+    </select>
+
+    <select id="exportSdTrafficVolumeList" parameterType="sdTrafficVolume" resultType="sdTrafficVolume">
+        SELECT
+        tv.tunnel_id AS tunnelId,
+        tv.direction,
+        sum( tv.car_number ) AS carNum,
+        <choose>
+            <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i:00' ) </when>
+            <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:00:00' ) </when>
+            <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d 00:00:00' ) </when>
+            <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m-01 00:00:00' ) </when>
+            <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y-01-01 00:00:00' ) </when>
+        </choose> AS carTime,
+        t.tunnel_name AS tunnelName,
+        #{dateType} AS dateType
+        FROM
+        sd_traffic_volume tv
+        LEFT JOIN sd_tunnels t on tv.tunnel_id = t.tunnel_id
+        WHERE
+        1 = 1
+        <if test="direction != null  and direction != ''">and tv.direction = #{direction} </if>
+        <if test="tunnelId != null  and tunnelId != ''">and tv.tunnel_id =#{tunnelId}</if>
+        <if test="id != null  and id != ''">and tv.id = #{id}</if>
+        <if test="ids != null  and ids != ''">and FIND_IN_SET(tv.id, #{ids}) > 0</if>
+        <if test="startDate != null and startDate != ''">
+            AND
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' ) <![CDATA[ >= ]]> DATE_FORMAT( #{startDate}, '%Y-%m-%d %H:%i' ) </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' ) <![CDATA[ >= ]]> DATE_FORMAT( #{startDate}, '%Y-%m-%d %H' ) </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT( #{startDate}, '%Y-%m-%d' ) </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' ) <![CDATA[ >= ]]> #{startDate} </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) <![CDATA[ >= ]]>  #{startDate} </when>
+            </choose>
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND
+            <choose>
+                <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' ) <![CDATA[ <= ]]> DATE_FORMAT( #{endDate}, '%Y-%m-%d %H:%i' ) </when>
+                <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' ) <![CDATA[ <= ]]> DATE_FORMAT( #{endDate}, '%Y-%m-%d %H' ) </when>
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( #{endDate}, '%Y-%m-%d' ) </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' ) <![CDATA[ <= ]]> #{endDate} </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) <![CDATA[ <= ]]> #{endDate} </when>
+            </choose>
+        </if>
+        GROUP BY
+        <choose>
+            <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' )  </when>
+            <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' )  </when>
+            <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' )  </when>
+            <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' )  </when>
+            <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) </when>
+        </choose>,
+        tv.direction,
+        tv.tunnel_id
+        ORDER BY
+        <choose>
+            <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i' )  </when>
+            <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H' )  </when>
+            <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' )  </when>
+            <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' )  </when>
+            <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) </when>
+        </choose> DESC
     </select>
 </mapper>

@@ -56,6 +56,11 @@
                 {{ stateForm.supplierName }}
               </el-form-item>
             </el-col> -->
+            <el-col :span="12" v-show="this.clickEqType == 45">
+              <el-form-item label="设备IP:" >
+                {{ stateForm.ip }}
+              </el-form-item>
+            </el-col>
             <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && ipShow">
               <el-form-item label="控制器IP:" >
                 {{ stateForm.f_ip }}
@@ -63,11 +68,16 @@
             </el-col>
             <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
               <el-form-item label="控制器IP:" >
-                {{ stateForm.ip }}
+                {{ stateForm.mca_ip }}
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-show="[1,2,3,4,10,12].includes(this.clickEqType) && !ipShow">
+            <el-col :span="12" v-show="[1,2,3,4,10,12,13].includes(this.clickEqType) && !ipShow">
               <el-form-item label="plcIP:" >
+                {{ stateForm.f_ip }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-show="[30,31,49].includes(this.clickEqType) && !ipShow">
+              <el-form-item label="主机IP:" >
                 {{ stateForm.f_ip }}
               </el-form-item>
             </el-col>
@@ -86,11 +96,11 @@
                 {{ geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="stateForm.eqType == 13">
+            <!-- <el-col :span="12" v-if="stateForm.eqType == 13">
               <el-form-item label="消防栓状态:">
                 {{ stateForm.xfsStatus }}
               </el-form-item>
-            </el-col>
+            </el-col> -->
           </el-row>
           <div class="lineClass"></div>
           <div style="margin-top: 10px">
@@ -353,7 +363,7 @@
             }else{
               this.ipShow = false
             }
-            console.log(this.ipShow,"this.ipShow")
+            // console.log(this.ipShow,"this.ipShow")
             // 查询设备当前状态 --------------------------------
             // getDevice(this.eqInfo.equipmentId).then((response) => {
             //   console.log(response, "查询设备当前状态");
@@ -487,11 +497,11 @@
           };
           setControlDeviceByParam(param).then((res) => {
             console.log("消防栓控制成功", res);
-            let msg = res.msg;
+            // let msg = res.msg;
             if (res.data == 1) {
-              this.$modal.msgSuccess(msg);
+              this.$modal.msgSuccess("控制成功");
             } else {
-              this.$modal.msgError(msg);
+              this.$modal.msgError("控制失败");
             }
             loading.close();
           }).catch(()=>{

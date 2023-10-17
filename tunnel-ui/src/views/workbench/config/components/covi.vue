@@ -53,6 +53,11 @@
               {{ stateForm.supplierName }}
             </el-form-item>
           </el-col> -->
+          <!-- <el-col :span="12">
+            <el-form-item label="设备IP:" >
+              {{ stateForm.ip }}
+            </el-form-item>
+          </el-col> -->
           <el-col :span="12" v-show="ipShow">
             <el-form-item label="控制器IP:" >
               {{ stateForm.f_ip }}
@@ -60,7 +65,12 @@
           </el-col>
           <el-col :span="12" v-show="!ipShow">
             <el-form-item label="控制器IP:" >
-              {{ stateForm.ip }}
+              {{ stateForm.mca_ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="!ipShow">
+            <el-form-item label="plcIP:" >
+              {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -78,24 +88,18 @@
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-show="!ipShow">
-            <el-form-item label="plcIP:" >
-              {{ stateForm.f_ip }}
-            </el-form-item>
-          </el-col>
+          
         </el-row>
         <div class="lineClass"></div>
         <el-row style="margin-top: 10px">
           <el-col :span="12">
             <el-form-item label="CO值:">
-              {{ COnowData
-              }}<span style="padding-left: 5px" v-if="COnowData">PPM</span>
+              {{ COnowData }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="VI值:">
-              {{ VInowData
-              }}<span style="padding-left: 5px" v-if="VInowData">M</span>
+              {{ VInowData }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -181,10 +185,10 @@ export default {
       getTodayCOVIData(this.eqInfo.equipmentId).then((response) => {
         console.log(response, "covi数据");
         if (response.data.COnowData) {
-          this.COnowData = parseFloat(response.data.COnowData).toFixed(2);
+          this.COnowData = parseFloat(response.data.COnowData).toFixed(2) + " " + response.data.COUnit;
         }
         if (response.data.VInowData) {
-          this.VInowData = parseFloat(response.data.VInowData).toFixed(2);
+          this.VInowData = parseFloat(response.data.VInowData).toFixed(2) + " " + response.data.VIUnit
         }
         var coXdata = [];
         var coYdata = [];

@@ -1856,7 +1856,7 @@
           grid: {
             top: "24%",
             bottom: "13%",
-            left: "14%",
+            left: "18%",
             right: "10%",
           },
           xAxis: [{

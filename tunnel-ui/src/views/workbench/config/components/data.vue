@@ -4,7 +4,7 @@
       v-dialogDrag
       class="workbench-dialog"
       :title="title"
-      width="450px"
+      width="500px"
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
@@ -18,7 +18,7 @@
       <el-form
         ref="form"
         :model="stateForm"
-        label-width="80px"
+        label-width="85px"
         label-position="left"
         size="mini"
       >
@@ -50,11 +50,11 @@
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
           <el-col :span="12">
             <el-form-item
@@ -71,17 +71,27 @@
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && ipShow">
+          <!-- <el-col :span="12">
+            <el-form-item label="设备IP:" >
+              {{ stateForm.ip }}
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="12" v-show="ipShow">
             <el-form-item label="控制器IP:" >
               {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
           <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && !ipShow">
-            <el-form-item label="控制器IP:" >
-              {{ stateForm.ip }}
+            <el-form-item label="主机IP:" >
+              {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && !ipShow">
+          <el-col :span="12" v-show="[48].includes(eqInfo.clickEqType) && !ipShow">
+            <el-form-item label="控制器IP:" >
+              {{ stateForm.mca_ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="[48,15].includes(eqInfo.clickEqType) && !ipShow">
             <el-form-item label="plcIP:" >
               {{ stateForm.f_ip }}
             </el-form-item>
@@ -93,63 +103,63 @@
         ></div>
         <!-- 48：风机内外震动   -->
         <el-row v-if="eqInfo.clickEqType == 48">
-          <el-col :span="13" v-if="stateForm2.shakeSpeed">
-            <el-form-item label="振动速度值:" label-width="90px">
+          <el-col :span="12" v-if="stateForm2.shakeSpeed">
+            <el-form-item label="振动速度值:" >
               {{ Number(stateForm2.shakeSpeed).toFixed(2) }}
               <span v-show="stateForm2.shakeSpeed">mm/s</span>
             </el-form-item>
           </el-col>
-          <el-col :span="11" v-if="stateForm2.subside">
-            <el-form-item label="沉降值:" label-width="90px">
+          <el-col :span="12" v-if="stateForm2.subside">
+            <el-form-item label="沉降值:" >
               {{ Number(stateForm2.subside).toFixed(2) }}
               <span v-show="stateForm2.subside">mm</span>
             </el-form-item>
           </el-col>
-          <el-col :span="13" v-if="stateForm2.amplitude">
-            <el-form-item label="振动幅度值:" label-width="90px">
+          <el-col :span="12" v-if="stateForm2.amplitude">
+            <el-form-item label="振动幅度值:" >
               {{ Number(stateForm2.amplitude).toFixed(2) }}
               <span v-show="stateForm2.amplitude">μm</span>
             </el-form-item>
           </el-col>
-          <el-col :span="11" v-if="stateForm2.slope">
-            <el-form-item label="倾斜值:" label-width="90px">
+          <el-col :span="12" v-if="stateForm2.slope">
+            <el-form-item label="倾斜值:" >
               {{ Number(stateForm2.slope).toFixed(2) }} <span v-show="stateForm2.slope">°</span>
             </el-form-item>
           </el-col>
-          <el-col :span="13" v-if="stateForm2.shakeAlaram">
-            <el-form-item label="振动告警:" label-width="90px">
+          <el-col :span="12" v-if="stateForm2.shakeAlaram">
+            <el-form-item label="振动告警:" >
               {{ getshakeAlaram(stateForm2.shakeAlaram) }}
             </el-form-item>
           </el-col>
-          <el-col :span="11" v-if="stateForm2.subsideSlopeAlaram">
+          <el-col :span="12" v-if="stateForm2.subsideSlopeAlaram">
             <el-form-item label="沉降倾斜告警:" label-width="100px">
               {{ getsubsideSlopeAlaram(stateForm2.subsideSlopeAlaram) }}
             </el-form-item>
           </el-col>
-          <el-col :span="13" v-if="stateForm2.alaram">
-            <el-form-item label="告警:" label-width="90px">
+          <el-col :span="12" v-if="stateForm2.alaram">
+            <el-form-item label="告警:" >
               {{ stateForm2.alaram }}
             </el-form-item>
           </el-col>
         </el-row>
         <!-- 41：温湿度传感器 -->
         <el-row v-if="eqInfo.clickEqType == 41">
-          <el-col :span="13">
-            <el-form-item label="温度:" label-width="90px">
+          <el-col :span="12">
+            <el-form-item label="温度:" >
 
               {{ stateForm.temperature }} <span v-show="stateForm.temperature">℃</span>
 
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item label="湿度:" label-width="90px">
+          <el-col :span="12">
+            <el-form-item label="湿度:" >
               {{ stateForm.humidity }} <span v-show="stateForm.humidity">%</span>
             </el-form-item>
           </el-col>
         </el-row>
         <!-- 42:水浸液位传感器 -->
         <el-row v-if="eqInfo.clickEqType == 42">
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="液位:">
               {{ stateForm2.level }} <span style="padding-left: 5px" v-show="stateForm2.level">m</span>
             </el-form-item>

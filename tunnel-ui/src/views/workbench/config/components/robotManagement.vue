@@ -16,11 +16,16 @@
 export default {
   data() {
     return {
-      url:"http://10.7.179.33:8080/robot/robotManagement.html"
+      url:"",
+      userName: this.$store.state.user.name,
     }
   },
   created() {
-    
+    if(this.userName == "admin_sso"){
+      this.url = ""
+    }else{
+      this.url = "http://10.7.179.33:8080/robot/robotManagement.html"
+    }
   },
   methods: {
     

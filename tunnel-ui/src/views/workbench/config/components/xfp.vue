@@ -87,17 +87,17 @@
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="11">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
-          <el-col :span="13">
+          </el-col> -->
+          <el-col :span="11">
             <el-form-item label="设备IP:">
               {{stateForm.ip}}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="13">
             <el-form-item
               label="设备状态:"
               :style="{

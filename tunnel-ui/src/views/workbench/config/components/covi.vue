@@ -94,14 +94,12 @@
         <el-row style="margin-top: 10px">
           <el-col :span="12">
             <el-form-item label="CO值:">
-              {{ COnowData
-              }}<span style="padding-left: 5px" v-if="COnowData">PPM</span>
+              {{ COnowData }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="VI值:">
-              {{ VInowData
-              }}<span style="padding-left: 5px" v-if="VInowData">M</span>
+              {{ VInowData }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -187,10 +185,10 @@ export default {
       getTodayCOVIData(this.eqInfo.equipmentId).then((response) => {
         console.log(response, "covi数据");
         if (response.data.COnowData) {
-          this.COnowData = parseFloat(response.data.COnowData).toFixed(2);
+          this.COnowData = parseFloat(response.data.COnowData).toFixed(2) + " " + response.data.COUnit;
         }
         if (response.data.VInowData) {
-          this.VInowData = parseFloat(response.data.VInowData).toFixed(2);
+          this.VInowData = parseFloat(response.data.VInowData).toFixed(2) + " " + response.data.VIUnit
         }
         var coXdata = [];
         var coYdata = [];

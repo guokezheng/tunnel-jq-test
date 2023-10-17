@@ -96,11 +96,11 @@
                 {{ geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="stateForm.eqType == 13">
+            <!-- <el-col :span="12" v-if="stateForm.eqType == 13">
               <el-form-item label="消防栓状态:">
                 {{ stateForm.xfsStatus }}
               </el-form-item>
-            </el-col>
+            </el-col> -->
           </el-row>
           <div class="lineClass"></div>
           <div style="margin-top: 10px">

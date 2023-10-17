@@ -22,7 +22,7 @@ public interface SdTrafficVolumeMapper
      * @param id 事件类型ID
      * @return 事件类型
      */
-    public SdEventType selectSdTrafficVolumeById(@Param("id") Long id);
+    public SdTrafficVolume selectSdTrafficVolumeById(@Param("id") Long id);
 
     /**
      * 查询车流量列表
@@ -30,7 +30,14 @@ public interface SdTrafficVolumeMapper
      * @param sdTrafficVolume
      * @return 事件类型集合
      */
-    public List<SdEventType> selectSdTrafficVolumeList(SdTrafficVolume sdTrafficVolume);
+    public List<SdTrafficVolume> selectSdTrafficVolumeList(SdTrafficVolume sdTrafficVolume);
+
+    /**
+     * 导出车流量列表
+     * @param sdTrafficVolume
+     * @return
+     */
+    public List<SdTrafficVolume> exportSdTrafficVolumeList(SdTrafficVolume sdTrafficVolume);
 
     /**
      * 新增车流量

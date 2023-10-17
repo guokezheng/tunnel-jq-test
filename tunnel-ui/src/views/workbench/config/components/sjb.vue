@@ -51,11 +51,11 @@
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="11">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
           <el-col :span="13">

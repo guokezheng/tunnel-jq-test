@@ -24,43 +24,39 @@
         v-show="show1"
       >
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="设备类型:">
               {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="隧道名称:">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item label="所属方向:">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="11">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
-          <el-col :span="13">
+          <el-col :span="12">
             <el-form-item
               label="设备状态:"
               :style="{
@@ -134,8 +130,8 @@
             >
           </el-col>
         </el-row>
-        <el-row style="margin-top: 10px">
-          <el-col :span="13">
+        <!-- <el-row style="margin-top: 10px">
+          <el-col :span="13"> -->
             <!--            <el-form-item label="报警点位:" label-width="130px">-->
             <!--            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">-->
             <!--              <el-radio-group v-model="stateForm2.address">-->
@@ -149,8 +145,8 @@
             <!-- <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true">
               <span style="color: red; font-weight: bold">当前地址为报警点位</span>
             </el-form-item> -->
-          </el-col>
-        </el-row>
+          <!-- </el-col>
+        </el-row> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button

@@ -172,7 +172,7 @@
               <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{ fluctuateSwitch == 0 ? "照明图标显示" : "照明图标显示" }}
               </p>
-              <el-switch v-model="fluctuateSwitch" class="switchStyle" @change="fluctuateChange" ></el-switch>
+              <el-switch v-model="fluctuateSwitch" class="switchStyle" @change="fluctuateChange"></el-switch>
             </div>
           </el-col>
           <el-col :span="12" v-hasPermi="['workbench:deawer:switch']">
@@ -180,23 +180,15 @@
               <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{ fluctuateSwitch1 == 0 ? "照明图标关" : "照明图标关" }}
               </p>
-              <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1" ></el-switch>
+              <el-switch v-model="fluctuateSwitch1" class="switchStyle" @change="fluctuateChange1"></el-switch>
             </div>
           </el-col>
           <el-col :span="12" v-hasPermi="['workbench:deawer:switch']">
             <div class="drawerItem zoomClass">
-              <p
-                class="zoom-title"
-                style="font-size: 0.7vw; margin-right: 0.5vw"
-              >
+              <p class="zoom-title" style="font-size: 0.7vw; margin-right: 0.5vw">
                 {{'对外情报板控制'}}
               </p>
-              <el-switch
-                v-model="wjmodel"
-                class="switchStyle"
-                @change="wjModelChange"
-                
-              ></el-switch>
+              <el-switch v-model="wjmodel" class="switchStyle" @change="wjModelChange"></el-switch>
             </div>
           </el-col>
         </el-row>
@@ -545,17 +537,18 @@
                       </label>
                       <!-- 水浸传感器 -->
                       <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 42">
-                          {{ item.num }}
+                        {{ item.num }}
                       </label>
                       <!-- 温湿度传感器 -->
                       <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 41">
                         {{ item.num }}
                       </label>
+                      
                       <!-- 风机 -->
-                      <!-- <label style="color: #f2a520" class="labelClass labelClass9"
+                      <label style="color: #f2a520" class="labelClass labelClass9"
                         v-if="item.eqType == 10 && selectBigType.index == 4">
                         {{ item.electricity }}
-                      </label> -->
+                      </label>
                     </div>
                     <!-- 桩号 -->
                     <input :class="[
@@ -894,8 +887,8 @@
     <com-kzq class="comClass" ref="kzqRef"></com-kzq>
 
     <!--图标含义对话框-->
-    <el-dialog  v-dialogDrag class="workbench-dialog explain-table icon-dialog" :title="title" :visible.sync="explainVisible"
-      width="1240px" append-to-body :close-on-click-modal="false">
+    <el-dialog v-dialogDrag class="workbench-dialog explain-table icon-dialog" :title="title"
+      :visible.sync="explainVisible" width="1240px" append-to-body :close-on-click-modal="false">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -1039,19 +1032,9 @@
                 :value="item.dictValue"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="事件类型" prop="eventType" >
-            <el-select
-              clearable
-              v-model="queryParams.eventType"
-              placeholder="请选择事件类型"
-              style="width: 100%"
-            >
-              <el-option
-                v-for="dict in eventTypeList"
-                :key="dict.id"
-                :label="dict.eventType"
-                :value="dict.id"
-              />
+          <el-form-item label="事件类型" prop="eventType">
+            <el-select clearable v-model="queryParams.eventType" placeholder="请选择事件类型" style="width: 100%">
+              <el-option v-for="dict in eventTypeList" :key="dict.id" :label="dict.eventType" :value="dict.id" />
             </el-select>
           </el-form-item>
           <!-- <el-form-item label="策略类型" prop="strategyType">
@@ -1151,7 +1134,8 @@
         <el-table-column type="index" width="70" align="center" :index="indexMethod3" label="序号">
         </el-table-column>
         <el-table-column label="隧道名称" align="center" prop="tunnels.tunnelName" />
-        <el-table-column label="事件类型" align="center" prop="tunnels.tunnelName" v-if="strategyActive == 'yujing'" />
+        <el-table-column label="事件类型" align="center" prop="tunnels.eventType" :formatter="eventTypeFormatEvent"
+          v-if="strategyActive == 'zidong'" />
         <el-table-column label="策略名称" align="center" prop="strategyName" show-overflow-tooltip />
         <el-table-column label="方向" align="center" prop="direction" :formatter="directionFormat" />
         <!-- <el-table-column
@@ -1317,7 +1301,9 @@
   import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
   import comDeawer from "@/views/workbench/config/deawer"; //右侧抽屉组件
   import comFooter from "@/views/workbench/config/footer"; //右侧抽屉组件
-  import { listEventType } from "@/api/event/eventType";
+  import {
+    listEventType
+  } from "@/api/event/eventType";
 
   import {
     getLocalIP
@@ -1593,7 +1579,7 @@
         // 设备方向字典
         directionOptions: [],
         // 自动触发事件类型
-        eventTypeList:[],
+        eventTypeList: [],
         setoptions: {
           // 时间不能大于当前时间
           disabledDate(time) {
@@ -2301,17 +2287,29 @@
     },
 
     methods: {
+      //模式中转换
+      eventTypeFormatEvent(row, column) {
+        console.log(row)
+        for (let i = 0; i < this.eventTypeList.length; i++) {
+          if (row.eventType == this.eventTypeList[i].id) {
+            return this.eventTypeList[i].eventType;
+          }
+        }
+      },
       getListEventType() {
-        let data = { prevControlType: "1" };
+        let data = {
+          prevControlType: "1"
+        };
         listEventType(data).then((res) => {
           // debugger
           let eventTypeList = []
-          for (let i = 0; i <  res.rows.length; i++) {
+          for (let i = 0; i < res.rows.length; i++) {
             // if(res.rows[i].eventType=="其他"||res.rows[i].eventType=="道路团雾"||res.rows[i].eventType=="大风"
             // ||res.rows[i].eventType=="大雾"||res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
             //   eventTypeList.push(res.rows[i])
             // }
-            if(res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+            if (res.rows[i].eventType == "能见度异常" || res.rows[i].eventType == "光强异常" || res.rows[i].eventType ==
+              "CO异常") {
               eventTypeList.push(res.rows[i])
             }
           }
@@ -2320,7 +2318,7 @@
         });
       },
       // 关闭小的一键控制弹框
-      close_dialogs_event (data) {
+      close_dialogs_event(data) {
         // console.log(data,'这是子传父');
         this.buttonsDeawer = data
       },
@@ -2722,9 +2720,10 @@
             for (let i = 0; i < content.length; i++) {
               // var itemId = "ITEM" + this.formatNum(i, 3);
               var con = content[i];
-              con.CONTENT = con.CONTENT.replace("<br>", " ").replace("&nbsp"," ").replace("<n>"," ").replace("<r>"," ");
+              con.CONTENT = con.CONTENT.replace("<br>", " ").replace("&nbsp", " ").replace("<n>", " ").replace("<r>",
+                " ");
               array.push(con);
-              arr += con.CONTENT.replace("<br>", " ").replace("&nbsp", " ").replace("<n>"," ").replace("<r>"," ");
+              arr += con.CONTENT.replace("<br>", " ").replace("&nbsp", " ").replace("<n>", " ").replace("<r>", " ");
               arr += " ";
               fontS = Number(con.FONT_SIZE.substring(0, 2));
             }
@@ -2801,7 +2800,7 @@
           return font;
         }
       },
-        // 转字体
+      // 转字体
       getFont(font) {
         if (font == "KaiTi" || font == 'k') {
           return "楷体";
@@ -3020,7 +3019,7 @@
       // 筛选设备名称
       screenEqNameButton() {
         let that = this;
-        if (this.screenEqName ) {
+        if (this.screenEqName) {
           let bigType = "";
           let param = document.getElementsByClassName("vehicleLane");
           for (var i = 0; i < this.selectedIconList.length; i++) {
@@ -3086,14 +3085,14 @@
               this.resetCanvasFlag = true;
             }
           }
-          console.log(bigType,"bigType")
+          console.log(bigType, "bigType")
           if (bigType.includes("0")) {
             this.displayControl(0, "全部设备");
           } else {
-            console.log(this.dictList,"this.dictList")
+            console.log(this.dictList, "this.dictList")
             for (let itm of this.dictList) {
               if (bigType == itm.value) {
-                console.log(bigType, itm.label,"111111")
+                console.log(bigType, itm.label, "111111")
                 this.displayControl(bigType, itm.label);
               }
             }
@@ -3236,14 +3235,14 @@
       },
 
       wjModelChange(val) {
-          let model = 0;
-          if(val == true){
-            model = 1;
-          }else {
-            model = 0;
-          }
-          setWjModel(model).then((res) => {})
-          console.log(val,"情报板情报板情报板")
+        let model = 0;
+        if (val == true) {
+          model = 1;
+        } else {
+          model = 0;
+        }
+        setWjModel(model).then((res) => {})
+        console.log(val, "情报板情报板情报板")
       },
       /** 设备类型 */
       getEqType() {
@@ -3368,13 +3367,13 @@
             let arr = [];
             this.checkData(this.siteList[0], arr);
           })
-          // .then(() => {
-            // if (this.manageStation == "1") {
-            //   // console.log("this.deptId3333");
-            //   let arr = ["YG118", "YG11801", "YG1180103"];
-            //   this.changeSite(arr);
-            // }
-          // });
+        // .then(() => {
+        // if (this.manageStation == "1") {
+        //   // console.log("this.deptId3333");
+        //   let arr = ["YG118", "YG11801", "YG1180103"];
+        //   this.changeSite(arr);
+        // }
+        // });
       },
 
       checkData(obj, arr) {
@@ -3756,7 +3755,7 @@
             mouseDownScrollPosition.scrollTop + dragMoveDiff.y;
           if (scrollContainer.scrollLeft > 0 || scrollContainer.scrollTop > 0) {
             this.resetCanvasFlag = true;
-          }else{
+          } else {
             this.resetCanvasFlag = false;
           }
         };
@@ -4280,7 +4279,7 @@
                 //   that.selectBigType.index.toString(),
                 //   that.selectBigType.bigType.toString()
                 // );
-                that.displayControl(0,"全部设备");
+                that.displayControl(0, "全部设备");
               });
 
             if (res.upList != undefined) {
@@ -4465,16 +4464,16 @@
                             this.selectedIconList[j].num =
                               parseFloat(deviceData.DNLD).toFixed(2) + "lux";
                           }
-                        } else if(deviceData.eqType == 42){
+                        } else if (deviceData.eqType == 42) {
                           if (deviceData.level) {
                             this.selectedIconList[j].num =
                               parseFloat(deviceData.level).toFixed(2) + "m";
                           }
-                        } else if(deviceData.eqType == 41){
+                        } else if (deviceData.eqType == 41) {
                           if (deviceData.temperature && deviceData.humidity) {
-                            this.selectedIconList[j].num = 
-                            "温度：" + deviceData.temperature +
-                            "湿度：" + deviceData.humidity
+                            this.selectedIconList[j].num =
+                              "温度：" + deviceData.temperature +
+                              " 湿度：" + deviceData.humidity
                           }
                         }
                       }
@@ -4497,7 +4496,8 @@
                               deviceData.electricity;
                           } else if (deviceData.eqType == 10) {
                             this.selectedIconList[j].electricity =
-                              deviceData.electricity;
+                              deviceData.mode 
+                              // + " " + deviceData.electricity;
                           }
                           //取设备运行状态图标
                           let url = this.eqTypeStateList[k].url;
@@ -4543,7 +4543,7 @@
 
       /* 选择隧道*/
       setTunnel(item, index) {
-        console.log(item,"选择隧道")
+        console.log(item, "选择隧道")
         this.tunnelLang =
           Number(item.endPileNum) - Number(item.startPileNum) + 10;
         // console.log(Number(item.endPileNum),Number(item.startPileNum),"隧道长度111")
@@ -4884,7 +4884,7 @@
                 this.directionList,
                 this.eqTypeDialogList
               );
-            }else if (item.eqType == 7 || item.eqType == 9) {
+            } else if (item.eqType == 7 || item.eqType == 9) {
               // 照明
               this.$refs.lightRef.init(
                 this.eqInfo,
@@ -5611,7 +5611,7 @@
     border-radius: 3px;
     color: white;
     text-align: center;
-    
+
     >div {
       width: 50px;
       height: 20px;
@@ -6365,10 +6365,11 @@
 
     .el-input__suffix-inner {
       pointer-events: none !important;
+
       i {
         color: transparent;
+      }
     }
-  }
   }
 
   // 机器人图片盒子

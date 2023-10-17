@@ -50,11 +50,11 @@
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="设备厂商:">
               {{ stateForm.supplierName }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
           <el-col :span="12">
             <el-form-item
@@ -86,14 +86,14 @@
               {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-show="[48,15].includes(eqInfo.clickEqType) && !ipShow">
-            <el-form-item label="plcIP:" >
-              {{ stateForm.f_ip }}
-            </el-form-item>
-          </el-col>
           <el-col :span="12" v-show="[48].includes(eqInfo.clickEqType) && !ipShow">
             <el-form-item label="控制器IP:" >
               {{ stateForm.mca_ip }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="[48,15].includes(eqInfo.clickEqType) && !ipShow">
+            <el-form-item label="plcIP:" >
+              {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
         </el-row>

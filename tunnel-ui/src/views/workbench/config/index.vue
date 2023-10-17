@@ -4438,15 +4438,14 @@
                             this.selectedIconList[j].num =
                               "CO:" +
                               parseFloat(deviceData.CO).toFixed(2) +
-                              "PPM  VI:" +
-                              parseFloat(deviceData.VI).toFixed(2) +
-                              "M";
+                              " PPM  VI:" +
+                              parseFloat(deviceData.VI).toFixed(2) + " " +deviceData.unit;
                           }
                         } else if (deviceData.eqType == 17) {
                           if (deviceData.FS && deviceData.FX) {
                             this.selectedIconList[j].num =
                               parseFloat(deviceData.FS).toFixed(2) +
-                              "m/s " +
+                              " m/s " +
                               deviceData.FX;
                           }
                         } else if (deviceData.eqType == 5) {

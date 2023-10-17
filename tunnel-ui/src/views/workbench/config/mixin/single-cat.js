@@ -141,7 +141,7 @@ export const singleCat = {
         let Mileage = math.divide(
           math.subtract(+tunnel.endPileNum - +tunnel.startPileNum) / 1000
         );
-        debugger
+        // debugger
         this.tunnelKm = Mileage;
         if (Mileage <= 1.3) {
           var length = +1300;

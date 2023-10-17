@@ -14,6 +14,10 @@ public enum DeviceType {
     FENGSHUFENGXIANG("17", "风速风向"),
     DONGNEILIANGDU("18", "洞内亮度"),
     DONGWAILIANGDU("5", "洞外亮度"),
+    DONGFANGDU("48", "风机内外振动仪检测器"),
+    DONGWATERGDU("42", "水浸传感器"),
+    DONGHUMIDGDU("41", "温湿度传感器"),
+    DONGCATGDU("20", "微波车辆检测器"),
 
     /**
      * 对应前台自定义类型
@@ -21,7 +25,11 @@ public enum DeviceType {
     COVIITEM("1", "COVI数据报表"),
     FENGSHUFENGXIANGITEM("2", "风速风向数据报表"),
     DONGNEILIANGDUITEM("3", "洞内亮度数据报表"),
-    DONGWAILIANGDUITEM("4", "洞外亮度数据报表");
+    DONGWAILIANGDUITEM("4", "洞外亮度数据报表"),
+    DONGFANGDUITEM("5", "风机内外振动仪检测器"),
+    DONGWATERGDUITEM("6", "水浸传感器"),
+    DONGHUMIDGDUITEM("7", "温湿度传感器"),
+    DONGCATGDUITEM("8", "微波车辆检测器");
 
 
     DeviceType(String code, String name){

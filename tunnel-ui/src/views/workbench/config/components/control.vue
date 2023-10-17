@@ -325,11 +325,13 @@
     },
     methods: {
       init(eqInfo, brandList, directionList, eqTypeDialogList) {
+
         this.eqInfo = eqInfo;
         this.brandList = brandList;
         this.directionList = directionList;
         this.eqTypeDialogList = eqTypeDialogList;
         this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType));
+        this.getEqTypeStateIcon();
         this.getMessage();
       },
       // 查设备详情
@@ -339,11 +341,13 @@
           // 查询单选框弹窗信息 -----------------------
           await getDeviceById(this.eqInfo.equipmentId).then((res) => {
             console.log(res, "查询单选框弹窗信息");
+            debugger
             form = JSON.parse(JSON.stringify(res.data));
             this.title = form.eqName;
             form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
             form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
             this.stateForm = form
+            console.log( this.stateForm.state, "查询单选框弹窗信息");
             if(res.data.tunnelId == "JQ-JiNan-WenZuBei-MJY" || res.data.tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'){
               this.ipShow = true
             }else{
@@ -354,7 +358,7 @@
             // getDevice(this.eqInfo.equipmentId).then((response) => {
             //   console.log(response, "查询设备当前状态");
             //   this.stateForm.state = response.data.state;
-              this.getEqTypeStateIcon();
+
             // });
             if (this.eqInfo.clickEqType == 30) {
               this.fireMarkData = [
@@ -363,7 +367,8 @@
                   value: this.stateForm.query_point_address,
                 },
               ];
-              if (this.stateForm.query_point_address == this.stateForm.fireMark) {
+              console.log(this.stateForm.query_point_address)
+              if (this.stateForm.pile == this.stateForm.fireMark) {
                 this.fireMarkData.push({ label: "清除报警点位", value: "255" });
                 this.showTipe = true;
               } else {
@@ -402,7 +407,7 @@
               iconUrl.push(img);
             }
           }
-
+          debugger
           that.eqTypeStateList.push({
             type: list[i].stateTypeId,
             state: list[i].deviceState,
@@ -509,7 +514,7 @@
                 ? "0"
                 : this.stateForm.state == "2"
                 ? "255"
-                : "3",
+                : this.stateForm.pile,
           };
           this.$modal.msgSuccess("指令下发中，请稍后。");
           controlEvacuationSignDevice(param).then((response) => {

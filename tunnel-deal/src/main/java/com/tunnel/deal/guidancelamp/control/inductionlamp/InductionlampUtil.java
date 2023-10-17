@@ -22,6 +22,8 @@ public class InductionlampUtil {
 
     private static final int PILOT_LIGHT_MODE_2 = 3;
 
+    private static final int PILOT_LIGHT_MODE_5 = 5;
+
 //    private static final int PILOT_LIGHT_MODE_3 = 3;
 
 //    private static final int PILOT_LIGHT_MODE_4 = 4;
@@ -193,7 +195,8 @@ public class InductionlampUtil {
     //当前状态查询
     public static Map getNowOpenState(String ip, Integer port) {
         //获取当前是否开灯
-        String code = "1GH+SW?\r\n";
+//        String code = "1GH+FIRE?\r\n";
+        String code = "1GH+FIRE?,BPWM?,BFREQ?,BMODE?\r\n";
         NettyClient client = new NettyClient(ip, port, code, 1);
         try {
             client.start(null);
@@ -231,13 +234,37 @@ public class InductionlampUtil {
                             //响应指令:
                             String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
                             Map<String, Object> map = new HashMap<>();
-                            if (codeInfo.equals("1GH+SW=1")) {
-                                map.put("openState", "1");
-                                return map;
-                            } else {
-                                map.put("openState", "0");
-                                return map;
+                            //常亮1GH+FIRE=255,1GH+BPWM=100,
+                            String[] codeInfoArray = codeInfo.split(",");
+                            for (int i = 0 ; i<=codeInfoArray.length-1; i++){
+                                if(codeInfoArray[i].indexOf("GH+FIRE")>-1){
+                                    if("255".equals(codeInfoArray[i].split("=")[1])){
+                                        map.put("openState", "2");
+                                    }else if("0".equals(codeInfoArray[i].split("=")[1])){
+                                        map.put("openState", "1");
+                                    }else{//报警
+                                        map.put("openState", "5");
+                                        map.put("fireMark", codeInfoArray[i].split("=")[1]);
+                                    }
+                                }
+                                if(codeInfoArray[i].indexOf("GH+BPWM")>-1){
+                                    map.put("brightness", codeInfoArray[i].toString().split("=")[1]);
+                                }
+                                if(codeInfoArray[i].indexOf("GH+BFREQ")>-1){
+                                    map.put("frequency", codeInfoArray[i].toString().split("=")[1]);
+                                }
                             }
+                            return map;
+//                            if (codeInfo.equals("1GH+FIRE=255")) {
+//                                map.put("openState", "2");
+//                                return map;
+//                            } else if (codeInfo.equals("1GH+FIRE=0")) {//关闭
+//                                map.put("openState", "1");
+//                                return map;
+//                            }else if (codeInfo.indexOf("1GH+FIRE")>-1) {//报警
+//                                map.put("openState", "5");
+//                                return map;
+//                            }
                     }
                     client.stop();
                     return null;
@@ -497,12 +524,12 @@ public class InductionlampUtil {
                 resultCode = "1GH+FIRE=0\r\n";
                 resultMap.put("msgInfo","关闭所有灯光。");
                 break;
-            case PILOT_LIGHT_MODE_1 :
-                resultCode = "1GH+SW=1,FIRE="+fireMark+",RUNMODE=B,TPWM="+brightnessParam+",TPWMDEF=5,BFREQ="+timeSecond+",TLEDONT=250,BLEDOFFT=50,BMODE=1,\r\n";
+            case PILOT_LIGHT_MODE_1 ://打开
+                resultCode = "1GH+BMODE=0,BPWM="+brightnessParam+",FIRE=255,\r\n";
                 resultMap.put("msgInfo","同步单闪，标号地址"+fireMark+"，频率"+timeSecond+"，亮度"+brightnessParam+"。");
                 break;
-            case PILOT_LIGHT_MODE_2 :
-                resultCode = "1GH+SW=1,FIRE="+fireMark+",RUNMODE=W,TPWM="+brightnessParam+",TPWMDEF=5,WFREQ="+timeSecond+",TLEDONT=250,WLEDDELT=50,WMODE=0,\r\n";
+            case PILOT_LIGHT_MODE_5 ://报警fireMark
+                resultCode = "1GH+FIRE="+fireMark+",BPWM="+brightnessParam+",BMODE="+timeSecond+",\r\n";
                 resultMap.put("msgInfo","顺向单闪流水灯，标号地址"+fireMark+"，频率"+timeSecond+"次/min，亮度为"+brightnessParam+"。");
                 break;
             default:

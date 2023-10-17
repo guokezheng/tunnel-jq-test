@@ -195,7 +195,7 @@
                 v-model="wjmodel"
                 class="switchStyle"
                 @change="wjModelChange"
-                
+
               ></el-switch>
             </div>
           </el-col>
@@ -2107,6 +2107,7 @@
         this.$refs.tree.filter(val);
       },
       "batchManageForm.state": function (newVal, oldVal) {
+        debugger
         // console.log(newVal, "newVal");
         if ([7, 9].includes(this.itemEqType)) {
           // 基础照明、加强照明  state == 1 开启  state == 2  关闭
@@ -4645,6 +4646,7 @@
       //================================================单个配置开始==================================
       /* 打开配置界面*/
       async openStateSwitch(item) {
+        debugger
         console.log(item, "item");
         if (this.addBatchManage == true) {
           // 判断设备是否可控 不可控的不弹批量弹窗
@@ -5554,7 +5556,7 @@
     border-radius: 3px;
     color: white;
     text-align: center;
-    
+
     >div {
       width: 50px;
       height: 20px;

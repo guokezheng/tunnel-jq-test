@@ -9,15 +9,17 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.deal.guidancelamp.control.ClientHandler;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
+import io.swagger.models.auth.In;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  *
@@ -35,6 +37,8 @@ public class GuidanceLampHandle {
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
 
     private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+
+    private static final Logger log = LoggerFactory.getLogger(GuidanceLampHandle.class);
 
     private GuidanceLampHandle() {
     }
@@ -90,56 +94,109 @@ public class GuidanceLampHandle {
         } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode().longValue() && !fireMark.equals("")) {
             //发送疏散标志控制指令
             try {
-                String code = "1GH+FIRE?\r\n";
+                String code = "1GH+FIRE";
                 NettyClient client = new NettyClient(ip, port,code,1);
                 client.start(null);
-                Map codeMap = InductionlampUtil.getEvacuationSignLightMode(ctrState,Integer.parseInt(brightness),Integer.parseInt(frequency),fireMark);
+                //存储子级设备状态
+                List<SdDevices> devicesListByFEqId = sdDevicesMapper.getDevicesListByFEqId(deviceId);
+                        devicesListByFEqId = devicesListByFEqId.stream()
+                .sorted(Comparator.comparing(SdDevices::getPileNum))
+                .collect(Collectors.toList());
+                Integer index = -1;
+                for (int i = 0; i < devicesListByFEqId.size(); i++) {
+                    if (devicesListByFEqId.get(i).getPile().equals(fireMark)) {
+                        index = i;
+                        break;
+                    }
+                }
+                Map codeMap = InductionlampUtil.getEvacuationSignLightMode(ctrState,Integer.parseInt(brightness),Integer.parseInt(frequency),index.toString());
                 client.pushCode(codeMap.get("code").toString());
+                //获取返回数据
+                ClientHandler clientHandler =  client.getClientHandler();
+                //推送数据开始时间
+                long st = System.currentTimeMillis();
+                //等待返回数据
+//                while (clientHandler.FLAG){
+//                    long ed = System.currentTimeMillis();
+//                    //判断当前时间是否超时
+//                    if((ed-st)/1000>client.OVERTIME){
+//                        clientHandler.stop();
+//                    }
+//                    if(clientHandler.DOWNLOADFLAG){
+//                        switch (code) {
+//                            case "OK":
+//                                log.info("操作成功。");
+//                                break;
+//                            case "ERROR":
+//                                log.error("操作失败，请检查操作指令并联系管理员。");
+//                                break;
+//                            case "INVALID":
+//                                log.error("无效操作，请检查操作指令并联系管理员。");
+//                                break;
+//                            default:
+//                                //响应指令:
+//                                String codeInfo = clientHandler.getCode().toString();
+//
+//
+//                        }
+//                    }
+//                    Thread.sleep(1);
+//                }
                 client.stop();
             } catch (Exception e) {
                 System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
                 return 0;
             }
-            //存储变更后控制器状态到数据库
-            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()), ctrState.toString());
+            //存储变更后控制器状态到数据库updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()), ctrState.toString());
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()), brightness);
-            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()), frequency);
+//            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()), frequency);
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()), fireMark);
             //存储子级设备状态
             List<SdDevices> devicesListByFEqId = sdDevicesMapper.getDevicesListByFEqId(deviceId);
-//            for (int i = 0;i < devicesListByFEqId.size();i++) {
-//                String eqId = devicesListByFEqId.get(i).getEqId();
-//                updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()), ctrState.toString());
-//                updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()), brightness);
-//                updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()), frequency);
-//                updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()), fireMark);
-//            }
+
             String state = ctrState.toString();
             if (!devicesListByFEqId.isEmpty()) {
                 //疏散标志关灯
                 if (fireMark.equals("0") && !fireMark.equals("255")) {
                     state = "1";
+                    //模式
+                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                    //亮度
+                    updateDeviceDatas(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                    //开灯状态
+                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                    //频率
+//                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                    //疏散标志事件标号
+                    updateDeviceDatas(sdDevices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     for (int i = 0;i < devicesListByFEqId.size();i++) {
                         SdDevices devo = devicesListByFEqId.get(i);
                         updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         updateDeviceDatas(devo, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+//                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                         updateDeviceDatas(devo, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     }
                     //疏散标志报警点更新
                 } else if (!fireMark.equals("0") && !fireMark.equals("255")) {
-                    BigDecimal fMark = new BigDecimal(fireMark);
+//                    devicesListByFEqId = devicesListByFEqId.stream()
+//                            .sorted(Comparator.comparing(SdDevices::getPileNum))
+//                            .collect(Collectors.toList());
+                    //控制模式
+                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                    //开灯状态
+                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                    //亮度存贮
+                    updateDeviceDatas(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                        updateDeviceDatas(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                    //疏散标志事件标号
+                    updateDeviceDatas(sdDevices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     for (int i = 0;i < devicesListByFEqId.size();i++) {
                         SdDevices devices = devicesListByFEqId.get(i);
-                        BigDecimal addressMark = new BigDecimal(devices.getQueryPointAddress());
-                        if (fMark.compareTo(addressMark) < 0) {
-                            state = "6";
-                        } else if (fMark.compareTo(addressMark) == 0) {
-                            state = "5";
-                        } else if (fMark.compareTo(addressMark) > 0) {
-                            state = "4";
-                        }
+                        state = "5";
+                        //疏散标志事件标号
                         updateDeviceDatas(devices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                        //开灯状态
+                        updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         updateDeviceDatas(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         updateDeviceDatas(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                         updateDeviceDatas(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
@@ -147,11 +204,23 @@ public class GuidanceLampHandle {
                 } else {
                     //疏散标志开灯无报警点
                     state = "2";
+                    //控制模式
+                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                    //开灯状态
+                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                    //亮度存贮
+                    updateDeviceDatas(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+//                        updateDeviceDatas(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                    updateDeviceDatas(sdDevices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     for (int i = 0;i < devicesListByFEqId.size();i++) {
                         SdDevices devo = devicesListByFEqId.get(i);
+                        //控制模式
                         updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        //开灯状态
+                        updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                        //亮度存贮
                         updateDeviceDatas(devo, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+//                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                         updateDeviceDatas(devo, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     }
                 }

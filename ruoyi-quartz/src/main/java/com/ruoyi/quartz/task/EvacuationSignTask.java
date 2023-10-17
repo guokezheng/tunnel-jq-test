@@ -233,6 +233,29 @@ public class EvacuationSignTask {
         }
     }
 
+    /**
+     * 状态储存
+     * @param sdDevices
+     * @param value
+     * @param itemId
+     */
+    private static void saveDataIntoSdDeviceDataTwo(SdDevices sdDevices, String value, Integer itemId) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = deviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            deviceDataMapper.updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            deviceDataMapper.insertSdDeviceData(sdDeviceData);
+        }
+    }
+
     public void sendCommand(SdDevices sdDevices, String ip, String portAddress) {
         if (ip == null || portAddress == null || "".equals(ip) || "".equals(portAddress)) {
             return;
@@ -248,56 +271,92 @@ public class EvacuationSignTask {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             //状态入库
             String state = handleDeviceStatus(sdDevices, codeMap);
-            if (state != "" && state.equals("1")) {
+            //全部常亮
+            if (state != "" && state.equals("2")) {
                 //推送物联中台kafka内容
-                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                //疏散标志是否开灯存储状态
+                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                //疏散标志亮度存储状态
+                saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                //疏散标志事件标号
+                saveDataIntoSdDeviceDataTwo(sdDevices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                //疏散标志事件标号
+                saveDataIntoSdDeviceDataTwo(sdDevices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                 //更新子设备的状态
                 if (!list.isEmpty()) {
                     for (int i = 0;i < list.size();i++) {
                         SdDevices devices = list.get(i);
-                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                        devices.setEqStatus("1");
+                        devices.setEqStatusTime(new Date());
+                        sdDevicesService.updateSdDevices(devices);
+                        //疏散标志控制模式
+                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        //疏散标志是否开灯存储状态
+                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                        //疏散标志亮度存储状态
+                        saveDataIntoSdDeviceDataTwo(devices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                        //疏散标志事件标号
+                        saveDataIntoSdDeviceDataTwo(devices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     }
                 }
-                //获取当前运行模式
-                codeMap = InductionlampUtil.getNowRunMode(ip, port);
-                //状态入库
-                state = handleDeviceStatus(sdDevices, codeMap);
-                String code = "";
-                if (state != "" && state.equals("1")) {
-                    //当前属于闪烁模式，查询当前闪灯模式、亮度、频率
-                    code = "1GH+BMODE?,TPWM?,BFREQ?\r\n";
-                    codeMap = InductionlampUtil.getNowModeAndParameter(code, ip, port);
-                    handleDeviceStatus(sdDevices, codeMap);
-                    //codeMap中包含的数据解析
-                    handleCodeMap(sdDevices, codeMap);
-                } else if (state != "" && state.equals("2")) {
-                    //当前属于流水模式，查询当前闪灯模式、亮度、频率
-                    code = "1GH+WMODE?,TPWM?,WFREQ?\r\n";
-                    codeMap = InductionlampUtil.getNowModeAndParameter(code, ip, port);
-                    handleDeviceStatus(sdDevices, codeMap);
-                    //codeMap中包含的数据解析
-                    handleCodeMap(sdDevices, codeMap);
-                }
-                //当前不管是什么模式，都需要查询报警标点
-                codeMap = InductionlampUtil.getNowevacuationSignStatus(ip, port);
-                //更新状态
-                handleDeviceStatus(sdDevices, codeMap);
-                //此处仅处理获取到的标号信息
-                //FIRE=255表示所有疏散标志全开灯，表示当前隧道状态为正常状态
-                handleCodeMap(sdDevices, codeMap);
-            } else if (state != "" && state.equals("0")) {
-                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
-                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
-                sendDataToWanJi(sdDevices, "lightOff", "0");
+            } else if (state != "" && state.equals("1")) {//全部关闭
+                //推送物联中台kafka内容
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                //疏散标志是否开灯存储状态
+                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                //疏散标志事件标号
+                saveDataIntoSdDeviceDataTwo(sdDevices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                 //更新子设备的状态
                 if (!list.isEmpty()) {
                     for (int i = 0;i < list.size();i++) {
                         SdDevices devices = list.get(i);
-                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
-                        saveDataIntoSdDeviceData(devices, "1", DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
-//                        sendDataToWanJi(devices, "lightOff", "0");
+                        devices.setEqStatus("1");
+                        devices.setEqStatusTime(new Date());
+                        sdDevicesService.updateSdDevices(devices);
+                        //m模式疏散标志控制模式
+                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        //疏散标志是否开灯存储状态
+                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                        //疏散标志事件标号
+                        saveDataIntoSdDeviceDataTwo(devices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     }
                 }
+            }else  if (state != "" && state.equals("5")) {
+
+                list = list.stream()
+                .sorted(Comparator.comparing(SdDevices::getPileNum))
+                .collect(Collectors.toList());
+                String fireMark = codeMap.get("fireMark").toString();
+                //推送物联中台kafka内容
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                //疏散标志是否开灯存储状态
+                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                //疏散标志亮度存储状态
+                saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                //疏散标志事件标号
+                saveDataIntoSdDeviceDataTwo(sdDevices, list.get(Integer.parseInt(fireMark)).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                //疏散标志事件频率
+                saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("frequency").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                //更新子设备的状态
+                if (!list.isEmpty()) {
+                    for (int i = 0;i < list.size();i++) {
+                        SdDevices devices = list.get(i);
+                        devices.setEqStatus("1");
+                        devices.setEqStatusTime(new Date());
+                        sdDevicesService.updateSdDevices(devices);
+                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        //疏散标志是否开灯存储状态
+                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                        //疏散标志亮度存储状态
+                        saveDataIntoSdDeviceDataTwo(devices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                        //疏散标志事件标号
+                        saveDataIntoSdDeviceDataTwo(devices, list.get(Integer.parseInt(fireMark)).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                        //疏散标志事件频率
+                        saveDataIntoSdDeviceDataTwo(devices, codeMap.get("frequency").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                    }
+                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();

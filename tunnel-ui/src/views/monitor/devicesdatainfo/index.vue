@@ -60,6 +60,10 @@
             <el-option label="风速风向" value="2"> </el-option>
             <el-option label="洞内光强" value="3"> </el-option>
             <el-option label="洞外光强" value="4"> </el-option>
+            <el-option label="风机内外振动仪检测器" value="5"> </el-option>
+            <el-option label="水浸传感器" value="6"> </el-option>
+            <el-option label="温湿度传感器" value="7"> </el-option>
+            <el-option label="微波车辆检测器" value="8"> </el-option>
           </el-select>
         </el-form-item>
 
@@ -336,7 +340,7 @@
           @pagination="getList"
         />
         </div>
-       
+
       </div>
       <div v-show="echartShow">
         <div
@@ -693,6 +697,7 @@ export default {
     },
 
     handleRecordy(row) {
+      debugger
       this.device_boxShow = false;
       this.echartShow = false;
       this.record = true;
@@ -706,7 +711,15 @@ export default {
         this.searchValue = "2";
       } else if (row.eqType == "18") {
         this.searchValue = "3";
-      } else {
+      }else if (row.eqType == "20") {
+        this.searchValue = "8";
+      } else if (row.eqType == "41") {
+        this.searchValue = "7";
+      }  else if (row.eqType == "42") {
+        this.searchValue = "6";
+      } else if (row.eqType == "48") {
+        this.searchValue = "5";
+      }else {
         this.searchValue = "4";
       }
       this.deviceId = row.eqId;

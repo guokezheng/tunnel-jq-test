@@ -204,7 +204,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         if( type=="1"|| type=="2"|| type=="3"|| type=="4"){//总车流量
             //判断是单个数字的不需要解析
             if(str.substring(number, numberTwo).replaceAll("0+$", "").length()==1&&
-                    !str.substring(number, numberTwo).replaceAll("0+$", "").matches("\\d+")){
+                    str.substring(number, numberTwo).replaceAll("0+$", "").matches("\\d+")){
 
                 totalNum = str.substring(number, numberTwo).replaceAll("0+$", "");
             }else{

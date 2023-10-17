@@ -289,10 +289,19 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else if (searchValue.equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
             maps = sdDeviceDataMapper.selectDNDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
+        } else if (searchValue.equals(DeviceType.DONGFANGDUITEM.getCode())) {//风机内外振动仪检测器
             maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else {
+        }else if (searchValue.equals(DeviceType.DONGWATERGDUITEM.getCode())) {//水浸传感器
+            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (searchValue.equals(DeviceType.DONGHUMIDGDUITEM.getCode())) {//温湿度
+            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        }else if (searchValue.equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
+            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        }else {
             return null;
         }
 
@@ -329,6 +338,14 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
                 sdDeviceData.setSearchValue(DeviceType.DONGNEILIANGDU.getCode());
             }else if (DeviceType.DONGWAILIANGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//洞外亮度
                 sdDeviceData.setSearchValue(DeviceType.DONGWAILIANGDU.getCode());
+            }else if (DeviceType.DONGFANGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//风机内外振动仪检测器
+                sdDeviceData.setSearchValue(DeviceType.DONGFANGDU.getCode());
+            }else if (DeviceType.DONGWATERGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//水浸传感器
+                sdDeviceData.setSearchValue(DeviceType.DONGWATERGDU.getCode());
+            }else if (DeviceType.DONGHUMIDGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//温湿度传感器
+                sdDeviceData.setSearchValue(DeviceType.DONGHUMIDGDU.getCode());
+            }else if (DeviceType.DONGCATGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//微波车检
+                sdDeviceData.setSearchValue(DeviceType.DONGCATGDU.getCode());
             }
         }
         if (sdDeviceData.getDeptId() == null) {
@@ -578,7 +595,19 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
             List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
             return maps;
-        } else {
+        }  else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGFANGDUITEM.getCode())) {//风机内外振动仪检测器
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectFJDataList(beginTime, endTime, deviceId);
+            return maps;
+        }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWATERGDUITEM.getCode())) {//水浸传感器
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            return maps;
+        }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGHUMIDGDUITEM.getCode())) {//温湿度传感器
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            return maps;
+        }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            return maps;
+        }else {
             return null;
         }
 

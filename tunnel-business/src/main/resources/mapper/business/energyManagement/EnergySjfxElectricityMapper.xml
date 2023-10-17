@@ -32,14 +32,14 @@
             #{item}
         </foreach>
         and es.statistics_type = #{statisticsType}
-        and es.create_time &gt;= STR_TO_DATE(#{statisticsDate},
+        and es.create_time &gt;= DATE_FORMAT(#{statisticsDate},
         <choose>
             <when test="statisticsType == 0">'%Y-%m-%d'</when>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        and es.create_time &lt;STR_TO_DATE(
+        and es.create_time &lt; DATE_FORMAT(
         date_add( #{statisticsDate},
         <choose>
             <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
@@ -67,14 +67,14 @@
             #{item1}
         </foreach>
         and ei.statistics_type = #{statisticsType}
-        and ei.create_time &gt;= STR_TO_DATE(#{statisticsDate},
+        and ei.create_time &gt;= DATE_FORMAT(#{statisticsDate},
         <choose>
             <when test="statisticsType == 0">'%Y-%m-%d'</when>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        and ei.create_time &lt;STR_TO_DATE(
+        and ei.create_time &lt;DATE_FORMAT(
         date_add( #{statisticsDate},
         <choose>
             <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
@@ -102,14 +102,14 @@
             #{item1}
         </foreach>
         and ei.statistics_type = #{statisticsType}
-        and ei.create_time &gt;= STR_TO_DATE(#{statisticsDate},
+        and ei.create_time &gt;= DATE_FORMAT(#{statisticsDate},
         <choose>
             <when test="statisticsType == 0">'%Y-%m-%d'</when>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        and ei.create_time &lt;STR_TO_DATE(
+        and ei.create_time &lt;DATE_FORMAT(
         date_add( #{statisticsDate},
         <choose>
             <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
@@ -129,14 +129,14 @@
         </foreach>
 
         and ef.statistics_type = #{statisticsType}
-        and ef.create_time &gt;= STR_TO_DATE(#{baseTime},
+        and ef.create_time &gt;= DATE_FORMAT(#{baseTime},
         <choose>
             <when test="statisticsType == 0">'%Y-%m-%d'</when>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        and ef.create_time &lt;STR_TO_DATE(
+        and ef.create_time &lt;DATE_FORMAT(
         date_add( #{baseTime},
         <choose>
             <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
@@ -165,14 +165,14 @@
         </foreach>
 
         and ef.statistics_type = #{statisticsType}
-        and ef.create_time &gt;= STR_TO_DATE(#{baseTime},
+        and ef.create_time &gt;= DATE_FORMAT(#{baseTime},
         <choose>
             <when test="statisticsType == 0">'%Y-%m-%d'</when>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        and ef.create_time &lt;STR_TO_DATE(
+        and ef.create_time &lt;DATE_FORMAT(
         date_add( #{baseTime},
         <choose>
             <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
@@ -189,7 +189,7 @@
     <select id="getListOfYear" resultType="com.tunnel.business.domain.energyManagement.EnergyConfigcenterElectricityPrice">
     select id id,unit_price2 unitPrice2,unit_price3 unitPrice3,unit_price4 unitPrice4,unit_price5 unitPrice5,unit_price6 unitPrice6
     ,jian_cof jianCof,feng_cof fengCof,gu_cof guCof,shen_cof shenCof,month month
-    from energy_configcenter_electricity_price where year(STR_TO_DATE(`month`,'%Y-%m-%d')) = year(#{createTime}) order by `month` desc
+    from energy_configcenter_electricity_price where year(DATE_FORMAT(`month`,'%Y-%m-%d')) = year(#{createTime}) order by `month` desc
   </select>
 
 
@@ -226,13 +226,13 @@
           #{item}
       </foreach>
         AND ea.statistics_type = #{statisticsType}
-        AND ea.statistics_date <![CDATA[ >= ]]> STR_TO_DATE(#{baseTime},
+        AND ea.statistics_date <![CDATA[ >= ]]> DATE_FORMAT(#{baseTime},
         <choose>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        AND ea.statistics_date <![CDATA[ < ]]> STR_TO_DATE(
+        AND ea.statistics_date <![CDATA[ < ]]> DATE_FORMAT(
         date_add( #{baseTime},
         <choose>
             <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>

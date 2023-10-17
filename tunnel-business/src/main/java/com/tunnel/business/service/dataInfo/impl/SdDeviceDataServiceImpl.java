@@ -19,6 +19,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
+import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
     @Autowired
     private SdDeviceDataRecordMapper sdDeviceDataRecordMapper;
+
+    @Autowired
+    private ISdDeviceTypeItemService sdDeviceTypeItemService;
 
     /**
      * 查询设备实时数据（存储模拟量）
@@ -148,6 +152,11 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else {
             map.put("COnowData", null);
         }
+        SdDeviceTypeItem sdDeviceTypeItem = sdDeviceTypeItemService.selectSdDeviceTypeItemById(itemId);
+        if(sdDeviceTypeItem != null){
+            map.put("COUnit", sdDeviceTypeItem.getUnit());
+        }
+
         List<Map<String, Double>> todayCOData = sdDeviceDataMapper.getTodayData(deviceId, itemId, today);
         itemId = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
         data.setItemId(Long.valueOf(itemId));
@@ -162,6 +171,12 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else {
             map.put("VInowData", null);
         }
+
+        sdDeviceTypeItem = sdDeviceTypeItemService.selectSdDeviceTypeItemById(itemId);
+        if(sdDeviceTypeItem != null){
+            map.put("VIUnit", sdDeviceTypeItem.getUnit());
+        }
+
         List<Map<String, Double>> todayVIData = sdDeviceDataMapper.getTodayData(deviceId, itemId, today);
         map.put("todayCOData", todayCOData);
         map.put("todayVIData", todayVIData);

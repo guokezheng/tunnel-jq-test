@@ -1,7 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -11,7 +10,6 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.system.domain.SysLogininfor;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
@@ -19,11 +17,14 @@ import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.energyManagement.ElectricityData;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import io.swagger.annotations.ApiImplicitParam;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -57,6 +58,9 @@ public class SdDeviceDataController extends BaseController
 
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    private SdTunnelsMapper sdTunnelsMapper;
 
     @Autowired
     @Qualifier("kafkaOneTemplate")
@@ -371,6 +375,62 @@ public class SdDeviceDataController extends BaseController
             List<SdDeviceDWData> list = sdDeviceDataService.handleDWExportRecord(sdDeviceCOVIData);
             ExcelUtil<SdDeviceDWData> util = new ExcelUtil<SdDeviceDWData>(SdDeviceDWData.class);
             return util.exportExcel(list, DeviceType.DONGWAILIANGDUITEM.getName());
+        }else if(DeviceType.DONGCATGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//微波车检
+            List<Map<String, String>> maps = sdDeviceDataService.handleWBExportRecord(sdDeviceCOVIData);
+            List<SdDeviceWBData> sdDeviceSJDataArray = new ArrayList<>();
+            for (Map<String, String> map :maps){
+                try {
+                    SdDeviceWBData sdDeviceSJData = new SdDeviceWBData();
+                    BeanUtils.populate(sdDeviceSJData, map);
+                    sdDeviceSJDataArray.add(sdDeviceSJData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            ExcelUtil<SdDeviceWBData> util = new ExcelUtil<SdDeviceWBData>(SdDeviceWBData.class);
+            return util.exportExcel(sdDeviceSJDataArray, DeviceType.DONGCATGDUITEM.getName());
+        }else if(DeviceType.DONGHUMIDGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//温湿度
+            List<Map<String, String>> maps = sdDeviceDataService.handleWSDExportRecord(sdDeviceCOVIData);
+            List<SdDeviceWSDData> sdDeviceSJDataArray = new ArrayList<>();
+            for (Map<String, String> map :maps){
+                try {
+                    SdDeviceWSDData sdDeviceSJData = new SdDeviceWSDData();
+                    BeanUtils.populate(sdDeviceSJData, map);
+                    sdDeviceSJDataArray.add(sdDeviceSJData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            ExcelUtil<SdDeviceWSDData> util = new ExcelUtil<SdDeviceWSDData>(SdDeviceWSDData.class);
+            return util.exportExcel(sdDeviceSJDataArray, DeviceType.DONGHUMIDGDUITEM.getName());
+        }else if(DeviceType.DONGWATERGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//水浸
+            List<Map<String, String>> maps = sdDeviceDataService.handleSJExportRecord(sdDeviceCOVIData);
+            List<SdDeviceSJData> sdDeviceSJDataArray = new ArrayList<>();
+            for (Map<String, String> map :maps){
+                try {
+                    SdDeviceSJData sdDeviceSJData = new SdDeviceSJData();
+                    BeanUtils.populate(sdDeviceSJData, map);
+                    sdDeviceSJDataArray.add(sdDeviceSJData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            ExcelUtil<SdDeviceSJData> util = new ExcelUtil<SdDeviceSJData>(SdDeviceSJData.class);
+            return util.exportExcel(sdDeviceSJDataArray, DeviceType.DONGWATERGDUITEM.getName());
+        }else if(DeviceType.DONGFANGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//风机
+            List<Map<String, String>> maps = sdDeviceDataService.handleFJExportRecord(sdDeviceCOVIData);
+            List<SdDeviceFJData> sdDeviceSJDataArray = new ArrayList<>();
+            for (Map<String, String> map :maps){
+                try {
+                    SdDeviceFJData sdDeviceSJData = new SdDeviceFJData();
+                    BeanUtils.populate(sdDeviceSJData, map);
+                    sdDeviceSJDataArray.add(sdDeviceSJData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            ExcelUtil<SdDeviceFJData> util = new ExcelUtil<SdDeviceFJData>(SdDeviceFJData.class);
+            return util.exportExcel(sdDeviceSJDataArray, DeviceType.DONGFANGDUITEM.getName());
         }else{
             return null;
         }

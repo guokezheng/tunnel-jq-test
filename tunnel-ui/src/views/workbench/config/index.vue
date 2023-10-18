@@ -107,6 +107,10 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>智慧调光</span>
           </el-button>
+          <el-button class="buttons" type="primary" size="mini" @click="offlineDevice">
+            <img src="../../../assets/icons/kzcl.png" />
+            <span>离线设备</span>
+          </el-button>
           <!--          <el-button-->
           <!--            class="buttons"-->
           <!--            type="primary"-->
@@ -1177,6 +1181,7 @@
     </el-dialog>
     <!--    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>-->
     <jointControlStrategy ref="jointControlStrategy" :show="jointControlShow"></jointControlStrategy>
+    <offlineDeviceModal ref="offlineDeviceModal" :show="offlineDeviceShow"></offlineDeviceModal>
   </div>
 </template>
 
@@ -1200,6 +1205,7 @@
   } from "vuex";
   // import timingTask from "@/views/workbench/config/components/timingTask";
   import jointControlStrategy from "@/views/workbench/config/components/jointControlStrategy";
+  import offlineDeviceModal from "@/views/workbench/config/components/offlineDeviceModal";
   import {
     getLiPowerDevices,
     //initLipowerDevice
@@ -1419,7 +1425,8 @@
       comFooter, //底部echarts
       comXfp,
       jointControlStrategy,
-      comControl
+      comControl,
+      offlineDeviceModal
     },
 
     data() {
@@ -1976,6 +1983,7 @@
         lightingForm: {},
         timingTaskShow: false,
         jointControlShow: false,
+        offlineDeviceShow: false,
       };
     },
 
@@ -5048,6 +5056,9 @@
       strategyPage2() {
         this.jointControlShow = !this.jointControlShow;
         // this.$refs.jointControlStrategy.getEchartsData(this.tunnelList,this.tunnelItem,true)
+      },
+      offlineDevice(){
+        this.offlineDeviceShow= !this.offlineDeviceShow;
       },
       handleClick(tab, event) {
         this.tableKey++

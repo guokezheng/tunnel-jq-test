@@ -21,6 +21,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -303,16 +304,26 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             maps = sdDeviceDataMapper.selectDNDataLineList(beginTime, endTime, deviceId);
             return maps;
         } else if (searchValue.equals(DeviceType.DONGFANGDUITEM.getCode())) {//风机内外振动仪检测器
-            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+             maps = sdDeviceDataMapper.selectFJDataList(beginTime, endTime, deviceId);
             return maps;
         }else if (searchValue.equals(DeviceType.DONGWATERGDUITEM.getCode())) {//水浸传感器
-            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            maps = sdDeviceDataMapper.selectSJDataList(beginTime, endTime, deviceId);
             return maps;
         } else if (searchValue.equals(DeviceType.DONGHUMIDGDUITEM.getCode())) {//温湿度
-            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            maps = sdDeviceDataMapper.selectWSDDataList(beginTime, endTime, deviceId);
             return maps;
         }else if (searchValue.equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
-            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);
+            if(maps.size()>0){
+                SdTunnels tunnelId = sdTunnelsMapper.selectSdTunnelsById(maps.get(0).get("tunnelId"));
+                SdDevices tunnelId1 = sdDevicesMapper.selectSdDevicesById(maps.get(0).get("deviceId"));
+                for (Map<String, String> map :maps){
+                    map.put("tunnelName",tunnelId.getTunnelName());
+                    map.put("deptName",tunnelId.getTunnelStationName());
+                    map.put("direction",tunnelId1.getDirection());
+                    map.put("pile",tunnelId1.getPile());
+                }
+            }
             return maps;
         }else {
             return null;
@@ -397,6 +408,45 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         getSelectExportParams(sdDeviceCOVIData);
         List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
         return list;
+    }
+
+    @Override
+    public List<Map<String, String>> handleWBExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        if(maps.size()>0){
+            SdTunnels tunnelId = sdTunnelsMapper.selectSdTunnelsById(maps.get(0).get("tunnelId"));
+            SdDevices tunnelId1 = sdDevicesMapper.selectSdDevicesById(maps.get(0).get("deviceId"));
+            for (Map<String, String> map :maps){
+                map.put("tunnelName",tunnelId.getTunnelName());
+                map.put("deptName",tunnelId.getTunnelStationName());
+                map.put("direction",tunnelId1.getDirection());
+                map.put("pile",tunnelId1.getPile());
+                map.put("eqName",tunnelId1.getEqName());
+                map.put("eqId",tunnelId1.getEqId());
+            }
+        }
+        return maps;
+    }
+
+    @Override
+    public List<Map<String, String>> handleWSDExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        List<Map<String, String>> maps = sdDeviceDataMapper.selectWSDDataList(
+                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        return maps;
+    }
+
+    @Override
+    public List<Map<String, String>> handleSJExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        List<Map<String, String>> maps = sdDeviceDataMapper.selectSJDataList(
+                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        return maps;
+    }
+
+    @Override
+    public List<Map<String, String>> handleFJExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        List<Map<String, String>> maps = sdDeviceDataMapper.selectFJDataList(
+                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        return maps;
     }
 
 
@@ -612,10 +662,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             List<Map<String, String>> maps = sdDeviceDataMapper.selectFJDataList(beginTime, endTime, deviceId);
             return maps;
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWATERGDUITEM.getCode())) {//水浸传感器
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectSJDataList(beginTime, endTime, deviceId);
             return maps;
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGHUMIDGDUITEM.getCode())) {//温湿度传感器
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectWSDDataList(beginTime, endTime, deviceId);
             return maps;
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
             List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);

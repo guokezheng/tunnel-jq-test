@@ -364,7 +364,8 @@
           <el-table-column label="管理机构" align="center" prop="deptName" />
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
+          <el-table-column label="湿度" align="center" prop="sd" />
+          <el-table-column label="温度" align="center" prop="wd" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
         <!--  水浸传感器-->
@@ -392,7 +393,7 @@
           <el-table-column label="管理机构" align="center" prop="deptName" />
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
+          <el-table-column label="液位" align="center" prop="data" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
         <!--  风机内外振动仪检测器-->
@@ -424,6 +425,16 @@
           <el-table-column label="振动幅度值" align="center" prop="data" />
           <el-table-column label="沉降值" align="center" prop="CJZ" />
           <el-table-column label="倾斜值" align="center" prop="QXZ" />
+          <el-table-column label="沉降倾斜告警" align="center" prop="CJQXGJ">
+            <template slot-scope="scope">
+              {{ getshakeAlaram(scope.row.CJQXGJ) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="振动告警" align="center" prop="ZDGJ">
+            <template slot-scope="scope">
+              {{ getshakeAlaram(scope.row.ZDGJ) }}
+            </template>
+          </el-table-column>
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
         <div style="height: 33px;">
@@ -677,6 +688,26 @@ export default {
       dnTime: [],
       dwData: [],
       dwTime: [],
+      //微波车检
+      wbTime:[],
+      wbData:[],
+      //风机
+      fjTime:[],
+      //风机振动速度值
+      fjzdsdData:[],
+      //风机振动幅度度值
+      fjzdfdData:[],
+      //风机沉降值
+      fjcjzData:[],
+      //风机倾斜值
+      fjqqxzData:[],
+      //水浸
+      sjTime:[],
+      sjData:[],
+      //温湿度
+      wsdTime:[],
+      wdData:[],
+      sdData:[],
       // 部门树选项
       deptOptions: undefined,
       // 部门树选项
@@ -861,7 +892,15 @@ export default {
         })
         .catch(() => {});
     },
-
+    getshakeAlaram(type) {
+      if (type == 0) {
+        return "正常";
+      } else if (type == 1) {
+        return "报警";
+      } else if (type == 2) {
+        return "危险";
+      }
+    },
     /** 数据报表详情导出按钮 */
     handleExportRecord() {
       this.querysParams.searchValue = this.searchValue;
@@ -886,6 +925,30 @@ export default {
         confirmInfo = "是否确认导出所有的洞内光强数据项？";
         if (this.ids.length > 0) {
           confirmInfo = "是否确认导出所选的洞内光强数据项？";
+        }
+      }else if (this.searchValue == "8") {
+        //微波
+        confirmInfo = "是否确认导出所有的微波车检数据项？";
+        if (this.ids.length > 0) {
+          confirmInfo = "是否确认导出所选的微波车检数据项？";
+        }
+      }else if (this.searchValue == "7") {
+        //温湿度
+        confirmInfo = "是否确认导出所有的温湿度数据项？";
+        if (this.ids.length > 0) {
+          confirmInfo = "是否确认导出所选的温湿度数据项？";
+        }
+      }else if (this.searchValue == "6") {
+        //水浸
+        confirmInfo = "是否确认导出所有的水浸数据项？";
+        if (this.ids.length > 0) {
+          confirmInfo = "是否确认导出所选的水浸数据项？";
+        }
+      }else if (this.searchValue == "5") {
+        //风机内外振动仪检测器
+        confirmInfo = "是否确认导出所有的风机内外振动仪检测器数据项？";
+        if (this.ids.length > 0) {
+          confirmInfo = "是否确认导出所选的风机内外振动仪检测器数据项？";
         }
       } else {
         //洞外光强
@@ -1157,6 +1220,226 @@ export default {
             },
           },
         ];
+      }else if(this.searchValue == 5){
+        var series = [
+          {
+            name: "振动速度值",
+            type: "line",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.fjzdsdData,
+          },
+          {
+            name: "振动幅度值",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.fjzdfdData,
+            type: "line",
+          },
+          {
+            name: "倾斜值",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.fjqqxzData,
+            type: "line",
+          },
+          {
+            name: "沉降值",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.fjcjzData,
+            type: "line",
+          },
+
+        ];
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.fjTime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+            },
+            nameTextStyle: {
+              fontFamily: "PingFang",
+              fontsize: "29px",
+            },
+          },
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置y轴线条颜色为黑色
+                width: 2, // 设置y轴线条宽度为2像素
+              },
+              show: true,
+            },
+          },
+        ];
+
+        legends = {
+          textStyle: {
+            fontSize: 13, //字体大小
+            color: "#ffffff", //字体颜色
+          },
+          left: "center",
+          data: ["振动速度值", "振动幅度值","倾斜值", "沉降值"],
+        };
+      }else if(this.searchValue == 6){//水浸
+        var series = [
+          {
+            name: "水浸传感器",
+            stack: "Total",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.sjData,
+            type: "line",
+          },
+        ];
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.sjTime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+            },
+          },
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "m",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+              show: true,
+            },
+          },
+        ];
+      }else if(this.searchValue == 7){//温湿度
+        var series = [
+          {
+            name: "温度",
+            type: "line",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.wdData,
+          },
+          {
+            name: "湿度",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.sdData,
+            type: "line",
+          },
+        ];
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.wsdTime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+            },
+            nameTextStyle: {
+              fontFamily: "PingFang",
+              fontsize: "29px",
+            },
+          },
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "温度(℃)/湿度(%)",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置y轴线条颜色为黑色
+                width: 2, // 设置y轴线条宽度为2像素
+              },
+              show: true,
+            },
+          },
+        ];
+
+        legends = {
+          textStyle: {
+            fontSize: 13, //字体大小
+            color: "#ffffff", //字体颜色
+          },
+          left: "center",
+          data: ["CO", "VI"],
+        };
+      }else if (this.searchValue == 8) {
+        //   fsData: [],
+        // dnData: [],
+        // dwData: [],
+        var series = [
+          {
+            name: "微波车检",
+            stack: "Total",
+            label: {
+              show: false,
+              position: "top",
+            },
+            data: this.wbData,
+            type: "line",
+          },
+        ];
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.wbTime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+            },
+          },
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "辆",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+              show: true,
+            },
+          },
+        ];
       }
       option = {
         tooltip: {
@@ -1260,6 +1543,7 @@ export default {
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {
+          debugger
           let list1 = response.rows;
           if (this.searchValue == "1") {
             this.CO = list1.map((item) => item.CO);
@@ -1271,6 +1555,28 @@ export default {
           } else if (this.searchValue == "3") {
             this.dnData = list1.map((item) => item.data);
             this.dnTime = list1.map((item) => item.createTime);
+          } else if (this.searchValue == "8") {
+            this.wbData = list1.map((item) => item.data);
+            this.wbTime = list1.map((item) => item.createTime);
+          } else if (this.searchValue == "5") {
+            debugger
+            this.fjcjzData = list1.map((item) => item.CJZ);
+            this.fjqqxzData = list1.map((item) => item.QXZ);
+            this.fjzdfdData = list1.map((item) => item.ZDFD);
+            this.fjzdsdData = list1.map((item) => item.ZDSD);
+            this.fjTime = list1.map((item) => item.createTime);
+            console.log(this.fjcjzData)
+            console.log(this.fjqqxzData)
+            console.log(this.fjzdfdData)
+            console.log(this.fjzdsdData)
+            console.log(this.fjTime)
+          }else if(this.searchValue == "6"){
+            this.sjData = list1.map((item) => item.data);
+            this.sjTime = list1.map((item) => item.createTime);
+          }else if(this.searchValue == "7"){
+            this.sdData = list1.map((item) => item.sd);
+            this.wdData = list1.map((item) => item.wd);
+            this.wsdTime = list1.map((item) => item.createTime);
           } else {
             this.dwData = list1.map((item) => item.data);
             this.dwTime = list1.map((item) => item.createTime);

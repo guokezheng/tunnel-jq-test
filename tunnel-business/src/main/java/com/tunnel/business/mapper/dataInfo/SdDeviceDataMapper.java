@@ -83,6 +83,10 @@ public interface SdDeviceDataMapper
 
     public List<Map<String, String>> selectFJDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
+    public List<Map<String, String>> selectSJDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
+
+    public List<Map<String, String>> selectWSDDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
+
     public List<Map<String, String>> selectDNDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
     /**

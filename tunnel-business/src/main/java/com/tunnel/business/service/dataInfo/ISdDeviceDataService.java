@@ -127,6 +127,14 @@ public interface ISdDeviceDataService {
 
     List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
 
+    List<Map<String, String>> handleWBExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<Map<String, String>> handleWSDExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<Map<String, String>> handleSJExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<Map<String, String>> handleFJExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
      void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog);
 
 

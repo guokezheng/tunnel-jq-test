@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="explain-table" custom-class="no-scroll" title="离线设备" :close-on-click-modal="false"
+  <el-dialog class="explain-table  offlinclass" custom-class="no-scroll" title="离线设备" :close-on-click-modal="false"
              :visible.sync="visibleSync" width="80%" destroy-on-close append-to-body :lock-scroll="true"
              :before-close="closeLogin">
     <div >
@@ -200,7 +200,7 @@
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
-        style="margin-top:-20px !important;"
+
       />
 
 
@@ -1089,5 +1089,9 @@ export default {
 </script>
 
 <style scoped>
-
+.offlinclass{
+.el-dialog__body{
+  height: 60vh;
+}
+}
 </style>

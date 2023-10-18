@@ -31,7 +31,7 @@ export default {
       // 建立 websocket 连接
       this.socket.initialize({
         // url: 'ws://' + location.hostname + ':' + port + path,
-        url: "ws://10.168.56.206" + ":" + port + path,
+        url: "ws://10.7.179.15" + ":" + port + path,
         // url: "ws://10.168.64.171" + ":" + port + path,
         //  url: 'ws://10.168.78.127'+ ':' + port + path,
 

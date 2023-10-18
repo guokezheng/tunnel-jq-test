@@ -58,13 +58,8 @@
               {{ stateForm.ip }}
             </el-form-item>
           </el-col> -->
-          <el-col :span="12" v-show="ipShow">
+          <el-col :span="12" v-show="[14,35,48].includes(eqInfo.clickEqType) && ipShow">
             <el-form-item label="控制器IP:">
-              {{ stateForm.f_ip }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-show="[41,42].includes(eqInfo.clickEqType) && !ipShow">
-            <el-form-item label="主机IP:">
               {{ stateForm.f_ip }}
             </el-form-item>
           </el-col>
@@ -73,7 +68,7 @@
               {{ stateForm.mca_ip }}
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-show="[48,15].includes(eqInfo.clickEqType) && !ipShow">
+          <el-col :span="12" v-show="[48,15,41,42].includes(eqInfo.clickEqType) && !ipShow">
             <el-form-item label="plcIP:">
               {{ stateForm.f_ip }}
             </el-form-item>

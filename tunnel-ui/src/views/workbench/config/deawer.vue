@@ -604,7 +604,7 @@ export default {
     getAudioFile() {
       this.getDicts("radio_file_list").then((data) => {
         this.radioFileList = data.data;
-        console.log(this.radioFileList,"this.radioFileList")
+        // console.log(this.radioFileList,"this.radioFileList")
       });
     },
     /* 获取隧道配置信息*/
@@ -626,7 +626,7 @@ export default {
     },
     async getMessage(eqId){
       await getDeviceById(eqId).then((res) => {
-        console.log(res,"广播")
+        // console.log(res,"广播")
         this.brandId = res.data.brandId
       })
     },  

@@ -791,7 +791,7 @@
               let ds = this.getdate(currentDate) //当前
               let ds1 = this.getdate(twoDaysAgo) //前天
               let ds2 = this.getdate(threeDaysAgo) //昨天
-              debugger
+              // debugger
               let todayDate = ds[0].split(" ")[0]
 
               //查询济南光照曲线
@@ -834,7 +834,7 @@
               dataLogInfoLineList(
                 this.addDateRange(this.queryParamsLight, ds3)
               ).then((response) => {
-                debugger
+                // debugger
                 let list1 = response.rows;
                 list1 = this.lightDatafiler(list1)
                 //重新组装数据
@@ -868,7 +868,7 @@
                 console.log( this.XDataLight)
                 // this.XDataLight = this.generateTimeList(todayDate)
                 this.XDataLightOne = this.XDataLight
-                debugger
+                // debugger
 
                 // list1 = this.lightDatafiler(this.yDataLight2)
 
@@ -1048,7 +1048,7 @@
       },
       //光强 修改隧道名称查看不同隧道 光强照明配置
       lightChangeEvent(indextabs) {
-        debugger
+        // debugger
         console.log(this.lightFilesModel.tunnelId,this.lightFilesModel.direction,"indextabs")
         if (!!this.lightFilesModel.tunnelId && !!this.lightFilesModel.direction) {
           let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModel.tunnelId)

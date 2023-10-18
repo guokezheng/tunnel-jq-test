@@ -414,7 +414,7 @@ export default {
     },
     // 组件调用方法;回显数据;
     async getStrategyData(row) {
-      debugger
+      // debugger
       console.log(row, "当前策略数据");
       await  getCategoryTree().then((data) => {
         let dataNum = 0;

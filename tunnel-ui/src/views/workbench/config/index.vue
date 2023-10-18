@@ -543,10 +543,10 @@
                       <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 41">
                         {{ item.num }}
                       </label>
-
+                      
                       <!-- 风机 -->
                       <label style="color: #f2a520" class="labelClass labelClass9"
-                        v-if="item.eqType == 10 && selectBigType.index == 4">
+                        v-if="item.eqType == 10">
                         {{ item.electricity }}
                       </label>
                     </div>
@@ -2164,18 +2164,8 @@
         // console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
 
         if (this.manageStation == "1") {
-          getJlyTunnel().then((res) => {
-            var arr = [];
-            for (let item of res.data) {
-              if (newVal == item.tunnelId) {
-                var atr = item.ancestors.slice(2);
-                arr = atr.split(",");
-                arr.push(item.deptId);
-                this.tunnelQueryParams.deptId = item.deptId;
-                this.changeSite(arr);
-              }
-            }
-          });
+          this.tunnelQueryParams.deptId = this.$cache.local.get("deptId").split(",")
+          
         }
         this.getTunnelList();
       },
@@ -2289,7 +2279,7 @@
     methods: {
       //模式中转换
       eventTypeFormatEvent(row, column) {
-        console.log(row)
+        // console.log(row)
         for (let i = 0; i < this.eventTypeList.length; i++) {
           if (row.eventType == this.eventTypeList[i].id) {
             return this.eventTypeList[i].eventType;
@@ -2314,7 +2304,7 @@
             }
           }
           this.eventTypeList = eventTypeList;
-          console.log(this.eventTypeList, "事件类型");
+          // console.log(this.eventTypeList, "事件类型");
         });
       },
       // 关闭小的一键控制弹框
@@ -2337,7 +2327,7 @@
         }
       },
       mouseSrollAuto(e) {
-        console.log(e.target.scrollLeft, "e.target.scrollLeft");
+        // console.log(e.target.scrollLeft, "e.target.scrollLeft");
         if (e.target.scrollLeft > 0) {
           this.resetCanvasFlag = true;
         } else {
@@ -2767,9 +2757,17 @@
           }
         } else {
           if (type == "width") {
-            return 24;
+            if (eqType && eqType == 16) {
+              return 24;
+            }else{
+              return 30
+            }
           } else if (type == "height") {
-            return 72;
+            if (eqType && eqType == 16) {
+              return 72;
+            }else{
+              return 192
+            }
           } else if (type == "content") {
             return "山东高速欢迎您";
           } else if (type == "array") {
@@ -2873,10 +2871,10 @@
       },
       // 批量操作 弹窗确定
       batchManageOK() {
-        console.log(this.itemEqType, "this.itemEqType")
-        console.log(this.batchManageForm.state, "this.batchManageForm.state")
-        console.log(this.batchManageForm.brightness, "this.batchManageForm.brightness")
-        console.log(this.batchManageForm.frequency, "this.batchManageForm.frequency")
+        // console.log(this.itemEqType, "this.itemEqType")
+        // console.log(this.batchManageForm.state, "this.batchManageForm.state")
+        // console.log(this.batchManageForm.brightness, "this.batchManageForm.brightness")
+        // console.log(this.batchManageForm.frequency, "this.batchManageForm.frequency")
         if (this.itemEqType == 9 && this.batchManageForm.brightness < 30 && this.batchManageForm.state == 1) {
           this.$modal.msgWarning("基本照明亮度不得低于30");
           return;
@@ -3085,14 +3083,14 @@
               this.resetCanvasFlag = true;
             }
           }
-          console.log(bigType, "bigType")
+          // console.log(bigType, "bigType")
           if (bigType.includes("0")) {
             this.displayControl(0, "全部设备");
           } else {
             console.log(this.dictList, "this.dictList")
             for (let itm of this.dictList) {
               if (bigType == itm.value) {
-                console.log(bigType, itm.label, "111111")
+                // console.log(bigType, itm.label, "111111")
                 this.displayControl(bigType, itm.label);
               }
             }
@@ -3242,7 +3240,7 @@
           model = 0;
         }
         setWjModel(model).then((res) => {})
-        console.log(val, "情报板情报板情报板")
+        // console.log(val, "情报板情报板情报板")
       },
       /** 设备类型 */
       getEqType() {
@@ -3377,7 +3375,7 @@
       },
 
       checkData(obj, arr) {
-        // console.log(arr, "arr");
+        // console.log(obj,arr, "arr");
         if (obj.children && obj.children.length > 0) {
           arr.push(obj.id);
           this.checkData(obj.children[0], arr);
@@ -3391,26 +3389,28 @@
 
       // 改变站点
       changeSite(index) {
-        console.log(index, "index");
+        // console.log(index, "index");
         if (index) {
           // 判断是否有缓存的管理站id
           // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
           // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
           // 3. get到管理站id this.tunnelQueryParams.deptId为空 是刷新 get管理站id 并赋值
           // 4. get到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
+          // console.log(this.$cache.local.get("deptId"),"get deptId")
+          // console.log(this.tunnelQueryParams.deptId,"this.tunnelQueryParams.deptId111")
           if (!this.$cache.local.get("deptId")) {
-            if (!this.tunnelQueryParams.deptId) {
+            if (this.tunnelQueryParams.deptId.length == 0) {
               this.tunnelQueryParams.deptId = index;
             } else {
               this.tunnelQueryParams.deptId = index;
-              this.$cache.local.set("deptId", this.tunnelQueryParams.deptId);
+              this.$cache.local.set("deptId", this.tunnelQueryParams.deptId.toString());
             }
           } else {
-            if (!this.tunnelQueryParams.deptId) {
-              this.tunnelQueryParams.deptId = this.$cache.local.get("deptId");
+            if (this.tunnelQueryParams.deptId.length == 0) {
+              this.tunnelQueryParams.deptId = this.$cache.local.get("deptId").split(',');
             } else {
-              this.tunnelQueryParams.deptId = index;
-              this.$cache.local.set("deptId", index);
+              this.tunnelQueryParams.deptId = this.tunnelQueryParams.deptId;
+              this.$cache.local.set("deptId", this.tunnelQueryParams.deptId.toString());
             }
           }
           this.$forceUpdate();
@@ -3719,7 +3719,7 @@
       },
       //地图复位
       resetCanvas() {
-        console.log("地图复位");
+        // console.log("地图复位");
         setTimeout(() => {
           this.resetCanvasFlag = false;
         }, 50);
@@ -3730,7 +3730,7 @@
       },
       //右键拖动
       dragImg(e) {
-        console.log("右键拖动");
+        // console.log("右键拖动");
         let scrollContainer = document.querySelector(".vehicleLane");
         let dragContainer = document.querySelector(".content");
         let mouseDownScrollPosition = {
@@ -4009,6 +4009,7 @@
         var tunnelQueryParams2 = {
           deptId: this.tunnelQueryParams.deptId[this.tunnelQueryParams.deptId.length - 1]
         }
+        // console.log(this.tunnelQueryParams.deptId,"this.tunnelQueryParams.deptId")
         listTunnels(tunnelQueryParams2).then((response) => {
           console.log(response, "查询隧道列表");
           if (!response.rows[0]) {
@@ -4046,6 +4047,8 @@
               this.selectEquipmentType(this.currentTunnel.id);
               this.setTunnel(list[0], 0);
             } else {
+              // console.log(this.$cache.local.get("manageStationSelect"),"get manageStationSelect")
+              // console.log(list,"list")
               for (let i = 0; i < list.length; i++) {
                 if (
                   list[i].tunnelId == this.$cache.local.get("manageStationSelect")
@@ -4495,7 +4498,7 @@
                               deviceData.electricity;
                           } else if (deviceData.eqType == 10) {
                             this.selectedIconList[j].electricity =
-                              deviceData.mode
+                              deviceData.mode 
                               // + " " + deviceData.electricity;
                           }
                           //取设备运行状态图标
@@ -4585,6 +4588,7 @@
         } else {
           if (!this.currentTunnel.name) {
             let aa = JSON.parse(this.$cache.local.get("currentTunnel"));
+            // console.log(aa,"aa")
             this.$refs.deawerRef.init(aa.tunnelId, aa.lane);
             this.$refs.footerRef.init(aa.tunnelId);
             this.currentTunnel.id = aa.tunnelId;
@@ -4614,7 +4618,7 @@
 
       /*点击设备类型*/
       displayControl(value, lable) {
-        console.log(value, lable, "value, lable");
+        // console.log(value, lable, "value, lable");
         // carShow
         if (
           this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" &&
@@ -6585,7 +6589,7 @@
   }
 
   .labelClass9 {
-    transform: translate(32px, -2px) !important;
+    transform: translate(27px, -2px) !important;
   }
 
 </style>

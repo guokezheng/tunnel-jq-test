@@ -231,6 +231,16 @@ export default {
       } else {
         if(this.$cache.local.get("manageStationSelect")){
           this.manageStationSelect = this.$cache.local.get("manageStationSelect")
+          let arr = []
+          for(let item of this.manageStationList){
+            if(item.tunnelId == this.$cache.local.get("manageStationSelect")){
+              let itm = item.ancestors.split(",")
+              arr.push(itm[itm.length - 1])
+              arr.push(item.deptId)
+            }
+          }
+          this.$cache.local.set("deptId", arr.toString());
+          // console.log(arr,"arr导航栏")
         }else{
         // if (
         //   this.$cache.local.get("manageStationSelect") ==
@@ -249,6 +259,16 @@ export default {
     changeNavSelect(val) {
       this.$store.dispatch("manage/changeTunnelId", val);
       this.$cache.local.set("manageStationSelect", val);
+      let arr = []
+      for(let item of this.manageStationList){
+        if(val == item.tunnelId){
+          let itm = item.ancestors.split(",")
+          arr.push(itm[itm.length - 1])
+          arr.push(item.deptId)
+        }
+      }
+      this.$cache.local.set("deptId", arr.toString());
+      // console.log(arr,"arr导航栏")
       // if(val != 'JQ-WeiFang-JiuLongYu-HSD'){
       //   this.$cache.local.set("manageStation",'0')
       //   // this.manageStation = '0'

@@ -71,12 +71,12 @@
                 {{ stateForm.mca_ip }}
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-show="[1,2,3,4,10,12,13].includes(this.clickEqType) && !ipShow">
+            <el-col :span="12" v-show="[1,2,3,4,10,12,13,49].includes(this.clickEqType) && !ipShow">
               <el-form-item label="plcIP:" >
                 {{ stateForm.f_ip }}
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-show="[30,31,49].includes(this.clickEqType) && !ipShow">
+            <el-col :span="12" v-show="[30,31].includes(this.clickEqType) && !ipShow">
               <el-form-item label="主机IP:" >
                 {{ stateForm.f_ip }}
               </el-form-item>
@@ -351,7 +351,7 @@
           // 查询单选框弹窗信息 -----------------------
           await getDeviceById(this.eqInfo.equipmentId).then((res) => {
             console.log(res, "查询单选框弹窗信息");
-            debugger
+            // debugger
             form = JSON.parse(JSON.stringify(res.data));
             this.title = form.eqName;
             form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
@@ -417,7 +417,7 @@
               iconUrl.push(img);
             }
           }
-          debugger
+          // debugger
           that.eqTypeStateList.push({
             type: list[i].stateTypeId,
             state: list[i].deviceState,

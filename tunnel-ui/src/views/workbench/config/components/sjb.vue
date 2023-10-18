@@ -157,7 +157,7 @@ export default {
     };
   },
   created() {
-    debugger
+    // debugger
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getMessage();
     this.getChartMes();
@@ -202,7 +202,7 @@ export default {
         console.log(response, "查询设备状态图标");
         list = response.rows;
       });
-      debugger
+      // debugger
       that.eqTypeStateList = [];
       for (let i = 0; i < list.length; i++) {
         let iconUrl = [];

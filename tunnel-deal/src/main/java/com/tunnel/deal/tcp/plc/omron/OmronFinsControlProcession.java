@@ -233,6 +233,7 @@ public class OmronFinsControlProcession {
             String s = UdpClient(ip, portNum, command);
             JSONObject jsonObject = udpCommandParse(s);
         } catch (Exception e) {
+            System.out.println(ip + ": "+sdDevices.getfEqId() + " 请求超时" + command + e.getMessage());
             updateDevStatus(sdDevices.getfEqId());
             //  报错判定设备离线，将网关设备及子设备设置为离线
 //                    sdDevicesService.updateOfflineStatus(deviceId,true);
@@ -264,6 +265,7 @@ public class OmronFinsControlProcession {
             String s = UdpClient(destinationAddress, portNum, command);
             JSONObject jsonObject = udpCommandParse(s);
         } catch (Exception e) {
+            System.out.println(destinationAddress + ": " + " 请求超时" + command + e.getMessage());
             e.printStackTrace();
         }
 
@@ -356,6 +358,7 @@ public class OmronFinsControlProcession {
                 JSONObject jsonObject = udpCommandParse(s);
                 handleDeviceData(pList,fEqId,jsonObject.getString("value"),minAddress,cmdLength,dataLength,areaCode);
             } catch (Exception e) {
+                System.out.println(ip + ": "+fEqId + " 请求超时" + command + e.getMessage());
                 updateDevStatus(fEqId);
                 return;
             }
@@ -677,6 +680,7 @@ public class OmronFinsControlProcession {
             JSONObject jsonObject = udpCommandParse(s);
             handleSinglePointDeviceData(map,jsonObject.getString("value"));
         } catch (Exception e) {
+            System.out.println(ip + ": "+fEqId + " 请求超时" + command + e.getMessage());
             updateDevStatus(fEqId);
             //  报错判定设备离线，将网关设备及子设备设置为离线
 //                    sdDevicesService.updateOfflineStatus(deviceId,true);

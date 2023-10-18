@@ -358,7 +358,7 @@ export default {
     },
     //获取当日用电的数据
     async getEchartsData() {
-      debugger
+      // debugger
       //清空上次数据
       this.XDataEnergy = []
       this.yDataEnergy = []
@@ -571,7 +571,7 @@ export default {
     },
     //获取光亮的数据
     async getEchartsDataTwo() {
-      debugger
+      // debugger
       //清空上次数据
       // this.XDataEnergy = []
       // this.yDataEnergy = []

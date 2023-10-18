@@ -12,7 +12,7 @@ export const singleCat = {
   methods: {
     //实时车辆开关
     carShowChange(val) {
-      debugger
+      // debugger
       let tunnelItems = null;
       if(!!this.tunnelItem){
         tunnelItems = this.tunnelItem
@@ -39,7 +39,7 @@ export const singleCat = {
       //车辆实际距离入口距离
       var carKm = eventIndex.distance;
       //计算
-      debugger
+      // debugger
       let imgId =  document.getElementById("config-img-id")
       console.log(imgId)
       //上

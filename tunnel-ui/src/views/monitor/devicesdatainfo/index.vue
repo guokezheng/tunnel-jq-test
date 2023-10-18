@@ -976,7 +976,7 @@ export default {
     },
 
     handleRecordy(row) {
-      debugger
+      // debugger
       this.device_boxShow = false;
       this.echartShow = false;
       this.record = true;

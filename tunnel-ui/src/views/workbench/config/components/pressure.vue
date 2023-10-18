@@ -43,18 +43,18 @@
               {{ stateForm.ip }}
             </el-form-item>
           </el-col> -->
-          <el-col :span="12" v-show="ipShow">
+          <!-- <el-col :span="12" v-show="ipShow">
             <el-form-item label="控制器IP:">
               {{ stateForm.f_ip }}
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
-          <el-col :span="12" v-show="!ipShow">
+          <!-- <el-col :span="12" v-show="!ipShow">
             <el-form-item label="控制器IP:">
               {{ stateForm.mca_ip }}
             </el-form-item>
-          </el-col>
-          <el-col :span="12" v-show="!ipShow">
+          </el-col> -->
+          <el-col :span="12">
             <el-form-item label="plcIP:">
               {{ stateForm.f_ip }}
             </el-form-item>

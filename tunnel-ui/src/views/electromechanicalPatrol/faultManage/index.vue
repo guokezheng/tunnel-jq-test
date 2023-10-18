@@ -1796,7 +1796,7 @@ export default {
         });
     },
     jointControlClick(){
-      debugger
+      // debugger
       this.visibleSync = !this.visibleSync
     },
     /** 导出按钮操作 */

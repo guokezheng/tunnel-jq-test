@@ -118,7 +118,7 @@ router.beforeEach((to, from, next) => {
       })
     } else{
       if (whiteList.indexOf(to.path) !== -1) {
-        console.log("88888")
+        console.log("在免登录白名单，直接进入")
         // 在免登录白名单，直接进入
         next()
       }else{

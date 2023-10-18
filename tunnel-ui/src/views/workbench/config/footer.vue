@@ -564,7 +564,7 @@
           tunnelId: this.tunnelId,
         };
         getCarNumber(param).then((res)=>{
-          console.log(res,"除九龙峪外的车辆监测")
+          // console.log(res,"除九龙峪外的车辆监测")
           let yData1 = res.data.cllData.length>0?res.data.cllData:[0,0]
           let yData2 = res.data.ztsData.length>0?res.data.ztsData:[0,0]
           this.$nextTick(()=>{

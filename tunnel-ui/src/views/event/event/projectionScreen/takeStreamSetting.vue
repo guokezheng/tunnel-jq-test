@@ -220,7 +220,7 @@ export default {
   watch:{
     show:{
       handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
       }
     }

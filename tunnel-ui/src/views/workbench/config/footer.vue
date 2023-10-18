@@ -916,7 +916,7 @@
         if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
           getVideoUrl()
             .then((res) => {
-              console.log(res, "机器人视频");
+              // console.log(res, "机器人视频");
               this.liveUrl5 = res.data.infrared
               // this.liveUrl5 = 'rtmp://192.168.50.123:1231/live/2'
               // this.liveUrl5 =  'http://10.7.182.85:40080/hls2FAF2DE3/9_10.7.182.85.m3u8'

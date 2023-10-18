@@ -211,10 +211,10 @@ export default {
       console.log(res,"getJlyTunnel")
       this.manageStationList = res.data;
       var test = window.location.href;
-      console.log(test,"test")
+      // console.log(test,"test")
       console.log(this.$cache.local.get(
           "manageStationSelect",
-        ),"1111111111111")
+        ),"get manageStationSelect")
       if (test.substr(test.length - 1, 1) == "1") {
         this.$store.dispatch(
           "manage/changeTunnelId",

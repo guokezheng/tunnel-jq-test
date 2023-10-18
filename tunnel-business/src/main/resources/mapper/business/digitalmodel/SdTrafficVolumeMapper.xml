@@ -157,7 +157,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectCarNumber" parameterType="java.lang.String" resultType="hashmap">
         SELECT
-            max( tv.original_data ) AS originalData,
+            max( tv.original_data + 0) AS originalData,
             tv.direction,
             max( tv.create_time ) AS create_time
         FROM

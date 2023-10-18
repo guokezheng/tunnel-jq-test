@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
-          <el-input placeholder="请输入设备名称、桩号，回车搜索" v-model="queryParams.searchValue" @keyup.enter.native="handleQuery">
+          <el-input v-model="queryParams.searchValue" @keyup.enter.native="handleQuery">
             <el-button slot="append" class="searchTable" @click="boxShow = !boxShow"></el-button>
           </el-input>
         </div>
@@ -236,7 +236,7 @@
           pageSize: 10,
           // ids: "",
           searchValue: "",
-          dateType: 2,
+          dateType: 0,
         }
         this.$refs.tableFile.clearSelection();
         this.resetForm("queryForm");

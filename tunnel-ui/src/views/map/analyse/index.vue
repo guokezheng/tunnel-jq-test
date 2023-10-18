@@ -81,12 +81,18 @@
       getTunnel() {
         listTunnels().then((response) => {
           console.log(response.rows,"全部隧道")
-          if(response.rows.length>7){
+          let arr = []
+          for(let item of response.rows){
+            if(item.tunnelId != "JQ-WeiFang-JiuLongYu-HSD"){
+              arr.push(item)
+            }
+          }
+          if(arr.length>7){
             this.rightIcon = true
           }else{
             this.rightIcon = false
           }
-          this.tunnelList = response.rows;
+          this.tunnelList = arr;
           this.radio1 = JSON.parse(this.currentTunnel).tunnelId
           // let wrap = this.$refs.scroll.$refs.wrap;
           this.wrapWith  = this.tunnelList.length * 114 

@@ -3798,7 +3798,6 @@
   }
 
   .explain-table {
-
     .el-table th.el-table__cell.is-leaf,
     .el-table td.el-table__cell {
       border-bottom: solid 1px #2C3E91 !important;
@@ -3807,7 +3806,9 @@
     .el-table {
       background: transparent !important;
       padding: 0 !important;
-
+      .el-loading-mask{
+        background: transparent;
+      }
       tr {
         background: transparent !important;
         color: #fff;

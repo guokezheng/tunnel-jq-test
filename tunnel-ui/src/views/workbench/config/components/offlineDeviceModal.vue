@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="offlineDeviceclass" custom-class="no-scroll" title="离线设备" :close-on-click-modal="false"
+  <el-dialog class="explain-table" custom-class="no-scroll" title="离线设备" :close-on-click-modal="false"
              :visible.sync="visibleSync" width="80%" destroy-on-close append-to-body :lock-scroll="true"
              :before-close="closeLogin">
     <div >
@@ -128,7 +128,6 @@
       <el-table
         v-loading="loading"
         :data="devicesList"
-        class="allTable"
         height="45vh"
         :row-key="getRowKey"
         ref="tableFile"
@@ -201,6 +200,7 @@
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
+        style="margin-top:-20px !important;"
       />
 
 

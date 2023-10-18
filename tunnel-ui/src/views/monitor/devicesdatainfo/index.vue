@@ -154,6 +154,7 @@
             </el-button>
             <el-button size="small" @click="resetQuery">刷新</el-button>
           </el-col>
+          <!--  曲线图        -->
           <el-col :span="1" :offset="13" style="margin-left: 45.166667%">
             <div @click="marketChang()">
               <i
@@ -310,6 +311,121 @@
           <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
+<!--        微波车检-->
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list8"
+          @selection-change="handleSelectionChange4"
+          v-show="searchValue == '8'"
+          class="allTable"
+          height="58vh"
+          :row-key="getRowKey"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column
+            type="index"
+            :index="indexMethod8"
+            label="序号"
+            width="68"
+            align="center"
+          ></el-table-column>
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="车流量" align="center" prop="data" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
+        <!--  温湿度传感器-->
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list7"
+          @selection-change="handleSelectionChange4"
+          v-show="searchValue == '7'"
+          class="allTable"
+          height="58vh"
+          :row-key="getRowKey"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column
+            type="index"
+            :index="indexMethod7"
+            label="序号"
+            width="68"
+            align="center"
+          ></el-table-column>
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
+        <!--  水浸传感器-->
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list6"
+          @selection-change="handleSelectionChange4"
+          v-show="searchValue == '6'"
+          class="allTable"
+          height="58vh"
+          :row-key="getRowKey"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column
+            type="index"
+            :index="indexMethod6"
+            label="序号"
+            width="68"
+            align="center"
+          ></el-table-column>
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
+        <!--  风机内外振动仪检测器-->
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list5"
+          @selection-change="handleSelectionChange4"
+          v-show="searchValue == '5'"
+          class="allTable"
+          height="58vh"
+          :row-key="getRowKey"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column
+            type="index"
+            :index="indexMethod5"
+            label="序号"
+            width="68"
+            align="center"
+          ></el-table-column>
+          <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="振动速度值" align="center" prop="ZDSD" />
+          <el-table-column label="振动幅度值" align="center" prop="data" />
+          <el-table-column label="沉降值" align="center" prop="CJZ" />
+          <el-table-column label="倾斜值" align="center" prop="QXZ" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
         <div style="height: 33px;">
           <pagination
           v-show="total > 0 && this.searchValue == '1'"
@@ -339,6 +455,34 @@
           :limit.sync="queryParams3.pageSize"
           @pagination="getList"
         />
+          <pagination
+            v-show="total > 0 && this.searchValue == '5'"
+            :total="total"
+            :page.sync="queryParams5.pageNum"
+            :limit.sync="queryParams5.pageSize"
+            @pagination="getList"
+          />
+          <pagination
+            v-show="total > 0 && this.searchValue == '6'"
+            :total="total"
+            :page.sync="queryParams6.pageNum"
+            :limit.sync="queryParams6.pageSize"
+            @pagination="getList"
+          />
+          <pagination
+            v-show="total > 0 && this.searchValue == '7'"
+            :total="total"
+            :page.sync="queryParams7.pageNum"
+            :limit.sync="queryParams7.pageSize"
+            @pagination="getList"
+          />
+          <pagination
+            v-show="total > 0 && this.searchValue == '8'"
+            :total="total"
+            :page.sync="queryParams8.pageNum"
+            :limit.sync="queryParams8.pageSize"
+            @pagination="getList"
+          />
         </div>
 
       </div>
@@ -408,6 +552,14 @@ export default {
       list2: [],
       // 表格数据  洞外
       list3: [],
+      // 风机内外振动仪检测器
+      list5: [],
+      // 水浸传感器
+      list6: [],
+      // 温湿度传感器
+      list7: [],
+      // 微波车辆检测器
+      list8: [],
       // 设备表格数据
       listTab: [],
       // 日期范围
@@ -462,6 +614,46 @@ export default {
       },
       // 查询参数 洞外
       queryParams3: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        pile: null,
+        deviceId: null,
+        ids: "",
+      },
+      // 查询风机内外振动仪检测器
+      queryParams5: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        pile: null,
+        deviceId: null,
+        ids: "",
+      },
+      // 查询水浸传感器
+      queryParams6: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        pile: null,
+        deviceId: null,
+        ids: "",
+      },
+      // 查询温湿度传感器
+      queryParams7: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        pile: null,
+        deviceId: null,
+        ids: "",
+      },
+      // 查询微波车辆检测器
+      queryParams8: {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
@@ -620,6 +812,30 @@ export default {
     indexMethod3(index) {
       return (
         index + (this.queryParams3.pageNum - 1) * this.queryParams3.pageSize + 1
+      );
+    },
+    //翻页时不刷新序号
+    indexMethod5(index) {
+      return (
+        index + (this.queryParams5.pageNum - 1) * this.queryParams5.pageSize + 1
+      );
+    },
+    //翻页时不刷新序号
+    indexMethod6(index) {
+      return (
+        index + (this.queryParams6.pageNum - 1) * this.queryParams6.pageSize + 1
+      );
+    },
+    //翻页时不刷新序号
+    indexMethod7(index) {
+      return (
+        index + (this.queryParams7.pageNum - 1) * this.queryParams7.pageSize + 1
+      );
+    },
+    //翻页时不刷新序号
+    indexMethod8(index) {
+      return (
+        index + (this.queryParams8.pageNum - 1) * this.queryParams8.pageSize + 1
       );
     },
 
@@ -1006,6 +1222,10 @@ export default {
       this.queryParams1 = this.queryParams;
       this.queryParams2 = this.queryParams;
       this.queryParams3 = this.queryParams;
+      this.queryParams5 = this.queryParams;
+      this.queryParams6 = this.queryParams;
+      this.queryParams7 = this.queryParams;
+      this.queryParams8 = this.queryParams;
       if (deviceId != null && deviceId != "") {
         //COVI
         dataLogInfoList(
@@ -1017,7 +1237,15 @@ export default {
             this.list1 = response.rows;
           } else if (searchValue == "3") {
             this.list2 = response.rows;
-          } else {
+          }  else if (searchValue == "5") {
+            this.list5 = response.rows;
+          }else if (searchValue == "6") {
+            this.list6 = response.rows;
+          }else if (searchValue == "7") {
+            this.list7 = response.rows;
+          }else if (searchValue == "8") {
+            this.list8 = response.rows;
+          }  else {
             this.list3 = response.rows;
           }
 
@@ -1080,6 +1308,14 @@ export default {
       this.queryParams2.pageSize = 10;
       this.queryParams3.pageNum = 1;
       this.queryParams3.pageSize = 10;
+      this.queryParams5.pageNum = 1;
+      this.queryParams5.pageSize = 10;
+      this.queryParams6.pageNum = 1;
+      this.queryParams6.pageSize = 10;
+      this.queryParams7.pageNum = 1;
+      this.queryParams7.pageSize = 10;
+      this.queryParams8.pageNum = 1;
+      this.queryParams8.pageSize = 10;
 
       this.resetForm("queryForms");
       //待写

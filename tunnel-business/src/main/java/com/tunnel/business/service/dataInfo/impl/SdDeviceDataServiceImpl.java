@@ -7,16 +7,14 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
-import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.dataInfo.*;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
@@ -620,7 +618,17 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
             return maps;
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);
+            if(maps.size()>0){
+                SdTunnels tunnelId = sdTunnelsMapper.selectSdTunnelsById(maps.get(0).get("tunnelId"));
+                SdDevices tunnelId1 = sdDevicesMapper.selectSdDevicesById(maps.get(0).get("deviceId"));
+                for (Map<String, String> map :maps){
+                    map.put("tunnelName",tunnelId.getTunnelName());
+                    map.put("deptName",tunnelId.getTunnelStationName());
+                    map.put("direction",tunnelId1.getDirection());
+                    map.put("pile",tunnelId1.getPile());
+                }
+            }
             return maps;
         }else {
             return null;

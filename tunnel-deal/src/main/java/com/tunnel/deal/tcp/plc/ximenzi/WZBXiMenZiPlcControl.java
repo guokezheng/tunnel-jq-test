@@ -500,8 +500,12 @@ public class WZBXiMenZiPlcControl implements GeneralControlBean, TcpClientGenera
         Long dongnei = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
         Long dongwai = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
         Long yuanchuan = Long.valueOf(DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
+        Long wendu = Long.valueOf(DevicesTypeItemEnum.WEN_DU_CHUANGAN.getCode());
+        Long shidu  = Long.valueOf(DevicesTypeItemEnum.SHI_DU_CHUANGAN.getCode());
+        Long shuijin  = Long.valueOf(DevicesTypeItemEnum.SHUI_JIN_LEVEL.getCode());
         if(itemId == co || itemId == vi || itemId == fengsu || itemId == fengxiang
-                || itemId == dongnei || itemId == dongwai || itemId == yuanchuan){
+                || itemId == dongnei || itemId == dongwai || itemId == yuanchuan|| itemId == wendu
+                || itemId == shidu|| itemId == shuijin){
             SdDeviceDataRecord record = new SdDeviceDataRecord();
             record.setDeviceId(deviceId);
             record.setData(data);

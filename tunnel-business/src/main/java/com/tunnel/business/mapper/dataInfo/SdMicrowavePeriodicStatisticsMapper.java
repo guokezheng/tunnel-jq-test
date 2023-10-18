@@ -1,6 +1,7 @@
 package com.tunnel.business.mapper.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,8 @@ public interface SdMicrowavePeriodicStatisticsMapper
      * @return 结果
      */
     public int insertSdMicrowavePeriodicStatistics(SdMicrowavePeriodicStatistics sdMicrowavePeriodicStatistics);
+
+    public List<Map<String, String>>  selectCatHistory(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
     /**
      * 修改车流量信息

@@ -1,9 +1,12 @@
 package com.tunnel.webthings.kafka.consumer;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.event.SdLaneStatistics;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.mapper.event.SdLaneStatisticsMapper;
@@ -18,6 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 读取设备、隧道基础数据
@@ -39,6 +45,9 @@ public class KafkaReadListenToBasicDataTopic {
 
     @Autowired
     private PlatformApiController platformApiController;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 监听设备基础数据
@@ -109,5 +118,31 @@ public class KafkaReadListenToBasicDataTopic {
             }
         }
         consumer.commitSync();
+    }
+
+    /**
+     * 万集车辆数据
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"tunnelRadarData"}, containerFactory = "kafkaTwoContainerFactory")
+    public void tunnelRadarData(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
+            String carData = "";
+            if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
+                carData = record.value().toString();
+            }
+            setRadarData(carData);
+        }
+        consumer.commitSync();
+    }
+
+    public void setRadarData(String carData){
+        Map<String, Object> map = (Map<String, Object>)JSON.parse(carData);
+        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(map.get("tunnelId").toString())){
+            return;
+        }
+        redisCache.setCacheObject("vehicleSnap:" + map.get("tunnelId").toString() + ":" + map.get("roadDir") + ":" + map.get("vehicleLicense"),map,1, TimeUnit.HOURS);
     }
 }

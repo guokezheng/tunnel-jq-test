@@ -150,6 +150,7 @@ export default {
       eqTypeDialogList: [],
       directionList: [],
       ipShow:false,
+      VIUnit:''
     };
   },
   methods: {
@@ -190,6 +191,7 @@ export default {
         if (response.data.VInowData) {
           this.VInowData = parseFloat(response.data.VInowData).toFixed(2) + " " + response.data.VIUnit
         }
+        this.VIUnit = response.data.VIUnit
         var coXdata = [];
         var coYdata = [];
         var viXdata = [];
@@ -219,7 +221,7 @@ export default {
         XData = viXdata;
         YData = viYdata;
         lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-        yName = "VI/M";
+        yName = this.VIUnit;
       } else {
         XData = coXdata;
         YData = coYdata;

@@ -940,7 +940,7 @@ export default {
     max-height: 35vh;
   }
   ::v-deep .el-table__fixed-body-wrapper {
-    max-height: 25.8vh;
+    max-height: 25.9vh;
   }
   ::v-deep th.el-table__cell {
     background: #004f8b;
@@ -1055,4 +1055,5 @@ export default {
     padding-right: 6px;
   }
 }
+
 </style>

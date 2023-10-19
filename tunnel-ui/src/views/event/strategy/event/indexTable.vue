@@ -1442,6 +1442,7 @@ export default {
       this.queryParams.strategyInfo = null
       this.queryParams.schedulerTime = null
       this.queryParams.jobTime = null
+      this.queryParams.eventType = null
       console.log( this.queryParams )
       this.handleQuery();
       // this.getList();

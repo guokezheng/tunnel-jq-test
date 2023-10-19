@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
-          <el-input v-model="queryParams.searchValue" @keyup.enter.native="handleQuery">
+          <el-input placeholder="请点击右侧按钮搜索" v-model="queryParams.searchValue" @keyup.enter.native="handleQuery">
             <el-button slot="append" class="searchTable" @click="boxShow = !boxShow"></el-button>
           </el-input>
         </div>
@@ -39,19 +39,19 @@
         </el-form-item>
         <el-form-item label="时间筛选" prop="timeArr">
           <el-date-picker v-if="queryParams.dateType == 2 || queryParams.dateType == 1 || queryParams.dateType == 0"
-            v-model="dateRange" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+            v-model="dateRange" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
             align="center" class="date-picker" :clearable="false" value-format="yyyy-MM-dd HH:mm:ss"
             style="width: 100%;" popper-class="elDatePicker" size="small" :picker-options="setoptions"
-            :default-time="['00:00:00', '23:59:59']">
+            :default-time="['00:00:00', '23:59:59']" key="1">
           </el-date-picker>
           <el-date-picker v-if="queryParams.dateType == 3" size="small" class="date-picker" v-model="dateRange"
             format="yyyy-MM" align="center" type="monthrange" :clearable="false" :picker-options="setDateRange"
-            range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" style="width: 100%;"
-            value-format="yyyy-MM">
+            range-separator="-" start-placeholder="开始月份" end-placeholder="结束月份" style="width: 100%;"
+            value-format="yyyy-MM" key="2">
           </el-date-picker>
-          <el-date-picker v-show="queryParams.dateType == 4" size="small" class="date-picker" v-model="dateRange"
+          <el-date-picker v-if="queryParams.dateType == 4" size="small" class="date-picker" v-model="dateRange"
             align="center" type="year" :clearable="false" :picker-options="setDateRange" style="width: 100%;"
-            format="yyyy" value-format="yyyy"></el-date-picker>
+            format="yyyy" value-format="yyyy" key="3"></el-date-picker>
         </el-form-item>
 
         <el-form-item class="bottomBox">
@@ -238,6 +238,7 @@
           searchValue: "",
           dateType: 0,
         }
+        this.dateRange = new Date()
         this.$refs.tableFile.clearSelection();
         this.resetForm("queryForm");
         this.handleQuery()
@@ -278,5 +279,7 @@
   .el-radio {
     color: #fff;
   }
-
+::v-deep .el-range-editor--small .el-range-separator{
+  line-height: 31px;
+}
 </style>

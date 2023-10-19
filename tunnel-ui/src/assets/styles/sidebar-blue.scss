@@ -1663,8 +1663,8 @@
     .el-table__footer-wrapper tbody td.el-table__cell {}
 
     .el-table__fixed-right-patch {
-      background-color: #0090D8;
-      border-bottom: 1px solid #0090D8;
+      background-color: #263481;
+      border-bottom: 1px solid #263481;
     }
 
     .energyTable {
@@ -2243,7 +2243,7 @@
 
     .el-table .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {
-      background-color: rgba($color: #2C3E91, $alpha: 0.8);
+      background-color: #263481;
       // border-bottom: solid 1px rgba(225, 228, 230, .16);
       border-bottom: none;
 
@@ -2257,15 +2257,16 @@
     }
 
     .el-table__fixed-footer-wrapper tbody td.el-table__cell {
-      background-color: #004375;
+      background-color: #263481;
       border: none;
       color: white;
     }
 
     .el-table__footer-wrapper tbody td.el-table__cell {
-      background-color: #004F8B;
+      background-color: #263481;
       border: none;
       color: white;
+      border-left: solid 1px rgba(225, 228, 230, 0.08);
     }
 
     // 表格鼠标移入行选中
@@ -2979,7 +2980,9 @@
         color: #FFF;
       }
     }
-
+    .el-month-table td.in-range div{
+      background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
+    }
     .el-date-table td.in-range div:hover {
       background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
     }
@@ -2987,7 +2990,9 @@
     .el-date-table td.in-range div {
       background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
     }
-
+    .el-month-table td.start-date .cell{
+      color: #fff;
+    }
     .el-date-table th {
       color: #C0C4CC;
       border-bottom: none !important;
@@ -3766,7 +3771,7 @@
   // 隔行变色
   .allTable {
     background: transparent;
-
+    
     .el-table__body-wrapper tbody {
       tr:nth-of-type(odd) {
         background-color: #100A43 !important;
@@ -3782,11 +3787,21 @@
 
     .el-table__header-wrapper th,
     .el-table__fixed-header-wrapper th {
-      background: rgba($color: #2C3E91, $alpha: 0.8);
+      background: #2B3C8E;
       color: #fff;
 
     }
-
+    .el-table__fixed-body-wrapper {
+      tr:nth-of-type(odd){
+        background: #100A43 !important;
+      }
+      tr:nth-of-type(even){
+        background: #181A5B !important;
+      }
+    }
+    .el-table__fixed-footer-wrapper{
+      background: #263481;
+    }
     .el-table--enable-row-hover .el-table__body tr:hover>td {
       background: #2C3E91 !important;
       color: #fff;

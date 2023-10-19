@@ -119,7 +119,7 @@ export default {
     }
   },
   created(){
-    debugger
+    // debugger
     this.wellNumOptions = []
     let valueNum = 0
     let labelNum = 0
@@ -132,7 +132,7 @@ export default {
   },
   methods:{
     closeLogin(){
-      debugger
+      // debugger
       this.visibleSync = !this.visibleSync
     },
     selectChange(){
@@ -140,12 +140,12 @@ export default {
     },
     //usa 单选事件
     radioChange(e){
-      debugger
+      // debugger
       console.log(e)
       this.loginModel.use = e
     },
     deviceLogin(){
-      debugger
+      // debugger
       this.visibleSync = !this.visibleSync
       this.$emit('wellSettingModel', this.loginModel)
 
@@ -164,7 +164,7 @@ export default {
   watch:{
     show:{
       handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
       }
     }

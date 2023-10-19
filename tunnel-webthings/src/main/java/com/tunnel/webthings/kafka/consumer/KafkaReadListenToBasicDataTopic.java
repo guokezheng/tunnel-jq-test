@@ -128,7 +128,7 @@ public class KafkaReadListenToBasicDataTopic {
      */
     @KafkaListener(topics = {"tunnelRadarData"}, containerFactory = "kafkaTwoContainerFactory")
     public void tunnelRadarData(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
+        if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
             String carData = "";
             if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
                 carData = record.value().toString();

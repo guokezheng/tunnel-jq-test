@@ -139,8 +139,9 @@ public class OmronFinsControlProcession {
 
     public static String UdpClient(String ipAddress, Integer port, String message) {
         String receiveStr = "";
+        DatagramSocket datagramSocket = null;
         try {
-            DatagramSocket datagramSocket = new DatagramSocket();
+            datagramSocket = new DatagramSocket();
             // 设置超时时间
             datagramSocket.setSoTimeout(5000);
             byte[] buf = Hex.decodeHex(message.toCharArray());
@@ -158,6 +159,7 @@ public class OmronFinsControlProcession {
             receiveStr = byteToArray(bytes, length);
             datagramSocket.close();
         } catch (Exception e) {
+            datagramSocket.close();
             throw new ParameterException(e.getMessage());
         }
         return receiveStr;

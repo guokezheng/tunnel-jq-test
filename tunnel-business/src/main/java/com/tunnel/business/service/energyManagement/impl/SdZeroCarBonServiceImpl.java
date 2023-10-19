@@ -3,10 +3,13 @@ package com.tunnel.business.service.energyManagement.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.datacenter.domain.enumeration.ZeroTunnelEnum;
+import com.tunnel.business.datacenter.util.DESUtil;
+import com.tunnel.business.datacenter.util.DateUtils;
 import com.tunnel.business.service.energyManagement.SdZeroCarBonService;
 import com.tunnel.business.utils.sso.AuthUtil;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -40,11 +43,25 @@ public class SdZeroCarBonServiceImpl implements SdZeroCarBonService {
     @Value("${sso.zeroPassword}")
     public String zeroPassword;
 
+    @Value("${sso.zeroUrl}")
+    public String zeroUrl;
+
     public String getZeroUrl(String tunnelId){
-        String zeroToken = getZeroToken();
+        /*String zeroToken = getZeroToken();
         String zeroCode = getZeroCode(zeroToken);
-        String url = "http://10.166.132.26/carbon-ui/#/login?code="+zeroCode+"&&asideCollapse=false&&route=tunnel/home?pointId="+ ZeroTunnelEnum.getValue(tunnelId);
+        String url = "http://10.166.154.106:31263/carbon-ui/#/login?code="+zeroCode+"&&asideCollapse=false&&route=tunnel/home?pointId="+ ZeroTunnelEnum.getValue(tunnelId);*/
+        String url = zeroUrl+"/carbon-ui/single"+ "?u=FKqlFHFeIte74%2BYFhTlQBQ==&p=cIMwNZZjjB5tpl8j8g/uMQ==&t=" + getEscape(getEscData(DateUtils.getNowDate().getTime()+"")) + "&route=suidao%3F+%26roadId%3DS000637" + "%26stakeNum%3D" + getEscape(ZeroTunnelEnum.getStake(tunnelId)) + "%26code%3D" + ZeroTunnelEnum.getValue(tunnelId);
         return url;
+    }
+
+    public String getEscData(String data){
+        String escData = DESUtil.encryptDesToBase64(data, "CPs6i7cqjEthTZ4I8wU");
+        return escData;
+    }
+
+    public String getEscape(String data){
+        data = data.replaceAll("\\+","%2B");
+        return data;
     }
 
     /**

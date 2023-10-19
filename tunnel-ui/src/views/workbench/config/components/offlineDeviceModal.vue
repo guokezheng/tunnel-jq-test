@@ -517,7 +517,7 @@ export default {
 
   methods: {
     closeLogin() {
-      debugger
+      // debugger
       this.visibleSync = !this.visibleSync
     },
     // 关闭级联选择器时 把打开的二级菜单折叠
@@ -541,7 +541,7 @@ export default {
       );
     },
     bodyCloseMenus(e) {
-      debugger
+      // debugger
       let self = this;
       if (self.boxShow) {
         if (
@@ -1071,7 +1071,7 @@ export default {
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
-    debugger
+    // debugger
     document.addEventListener("click", this.bodyCloseMenus);
   },
   props: {
@@ -1080,7 +1080,7 @@ export default {
   watch: {
     show: {
       async handler(newValue, oldValue) {
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
       }
     },

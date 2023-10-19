@@ -62,4 +62,12 @@ public class RadarTemporaryTask {
         SdLaneStatisticsMapper statisticsMapper = SpringUtils.getBean(SdLaneStatisticsMapper.class);
         statisticsMapper.clearLaneData();
     }
+
+    /**
+     * 情况当天车辆数据
+     */
+    public void clearCarData(){
+        SdRadarDetectDataTemporaryMapper mapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
+        mapper.clearCarData();
+    }
 }

@@ -1036,7 +1036,7 @@
                 :value="item.dictValue"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="事件类型" prop="eventType">
+          <el-form-item label="事件类型" prop="eventType" v-if="strategyActive == 'zidong'">
             <el-select clearable v-model="queryParams.eventType" placeholder="请选择事件类型" style="width: 100%">
               <el-option v-for="dict in eventTypeList" :key="dict.id" :label="dict.eventType" :value="dict.id" />
             </el-select>

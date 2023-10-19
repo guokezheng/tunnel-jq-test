@@ -139,8 +139,9 @@ public class OmronFinsControlProcession {
 
     public static String UdpClient(String ipAddress, Integer port, String message) {
         String receiveStr = "";
+        DatagramSocket datagramSocket = null;
         try {
-            DatagramSocket datagramSocket = new DatagramSocket();
+            datagramSocket = new DatagramSocket();
             // 设置超时时间
             datagramSocket.setSoTimeout(5000);
             byte[] buf = Hex.decodeHex(message.toCharArray());
@@ -158,6 +159,7 @@ public class OmronFinsControlProcession {
             receiveStr = byteToArray(bytes, length);
             datagramSocket.close();
         } catch (Exception e) {
+            datagramSocket.close();
             throw new ParameterException(e.getMessage());
         }
         return receiveStr;
@@ -422,6 +424,13 @@ public class OmronFinsControlProcession {
                 }
 //            System.out.println("测试配置：pointConfig="+pointConfig+",eqId="+eqId);
                 data = getFinalData(eqId,data,pointConfig,dataLengthStr);
+
+                // Vi  数值千米换算成米 待优化 ，从数据库配置
+                if(itemId.equals(String.valueOf(DevicesTypeItemEnum.VI.getCode())) && !"JQ-WeiFang-JiuLongYu-HSD".equals(itemMap.get("eqTunnelId"))){
+                    BigDecimal dValue = new BigDecimal(data);
+                    dValue = dValue.multiply(BigDecimal.valueOf(1000));
+                    data = String.valueOf(dValue);
+                }
 
                 //存储实时数据
                 dataSave(fEqId,eqId,data,itemId);

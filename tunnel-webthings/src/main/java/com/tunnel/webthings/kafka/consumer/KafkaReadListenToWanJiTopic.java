@@ -30,7 +30,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -77,6 +79,10 @@ public class KafkaReadListenToWanJiTopic {
      */
     @Resource(name = "threadPoolTaskExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Autowired
+    @Qualifier("kafkaTwoTemplate")
+    private KafkaTemplate<String, String> kafkaTwoTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToWanJiTopic.class);
 
@@ -402,7 +408,7 @@ public class KafkaReadListenToWanJiTopic {
             detectDataMapper.insertSdRadarDetectData(radarDetectData);
             if(StringUtils.isNotEmpty(radarDetectData.getVehicleLicense()) && StringUtils.isNotNull(radarDetectData.getVehicleLicense())){
                 //将数据推送至物联
-                //sendKafka(sdRadarDetectData);
+                sendKafka(radarDetectData);
                 setCarsnapRedis(radarDetectData);
             }
         }
@@ -752,5 +758,24 @@ public class KafkaReadListenToWanJiTopic {
             log.error("推送物联事件出现异常{}",JSON.toJSONString(map));
             future.cancel(true);
         }
+    }
+
+    /**
+     * 将数据推送至物联
+     * @param sdRadarDetectData
+     */
+    public void sendKafka(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = new JSONObject(map);
+        kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
 }

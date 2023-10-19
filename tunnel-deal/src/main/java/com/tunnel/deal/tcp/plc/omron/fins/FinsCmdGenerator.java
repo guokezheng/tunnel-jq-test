@@ -68,7 +68,7 @@ public class FinsCmdGenerator {
         FinsReadSendCmd send = new FinsReadSendCmd();
 //        send.setLength();
         send.setDa1(String.format("%02x",getIPLast(destinationAddress)));
-        send.setSa1(String.format("%02x",getIPLast(sourceAddress)));
+        send.setSa1("C0");
         //16进制数，不需要转换
         send.setArea(area);
         //转16进制前补0,2字节4位

@@ -472,6 +472,14 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
                 dataNum = dataNum.setScale(2,BigDecimal.ROUND_HALF_UP);
                 result = String.valueOf(dataNum);
             }
+
+            // Vi  数值千米换算成米  待优化 ，从数据库配置
+            if(itemId.equals(String.valueOf(DevicesTypeItemEnum.VI.getCode()))){
+                BigDecimal dValue = new BigDecimal(data);
+                dValue = dValue.multiply(BigDecimal.valueOf(1000));
+                result = String.valueOf(dValue);
+            }
+
             //如果是整数模拟量,直接保存
             //更新实时数据
             SdDevices sdDevices = new SdDevices();

@@ -68,3 +68,6 @@ device:
   hongmeng:
     #正式环境部署地址
     url: http://10.7.187.28:60400/qxsd-iot
+
+#万集车流量
+wj_carVolume: gsy

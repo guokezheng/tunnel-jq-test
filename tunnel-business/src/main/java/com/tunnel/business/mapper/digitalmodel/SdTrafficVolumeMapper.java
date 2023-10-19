@@ -71,5 +71,5 @@ public interface SdTrafficVolumeMapper
      */
     public int deleteSdTrafficVolumeByIds(@Param("ids") Long[] ids);
 
-    List<Map<String, Object>> selectCarNumber(@Param("tunnelId") String tunnelId);
+    List<SdTrafficVolume> selectCarNumber(@Param("tunnelId") String tunnelId);
 }

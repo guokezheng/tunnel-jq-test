@@ -380,18 +380,18 @@ public class RadarTask {
             ResponseEntity<Map> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, Map.class);
             HashMap<String, Object> body = (HashMap<String, Object>)exchange.getBody();
             if("success".equals(body.get("status").toString())){
-                List<Map<String, Object>> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
+                List<SdTrafficVolume> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
                 Map<String, Object> data = (Map<String, Object> )body.get("data");
                 String up = "";
                 String down = "";
                 if(data != null){
-                    for(Map<String, Object> objectMap : mapList){
-                        if("1".equals(objectMap.get("direction").toString())){
-                            Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                    for(SdTrafficVolume objectMap : mapList){
+                        if("1".equals(objectMap.getDirection())){
+                            Integer oldData = objectMap.getOriginalNum();
                             Integer newData = Integer.valueOf(data.get("up").toString());
                             up = (newData - oldData) + "";
                         }else {
-                            Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                            Integer oldData = objectMap.getOriginalNum();
                             Integer newData = Integer.valueOf(data.get("down").toString());
                             down = (newData - oldData) + "";
                         }

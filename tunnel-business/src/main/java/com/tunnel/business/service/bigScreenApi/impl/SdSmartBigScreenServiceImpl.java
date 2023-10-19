@@ -12,6 +12,7 @@ import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
+import com.tunnel.business.domain.event.SdTrafficVolume;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
@@ -486,12 +487,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Override
     public AjaxResult getCarNumber(String tunnelId) {
-        List<Map<String, Object>> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
+        List<SdTrafficVolume> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
         List<String> cllList = new ArrayList<>();
         List<String> ztsList = new ArrayList<>();
-        for(Map<String,Object> item : mapList){
-            cllList.add(item.get("originalData").toString());
-            String redisKry = "carVolume:" + tunnelId + ":" + item.get("direction").toString();
+        for(SdTrafficVolume item : mapList){
+            cllList.add(item.getOriginalNum()+"");
+            String redisKry = "carVolume:" + tunnelId + ":" + item.getDirection();
             ztsList.add(redisCache.getCacheObject(redisKry) == null ? "0" : redisCache.getCacheObject(redisKry).toString());
         }
         Map<String, Object> map = new HashMap<>();

@@ -4505,8 +4505,8 @@
                             this.selectedIconList[j].electricity =
                               deviceData.electricity;
                           } else if (deviceData.eqType == 10) {
-                            this.selectedIconList[j].electricity =
-                              deviceData.mode 
+                            this.selectedIconList[j].electricity = 
+                              deviceData.mode == "远程" ? "" : deviceData.mode
                               // + " " + deviceData.electricity;
                           }
                           //取设备运行状态图标

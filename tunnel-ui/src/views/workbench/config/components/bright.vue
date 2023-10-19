@@ -85,8 +85,8 @@
               <span style="padding-left: 10px" v-if="nowData">lux</span>
             </el-form-item>
           </el-col>
-          
-          
+
+
           <el-col :span="12">
             <el-form-item
               label="设备状态:"
@@ -176,7 +176,7 @@ export default {
           }else{
             this.ipShow = false
           }
-          
+
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -266,7 +266,7 @@ export default {
         },
         legend: {
           show: true,
-          data: this.eqInfo.clickEqType == 18?[]:["当前隧道", "传统隧道"],
+          data: this.eqInfo.clickEqType == 18?[]:["当前隧道"],
           textStyle: {
             color: "#AFAFAF",
             fontSize: 10,
@@ -371,28 +371,28 @@ export default {
             },
             data: yData1,
           },
-          {
-              type: "line",
-              smooth: true, // 平滑曲线显示
-              color: "#FAC858",
-              lineStyle: {
-                width: 1,
-              },
-              // stack: "Total",
-              // areaStyle: {},
-              symbol: "circle",
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white",
-                },
-              },
-              // emphasis: {
-              //   focus: "series",
-              // },
-              name: "传统隧道",
-              data: yData2,
-            },
+          // {
+          //     type: "line",
+          //     smooth: true, // 平滑曲线显示
+          //     color: "#FAC858",
+          //     lineStyle: {
+          //       width: 1,
+          //     },
+          //     // stack: "Total",
+          //     // areaStyle: {},
+          //     symbol: "circle",
+          //     symbolSize: [7, 7],
+          //     itemStyle: {
+          //       normal: {
+          //         borderColor: "white",
+          //       },
+          //     },
+          //     // emphasis: {
+          //     //   focus: "series",
+          //     // },
+          //     name: "传统隧道",
+          //     data: yData2,
+          //   },
         ],
       };
 

@@ -1,6 +1,6 @@
 <template>
   <el-dialog class="explain-table  offlinclass" custom-class="no-scroll" title="离线设备" :close-on-click-modal="false"
-             :visible.sync="visibleSync" width="80%" destroy-on-close append-to-body :lock-scroll="true"
+             :visible.sync="visibleSync" width="60%" destroy-on-close append-to-body :lock-scroll="true"
              :before-close="closeLogin">
     <div >
       <!-- 全局搜索 -->
@@ -152,7 +152,7 @@
           label="设备名称"
           align="center"
           prop="eqName"
-          width="150"
+          width="250"
           show-overflow-tooltip
         />
         <el-table-column

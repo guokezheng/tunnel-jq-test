@@ -303,6 +303,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         } else if (searchValue.equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
             maps = sdDeviceDataMapper.selectDNDataLineList(beginTime, endTime, deviceId);
             return maps;
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
+           maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            return maps;
         } else if (searchValue.equals(DeviceType.DONGFANGDUITEM.getCode())) {//风机内外振动仪检测器
              maps = sdDeviceDataMapper.selectFJDataList(beginTime, endTime, deviceId);
             return maps;

@@ -76,5 +76,5 @@ public interface SdMicrowavePeriodicStatisticsMapper
      * @param statistics
      * @return
      */
-    List<Map<String, String>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics);
+    List<Map<String, Integer>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics);
 }

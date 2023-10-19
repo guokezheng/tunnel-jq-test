@@ -1511,6 +1511,9 @@ export default {
       this.queryParams8 = this.queryParams;
       if (deviceId != null && deviceId != "") {
         //COVI
+        debugger
+        console.log(this.queryParams)
+        console.log(this.dateRange)
         dataLogInfoList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {

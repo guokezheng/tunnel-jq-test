@@ -74,5 +74,5 @@ public interface ISdMicrowavePeriodicStatisticsService
      * @param statistics
      * @return
      */
-    Map<String, List<Map<String, String>>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics);
+    Map<String, List<Map<String, Integer>>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics);
 }

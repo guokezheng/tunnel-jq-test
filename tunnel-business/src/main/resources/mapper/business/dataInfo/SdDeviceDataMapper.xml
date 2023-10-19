@@ -251,7 +251,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
-        where b.eq_type = 17 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        where b.eq_type = 17
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+          and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
@@ -266,7 +269,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
-        where b.eq_type = 5 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        where b.eq_type = 5
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+          and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
@@ -286,7 +292,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
-        where b.eq_type = 48 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        where b.eq_type = 48
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+            and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
@@ -301,7 +310,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT JOIN sys_dict_data e ON e.dict_value = b.eq_direction AND e.dict_type = "sd_direction"
         LEFT JOIN sys_dept f ON f.dept_id = c.dept_id
         LEFT JOIN sd_device_type_item g ON g.id = a.item_id
-        WHERE b.eq_type = 42 AND a.create_time BETWEEN DATE_FORMAT(#{beginTime}, '%Y-%m-%d %H:%i:%s') AND DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%s')
+        WHERE b.eq_type = 42
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+          AND a.create_time BETWEEN DATE_FORMAT(#{beginTime}, '%Y-%m-%d %H:%i:%s') AND DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%s')
+        </if>
         <if test="deviceId != null and deviceId != ''"> AND b.eq_id = #{deviceId}</if>
         GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i')
         ORDER BY a.create_time DESC
@@ -317,7 +329,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
-        where b.eq_type = 41 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        where b.eq_type = 41
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+          and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i'),eqId
         ORDER BY a.create_time desc
@@ -331,7 +346,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
-        where b.eq_type = 18 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        where b.eq_type = 18
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+          and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc

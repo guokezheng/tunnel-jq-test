@@ -1,9 +1,13 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
@@ -116,17 +120,37 @@ public class SdMicrowavePeriodicStatisticsServiceImpl implements ISdMicrowavePer
     }
 
     @Override
-    public Map<String, List<Map<String, String>>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics) {
-        Map<String, List<Map<String, String>>> map = new HashMap<>();
+    public Map<String, List<Map<String, Integer>>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics) {
+        Map<String, List<Map<String, Integer>>> map = new HashMap<>();
         //一车道
         statistics.setLaneNo(1L);
-        List<Map<String, String>> laneNoOne = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+        List<Map<String, Integer>> laneNoOne = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
         //二车道
         statistics.setLaneNo(2L);
-        List<Map<String, String>> laneNoTwo = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+        List<Map<String, Integer>> laneNoTwo = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
         //三车道
         statistics.setLaneNo(3L);
-        List<Map<String, String>> laneNoThree = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+        List<Map<String, Integer>> laneNoThree = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+
+        // 格式化时间，只保留到小时
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
+        // 获取当前时间
+        LocalDateTime now = LocalDateTime.now();
+        String formattedTime = now.format(formatter);
+
+        System.out.println("当前时间到小时：" + formattedTime);
+
+        laneNoOne = laneNoOne.stream()
+                .filter(person -> person.get("order_hour")<=  Integer.parseInt(formattedTime.split(" ")[1]))
+                .collect(Collectors.toList());
+        laneNoTwo = laneNoTwo.stream()
+                .filter(person -> person.get("order_hour")<= Integer.parseInt(formattedTime.split(" ")[1]) )
+                .collect(Collectors.toList());
+        laneNoThree = laneNoThree.stream()
+                .filter(person -> person.get("order_hour") <= Integer.parseInt(formattedTime.split(" ")[1]) )
+                .collect(Collectors.toList());
+
+
         map.put("laneNoOne",laneNoOne);
         map.put("laneNoTwo",laneNoTwo);
         map.put("laneNoThree",laneNoThree);

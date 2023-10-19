@@ -1026,6 +1026,9 @@
         return formattedHours + ':' + formattedMinutes;
       },
       lightDatafiler(list1) {
+        list1.sort(function(a, b) {
+          return new Date(a.createTime) - new Date(b.createTime);
+        });
         let num = 0
         // 过滤后的列表
         const filteredList = list1.filter((entity, index) => {
@@ -1037,9 +1040,11 @@
             const prevTime = new Date(list1[index - num].createTime);
             const currTime = new Date(list1[index].createTime);
             const diffInMinutes = (currTime - prevTime) / (1000 * 60); // 计算相邻实体的时间差，单位为分钟
-            num = num + 1
+
             if (diffInMinutes >= 5) {
               num = 0
+            }else{
+              num =num+1
             }
             return diffInMinutes >= 5; // 判断时间差是否大于等于5分钟
           }

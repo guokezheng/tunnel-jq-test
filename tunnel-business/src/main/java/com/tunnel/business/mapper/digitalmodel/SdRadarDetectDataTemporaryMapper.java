@@ -97,4 +97,6 @@ public interface SdRadarDetectDataTemporaryMapper
      * @return
      */
     public List<String> hourVehicleData();
+
+    int clearCarData();
 }

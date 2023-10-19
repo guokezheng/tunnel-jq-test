@@ -244,4 +244,8 @@
         GROUP BY
             ddt.vehicle_license
     </select>
+
+    <delete id="clearCarData">
+        TRUNCATE TABLE `sd_radar_detect_data`
+    </delete>
 </mapper>

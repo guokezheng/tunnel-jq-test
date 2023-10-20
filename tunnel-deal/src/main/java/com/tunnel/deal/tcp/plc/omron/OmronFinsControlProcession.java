@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.ParameterException;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
@@ -26,12 +27,7 @@ import com.tunnel.deal.tcp.client.netty.TcpNettySocketClient;
 import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.plc.omron.fins.*;
 import com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask;
-import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.tcp.util.NumberSystemConvert;
-import com.zc.common.core.ThreadPool.ThreadPool;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,14 +41,12 @@ import java.math.BigDecimal;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.*;
-import static com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask.commandLock;
 
 /**
  * @author zhai
@@ -94,6 +88,12 @@ public class OmronFinsControlProcession {
 
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
+
+    /**
+     * redis工具类
+     */
+    @Autowired
+    private RedisCache redisCache;
 
     OmronFinsControlProcession(){
         OmronHandler omronHandler = new OmronHandler();
@@ -236,9 +236,7 @@ public class OmronFinsControlProcession {
             JSONObject jsonObject = udpCommandParse(s);
         } catch (Exception e) {
             System.out.println(ip + ": "+sdDevices.getfEqId() + " 请求超时" + command + e.getMessage());
-            updateDevStatus(sdDevices.getfEqId());
-            //  报错判定设备离线，将网关设备及子设备设置为离线
-//                    sdDevicesService.updateOfflineStatus(deviceId,true);
+            //updateDevStatus(sdDevices.getfEqId());
             return AjaxResult.error("设备指令发送报错");
         }
 
@@ -361,7 +359,7 @@ public class OmronFinsControlProcession {
                 handleDeviceData(pList,fEqId,jsonObject.getString("value"),minAddress,cmdLength,dataLength,areaCode);
             } catch (Exception e) {
                 System.out.println(ip + ": "+fEqId + " 请求超时" + command + e.getMessage());
-                updateDevStatus(fEqId);
+                //updateDevStatus(fEqId);
                 return;
             }
         }
@@ -527,6 +525,7 @@ public class OmronFinsControlProcession {
         //设置设备在线
         devicesService.updateOnlineStatus(eqId,false);
         devicesService.updateOnlineStatus(fEqId,false);
+        redisCache.setCacheObject("pushData:" + eqId,"",10, TimeUnit.MINUTES);
         //异步推送万集数据
         threadPoolTaskExecutor.execute(()->{
             pushWanJi(eqId);
@@ -548,11 +547,15 @@ public class OmronFinsControlProcession {
      * @param eqId
      */
     private void pushWanJi(String eqId){
-        SdDevices sdDevices = devicesService.selectSdDevicesById(eqId);
-        List<SdDevices> sdDevicesList =  new ArrayList<>();
-        sdDevicesList.add(sdDevices);
-        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
-        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
+        try{
+            SdDevices sdDevices = devicesService.selectSdDevicesById(eqId);
+            List<SdDevices> sdDevicesList =  new ArrayList<>();
+            sdDevicesList.add(sdDevices);
+            List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
+            kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
+        }catch (Exception e){
+            e.getMessage();
+        }
     }
 
     /**
@@ -690,9 +693,7 @@ public class OmronFinsControlProcession {
             handleSinglePointDeviceData(map,jsonObject.getString("value"));
         } catch (Exception e) {
             System.out.println(ip + ": "+fEqId + " 请求超时" + command + e.getMessage());
-            updateDevStatus(fEqId);
-            //  报错判定设备离线，将网关设备及子设备设置为离线
-//                    sdDevicesService.updateOfflineStatus(deviceId,true);
+            //updateDevStatus(fEqId);
             return;
         }
     }

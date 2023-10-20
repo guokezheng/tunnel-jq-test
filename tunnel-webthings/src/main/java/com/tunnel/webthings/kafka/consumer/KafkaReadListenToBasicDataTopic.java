@@ -140,9 +140,6 @@ public class KafkaReadListenToBasicDataTopic {
 
     public void setRadarData(String carData){
         Map<String, Object> map = (Map<String, Object>)JSON.parse(carData);
-        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(map.get("tunnelId").toString())){
-            return;
-        }
         redisCache.setCacheObject("vehicleSnap:" + map.get("tunnelId").toString() + ":" + map.get("roadDir") + ":" + map.get("vehicleLicense"),map,1, TimeUnit.HOURS);
     }
 }

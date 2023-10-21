@@ -239,7 +239,7 @@ export default {
     line-height: 20px;
   }
   ::v-deep .el-checkbox__label {
-    font-size: 16px;
+    font-size: 0.7vw;
     padding-left: 8px;
   }
   ::v-deep .el-checkbox__inner {
@@ -248,5 +248,8 @@ export default {
 }
 .theme-blue .box {
   background: none !important;
+}
+.el-tree{
+  background: transparent !important;
 }
 </style>

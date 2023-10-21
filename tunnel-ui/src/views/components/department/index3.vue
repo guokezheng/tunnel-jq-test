@@ -10,6 +10,7 @@
       placeholder="请选择归属部门"
       noResultsText="暂无数据"
       :beforeClearAll="clearable"
+      size="small"
     />
   </div>
 </template>

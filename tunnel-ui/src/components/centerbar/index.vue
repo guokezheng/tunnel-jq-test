@@ -208,7 +208,7 @@ export default {
           arr.push(item);
         }
       }
-      console.log(arr, "arr");
+      console.log(arr, "路由");
       let num = 2;
       if (this.userName == "admin") {
         num = 2;

@@ -2224,7 +2224,33 @@
     .vue-treeselect__single-value {
       color: #fff;
     }
+/* //树形菜单 */
+  .vue-treeselect__menu {
+    background: #2C3E91;
+    border: none;
+  }
 
+  /* //hover */
+  .vue-treeselect__option--highlight {
+    background-color: #4659B4 !important;
+  }
+
+  /* //选中的menu */
+  .vue-treeselect__option--selected {
+    background: #2C3E91;
+  }
+
+  /* //menu文字 */
+  .vue-treeselect__label {
+    color: #fff;
+    font-size: 0.7vw;
+    font-weight: normal;
+  }
+
+  /* //menu-icon */
+  .vue-treeselect__option-arrow-container .vue-treeselect__option-arrow {
+    color: #fff !important;
+  }
     // 时间框背景色
     .el-range-editor.el-input__inner {
       background-color: rgba(20, 34, 111, 0.74);

@@ -1640,7 +1640,9 @@
   }
 
   #app {
-
+    .buttons .el-button--mini{
+      font-size: 0.7vw;
+    }
     .buttonsDeawer,
     .indicatorLight,
     .brightnessControl,
@@ -3727,7 +3729,7 @@
     }
 
     .pagination-container {
-      margin-bottom: 10px !important;
+      margin-bottom: 0px !important;
 
       .el-pagination.is-background .el-pager li {
         border: solid 1px #25678D;
@@ -3983,10 +3985,10 @@
       background-color: transparent !important;
       border: none !important;
       width: 2vw;
-      font-size: 0.5vw;
+      font-size: 0.7vw;
 
       :hover {
-        font-size: 0.6vw;
+        font-size: 0.7vw;
       }
 
       .el-icon-minus,
@@ -4002,7 +4004,7 @@
       background: linear-gradient(2deg, #00070D, #005AA8);
       border: solid 1px #00c8ff !important;
       line-height: 3vh;
-      font-size: 0.5vw;
+      font-size: 0.7vw;
     }
 
     .switchStyle .is-checked .el-switch__core {

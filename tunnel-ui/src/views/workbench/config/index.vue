@@ -412,13 +412,6 @@
                                 item.eqType
                               ) + 'px'
                             : item.iconHeight + 'px',
-                          fontSize: item.associated_device_id
-                            ? getBoardStyle(
-                                item.associated_device_id,
-                                'fontSize',
-                                item.eqType
-                              ) + 'px'
-                            : '15px',
                         }" :src="getTypePic(item)" :class="
                           item.eqName == screenEqName ? 'screenEqNameClass' : ''
                         ">
@@ -441,7 +434,7 @@
                             )" :key="itm.associated_device_id" :style="{
                               color: getColorStyle(itm.COLOR),
                               fontFamily:getFont(itm.FONT),
-                            }" style="padding-top: 10px">{{ itm.CONTENT }}</span>
+                            }" style="padding-top: 10px;">{{ itm.CONTENT }}</span>
                         </div>
                       </div>
                       <div v-show="item.eqType == 36" class="boardBox2" :style="{
@@ -464,14 +457,6 @@
                                   item.eqType
                                 ) + 'px'
                               : item.iconHeight + 'px',
-                          fontSize:
-                            item.associated_device_id != undefined
-                              ? getBoardStyle(
-                                  item.associated_device_id,
-                                  'fontSize',
-                                  item.eqType
-                                ) + 'px'
-                              : '15px',
                         }" :src="getTypePic(item)" :class="
                           item.eqName == screenEqName ? 'screenEqNameClass' : ''
                         ">
@@ -2728,13 +2713,15 @@
 
             if (type == "content") {
               return arr;
-            } else if (type == "fontSize") {
-              if (eqType && eqType == 16) {
-                return fontS / 2;
-              } else if (eqType && eqType == 36) {
-                return fontS / 4;
-              }
-            } else if (type == "array") {
+            } 
+            // else if (type == "fontSize") {
+            //   if (eqType && eqType == 16) {
+            //     return fontS / 2;
+            //   } else if (eqType && eqType == 36) {
+            //     return fontS / 4;
+            //   }
+            // } 
+            else if (type == "array") {
               return array;
             }
           } else {
@@ -2753,9 +2740,11 @@
               }
             } else if (type == "content") {
               return "山东高速欢迎您";
-            } else if (type == "fontSize") {
-              return 15;
-            } else if (type == "array") {
+            } 
+            // else if (type == "fontSize") {
+            //   return 15;
+            // }
+             else if (type == "array") {
               let array = [{
                 CONTENT: "山东高速欢迎您",
                 COLOR: "黄色"
@@ -5780,14 +5769,14 @@
     justify-content: center;
   }
 
-  //多选框选中样式
+  /* //多选框选中样式
   ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
     background-color: white;
     width: 14px;
     height: 14px;
-  }
+  } */
 
-  ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after {
+  /* ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after {
     height: 9px;
     width: 6px;
     border: 2px solid #dcad76; // 是改这里的颜色
@@ -5795,7 +5784,7 @@
     border-top: 0;
     top: 0px;
     left: 2px;
-  }
+  } */
 
   ::v-deep .el-date-editor.el-input,
   .el-date-editor.el-input__inner {
@@ -7200,6 +7189,7 @@
     writing-mode: tb-rl;
     white-space: nowrap;
     text-align: center;
+    font-size: 0.7vw;
     padding: 2px;
     border: solid 1.5px #f9b554;
     display: flex;
@@ -7232,6 +7222,7 @@
     writing-mode: tb-rl;
     white-space: nowrap;
     text-align: center;
+    font-size: 0.7vw;
     padding: 4px;
     border: solid 1.5px #f9b554;
     display: flex;

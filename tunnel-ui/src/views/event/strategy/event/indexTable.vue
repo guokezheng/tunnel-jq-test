@@ -48,7 +48,7 @@
             :model="queryParams"
             label-width="75px"
           >
-            <!-- <el-form-item label="隧道名称" prop="tunnelId">
+            <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == 0">
               <el-select
                 v-model="queryParams.tunnelId"
                 placeholder="请选择隧道"
@@ -62,7 +62,7 @@
                   :value="item.tunnelId"
                 />
               </el-select>
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="方向" prop="direction">
               <el-select
                 v-model="queryParams.direction"

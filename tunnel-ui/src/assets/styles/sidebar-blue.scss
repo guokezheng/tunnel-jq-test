@@ -2253,6 +2253,7 @@
   .vue-treeselect__option-arrow-container .vue-treeselect__option-arrow {
     color: #fff !important;
   }
+  
     // 时间框背景色
     .el-range-editor.el-input__inner {
       background-color: rgba(20, 34, 111, 0.74);
@@ -3018,7 +3019,7 @@
     .el-date-table td.in-range div {
       background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
     }
-    .el-month-table td.start-date .cell{
+    .el-month-table td.start-date .cell,.el-month-table td.end-date .cell{
       color: #fff;
     }
     .el-date-table th {

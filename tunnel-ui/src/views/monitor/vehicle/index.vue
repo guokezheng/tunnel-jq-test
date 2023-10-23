@@ -69,7 +69,7 @@
       <el-table-column label="所属隧道" align="center" prop="tunnelName" />
       <el-table-column label="方向" align="center" prop="direction" :formatter="getDirection" />
       <el-table-column label="车流量" align="center" prop="carNum" />
-      <el-table-column label="时间" align="center" prop="createTime" />
+      <el-table-column label="时间" align="center" prop="carTime" />
     </el-table>
 
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"

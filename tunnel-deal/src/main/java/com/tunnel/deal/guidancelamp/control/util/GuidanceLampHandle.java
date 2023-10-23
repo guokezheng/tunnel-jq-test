@@ -101,7 +101,12 @@ public class GuidanceLampHandle {
                 List<SdDevices> devicesListByFEqId = sdDevicesMapper.getDevicesListByFEqId(deviceId);
                         devicesListByFEqId = devicesListByFEqId.stream()
                 .sorted(Comparator.comparing(SdDevices::getPileNum))
-                .collect(Collectors.toList());
+                                .distinct()
+                                .collect(Collectors.collectingAndThen(
+                                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(SdDevices::getPile))),
+                                        ArrayList::new
+                                ));
+
                 Integer index = -1;
                 for (int i = 0; i < devicesListByFEqId.size(); i++) {
                     if (devicesListByFEqId.get(i).getPile().equals(fireMark)) {
@@ -109,6 +114,7 @@ public class GuidanceLampHandle {
                         break;
                     }
                 }
+                index =index+1;
                 Map codeMap = InductionlampUtil.getEvacuationSignLightMode(ctrState,Integer.parseInt(brightness),Integer.parseInt(frequency),index.toString());
                 client.pushCode(codeMap.get("code").toString());
                 //获取返回数据

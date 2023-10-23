@@ -124,7 +124,9 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                 for(String id : strings){
                     codeList.remove(id);
                 }
-                infoList = itemizedMapper.getItemizedMap(codeList);
+                if(codeList.size() != 0){
+                    infoList = itemizedMapper.getItemizedMap(codeList);
+                }
             }
 
         } else if ("4".equals(tabType)) { // 分类
@@ -142,7 +144,9 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                 for(String id : strings){
                     codeList.remove(id);
                 }
-                infoList = classificationMapper.getFicationMap(codeList);
+                if(codeList.size() != 0){
+                    infoList = classificationMapper.getFicationMap(codeList);
+                }
             }
         } else {
             throw new Exception("tabType类型错误");

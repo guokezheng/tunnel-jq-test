@@ -616,20 +616,20 @@
                       AND rddt.vehicle_type IN ( '14', '17', '26' )
                   </if>
             ) b LEFT JOIN sd_tunnels t ON b.tunnel_id = t.tunnel_id
+        GROUP BY b.tunnel_id
     </select>
 
     <select id="getTunnelVehicleSpeed" resultType="hashmap">
         SELECT
-            ls.tunnel_id AS tunnelId,
-            -- ROUND( ROUND( sum( ls.speed )/ 2, 2 )/ 3, 2 ) AS speed
-            ROUND( sum( ls.speed )/ count( ls.id ), 2 ) AS speed
+            rddt.tunnel_id AS tunnelId,
+            ROUND(( SUM( rddt.speed )/ count( rddt.tunnel_id )), 2 ) AS speed
         FROM
-            sd_lane_statistics ls
+            sd_radar_detect_data_temporary rddt
         WHERE
             1 = 1
-          AND ls.TIME IN ( SELECT Max( TIME ) FROM sd_lane_statistics GROUP BY tunnel_id )
+          AND rddt.detect_time >= ( NOW() - INTERVAL 1 HOUR )
         GROUP BY
-            ls.tunnel_id
+            rddt.tunnel_id
     </select>
     
     <select id="getTunnelDataStatis" resultType="hashmap">

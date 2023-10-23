@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="carNumber"    column="car_number"    />
         <result property="tunnelName"    column="tunnel_name"    />
         <result property="carNum"    column="carNum"    />
+        <result property="carTime"    column="carTime"    />
     </resultMap>
 
     <sql id="selectSdTrafficVolume">
@@ -30,10 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <choose>
                 <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i:00' ) </when>
                 <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:00:00' ) </when>
-                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d 00:00:00' ) </when>
-                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m-01 00:00:00' ) </when>
-                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y-01-01 00:00:00' ) </when>
-            </choose> AS create_time,
+                <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d' ) </when>
+                <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' ) </when>
+                <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) </when>
+            </choose> AS carTime,
             t.tunnel_name
         FROM
             sd_traffic_volume tv
@@ -182,8 +183,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <when test="dateType == 0">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:%i:00' ) </when>
             <when test="dateType == 1">DATE_FORMAT( tv.create_time, '%Y-%m-%d %H:00:00' ) </when>
             <when test="dateType == 2">DATE_FORMAT( tv.create_time, '%Y-%m-%d 00:00:00' ) </when>
-            <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m-01 00:00:00' ) </when>
-            <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y-01-01 00:00:00' ) </when>
+            <when test="dateType == 3">DATE_FORMAT( tv.create_time, '%Y-%m' ) </when>
+            <when test="dateType == 4">DATE_FORMAT( tv.create_time, '%Y' ) </when>
         </choose> AS carTime,
         t.tunnel_name AS tunnelName,
         #{dateType} AS dateType

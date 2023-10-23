@@ -578,6 +578,22 @@ public class KafkaReadListenToWanJiTopic {
         return  map;
     }
 
+    public Map setCarsnapRedisTwo(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        map.put("detectTime",sdRadarDetectData.getDetectTime());
+        map.put("vehicleId",sdRadarDetectData.getVehicleId());
+        return  map;
+    }
+
     public void saveAnalysisCarsnapTwo(JSONArray jsonArray,Long time, String tunnelId, String direction, Date timeStamp){
         List<Map> list = new ArrayList<>();
         for(int i = 0; i < jsonArray.size(); i++){
@@ -627,7 +643,7 @@ public class KafkaReadListenToWanJiTopic {
         if(StringUtils.isNotEmpty(radarDetectData.getVehicleLicense()) && StringUtils.isNotNull(radarDetectData.getVehicleLicense())){
             //将数据推送至物联
             //sendKafka(sdRadarDetectData);
-            return setCarsnapRedis(radarDetectData);
+            return setCarsnapRedisTwo(radarDetectData);
         }
         return null;
     }
@@ -767,7 +783,7 @@ public class KafkaReadListenToWanJiTopic {
     public void sendKafka(SdRadarDetectData sdRadarDetectData){
         Map<String, Object> map = new HashMap<>();
         map.put("tunnelId",sdRadarDetectData.getTunnelId());
-        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
         map.put("speed",sdRadarDetectData.getSpeed());
         map.put("laneNo",sdRadarDetectData.getLaneNum());
         map.put("vehicleType",sdRadarDetectData.getVehicleType());
@@ -775,6 +791,8 @@ public class KafkaReadListenToWanJiTopic {
         map.put("lng",sdRadarDetectData.getLongitude());
         map.put("distance",sdRadarDetectData.getDistance());
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        map.put("detectTime",sdRadarDetectData.getDetectTime());
+        map.put("vehicleId",sdRadarDetectData.getVehicleId());
         JSONObject jsonObject = new JSONObject(map);
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }

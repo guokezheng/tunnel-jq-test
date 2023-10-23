@@ -306,18 +306,21 @@ public class RadarTask {
         for(Map<String, Object> item : list){
             try {
                 SdRadarDetectDataTemporary temporary = new SdRadarDetectDataTemporary();
-                temporary.setTunnelId(item.get("tunnelId").toString());
-                temporary.setRoadDir(item.get("roadDir").toString());
-                temporary.setSpeed(item.get("speed").toString());
-                temporary.setVehicleType(item.get("vehicleType").toString());
-                temporary.setLatitude(item.get("lat").toString());
-                temporary.setLongitude(item.get("lng").toString());
-                temporary.setDistance(item.get("distance").toString());
-                temporary.setVehicleLicense(item.get("vehicleLicense").toString());
-                temporary.setVehicleId(item.get("vehicleId").toString());
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-                Date detectTime1 = sdf.parse(item.get("detectTime").toString());
-                temporary.setDetectTime(detectTime1);
+                temporary.setTunnelId(item.get("tunnelId") == null ? "" : item.get("tunnelId").toString());
+                temporary.setRoadDir(item.get("roadDir") == null ? "" : item.get("roadDir").toString());
+                temporary.setSpeed(item.get("speed") == null ? "" : item.get("speed").toString());
+                temporary.setVehicleType(item.get("vehicleType") == null ? "" : item.get("vehicleType").toString());
+                temporary.setLatitude(item.get("lat") == null ? "" : item.get("lat").toString());
+                temporary.setLongitude(item.get("lng") == null ? "" : item.get("lng").toString());
+                temporary.setDistance(item.get("distance") == null ? "" : item.get("distance").toString());
+                temporary.setVehicleLicense(item.get("vehicleLicense") == null ? "" : item.get("vehicleLicense").toString());
+                temporary.setVehicleId(item.get("vehicleId") == null ? "" : item.get("vehicleId").toString());
+                /*SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+                Date detectTime1 = sdf.parse(item.get("detectTime") == null ? "" : item.get("detectTime").toString());*/
+                if(item.get("timeStamp") != null || !"".equals(item.get("timeStamp").toString())){
+                    Date timeStamp = dateZh(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, new Date(Long.valueOf(item.get("timeStamp").toString()))));
+                    temporary.setDetectTime(timeStamp);
+                }
                 boolean contains = hourVehicleData.contains(temporary.getVehicleLicense());
                 if(contains){
                     temporaryMapper.updateSyncDetectData(temporary);
@@ -380,18 +383,18 @@ public class RadarTask {
             ResponseEntity<Map> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, Map.class);
             HashMap<String, Object> body = (HashMap<String, Object>)exchange.getBody();
             if("success".equals(body.get("status").toString())){
-                List<Map<String, Object>> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
+                List<SdTrafficVolume> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
                 Map<String, Object> data = (Map<String, Object> )body.get("data");
                 String up = "";
                 String down = "";
                 if(data != null){
-                    for(Map<String, Object> objectMap : mapList){
-                        if("1".equals(objectMap.get("direction").toString())){
-                            Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                    for(SdTrafficVolume objectMap : mapList){
+                        if("1".equals(objectMap.getDirection())){
+                            Integer oldData = objectMap.getOriginalNum();
                             Integer newData = Integer.valueOf(data.get("up").toString());
                             up = (newData - oldData) + "";
                         }else {
-                            Integer oldData = Integer.valueOf(objectMap.get("originalData").toString());
+                            Integer oldData = objectMap.getOriginalNum();
                             Integer newData = Integer.valueOf(data.get("down").toString());
                             down = (newData - oldData) + "";
                         }
@@ -417,5 +420,25 @@ public class RadarTask {
         sdTrafficVolume.setOriginalData(originalData);
         sdTrafficVolume.setRemark(yuanData);
         volumeMapper.insertSdTrafficVolume(sdTrafficVolume);
+    }
+
+    /**
+     * 时间转换
+     * @param timeData
+     * @return
+     */
+    public Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
     }
 }

@@ -1640,7 +1640,9 @@
   }
 
   #app {
-
+    .buttons .el-button--mini{
+      font-size: 0.7vw;
+    }
     .buttonsDeawer,
     .indicatorLight,
     .brightnessControl,
@@ -2224,7 +2226,34 @@
     .vue-treeselect__single-value {
       color: #fff;
     }
+/* //树形菜单 */
+  .vue-treeselect__menu {
+    background: #2C3E91;
+    border: none;
+  }
 
+  /* //hover */
+  .vue-treeselect__option--highlight {
+    background-color: #4659B4 !important;
+  }
+
+  /* //选中的menu */
+  .vue-treeselect__option--selected {
+    background: #2C3E91;
+  }
+
+  /* //menu文字 */
+  .vue-treeselect__label {
+    color: #fff;
+    font-size: 0.7vw;
+    font-weight: normal;
+  }
+
+  /* //menu-icon */
+  .vue-treeselect__option-arrow-container .vue-treeselect__option-arrow {
+    color: #fff !important;
+  }
+  
     // 时间框背景色
     .el-range-editor.el-input__inner {
       background-color: rgba(20, 34, 111, 0.74);
@@ -2990,7 +3019,7 @@
     .el-date-table td.in-range div {
       background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
     }
-    .el-month-table td.start-date .cell{
+    .el-month-table td.start-date .cell,.el-month-table td.end-date .cell{
       color: #fff;
     }
     .el-date-table th {
@@ -3701,7 +3730,7 @@
     }
 
     .pagination-container {
-      margin-bottom: 10px !important;
+      margin-bottom: 0px !important;
 
       .el-pagination.is-background .el-pager li {
         border: solid 1px #25678D;
@@ -3957,10 +3986,10 @@
       background-color: transparent !important;
       border: none !important;
       width: 2vw;
-      font-size: 0.5vw;
+      font-size: 0.7vw;
 
       :hover {
-        font-size: 0.6vw;
+        font-size: 0.7vw;
       }
 
       .el-icon-minus,
@@ -3976,7 +4005,7 @@
       background: linear-gradient(2deg, #00070D, #005AA8);
       border: solid 1px #00c8ff !important;
       line-height: 3vh;
-      font-size: 0.5vw;
+      font-size: 0.7vw;
     }
 
     .switchStyle .is-checked .el-switch__core {

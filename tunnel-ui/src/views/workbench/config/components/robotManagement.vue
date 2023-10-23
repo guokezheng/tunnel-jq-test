@@ -22,7 +22,7 @@ export default {
   },
   created() {
     if(this.userName == "admin_sso"){
-      this.url = ""
+      this.url = "http://10.7.179.33:8080/robot/robotManagementDisable.html"
     }else{
       this.url = "http://10.7.179.33:8080/robot/robotManagement.html"
     }

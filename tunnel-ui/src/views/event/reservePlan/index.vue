@@ -286,12 +286,13 @@
         </el-form-item>
         <el-form-item label="事件类型" prop="planTypeId" key="planTypeId">
           <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 100%"
-            v-if="reservePlanDrawForm.prevControlType">
+            >
+            <!-- v-if="reservePlanDrawForm.prevControlType" -->
             <el-option v-for="(item, index) in planTypeData" :key="index" :label="item.eventType" :value="item.id" />
           </el-select>
-          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 100%" v-else>
+          <!-- <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 100%" v-else>
             <el-option v-for="(item, index) in planTypeDataAll" :key="index" :label="item.eventType" :value="item.id" />
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="事件等级" prop="eventGrade">
           <el-select v-model="reservePlanDrawForm.eventGrade" placeholder="请选择事件等级" style="width: 100%">
@@ -1109,7 +1110,7 @@
         }
       },
       getPlanTypeData(id) {
-        for (var item of this.planTypeDataAll) {
+        for (var item of this.planTypeData) {
           if (item.id == id) {
             return item.eventType;
           }
@@ -2073,7 +2074,7 @@
       getPlanType() {
         let data = {};
         listEventType(data).then((response) => {
-          this.planTypeDataAll = response.rows;
+          this.planTypeData = response.rows;
         });
       },
       //关闭drawer

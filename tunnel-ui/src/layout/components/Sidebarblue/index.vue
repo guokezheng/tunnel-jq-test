@@ -116,7 +116,7 @@ export default {
         bottom:unset;
         position: unset;
     }
-    .theme-dark  .el-scrollbar__wrap{
+    .theme-dark,.theme-blue  .el-scrollbar__wrap{
         margin-right: 0px !important;
         margin-bottom: 0px !important;
     }

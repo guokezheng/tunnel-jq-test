@@ -2002,6 +2002,34 @@
       color: #fff;
     }
 
+    /* //树形菜单 */
+    .vue-treeselect__menu {
+      background: #003D6C;
+      border: solid 1px #093566;
+    }
+
+    /* //hover */
+    .vue-treeselect__option--highlight {
+      background-color: #004F8B !important;
+    }
+
+    /* //选中的menu */
+    .vue-treeselect__option--selected {
+      background: #003D6C;
+    }
+
+    /* //menu文字 */
+    .vue-treeselect__label {
+      color: #fff;
+      font-size: 0.7vw;
+      font-weight: normal;
+    }
+
+    /* //menu-icon */
+    .vue-treeselect__option-arrow-container .vue-treeselect__option-arrow {
+      color: #fff !important;
+    }
+
     // 时间框背景色
     .el-range-editor.el-input__inner {
       background-color: #004F8B;
@@ -2755,12 +2783,16 @@
     .el-date-table td.in-range div {
       background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
     }
-    .el-month-table td.in-range div{
+
+    .el-month-table td.in-range div {
       background-color: rgba($color: #0292BA, $alpha: 0.5) !important;
     }
-    .el-month-table td.start-date .cell, .el-month-table td.end-date .cell{
-      color:#fff !important;
+
+    .el-month-table td.start-date .cell,
+    .el-month-table td.end-date .cell {
+      color: #fff !important;
     }
+
     .el-date-table th {
       color: #C0C4CC;
       border-bottom: none !important;

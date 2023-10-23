@@ -34,6 +34,16 @@ public class SdTrafficVolume extends BaseEntity {
 
     private String originalData;
 
+    private int originalNum;
+
+    public int getOriginalNum() {
+        return originalNum;
+    }
+
+    public void setOriginalNum(int originalNum) {
+        this.originalNum = originalNum;
+    }
+
     @Excel(name = "统计类型",readConverterExp = "0=分,1=时,2=日,3=月,4=年")
     private int dateType;
 

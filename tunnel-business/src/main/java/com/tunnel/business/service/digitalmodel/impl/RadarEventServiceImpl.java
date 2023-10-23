@@ -784,6 +784,7 @@ public class RadarEventServiceImpl implements RadarEventService {
      */
     public SdRadarDevice setRadarDevice(SdDevices f){
         SdRadarDevice sdRadarDevice = new SdRadarDevice();
+        sdRadarDevice.setTunnelId(f.getEqTunnelId());
         sdRadarDevice.setDeviceId(f.getEqId());
         sdRadarDevice.setIp(f.getIp());
         sdRadarDevice.setDeviceType(f.getEqType() + "");

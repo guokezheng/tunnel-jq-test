@@ -630,7 +630,15 @@ public class workspaceController extends BaseController {
         }
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode().longValue()) {
+            //查询子设备
+            SdDevices dev = new SdDevices();
+            dev.setFEqId(fEqId);
+            List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
+            sdOperationLog.setEqTypeId(list.get(0).getEqType());
+        }else {
+            sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        }
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());

@@ -217,7 +217,7 @@ spring:
         auto-offset-reset: earliest  #kafka出现错误重启后，会找到未消费的offset继续消费
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        max-poll-records: 5
+        max-poll-records: 1000
         security:
           protocol: SASL_PLAINTEXT
           properties:
@@ -225,6 +225,8 @@ spring:
               mechanism: SCRAM-SHA-256
               jaas:
                 config: org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';
+      properties:
+        max.poll.interval.ms: 1000000
     #    listener:
     #      ack-mode: manual
     #      concurrency: 3

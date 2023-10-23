@@ -22,6 +22,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -126,14 +127,16 @@ public class KafkaReadListenToBasicDataTopic {
      * @param acknowledgment
      * @param consumer
      */
-    @KafkaListener(topics = {"tunnelRadarData"}, containerFactory = "kafkaTwoContainerFactory")
-    public void tunnelRadarData(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+    @KafkaListener(topics = {"tunnelRadarData"}, containerFactory = "kafkaTwoContainerFactoryTwo")
+    public void tunnelRadarData(List<ConsumerRecord<String,Object>> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
             String carData = "";
-            if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
-                carData = record.value().toString();
+            for(ConsumerRecord<String,Object> item : record){
+                if(StringUtils.isNotNull(item.value()) && StringUtils.isNotEmpty(item.value().toString())){
+                    carData = item.value().toString();
+                }
+                setRadarData(carData);
             }
-            setRadarData(carData);
         }
         consumer.commitSync();
     }

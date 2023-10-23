@@ -1904,6 +1904,8 @@ public class KafkaReadListenToHuaWeiTopic {
         map.put("lng",sdRadarDetectData.getLongitude());
         map.put("distance",sdRadarDetectData.getDistance());
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        map.put("detectTime",sdRadarDetectData.getDetectTime());
+        map.put("vehicleId",sdRadarDetectData.getVehicleId());
         JSONObject jsonObject = new JSONObject(map);
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }

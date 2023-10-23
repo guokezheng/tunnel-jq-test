@@ -317,9 +317,16 @@ public class RadarTask {
                 temporary.setVehicleId(item.get("vehicleId") == null ? "" : item.get("vehicleId").toString());
                 /*SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
                 Date detectTime1 = sdf.parse(item.get("detectTime") == null ? "" : item.get("detectTime").toString());*/
-                if(item.get("timeStamp") != null || !"".equals(item.get("timeStamp").toString())){
-                    Date timeStamp = dateZh(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, new Date(Long.valueOf(item.get("timeStamp").toString()))));
-                    temporary.setDetectTime(timeStamp);
+                if(item.get("detectTime") != null){
+                    boolean detectTime = isNumeric(item.get("detectTime").toString());
+                    Date detectTimeData = DateUtils.getNowDate();
+                    if(detectTime){
+                        detectTimeData = dateZh(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(Long.valueOf(item.get("detectTime").toString()))));
+                    }else {
+                        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+                        detectTimeData = sdf.parse(item.get("detectTime") == null ? "" : item.get("detectTime").toString());
+                    }
+                    temporary.setDetectTime(detectTimeData);
                 }
                 boolean contains = hourVehicleData.contains(temporary.getVehicleLicense());
                 if(contains){
@@ -440,5 +447,17 @@ public class RadarTask {
             e.printStackTrace();
         }
         return time;
+    }
+
+    /**
+     * 监测是否是纯数字
+     * @param s
+     * @return
+     */
+    public final static boolean isNumeric(String s) {
+        if (s != null && !"".equals(s.trim()))
+            return s.matches("^[0-9]*$");
+        else
+            return false;
     }
 }

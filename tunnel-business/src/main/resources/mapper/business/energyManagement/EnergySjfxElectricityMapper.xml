@@ -32,14 +32,26 @@
             #{item}
         </foreach>
         and es.statistics_type = #{statisticsType}
-        and DATE_FORMAT (es.create_time,'%Y-%m') &gt;= DATE_FORMAT(#{statisticsDate},
+        and DATE_FORMAT (es.create_time,
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        ) &gt;= DATE_FORMAT(#{statisticsDate},
         <choose>
             <when test="statisticsType == 0">'%Y-%m-%d'</when>
             <when test="statisticsType == 1">'%Y-%m'</when>
             <when test="statisticsType == 2">'%Y'</when>
         </choose>
         )
-        and DATE_FORMAT (es.create_time,'%Y-%m') &lt; DATE_FORMAT(
+        and DATE_FORMAT (es.create_time,
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        ) &lt; DATE_FORMAT(
         date_add( #{statisticsDate},
         <choose>
             <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>

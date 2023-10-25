@@ -474,10 +474,13 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             }
 
             // Vi  数值千米换算成米  待优化 ，从数据库配置
-            if(itemId.equals(String.valueOf(DevicesTypeItemEnum.VI.getCode()))){
-                BigDecimal dValue = new BigDecimal(data);
-                dValue = dValue.multiply(BigDecimal.valueOf(1000));
-                result = String.valueOf(dValue);
+            if(itemId == DevicesTypeItemEnum.VI.getCode()){
+                Float num = NumberSystemConvert.convertHexToFloat(data);
+                //精确2位小数
+                BigDecimal dataNum = new BigDecimal(num);
+                dataNum = dataNum.multiply(BigDecimal.valueOf(1000));
+                dataNum = dataNum.setScale(2,BigDecimal.ROUND_HALF_UP);
+                result = String.valueOf(dataNum);
             }
 
             //如果是整数模拟量,直接保存

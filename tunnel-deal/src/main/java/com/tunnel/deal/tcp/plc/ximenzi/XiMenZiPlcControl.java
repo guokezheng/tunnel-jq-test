@@ -464,6 +464,10 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
                 result = state;
             }else if(dataLength == 2){
                 //模拟量，4个字节，2个寄存器地址，双字
+                if(valueMap.get(pointAddress+1) == null){
+                    System.out.println("没有数据，pointAddress="+pointAddress);
+                    continue;
+                }
                 data = data + valueMap.get(pointAddress + 1);
                 Float num = NumberSystemConvert.convertHexToFloat(data);
                 //精确2位小数

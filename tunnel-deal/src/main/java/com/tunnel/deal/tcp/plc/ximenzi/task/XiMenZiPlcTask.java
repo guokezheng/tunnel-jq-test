@@ -161,6 +161,10 @@ public class XiMenZiPlcTask {
             if(num > 30){
                 for(int addressCursor = minAddressNum; addressCursor < maxAddressNum; ){
                     Integer addressEnd = addressCursor + 50;
+                    //超过点位最大地址，读取可能会报错，需要特殊处理
+                    if(addressEnd > maxAddressNum){
+                        addressEnd = maxAddressNum;
+                    }
                     Integer cmdLength = addressEnd + Integer.valueOf(dataLength) - addressCursor;
                     modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,String.valueOf(addressCursor),String.valueOf(cmdLength));
 

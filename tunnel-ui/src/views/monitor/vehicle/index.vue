@@ -205,8 +205,10 @@
       bodyCloseMenus(e) {
         let self = this;
         if (self.boxShow == true) {
-          if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-            self.boxShow = false;
+          if (this.$refs.main && !this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+            if(self.boxShow == true){
+              self.boxShow = false;
+            }
           }
         }
       },
@@ -245,7 +247,7 @@
       },
       /** 搜索按钮操作 */
       handleQuery() {
-        console.log("搜索")
+        this.boxShow = false
         this.getList();
       },
       /** 数据报表Tab导出按钮操作 */

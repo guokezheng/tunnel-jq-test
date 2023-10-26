@@ -2103,6 +2103,7 @@
       handleQuery() {
         // this.queryParams.pageNum = 1;
         this.$refs.planTable.clearSelection();
+        this.boxShow = false
         this.queryParams.pageNum = 1;
         this.queryParams.pageSize = 10;
         this.$refs.planTable.bodyWrapper.scrollTop = 0;

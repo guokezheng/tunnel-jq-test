@@ -414,7 +414,7 @@ export default {
   background: #fff;
   div {
     width: 100%;
-    height: 150px !important;
+    height: 200px !important;
   }
 }
 ::v-deep .el-dialog {

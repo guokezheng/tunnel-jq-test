@@ -259,7 +259,7 @@ export default {
       background-color: gainsboro;
       color: black;
       text-align: center;
-      font-size: 0.5vw;
+      font-size: 0.7vw;
       display: flex;
       align-items: center;
       justify-content: center;

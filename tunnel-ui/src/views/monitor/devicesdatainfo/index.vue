@@ -364,8 +364,8 @@
           <el-table-column label="管理机构" align="center" prop="deptName" />
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="湿度" align="center" prop="sd" />
-          <el-table-column label="温度" align="center" prop="wd" />
+          <el-table-column label="湿度(%)" align="center" prop="sd" />
+          <el-table-column label="温度(℃)" align="center" prop="wd" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
         <!--  水浸传感器-->
@@ -393,7 +393,7 @@
           <el-table-column label="管理机构" align="center" prop="deptName" />
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="液位" align="center" prop="data" />
+          <el-table-column label="液位(m)" align="center" prop="data" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
         <!--  风机内外振动仪检测器-->
@@ -421,10 +421,10 @@
           <el-table-column label="管理机构" align="center" prop="deptName" />
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="振动速度值" align="center" prop="ZDSD" />
-          <el-table-column label="振动幅度值" align="center" prop="data" />
-          <el-table-column label="沉降值" align="center" prop="CJZ" />
-          <el-table-column label="倾斜值" align="center" prop="QXZ" />
+          <el-table-column label="振动速度值(mm/s)" align="center" prop="ZDSD" />
+          <el-table-column label="振动幅度值(μm)" align="center" prop="data" />
+          <el-table-column label="沉降值(mm)" align="center" prop="CJZ" />
+          <el-table-column label="倾斜值(°)" align="center" prop="QXZ" />
           <el-table-column label="沉降倾斜告警" align="center" prop="CJQXGJ">
             <template slot-scope="scope">
               {{ getshakeAlaram(scope.row.CJQXGJ) }}

@@ -34,7 +34,7 @@
             <!--            </el-row>-->
             <div class="searchBox searchBoxLight" v-show="boxShow" ref="cc">
               <el-form ref="queryForm" :inline="true" :model="queryParams" label-width="75px">
-                <el-form-item label="隧道名称" prop="tunnelId">
+                <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStation == 0">
                   <el-select v-model="queryParams.tunnelId" placeholder="请选择隧道" clearable size="small">
                     <el-option v-for="item in tunnelData" :key="item.tunnelId" :label="item.tunnelName"
                       :value="item.tunnelId" />
@@ -304,6 +304,7 @@
     },
     data() {
       return {
+        manageStation: this.$cache.local.get("manageStation"),
         visibleSync: false,
         dataTree: [{
             label: "日常联控",
@@ -668,9 +669,11 @@
 
       /** 查询隧道列表 */
       async getTunnels() {
-        if (this.$cache.local.get("manageStation") == "1") {
-          this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
-        }
+        // console.log(this.$cache.local.get("manageStation"),"manageStation")
+        // console.log(,"manageStationSelect")
+        // if (this.$cache.local.get("manageStation") == "1") {
+        //   this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
+        // }
         await listTunnels(this.paramsData).then((response) => {
           this.tunnelData = response.rows;
           console.log(this.tunnelData, "隧道列表");
@@ -1006,10 +1009,14 @@
             this.visibleSync = !this.visibleSync;
 
           })
+          if(this.manageStation == '1'){
+            this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+          }else{
+            await this.getTunnels();
+          }
           //查询主策略
           this.selectListStrategy();
           //查询隧道列表
-          await this.getTunnels();
           //查询方向
           await this.getDirection();
           // this.$nextTick(() => {

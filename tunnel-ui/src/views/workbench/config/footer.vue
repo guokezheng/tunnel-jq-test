@@ -1234,6 +1234,7 @@
 
           let option = {
             legend: {
+              selectedMode:false, // 顶部色块取消小手
               data: ["总量", "在途"],
               icon: "circle",
               orient: "horizontal",

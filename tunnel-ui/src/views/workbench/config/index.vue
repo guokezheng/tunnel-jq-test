@@ -2239,7 +2239,7 @@
       // const scrollview = this.$refs['divRoller']
       // 添加滚动监听，该滚动监听了拖拽滚动条
       // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-      window.addEventListener("scroll", this.mouseSrollAuto);
+      window.addEventListener("scroll", this.mouseSrollAuto,true);
 
       window.addEventListener("click", this.otherClose);
       $(document).on("click", function (e) {
@@ -5190,6 +5190,7 @@
         // this.stateForm = {};
       },
       handleTableWheel(event) {
+        // console.log(event,"event")
         let obj = this.$refs.divRoller;
         if (this.handleTableWheelSwithch == true) {
           this.tableZoom(obj, event);

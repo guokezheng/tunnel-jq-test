@@ -386,29 +386,32 @@ public class RadarTask {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-            ResponseEntity<Map> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, Map.class);
-            HashMap<String, Object> body = (HashMap<String, Object>)exchange.getBody();
-            if("success".equals(body.get("status").toString())){
-                List<SdTrafficVolume> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
-                Map<String, Object> data = (Map<String, Object> )body.get("data");
-                String up = "";
-                String down = "";
-                if(data != null){
-                    for(SdTrafficVolume objectMap : mapList){
-                        if("1".equals(objectMap.getDirection())){
-                            Integer oldData = objectMap.getOriginalNum();
-                            Integer newData = Integer.valueOf(data.get("up").toString());
-                            up = (newData - oldData) + "";
-                        }else {
-                            Integer oldData = objectMap.getOriginalNum();
-                            Integer newData = Integer.valueOf(data.get("down").toString());
-                            down = (newData - oldData) + "";
+            try{
+                ResponseEntity<Map> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, Map.class);
+                HashMap<String, Object> body = (HashMap<String, Object>)exchange.getBody();
+                if("success".equals(body.get("status").toString())){
+                    List<SdTrafficVolume> mapList = volumeMapper.selectCarNumber(item.get("tunnelId"));
+                    Map<String, Object> data = (Map<String, Object> )body.get("data");
+                    String up = "";
+                    String down = "";
+                    if(data != null){
+                        for(SdTrafficVolume objectMap : mapList){
+                            if("1".equals(objectMap.getDirection())){
+                                Integer oldData = objectMap.getOriginalNum();
+                                Integer newData = Integer.valueOf(data.get("up").toString());
+                                up = (newData - oldData) + "";
+                            }else {
+                                Integer oldData = objectMap.getOriginalNum();
+                                Integer newData = Integer.valueOf(data.get("down").toString());
+                                down = (newData - oldData) + "";
+                            }
                         }
                     }
+                    setTrafficVolumeData(item.get("tunnelId"),"1",up == "" ? "0" : up,data == null ? "0" : data.get("up").toString(), JSON.toJSONString(data));
+                    setTrafficVolumeData(item.get("tunnelId"),"2",down == "" ? "0" : down,data == null ? "0" : data.get("down").toString(),JSON.toJSONString(data));
                 }
-                setTrafficVolumeData(item.get("tunnelId"),"1",up == "" ? "0" : up,data == null ? "0" : data.get("up").toString(), JSON.toJSONString(data));
-                setTrafficVolumeData(item.get("tunnelId"),"2",down == "" ? "0" : down,data == null ? "0" : data.get("down").toString(),JSON.toJSONString(data));
+            }catch (Exception e){
+                continue;
             }
         }
     }

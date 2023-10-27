@@ -1426,6 +1426,7 @@ export default {
 
     /** 搜索按钮操作 */
     handleQuery() {
+      this.boxShow = false
       // this.queryParams.pageNum = 1;
       this.$refs.tableFile1.clearSelection();
       //this.$refs.tableFile2.clearSelection();

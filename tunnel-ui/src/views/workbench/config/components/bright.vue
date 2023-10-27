@@ -115,7 +115,7 @@
         >
       </el-radio-group>
       <div id="Inside" style="margin-bottom: 10px"></div>
-      <div slot="footer" class="dialog-footer">
+      <div  class="dialog-footer">
         <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
@@ -264,22 +264,22 @@ export default {
             // saveAsImage: { show: true }
           },
         },
-        legend: {
-          show: true,
-          data: this.eqInfo.clickEqType == 18?[]:["当前隧道"],
-          textStyle: {
-            color: "#AFAFAF",
-            fontSize: 10,
-          },
-          itemWidth: 10,
-          itemHeight: 10,
-          itemStyle: {},
-          top: "top",
-          left: "center",
-          padding: [6, 15, 0, 15],
-          icon: "circle",
-          orient: "horizontal",
-        },
+        // legend: {
+        //   show: true,
+        //   data: this.eqInfo.clickEqType == 18?[]:["当前隧道"],
+        //   textStyle: {
+        //     color: "#AFAFAF",
+        //     fontSize: 10,
+        //   },
+        //   itemWidth: 10,
+        //   itemHeight: 10,
+        //   itemStyle: {},
+        //   top: "top",
+        //   left: "center",
+        //   padding: [6, 15, 0, 15],
+        //   icon: "circle",
+        //   orient: "horizontal",
+        // },
         grid: {
           top: "24%",
           bottom: "18%",
@@ -423,11 +423,11 @@ export default {
 #Outside,
 #Inside {
   width: 100%;
-  height: 150px;
+  height: 200px;
   background: #fff;
   div {
     width: 100%;
-    height: 150px !important;
+    height: 200px !important;
   }
 }
 ::v-deep .el-radio-button--medium .el-radio-button__inner {

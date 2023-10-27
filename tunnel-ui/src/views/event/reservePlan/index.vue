@@ -636,7 +636,7 @@
         reserveId: "",
         //新增弹窗
         dialogFormVisible: false,
-        visibleAdd: false,
+        // visibleAdd: false,
         //配置策略
         strategyVisible: false,
         //策略数组
@@ -1233,31 +1233,29 @@
       // },
       //点击了取消
       cancelsubmitUpload() {
+        this.resetReservePlanDrawForm();
         this.dialogFormVisible = false;
-        this.fileList = [];
-        this.$nextTick(() => {
-          this.$refs["addform1"].resetFields();
-        });
         this.$refs.planTable.clearSelection();
         //this.handleQuery();
-        this.resetReservePlanDrawForm();
       },
       //form表单置空
       resetReservePlanDrawForm() {
-        (this.reservePlanDrawForm = {
-          planTypeId: null, //事件类型
-          direction:null,
-          eventGrade:null,
-          planName: null, //预案名称
-          category: null, //预案类别
-          planDescription: null, //预案描述
-          strategyId: null, //多个策略ID
-          strategyNames: null, //多个策略的名称，以：分割
-          planFileId: null,
-          tunnelId: null, //隧道
-          sId: null, //分区隧道
-        }),
-        (this.fileList = []);
+        this.reservePlanDrawForm = {
+          planTypeId: '', //事件类型
+          direction:'',
+          eventGrade:'',
+          planName: '', //预案名称
+          category: '', //预案类别
+          planDescription: '', //预案描述
+          strategyId: '', //多个策略ID
+          strategyNames: '', //多个策略的名称，以：分割
+          planFileId: '',
+          tunnelId: '', //隧道
+          sId: '', //分区隧道
+          prevControlType:'',
+          planDescription:'',
+        },
+        this.fileList = [];
         this.removeIds = [];
         this.planChangeSink = null;
         this.multipleSelectionIds = [];
@@ -1924,7 +1922,7 @@
         this.title = "新增预案";
         this.planChangeSink = "add";
         this.dialogFormVisible = true;
-        this.visibleAdd = true;
+        // this.visibleAdd = true;
       },
       changePartitionSelection(e) {
         this.$forceUpdate();
@@ -2105,6 +2103,7 @@
       handleQuery() {
         // this.queryParams.pageNum = 1;
         this.$refs.planTable.clearSelection();
+        this.boxShow = false
         this.queryParams.pageNum = 1;
         this.queryParams.pageSize = 10;
         this.$refs.planTable.bodyWrapper.scrollTop = 0;

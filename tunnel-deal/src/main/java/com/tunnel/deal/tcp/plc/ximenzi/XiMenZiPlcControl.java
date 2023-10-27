@@ -464,6 +464,10 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
                 result = state;
             }else if(dataLength == 2){
                 //模拟量，4个字节，2个寄存器地址，双字
+                if(valueMap.get(pointAddress+1) == null){
+                    System.out.println("没有数据，pointAddress="+pointAddress);
+                    continue;
+                }
                 data = data + valueMap.get(pointAddress + 1);
                 Float num = NumberSystemConvert.convertHexToFloat(data);
                 //精确2位小数
@@ -474,10 +478,13 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             }
 
             // Vi  数值千米换算成米  待优化 ，从数据库配置
-            if(itemId.equals(String.valueOf(DevicesTypeItemEnum.VI.getCode()))){
-                BigDecimal dValue = new BigDecimal(data);
-                dValue = dValue.multiply(BigDecimal.valueOf(1000));
-                result = String.valueOf(dValue);
+            if(itemId == DevicesTypeItemEnum.VI.getCode()){
+                Float num = NumberSystemConvert.convertHexToFloat(data);
+                //精确2位小数
+                BigDecimal dataNum = new BigDecimal(num);
+                dataNum = dataNum.multiply(BigDecimal.valueOf(1000));
+                dataNum = dataNum.setScale(2,BigDecimal.ROUND_HALF_UP);
+                result = String.valueOf(dataNum);
             }
 
             //如果是整数模拟量,直接保存

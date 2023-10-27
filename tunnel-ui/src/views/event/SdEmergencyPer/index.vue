@@ -453,6 +453,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      this.ry_boxShow = false
       this.queryParams.pageNum = 1;
       this.queryParams.pageSize = 10;
       this.$refs.peopleTable.clearSelection();

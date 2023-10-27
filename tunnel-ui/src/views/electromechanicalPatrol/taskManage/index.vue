@@ -1423,6 +1423,11 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
     document.addEventListener("click", this.bodyCloseMenus2);
   },
+  beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+      document.removeEventListener("click", this.bodyCloseMenus1);
+      document.removeEventListener("click", this.bodyCloseMenus2);
+    },
   methods: {
     /** 设备类型 */
     getEqType() {
@@ -1470,6 +1475,7 @@ export default {
       let self = this;
       if (self.task_boxShow == true) {
         if (
+          this.$refs.main &&
           !this.$refs.main.contains(e.target) &&
           !this.$refs.cc.contains(e.target)
         ) {

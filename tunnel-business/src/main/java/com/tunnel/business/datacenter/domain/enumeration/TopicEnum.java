@@ -21,7 +21,17 @@ public enum TopicEnum {
     //隧道车辆统计
     TUNNEL_STATISTICS_TOPIC("tunnelStatistics","tunnelStatistics"),
     //隧道车辆速度统计
-    LANE_STATISTICS_TOPIC("laneStatistics","laneStatistics");
+    LANE_STATISTICS_TOPIC("laneStatistics","laneStatistics"),
+
+    /**
+     * 交通负荷提供万集
+     */
+    TUNNEL_TRAFFIC_LOAD_TOPIC("zc_traffic_load_data","trafficLoadTopic"),
+
+    /**
+     * 情报板电话发布次数
+     */
+    TUNNEL_RELEASE_NUM_TOPIC("zc_release_data","releaseDataTopic");
 
     private String code;
     private String name;

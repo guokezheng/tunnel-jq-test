@@ -72,4 +72,11 @@ public interface IotBoardReleaseLogMapper
     IotBoardReleaseLog selectBoardContentList(@Param("deviceId") String deviceId);
 
     Map<String, Object> getBoardContentData(@Param("deviceId") String deviceId);
+
+    /**
+     * 查询今日发布情报板次数
+     * @param tunnelId
+     * @return
+     */
+    int getVmsCount(@Param("tunnelId") String tunnelId);
 }

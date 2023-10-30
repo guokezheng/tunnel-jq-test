@@ -100,4 +100,11 @@ public interface SdOperationLogMapper
     int selectAppOperationLogCountList(@Param("eqId")String eqId,@Param("start")String start,@Param("end")String end, @Param("tunnelArray")List<String> tunnelArray);
 
     List<SdOperationLog> selectAppOperationLogList(SdOperationLog sdOperationLog);
+
+    /**
+     * 查询今日广播次数
+     * @param tunnelId
+     * @return
+     */
+    int getPhoneCount(@Param("tunnelId") String tunnelId);
 }

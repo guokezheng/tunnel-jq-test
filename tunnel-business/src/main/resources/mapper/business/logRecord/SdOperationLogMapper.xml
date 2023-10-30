@@ -423,4 +423,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
+    <select id="getPhoneCount" parameterType="java.lang.String" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            sd_operation_log ol
+        WHERE
+            1 = 1
+          AND ol.eq_type_id = 22
+          AND DATE_FORMAT( ol.create_time, '%Y-%m-%d' ) = DATE_FORMAT(
+                NOW(),
+                '%Y-%m-%d')
+          AND ol.tunnel_id = #{tunnelId}
+    </select>
 </mapper>

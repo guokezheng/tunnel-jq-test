@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -83,6 +85,10 @@ public class KafkaReadListenToWanJiTopic {
     @Autowired
     @Qualifier("kafkaTwoTemplate")
     private KafkaTemplate<String, String> kafkaTwoTemplate;
+
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToWanJiTopic.class);
 
@@ -433,6 +439,23 @@ public class KafkaReadListenToWanJiTopic {
             }
         }
         redisCache.setCacheObject(redisKey,carNumber,30,TimeUnit.SECONDS);
+        //查询隧道信息
+        SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(tunnelId);
+        //结束桩号
+        Integer endpile = Integer.valueOf(sdTunnels.getEndPileNum());
+        //开始桩号
+        Integer startPile = Integer.valueOf(sdTunnels.getStartPileNum());
+        //隧道长度
+        BigDecimal tunnelNum = new BigDecimal(endpile - startPile);
+        //瞬时隧道最大承受车流量(上行/下行) 公式: 隧道长度/100*3个车道+应急停车带数量
+        //(上行/下行) 交通负荷公式: 隧道内车辆数/瞬时隧道最大承受车流量 (上行/下行)
+        BigDecimal maxCarNum = tunnelNum.divide(BigDecimal.valueOf(100),0,BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(3)).add(BigDecimal.valueOf(getParkingStripNum(tunnelId)));
+        BigDecimal divide = new BigDecimal(carNumber).divide(maxCarNum,2,BigDecimal.ROUND_HALF_UP);
+        JSONObject carData = new JSONObject();
+        carData.put("tunnelId",tunnelId);
+        carData.put("direction",direction);
+        carData.put("load",divide.multiply(new BigDecimal(100)));
+        kafkaOneTemplate.send(TopicEnum.TUNNEL_TRAFFIC_LOAD_TOPIC.getCode(),carData.toString());
     }
 
     /**
@@ -796,4 +819,28 @@ public class KafkaReadListenToWanJiTopic {
         JSONObject jsonObject = new JSONObject(map);
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
+
+    /**
+     * 获取应急停车带数量
+     * @param tunnelId
+     * @return
+     */
+    public int getParkingStripNum(String tunnelId){
+
+        switch (tunnelId){
+            case "JQ-JiNan-WenZuBei-MJY" : return 3;
+            case "JQ-ZiBo-TaiHe-PDS" : return 5;
+            case "JQ-ZiBo-TaiHe-QFL" : return 2;
+            case "JQ-WeiFang-MiaoZi-BJY" : return 2;
+            case "JQ-WeiFang-MiaoZi-WCL" : return 3;
+            case "JQ-WeiFang-YangTianShan-SZS" : return 2;
+            case "JQ-WeiFang-YangTianShan-YTS" : return 1;
+            case "JQ-WeiFang-JiuLongYu-MAS" : return 2;
+            case "JQ-WeiFang-JiuLongYu-JJL" : return 1;
+            case "JQ-WeiFang-JiuLongYu-HSD" : return 1;
+            default: return 0;
+        }
+    }
+
+
 }

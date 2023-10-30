@@ -210,9 +210,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectCatHistory" resultType="hashmap">
-        select a.tunnel_id tunnelId ,a.device_id deviceId,
+        select a.tunnel_id tunnelId ,a.device_id deviceId,d.eq_name eqName,
         SUM(a.small_vehicle_num)+SUM(a.mid_vehicle_num)+SUM(a.heavy_vehicle_num)  as data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime
-        from sd_microwave_periodic_statistics a
+        from sd_microwave_periodic_statistics a left join sd_devices d on a.device_id = d.eq_id
         where 1=1
         <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
               and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')

@@ -137,4 +137,11 @@ public interface SdDeviceDataMapper
     List<Map<String, Object>> getVmsData(@Param("deviceId") String deviceId);
 
     List<Map<String, Double>> getTodayData(@Param("deviceId") String deviceId, @Param("itemId") Long itemId, @Param("today") String today);
+
+    /**
+     * 查询当前隧道设备实时数据
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> getDevRealData(@Param("tunnelId") String tunnelId);
 }

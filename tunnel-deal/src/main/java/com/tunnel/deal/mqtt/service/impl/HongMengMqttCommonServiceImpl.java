@@ -189,15 +189,7 @@ public class HongMengMqttCommonServiceImpl implements HongMengMqttCommonService
      */
     @Override
     public void setRedisCacheDeviceStatus(String deviceId){
-        //定时任务5秒钟请求一次状态，如果获取返回信息，判定设备离线
-
-        //在线时间检测控制时间，定时任务传入方便修改
-        Integer expireTime = HongMengMqttTask.onlineSecondInterval;
-        if(expireTime == null){
-            //默认调整10分钟
-            expireTime = 600;
-        }
-        redisCache.setCacheObject(RedisKeyConstants.HONG_MENG_MQTT_STATUS + ":" + deviceId,"online",expireTime, TimeUnit.SECONDS);
+        redisCache.setCacheObject("pushData:" + deviceId,"",10, TimeUnit.MINUTES);
     }
 
 }

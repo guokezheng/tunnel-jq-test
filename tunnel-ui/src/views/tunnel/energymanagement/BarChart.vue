@@ -94,7 +94,7 @@ export default {
           axisTick: {
             show: false
           },
-          name: 'kw-h',
+          name: 'kW·h',
         },
         legend: {
           data: ['今日', '昨日'],

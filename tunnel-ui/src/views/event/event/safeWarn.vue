@@ -3064,7 +3064,7 @@ export default {
       this.processDialog = false;
       this.processType = false;
       this.reset();
-      this.getList();
+      // this.getList();
     },
   },
 };

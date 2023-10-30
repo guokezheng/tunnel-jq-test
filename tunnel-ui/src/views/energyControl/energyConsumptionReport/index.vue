@@ -777,7 +777,7 @@ export default {
           },
           yAxis: {
             type: "value",
-            name:'kW-h',
+            name:'kW·h',
             nameTextStyle:{
               color:"#fff"
             },

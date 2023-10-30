@@ -1889,7 +1889,7 @@
             data: xData,
           }, ],
           yAxis: [{
-            name: "kW-h",
+            name: "kW·h",
             nameTextStyle: {
               color: this.sideTheme != "theme-light" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,

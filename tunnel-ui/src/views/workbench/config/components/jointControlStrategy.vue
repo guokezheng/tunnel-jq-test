@@ -438,7 +438,7 @@
       bodyCloseMenus(e) {
         let self = this;
         if (self.boxShow == true) {
-          self.$nextTick(() => {
+          // self.$nextTick(() => {
             if (
               !self.$refs.main.contains(e.target) &&
               !self.$refs.cc.contains(e.target)
@@ -447,7 +447,7 @@
                 self.boxShow = false;
               }
             }
-          });
+          // });
         }
       },
       handleQuery() {
@@ -463,6 +463,7 @@
           //车流量联控照明
           this.selectCatStrategyList();
         }
+        this.boxShow = false
       },
       resetQuery() {
         if (this.treeModel == "0") {
@@ -477,6 +478,7 @@
           //车流量联控照明
           this.selectCatStrategyList("resetQuery");
         }
+        this.boxShow = false
       },
       //主定时任务列表
       selectListStrategy(data) {

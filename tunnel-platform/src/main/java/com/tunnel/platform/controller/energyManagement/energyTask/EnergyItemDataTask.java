@@ -148,11 +148,13 @@ public class EnergyItemDataTask {
                                     if(a == 0){
                                         energyItem.setItemizedCode(item.get("id").toString());//隧道id
                                         energyItemList.add(energyItem);
+                                        sdEnergyDataMapper.deleteEnergyItemData(energyItem);
                                     }else {
                                         energyItem.setClassificationCode(item.get("id").toString());//隧道id
                                         energyClassifList.add(energyItem);
+                                        sdEnergyDataMapper.deleteEnergyClassifData(energyItem);
                                     }
-                                    sdEnergyDataMapper.deleteEnergyItemData(energyItem);
+
                                 }
                             }
                         }

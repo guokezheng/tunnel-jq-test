@@ -317,16 +317,6 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             return maps;
         }else if (searchValue.equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
             maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);
-            if(maps.size()>0){
-                SdTunnels tunnelId = sdTunnelsMapper.selectSdTunnelsById(maps.get(0).get("tunnelId"));
-                SdDevices tunnelId1 = sdDevicesMapper.selectSdDevicesById(maps.get(0).get("deviceId"));
-                for (Map<String, String> map :maps){
-                    map.put("tunnelName",tunnelId.getTunnelName());
-                    map.put("deptName",tunnelId.getTunnelStationName());
-                    map.put("direction",tunnelId1.getDirection());
-                    map.put("pile",tunnelId1.getPile());
-                }
-            }
             return maps;
         }else {
             return null;
@@ -416,18 +406,6 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     @Override
     public List<Map<String, String>> handleWBExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
         List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
-        if(maps.size()>0){
-            SdTunnels tunnelId = sdTunnelsMapper.selectSdTunnelsById(maps.get(0).get("tunnelId"));
-            SdDevices tunnelId1 = sdDevicesMapper.selectSdDevicesById(maps.get(0).get("deviceId"));
-            for (Map<String, String> map :maps){
-                map.put("tunnelName",tunnelId.getTunnelName());
-                map.put("deptName",tunnelId.getTunnelStationName());
-                map.put("direction",tunnelId1.getDirection());
-                map.put("pile",tunnelId1.getPile());
-                map.put("eqName",tunnelId1.getEqName());
-                map.put("eqId",tunnelId1.getEqId());
-            }
-        }
         return maps;
     }
 
@@ -672,16 +650,6 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             return maps;
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
             List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);
-            if(maps.size()>0){
-                SdTunnels tunnelId = sdTunnelsMapper.selectSdTunnelsById(maps.get(0).get("tunnelId"));
-                SdDevices tunnelId1 = sdDevicesMapper.selectSdDevicesById(maps.get(0).get("deviceId"));
-                for (Map<String, String> map :maps){
-                    map.put("tunnelName",tunnelId.getTunnelName());
-                    map.put("deptName",tunnelId.getTunnelStationName());
-                    map.put("direction",tunnelId1.getDirection());
-                    map.put("pile",tunnelId1.getPile());
-                }
-            }
             return maps;
         }else {
             return null;

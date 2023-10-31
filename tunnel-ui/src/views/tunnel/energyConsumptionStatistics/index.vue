@@ -58,7 +58,7 @@
       <el-table v-loading="loading" :data="statisticsList" :default-sort = "{prop: 'createTime', order: 'descending'}" @selection-change="handleSelectionChange">
         <el-table-column label="设备ID" align="center" prop="equipmentId" />
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
-        <el-table-column label="耗电量(kw-h)" align="center" prop="powerConsumption" >
+        <el-table-column label="耗电量(kW·h)" align="center" prop="powerConsumption" >
           <template slot-scope="scope">
                 <div :style="scope.row.powerConsumption >= '50' ? 'color: #ff0000'  : 'color: #000'">
                   {{ scope.row.powerConsumption }}
@@ -100,7 +100,7 @@
                 </div>
           </template>
         </el-table-column>
-        <el-table-column label="电能(kw-h)" align="center" prop="electricEnergy" >
+        <el-table-column label="电能(kW·h)" align="center" prop="electricEnergy" >
           <template slot-scope="scope">
                 <div :style="scope.row.electricEnergy >= '50' ? 'color: #ff0000'  : 'color: #000'">
                   {{ scope.row.electricEnergy }}

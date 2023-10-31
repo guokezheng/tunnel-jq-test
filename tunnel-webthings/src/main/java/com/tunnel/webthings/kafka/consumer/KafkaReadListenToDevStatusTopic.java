@@ -64,14 +64,15 @@ public class KafkaReadListenToDevStatusTopic {
                 System.out.println(record.value());
                 JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
                 if(jsonObject.get("expands") != null && jsonObject.get("expands") != ""){
+                    JSONObject expands = JSONObject.parseObject(jsonObject.get("expands").toString());
                     //解析设备运行数据信息记录
-                    Object deviceDataRecordObject = jsonObject.get("deviceDataRecord");
+                    Object deviceDataRecordObject = expands.get("deviceDataRecord");
                     //解析设备运行数据信息
-                    Object deviceDataObject = jsonObject.get("deviceData");
+                    Object deviceDataObject = expands.get("deviceData");
                     //解析设备状态数据信息
-                    Object deviceStatusObject = jsonObject.get("deviceStatus");
+                    Object deviceStatusObject = expands.get("deviceStatus");
                     //设备运行数据信息记录操作
-                    if(deviceStatusObject != null){
+                    if(deviceDataRecordObject != null){
                         //Object o = jsonObject.get("deviceDataRecord");
                         SdDeviceDataRecord sdDeviceDataRecord = JSONUtil.toBean(deviceDataRecordObject.toString(), SdDeviceDataRecord.class);
                         SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecordService.selectSdDeviceDataRecordById(sdDeviceDataRecord.getId());

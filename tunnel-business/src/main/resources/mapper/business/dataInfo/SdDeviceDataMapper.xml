@@ -624,5 +624,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1 = 1
     </select>
 
-
+    <select id="getDevRealData" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            sdd.device_id AS deviceId,
+            sdd.`data` AS deviceData,
+            sdd.item_id AS devicesItemId,
+            dti.device_type_id AS eqType
+        FROM
+            sd_device_data sdd
+        LEFT JOIN sd_device_type_item dti ON sdd.item_id = dti.id
+        WHERE
+            1 = 1
+          AND sdd.device_id IN (
+            SELECT
+                eq_id
+            FROM
+                sd_devices
+            WHERE
+                1 = 1
+              AND eq_tunnel_id = #{tunnelId})
+    </select>
 </mapper>

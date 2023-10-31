@@ -189,7 +189,7 @@ export default {
                   // min: function(item){
                   // 	return parseInt(item.min / 10) * 10
                   // },
-                  name:'kw-h           ',
+                  name:'kW·h           ',
                   max: 100,
                   splitLine: {
                       show: false

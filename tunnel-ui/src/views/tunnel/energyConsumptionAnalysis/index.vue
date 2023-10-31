@@ -125,7 +125,7 @@
                 </el-table-column>
                 <el-table-column label="耗电量" align="center" prop="powerConsumption" sortable>
                   <template slot-scope="scope">
-                    <div>{{scope.row.powerConsumption}}kw-h</div>
+                    <div>{{scope.row.powerConsumption}}kW·h</div>
                   </template>
                 </el-table-column>
                 <el-table-column label="同比" align="center" prop="comparedSame" width="80" sortable>

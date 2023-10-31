@@ -84,7 +84,7 @@ export default {
           
         ],
         yAxis: {
-          name: "kw-h",
+          name: "kW·h",
           nameTextStyle: {
             color: "#fff",
             padding: [10, 20, 0, -40],

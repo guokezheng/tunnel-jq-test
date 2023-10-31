@@ -1288,15 +1288,13 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (self.boxShow) {
-        if (
-          !this.$refs.main.contains(e.target) &&
-          !this.$refs.cc.contains(e.target) &&
-          !this.$refs.cc1.contains(e.target)
-        ) {
-          if (self.boxShow == true) {
-            self.boxShow = false;
-          }
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
+          console.log("???")
+          self.boxShow = false;
         }
       }
     },

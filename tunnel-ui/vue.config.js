@@ -40,14 +40,16 @@ module.exports = {
         // target: `http://10.168.65.230:8000/`,// 展双
         // target: `http://10.168.77.73:8000/`,// 何义伟
         // target: `http://10.168.65.241:8000/`,// 田江伟
-        // target: `http://10.168.78.21:8000/`,// 郭政
+        // target: `http://10.168.69.3:8000/`,// 郭政
 
         // target: `http://10.3.16.252:8888/`,//吴昊阳 莱芜
         // target: `http://10.7.179.35:8000/`,//翟昌宏 胡山
         // target: `http://10.7.200.33:8000/`,//翟昌宏 仰天山
         // target: `http://10.7.179.31:8000/`,//郭政 胡山
+        // target: `http://10.7.183.35:8000/`,//翟昌宏 太河
 
 
+        // target: `http://10.7.195.14:8000/`,// 庙子
         // target: `http://10.7.179.15:8000/`,// 胡山
         target: `http://10.168.56.206:8000/`,// 公司
         // target: `http://10.3.16.40:8888/`,// 测试基地
@@ -91,13 +93,23 @@ module.exports = {
     resolve: {
       alias: {
         '@': resolve('src')
-      }
+      },
     }
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
+    const rootModulesPath = path.resolve('node_modules');
+    if (config.resolve.modules.store.has(rootModulesPath)) {
+      config.resolve.modules.store.delete(rootModulesPath);
+    }
+    if (config.resolve.modules.store.has('node_modules')) {
+      config.resolve.modules.store.delete('node_modules');
+    }
+    config.resolve.modules.store.add(rootModulesPath);
+    config.resolve.modules.store.add('node_modules');
+    
     // set svg-sprite-loader
     config.module
       .rule('svg')

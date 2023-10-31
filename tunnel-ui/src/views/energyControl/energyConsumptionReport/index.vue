@@ -740,12 +740,12 @@ export default {
             trigger: "axis",
             position: 'bottom',
             confine: true,
-            appendToBody: true,
-            enterable: true, // 防止tooltip浮层在折线或柱体等上时，触发mouseover事件
+            // appendToBody: true,
+            // enterable: true, // 防止tooltip浮层在折线或柱体等上时，触发mouseover事件
             formatter: function(p){
               // console.log(p)
               let content = p[0].name
-              content += "<div style='max-height:200px;overflow-x:auto'>"
+              content += "<div style='max-height:240px;overflow-x:auto'>"
 
               for(let item of p){
                 content += "<div style='display:flex;justify-content:space-between;width:160px'>"

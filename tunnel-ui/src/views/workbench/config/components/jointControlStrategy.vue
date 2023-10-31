@@ -64,6 +64,8 @@
                 <el-form-item class="bottomBox" style="height: 50px">
                   <el-button size="small" type="primary" @click="handleQuery">搜索
                   </el-button>
+<!--                  <el-button size="small" type="primary" @click="handleQuery1">搜索a-->
+<!--                  </el-button>-->
                   <el-button size="small" @click="resetQuery" type="primary" plain>重置
                   </el-button>
                 </el-form-item>
@@ -295,6 +297,12 @@
   import timingControl from "@/views/event/strategy/components/timingControl"; //定时控制
   import lightCurveModal from "./lightCurveModal";
   import catCurveModal from "./catCurveModal.vue";
+  import JSEncrypt from 'jsencrypt/bin/jsencrypt.min'
+  import axios from 'axios'
+  import $ from 'jquery'
+  import {
+    getEncryption
+  } from "@/api/workbench/config.js";
   export default {
     name: "jointControlStrategy",
     components: {
@@ -463,6 +471,47 @@
           //车流量联控照明
           this.selectCatStrategyList();
         }
+      },
+      async handleQuery1(){
+        let  ds = await this.Encrypt("demo")
+        let  ds1 = await this.Encrypt("Mapabc&2016123")
+        debugger
+        console.log(ds)
+        console.log(ds1)
+      },
+      async getJseKey(text) {
+        var encrypted = ""
+        await getEncryption().then((res)=>{
+          debugger
+          let jseKey = res.data.cllData.length>0?res.data.cllData:[0,0]
+          debugger
+          sessionStorage.setItem("jseKey", jseKey)
+          encrypted = this.getEncrypted(jseKey, text)
+        })
+        return encrypted
+      },
+
+      Encrypt(text) {
+
+        const jseKey = sessionStorage.getItem("jseKey");
+        var encrypted = "";
+        if(!jseKey) {
+          encrypted = this.getJseKey(text);
+          return encrypted
+        } else {
+          encrypted = this.getEncrypted(jseKey, text);
+          return encrypted;
+        }
+
+      },
+      getEncrypted(jseKey, text){
+        console.log(jseKey, text)
+        let jse = new JSEncrypt({
+          default_key_size: 2048
+        });
+        jse.setPublicKey(jseKey);
+        let encrypted = jse.encrypt(text);
+        return encrypted;
       },
       resetQuery() {
         if (this.treeModel == "0") {

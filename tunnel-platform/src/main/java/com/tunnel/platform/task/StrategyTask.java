@@ -33,6 +33,7 @@ import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.websocket.WebSocketService;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -575,11 +576,24 @@ public class StrategyTask {
                     if(s.get("warning_type").equals("0")){
                         this.triggerComparison(s,EventStateEnum.unprocessed.getCode(),null);
                     }else{
+
                         for (Long  id : strategyIdList){
                             List<SdStrategyRl> sdStrategyRls = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(id);
-                            for (SdStrategyRl sdStrategyRl : sdStrategyRls) {
-                                // 自动触发控制策略执行 控制设备triggerId 策略关联设备信息id
-                                this.autoJobParams(s,sdStrategyRl.getId());
+                            //当前是第几条数据
+                            Integer num = 0 ;
+                            //需要入库的数据
+                            StringBuffer stringBuffer = new StringBuffer();
+                            SdEvent sdEvent = null;
+                            for (int e = 0; e < sdStrategyRls.size(); e++) {
+                                SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(sdStrategyRls.get(e).getId());
+
+                                SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+                                if(e==0){
+                                    //生成事件 相同一个预警只生成一条
+                                    sdEvent = this.triggerComparison(s, EventStateEnum.processed.getCode(),sdStrategy);
+                                }
+                                this.autoJobParams(s,sdStrategyRls.get(e).getId(),e,sdStrategyRls.size()-1,stringBuffer,sdEvent);
                             }
                         }
 
@@ -751,14 +765,13 @@ public class StrategyTask {
      * @param strategyRlId
      * @throws UnknownHostException
      */
-    public  void autoJobParams(Map  s ,Long strategyRlId) throws UnknownHostException {
+    public  void autoJobParams(Map  s ,Long strategyRlId, int num, int Listnum,StringBuffer stringBuffer,SdEvent sdEvent) throws UnknownHostException {
+
+
+
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(strategyRlId);
 
         SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
-
-        //生成事件
-        SdEvent sdEvent = this.triggerComparison(s, EventStateEnum.processed.getCode(),sdStrategy);
-
         // 默认执行策略关联设备
         String[] split = sdStrategyRl.getEquipments().split(",");
         // 加强照明 基本照明 支持双向执行
@@ -821,8 +834,13 @@ public class StrategyTask {
             if(stateObject.size()<1){
                 continue;
             }
+            Boolean numType = false;
+            //判断是否是最后一条
+            if(num == Listnum){
+                numType = true;
+            }
             //生成处置记录
-            this.disposeRecord(integer,sdEvent,stateObject,sdStrategyRl);
+            this.disposeRecord(integer,sdEvent,stateObject,sdStrategyRl,numType,stringBuffer);
         }
     }
 
@@ -833,7 +851,7 @@ public class StrategyTask {
      * @param stateObject
      * @param sdStrategyRl
      */
-    public void disposeRecord(Integer integer, SdEvent sdEvent,List<SdEquipmentState> stateObject ,SdStrategyRl sdStrategyRl){
+    public void disposeRecord(Integer integer, SdEvent sdEvent,List<SdEquipmentState> stateObject ,SdStrategyRl sdStrategyRl,Boolean numType,StringBuffer stringBuffer){
         String resultName = integer==0?"失败":"成功";
         //更新事件
         //设置更新事件
@@ -879,7 +897,13 @@ public class StrategyTask {
                 fsControlData += "，亮度："+sdStrategyRl.getEndStateNum() + "%";
 
             }
-            setEventFlowData(sdEvent.getId(),fsControlData + "【"+resultName+"】");
+            if(!numType){
+                stringBuffer.append(fsControlData + "【"+resultName+"】;");
+            }else{
+                stringBuffer.append(fsControlData + "【"+resultName+"】;");
+                setEventFlowData(sdEvent.getId(),stringBuffer.toString());
+            }
+
         }else{
 
             String controlData = typeName + "控制执行：" + stateName + "；";
@@ -891,7 +915,12 @@ public class StrategyTask {
 
                 controlData = typeName + "控制执行：" + stateName + "，亮度："+sdStrategyRl.getStateNum()+"%；";
             }
-            setEventFlowData(sdEvent.getId(),controlData + "【"+resultName+"】");
+            if(!numType){
+                stringBuffer.append(controlData + "【"+resultName+"】;\r\n");
+            }else{
+                stringBuffer.append(controlData + "【"+resultName+"】;\r\n");
+                setEventFlowData(sdEvent.getId(),stringBuffer.toString());
+            }
         }
     }
 

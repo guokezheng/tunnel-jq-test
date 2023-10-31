@@ -2,6 +2,7 @@ package com.tunnel.business.service.bigScreenApi;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
@@ -186,4 +187,10 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getCarNumber(String tunnelId);
+
+    /**
+     * 图盟公钥
+     * @return
+     */
+    AjaxResult getEncryption();
 }

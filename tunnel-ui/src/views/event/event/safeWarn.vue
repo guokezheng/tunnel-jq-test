@@ -1243,7 +1243,7 @@
                   placement="top"
                 >
                   <el-card>
-                    <h4>{{ activity.flowDescription }}</h4>
+                    <h4 class="flow-description">{{ activity.flowDescription }}</h4>
                     <p>用户:{{ activity.nickName }}</p>
                   </el-card>
                 </el-timeline-item>
@@ -3916,6 +3916,9 @@ hr {
 }
 .el-dialog:not(.is-fullscreen) {
   margin-top: 4vh !important;
+}
+.flow-description {
+  white-space: pre-wrap; /* 换行并保留空格 */
 }
 </style>
 <!-- <style lang="scss">

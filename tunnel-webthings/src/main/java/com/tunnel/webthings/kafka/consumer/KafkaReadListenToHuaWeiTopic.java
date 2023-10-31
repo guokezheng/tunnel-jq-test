@@ -440,6 +440,7 @@ public class KafkaReadListenToHuaWeiTopic {
         consumer.commitSync();
     }
 
+
     /**
      * 获取车辆快照数据
      *

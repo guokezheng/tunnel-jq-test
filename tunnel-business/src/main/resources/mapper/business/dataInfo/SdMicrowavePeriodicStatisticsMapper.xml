@@ -221,4 +221,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY createTime
         ORDER BY a.create_time desc
     </select>
+
+    <select id="selectCarNumber" resultType="hashmap">
+        SELECT SUM(a.small_vehicle_num)+SUM(a.mid_vehicle_num)+SUM(a.heavy_vehicle_num)  as smallVehicleNum,a.eq_direction
+        FROM sd_microwave_periodic_statistics a
+        WHERE
+        1 = 1
+        AND a.device_id = #{deviceId}
+        AND DATE_FORMAT( a.create_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' ) ;
+
+    </select>
 </mapper>

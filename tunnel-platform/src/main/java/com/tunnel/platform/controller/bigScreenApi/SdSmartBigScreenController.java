@@ -334,4 +334,12 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getCarNumber(@RequestParam String tunnelId){
         return sdSmartBigScreenService.getCarNumber(tunnelId);
     }
+    /**
+     * 图盟公钥
+     * @return
+     */
+    @GetMapping("/getEncryption")
+    public AjaxResult getEncryption(){
+        return sdSmartBigScreenService.getEncryption();
+    }
 }

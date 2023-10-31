@@ -454,6 +454,15 @@ public interface SdDevicesMapper {
 
 
 	/**
+	 * 查询设备
+	 *
+	 * @param eqTunnelId 所属隧道 ID
+	 * @param eqType     设备诶行
+	 * @return
+	 */
+	List<SdDevices> tunnelEqType(@Param("eqTunnelId") String eqTunnelId, @Param("eqName") Long eqType);
+
+	/**
 	 * 根据条件查询 当前设备 数据 状态
 	 *
 	 * @param sdDevices

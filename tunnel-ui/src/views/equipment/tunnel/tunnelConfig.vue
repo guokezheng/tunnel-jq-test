@@ -363,7 +363,7 @@ export default {
       deviceEqType:"0",
     };
   },
-  created: function () {
+  created:  async function () {
     // console.log("我被穿件了");
     this.saveLoading = true;
     img = [];
@@ -374,9 +374,9 @@ export default {
       lane: lane,
     };
     // console.log(this.selectedTunnel, "this.selectedTunnel");
-    this.selectEquipmentType();
-    this.selectEnvironment();
-    this.getTunnels(this.selectedTunnel.id);
+    await this.selectEquipmentType();
+    await this.selectEnvironment();
+    await this.getTunnels(this.selectedTunnel.id);
     // debugger
 
 
@@ -546,7 +546,7 @@ export default {
           e.eqId = e.id + e.sdName;
           e.pile = "";
         });
-        // debugger
+        debugger
         var newDict = that.dict.type.sd_sys_name;
         if (that.selectedTunnel.name != "胡山隧道") {
           that.deviceEqTypeList = newDict.slice(0, 8);

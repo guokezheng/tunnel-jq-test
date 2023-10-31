@@ -40,6 +40,8 @@ public interface SdMicrowavePeriodicStatisticsMapper
 
     public List<Map<String, String>>  selectCatHistory(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
+    public Map<String, String>  selectCarNumber(@Param("deviceId") String deviceId);
+
     /**
      * 修改车流量信息
      * 

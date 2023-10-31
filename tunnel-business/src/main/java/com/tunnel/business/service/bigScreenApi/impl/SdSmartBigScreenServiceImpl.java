@@ -1,29 +1,47 @@
 package com.tunnel.business.service.bigScreenApi.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
-import com.tunnel.business.datacenter.domain.enumeration.FaultStatusEnum;
-import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.domain.event.SdTrafficVolume;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.SdTrafficVolumeMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.mapper.vehicle.SdVehicleDataMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
+import com.zc.common.core.httpclient.OkHttpClientUtil;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -50,6 +68,15 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Autowired
     private SdTrafficVolumeMapper trafficVolumeMapper;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    private SdMicrowavePeriodicStatisticsMapper sdMicrowavePeriodicStatisticsMapper;
+
+    @Autowired
+    private SdVehicleDataMapper sdVehicleDataMapper;
 
     @Override
     public Map<String, Object> getEventWarning(String tunnelId) {
@@ -487,21 +514,108 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Override
     public AjaxResult getCarNumber(String tunnelId) {
-        List<SdTrafficVolume> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
-        List<String> cllList = new ArrayList<>();
-        List<String> ztsList = new ArrayList<>();
-        for(SdTrafficVolume item : mapList){
-            cllList.add(item.getOriginalNum()+"");
-            String redisKry = "carVolume:" + tunnelId + ":" + item.getDirection();
-            ztsList.add(redisCache.getCacheObject(redisKry) == null ? "0" : redisCache.getCacheObject(redisKry).toString());
-        }
         Map<String, Object> map = new HashMap<>();
+        List<String> cllList = new ArrayList<>();
+        List<String> ztsList= new ArrayList<>();
+        if(tunnelId.equals(TunnelEnum.HANG_SHAN_DONG.getCode())){
+
+            //潍坊
+            Map<Object, Object> param = new HashMap<>();
+            Calendar calendar = Calendar.getInstance();
+            Date date = calendar.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String startDate = sdf.format(date)+":00:00:00";
+            param.put("startDate",startDate);
+            param.put("endDate",sdf.format(date)+":59:59:59");
+            param.put("tunnelId",tunnelId);
+            param.put("direction",2);
+            List<Map<String, Object>> vehicleListsByDate = sdVehicleDataMapper.getVehicleListsByDate(param);
+            cllList.add(vehicleListsByDate.get(0).get("num").toString());
+            ztsList.add("0");
+            //济南
+            param.put("direction",1);
+            List<Map<String, Object>> vehicleListsByDate1 =  sdVehicleDataMapper.getVehicleListsByDate(param);
+            cllList.add(vehicleListsByDate1.get(0).get("num").toString());
+            ztsList.add("0");
+        }else{
+            List<SdTrafficVolume> mapList = trafficVolumeMapper.selectCarNumber(tunnelId);
+            for(SdTrafficVolume item : mapList){
+                cllList.add(item.getOriginalNum()+"");
+                String redisKry = "carVolume:" + tunnelId + ":" + item.getDirection();
+                ztsList.add(redisCache.getCacheObject(redisKry) == null ? "0" : redisCache.getCacheObject(redisKry).toString());
+            }
+        }
+
+
         map.put("cllData",cllList);
 
         map.put("ztsData",ztsList);
         return AjaxResult.success(map);
     }
+    @Override
+    public AjaxResult getEncryption() {
+        Map<String, Object> map = new HashMap<>();
+        // 创建一个信任所有证书的TrustManager
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+        };
+        try {
+            // 创建一个不验证证书的SSLContext
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
 
+            // 使用自定义的SSLContext创建HttpsURLConnection
+            URL url = new URL("https://10.7.187.32:19300/mapabc-admin-system/api/v1/auth/code/key");
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setSSLSocketFactory(sslContext.getSocketFactory());
+            connection.setHostnameVerifier((hostname, session) -> true);
+            // 设置请求方法
+            connection.setRequestMethod("GET");
+
+            // 添加请求头
+            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+            // 发送请求并获取响应代码
+            int responseCode = connection.getResponseCode();
+
+            // 获取响应消息
+            String responseMessage = connection.getResponseMessage();
+
+            // 获取响应内容
+            InputStream inputStream;
+            if (responseCode >= 200 && responseCode < 400) {
+                inputStream = connection.getInputStream();
+            } else {
+                inputStream = connection.getErrorStream();
+            }
+
+        // 读取响应内容
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            // 关闭连接
+            connection.disconnect();
+
+            // 处理响应数据
+            System.out.println("Response Code: " + responseCode);
+            System.out.println("Response Message: " + responseMessage);
+            System.out.println("Response Body: " + response.toString());
+            map.put("cllData",response.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success(map);
+    }
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){
         List<Map<String, Object>> list = new ArrayList<>();
         //已完成数量

@@ -49,7 +49,13 @@ export function getCarNumber(query) {
     params: query
   })
 }
-
+// 图盟公钥
+export function getEncryption() {
+  return request({
+    url: '/eventWarning/getEncryption',
+    method: 'get'
+  })
+}
 // 洞口不降速监测
 export function getNoDeceleration(query) {
   return request({
@@ -294,7 +300,7 @@ export function controlWarningLightStripDevice(data) {
 }
 
 // 工作台树状搜索
-export function getCategoryDeviceTree(tunnelId) { 
+export function getCategoryDeviceTree(tunnelId) {
   return request({
     url: '/bigType/getCategoryDeviceTree?tunnelId=' + tunnelId,
     method: 'get'

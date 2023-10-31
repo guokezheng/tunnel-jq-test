@@ -114,6 +114,7 @@ public class ThirdPartLoginService {
                     //查询默认用户的信息
                     sysUser = sysUserService.selectUserByUserName(username);
 //                }
+                if(sysUser != null){
                     Authentication authentication = null;
                     try {
                         authentication = authenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(username, sysUser.getPassword()));
@@ -130,9 +131,9 @@ public class ThirdPartLoginService {
                     LoginUser loginUser = (LoginUser) authentication.getPrincipal();
 
                     ajaxResult = AjaxResult.success().put(Constants.TOKEN, tokenService.createToken(loginUser));
-//                } else {
-//                    ajaxResult = AjaxResult.error("系统中无此用户！");
-//                }
+                } else {
+                    ajaxResult = AjaxResult.error("系统中无此用户！");
+                }
 
             }
         }

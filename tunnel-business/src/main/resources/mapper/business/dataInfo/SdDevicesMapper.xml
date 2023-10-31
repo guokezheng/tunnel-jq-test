@@ -104,6 +104,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="tunnelEqType" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"></include>
+        <where>
+            <if test="eqType != null  and eqType != ''">and eq_name = #{eqType}</if>
+            <if test="eqTunnelId != null  and eqTunnelId != ''">and eq_tunnel_id = #{eqTunnelId}</if>
+        </where>
+        GROUP BY eq_direction
+    </select>
+
 
     <select id="selectSdDevicesListByParam" parameterType="SdDevices" resultMap="SdDevicesResult">
         <include refid="selectSdDevicesVo"></include>

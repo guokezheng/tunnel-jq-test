@@ -9,8 +9,9 @@
             <p>Vehicle detection</p>
           </div>
         </div>
-        <div id="vehicle" v-if="tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'"></div>
-        <div id="vehicleMonitoring" v-if="tunnelId != 'JQ-WeiFang-JiuLongYu-HSD'"></div>
+
+<!--        <div id="vehicle" v-if="tunnelId == 'JQ-WeiFang-JiuLongYu-HSD'"></div>-->
+        <div id="vehicleMonitoring" ></div>
       </div>
       <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
@@ -141,7 +142,7 @@
             :style="{
               animationDuration:
                 '15s'
-               
+
             }"
             height="165"
             :data="trafficList"
@@ -536,12 +537,12 @@
         this.tunnelId = tunnelId;
         // setTimeout(() => {
         this.getWarnList();
-        
+
         this.getVehicleMonitoring()
         this.timer = 0;
         let that = this
-        this.timer = setInterval(function(){ 
-          var currentdate = new Date();  
+        this.timer = setInterval(function(){
+          var currentdate = new Date();
           if(currentdate.getMinutes() % 5 == 0 && currentdate.getSeconds() == 0) {
             setTimeout(() => {
               that.getVehicleMonitoring()
@@ -1445,7 +1446,7 @@
           // 禁止echarts取消选中
           vehicleMonitoring.on('legendselectchanged', function (params) {
             vehicleMonitoring.setOption({
-              
+
                 legend:{selected:{[params.name]: true}}
             })
         });

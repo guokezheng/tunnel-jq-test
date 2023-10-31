@@ -2108,7 +2108,7 @@
 
     watch: {
       resetCanvasFlag: function (newVal, oldVal) {
-        console.log(newVal, "resetCanvasFlag");
+        // console.log(newVal, "resetCanvasFlag");
       },
       screenEqName(val) {
         this.$refs.tree.filter(val);
@@ -2553,7 +2553,7 @@
       },
       // 模糊查询
       treeClick() {
-        console.log("模糊查询");
+        // console.log("模糊查询");
         // // 点击输入框 折叠之前打开的树形菜单
         // const nodes = this.$refs.tree.store._getAllNodes();
         // nodes.forEach((item) => {

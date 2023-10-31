@@ -73,13 +73,27 @@ public class DevDataTask {
             list.add(TunnelEnum.SHUANG_ZI_SHAN.getCode());
             list.add(TunnelEnum.YANG_TIAN_SHAN.getCode());
         }
+        //推送设备运行状态
         for(String tunnelId : list){
             List<Map<String, Object>> devRealData = sdDeviceDataMapper.getDevRealData(tunnelId);
             devRealData.stream().forEach(item -> {
+                JSONObject definitionObject = definitionParam(item.get("deviceId").toString(), item.get("deviceData").toString(), Long.valueOf(item.get("devicesItemId").toString()));
+                JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject);
                 threadPoolTaskExecutor.execute(()->{
-                    sentWlData(item);
+                    sentWlData(jsonObject);
                 });
             });
+        }
+        //推送设备在线离线状态
+        for(String tunnelId : list){
+            List<SdDevices> devices = sdDevicesMapper.selectDevice(tunnelId);
+            devices.stream().forEach(item -> {
+                JSONObject jsonObject = devStatus(item);
+                threadPoolTaskExecutor.execute(()->{
+                    sentWlData(jsonObject);
+                });
+            });
+
         }
     }
 
@@ -122,12 +136,44 @@ public class DevDataTask {
     }
 
     /**
+     * 实时设备状态上传高速云共通方法
+     *
+     * @param sdDevices
+     * @return
+     */
+    public JSONObject devStatus(SdDevices sdDevices){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("devNo", "S00063700001980001");
+        jsonObject.put("devType",sdDevices.getEqType());
+        jsonObject.put("loginTime",DateUtils.getNowDate());
+        jsonObject.put("devStatus",sdDevices.getEqStatus());
+        jsonObject.put("source","suidao");
+        if("1".equals(sdDevices.getEqStatus())){
+            jsonObject.put("netstatus",sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark","连通");
+            jsonObject.put("devStatusRemark","正常");
+        }else if("2".equals(sdDevices.getEqStatus())){
+            jsonObject.put("netstatus",sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark","离线");
+            jsonObject.put("devStatusRemark","离线");
+        }else if("3".equals(sdDevices.getEqStatus())){
+            jsonObject.put("devStatusRemark","故障");
+        }else {
+            jsonObject.put("netstatus","1");
+            jsonObject.put("netStatusRemark","连通");
+        }
+        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        JSONObject obj = new JSONObject();
+        obj.put("deviceStatus",sdDevices);
+        jsonObject.put("expands",obj);
+        return jsonObject;
+    }
+
+    /**
      * 推送物联
      */
-    public void sentWlData(Map<String, Object> item){
+    public void sentWlData(JSONObject jsonObject){
         try {
-            JSONObject definitionObject = definitionParam(item.get("deviceId").toString(), item.get("deviceData").toString(), Long.valueOf(item.get("devicesItemId").toString()));
-            JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject);
             kafkaTwoTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObject.toString());
         }catch (Exception e){
             e.getMessage();

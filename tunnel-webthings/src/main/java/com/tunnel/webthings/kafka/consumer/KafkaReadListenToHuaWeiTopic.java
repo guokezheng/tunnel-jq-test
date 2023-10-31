@@ -561,7 +561,7 @@ public class KafkaReadListenToHuaWeiTopic {
             //设备状态
             Integer onlineStatus = jsonObject.getInteger("onlineStatus");
             //是否故障
-            Integer isFault = jsonObject.getInteger("isFault");
+            Integer isFault = jsonObject.getInteger("isFault") == null ? 0 : jsonObject.getInteger("isFault");
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqId(deviceId);
             sdDevices.setUpdateTime(DateUtils.getNowDate());

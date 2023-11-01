@@ -529,7 +529,7 @@ public class InductionlampUtil {
                 resultMap.put("msgInfo","同步单闪，标号地址"+fireMark+"，频率"+timeSecond+"，亮度"+brightnessParam+"。");
                 break;
             case PILOT_LIGHT_MODE_5 ://报警fireMark
-                resultCode = "1GH+FIRE="+fireMark+",BPWM="+brightnessParam+",BFREQ="+timeSecond+",BMODE=1,\r\n";
+                resultCode = "1GH+FIRE="+fireMark+",BPWM="+brightnessParam+",BFREQ="+timeSecond+",BMODE=1,BPWMHOLD=0,\r\n";
                 resultMap.put("msgInfo","顺向单闪流水灯，标号地址"+fireMark+"，频率"+timeSecond+"次/min，亮度为"+brightnessParam+"。");
                 break;
             default:

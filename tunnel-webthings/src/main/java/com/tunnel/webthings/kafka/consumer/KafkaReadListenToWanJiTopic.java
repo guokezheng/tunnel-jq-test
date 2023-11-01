@@ -309,45 +309,47 @@ public class KafkaReadListenToWanJiTopic {
      */
     public void saveEventImage(JSONObject jsonObject){
         //事件数据
-        JSONArray eventList = JSONObject.parseArray(jsonObject.get("eventList").toString());
-        for(int i =0; i < eventList.size(); i++){
-            //图片数据
-            JSONObject imageData = JSONObject.parseObject(eventList.get(i).toString());
-            //事件id
-            Long eventId = imageData.getLongValue("eventId");
-            //删除历史图片视频
-            imageMapper.delImageByBusinessIds(new Long[]{eventId});
-            //事件图片-视频
-            String[] imgList = new String[3];
-            String[] vedioList = new String[2];
-            String imagePath1 = imageData.getString("imagePath1");
-            String imagePath2 = imageData.getString("imagePath2");
-            String imagePath3 = imageData.getString("imagePath3");
-            String vedioPath = imageData.getString("vedioPath");
-            String vedioPath2 = imageData.getString("vedioPath2");
-            imgList[0] = imagePath1;
-            imgList[1] = imagePath2;
-            imgList[2] = imagePath3;
-            vedioList[0] = vedioPath;
-            vedioList[1] = vedioPath2;
-            List<SdTrafficImage> imageList = new ArrayList<>();
-            for(String img:imgList){
-                SdTrafficImage image = new SdTrafficImage();
-                image.setImgUrl(img);
-                image.setBusinessId(eventId.toString());
-                image.setImgType("0");
-                imageList.add(image);
+        //图片数据
+        //事件id
+        Long eventId = jsonObject.getLongValue("eventId");
+        //删除历史图片视频
+        imageMapper.delImageByBusinessIds(new Long[]{eventId});
+        //事件图片-视频
+        String[] imgList = new String[3];
+        String[] vedioList = new String[2];
+        String imagePath1 = jsonObject.getString("imagePath1");
+        String imagePath2 = jsonObject.getString("imagePath2");
+        String imagePath3 = jsonObject.getString("imagePath3");
+        String vedioPath = jsonObject.getString("vedioPath");
+        String vedioPath2 = jsonObject.getString("vedioPath2");
+        imgList[0] = imagePath1;
+        imgList[1] = imagePath2;
+        imgList[2] = imagePath3;
+        vedioList[0] = vedioPath;
+        vedioList[1] = vedioPath2;
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        for(String img:imgList){
+            if(img == null || "".equals(img)){
+                continue;
             }
-            for(String vedio:vedioList){
-                SdTrafficImage image = new SdTrafficImage();
-                image.setImgUrl(vedio);
-                image.setBusinessId(eventId.toString());
-                image.setImgType("1");
-                imageList.add(image);
-            }
-            //将图片视频存入
-            imageMapper.brachInsertFaultIconFile(imageList);
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(img);
+            image.setBusinessId(eventId.toString());
+            image.setImgType("0");
+            imageList.add(image);
         }
+        for(String vedio:vedioList){
+            if(vedio == null || "".equals(vedio)){
+                continue;
+            }
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(vedio);
+            image.setBusinessId(eventId.toString());
+            image.setImgType("1");
+            imageList.add(image);
+        }
+        //将图片视频存入
+        imageMapper.brachInsertFaultIconFile(imageList);
     }
 
     /**

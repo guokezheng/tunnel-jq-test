@@ -285,7 +285,7 @@
                 <video
                   :src="item.imgUrl"
                   :poster="item.imgUrl"
-                  v-if="index == 0"
+                  v-if="item.imgType != 0"
                   @click="openPicDialog(eventFormDetail)"
                   class="leftVideo"
                   autoplay
@@ -295,7 +295,7 @@
                 <img
                   :src="item.imgUrl"
                   style="width: 100%; height: 100%"
-                  v-if="index != 0"
+                  v-if="item.imgType == 0"
                   @click="clickImg(item.imgUrl)"
                 />
               </swiper-slide>
@@ -315,7 +315,7 @@
                 <video
                   :src="item.imgUrl"
                   :poster="item.imgUrl"
-                  v-if="index == 0"
+                  v-if="item.imgType != 0"
                   autoplay
                   muted
                   loop
@@ -323,7 +323,7 @@
                 <img
                   :src="item.imgUrl"
                   style="width: 100%; height: 100%"
-                  v-if="index != 0"
+                  v-if="item.imgType == 0"
                 />
               </swiper-slide>
               <div class="swiper-button-prev" slot="button-prev"></div>

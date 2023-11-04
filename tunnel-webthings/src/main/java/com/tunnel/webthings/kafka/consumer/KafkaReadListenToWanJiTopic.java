@@ -259,7 +259,7 @@ public class KafkaReadListenToWanJiTopic {
             Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
             sdEvent.setEventTitle(sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap));
             sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(Long.parseLong(eventData.getString("startTime")))));
-            sdEvent.setEndTime("0".equals(eventData.getString("endTime")) ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(Long.parseLong(eventData.getString("endTime")))));
+            //sdEvent.setEndTime("0".equals(eventData.getString("endTime")) ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,new Date(Long.parseLong(eventData.getString("endTime")))));
             sdEvent.setEventTime(DateUtils.parseDate(sdEvent.getStartTime()));
             sdEvent.setLaneNo(eventData.getString("laneNo"));
             sdEvent.setEventSource("1");
@@ -336,6 +336,7 @@ public class KafkaReadListenToWanJiTopic {
             image.setImgUrl(img);
             image.setBusinessId(eventId.toString());
             image.setImgType("0");
+            image.setCreateTime(DateUtils.getNowDate());
             imageList.add(image);
         }
         for(String vedio:vedioList){
@@ -346,6 +347,7 @@ public class KafkaReadListenToWanJiTopic {
             image.setImgUrl(vedio);
             image.setBusinessId(eventId.toString());
             image.setImgType("1");
+            image.setCreateTime(DateUtils.getNowDate());
             imageList.add(image);
         }
         //将图片视频存入

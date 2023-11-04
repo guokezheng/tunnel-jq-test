@@ -334,11 +334,11 @@ public class SdDevicesController extends BaseController {
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
         }
         //管理站平台下推送
-       /* if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
+        if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
             List<SdDevices> sdDevicesList = new ArrayList<>();
             sdDevicesList.add(sdDevices);
             sdPlatformApiController.devicesPush(sdDevicesList, "edit" , null);
-        }*/
+        }
         return Result.toResult(i);
     }
 

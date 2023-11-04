@@ -14,5 +14,5 @@ public interface ISdTunnelsDataService {
 
     Map getRealTimeCarFlow();
 
-
+    Map<String, Object> realTimeCongestion();
 }

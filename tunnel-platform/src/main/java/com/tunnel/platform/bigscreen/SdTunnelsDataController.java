@@ -82,6 +82,13 @@ public class SdTunnelsDataController extends BaseController {
         return AjaxResult.success(iSdTunnelsDataService.getRealTimeCarFlow());
     }
 
-
+    /**
+     * 隧道实时拥挤度
+     * @return
+     */
+    @GetMapping("/realTimeCongestion")
+    public AjaxResult realTimeCongestion(){
+        return AjaxResult.success(iSdTunnelsDataService.realTimeCongestion());
+    }
 
 }

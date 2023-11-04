@@ -8,31 +8,31 @@ import java.util.Map;
 public interface SdTunnelsDataMapper {
 
     /* 获取今日重大事故总数 */
-    Integer getMajorEventDataCount();
+    Integer getMajorEventDataCount(@Param("dept") String dept);
 
     /* 获取今日安全预警总数 */
-    Integer getMajorEventDataWarnCount();
+    Integer getMajorEventDataWarnCount(@Param("dept") String dept);
 
     /* 获取今日未处理安全预警总数 */
-    Integer getMajorEventDataHandleWarnCount();
+    Integer getMajorEventDataHandleWarnCount(@Param("dept") String dept);
 
     /* 获取今日交通事件总数 */
-    Integer getMajorEventDataEventCount();
+    Integer getMajorEventDataEventCount(@Param("dept") String dept);
 
     /* 获取今日未处理交通事件总数*/
-    Integer getMajorEventDataHandleEventCount();
+    Integer getMajorEventDataHandleEventCount(@Param("dept") String dept);
 
     /* 获取今日事件列表 */
-    List<Map<String,Object>> getMajorEventDataList();
+    List<Map<String,Object>> getMajorEventDataList(@Param("dept") String dept);
 
     /* 获取所有事件类型 */
     List<Map<String, Object>> getListByPrevControlTypeId(@Param("prevControlTypeId") String prevControlTypeId);
 
     /* 获取每个事件类型的总数 */
-    Integer[] getEventStatMonthDataByEventTypeId(@Param("eventTypeId") Integer eventTypeId);
+    Integer getEventStatMonthDataByEventTypeId(@Param("eventTypeId") Long eventTypeId,@Param("tunnelId") String tunnelId);
 
     /* 获取每个事件类型 周的数据集 */
-    Integer[] getEventStatWeekDataByEventTypeId(@Param("eventTypeId")Integer eventTypeId);
+    Integer[] getEventStatWeekDataByEventTypeId(@Param("eventTypeId")Long eventTypeId,@Param("dept") String dept);
 
     /* 获取当年车流量总数 */
     Integer getCarFlowDataThisYearCount();
@@ -46,11 +46,11 @@ public interface SdTunnelsDataMapper {
     /* 获取近七日车流量列表 */
     List<Map<String, Object>> getCarFlowDataWeekList();
 
-    /* 获取去年同期流量列表 */
-    List<Map<String, Object>> getCarFlowDataLastYearList();
+    /* 获取车流量TOP数据 */
+    List<Map<String, Object>> getTunnelCarNum(@Param("dept") String dept);
 
-    /* 获取每个4小时流量列表 */
-    List<Map<String, Object>> getCarFlowDataFourHoursList();
+    /* 获取当天车流量数据 */
+    List<Map<String, Integer>> getCarFlowDataList(@Param("dept") String dept);
 
     /* 获取全部隧道 */
     String [] getAllTunnelsList();

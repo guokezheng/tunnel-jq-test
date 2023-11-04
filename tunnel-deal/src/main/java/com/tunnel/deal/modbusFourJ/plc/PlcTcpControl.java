@@ -1,36 +1,27 @@
-package com.tunnel.deal.tcp.plc.ximenzi;
+package com.tunnel.deal.modbusFourJ.plc;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.spring.SpringUtils;
+import com.serotonin.modbus4j.ModbusMaster;
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
-import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.tcp.client.general.TcpClientGeneralBean;
-import com.tunnel.deal.tcp.modbus.ModbusCmd;
-import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
-import com.tunnel.deal.tcp.modbus.ModbusCmdValues;
+import com.tunnel.deal.modbusFourJ.util.Modbus4jWriteUtil;
+import com.tunnel.deal.modbusFourJ.util.ModbusTcpMaster;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
-import com.tunnel.deal.tcp.plc.ximenzi.task.XiMenZiPlcTask;
+import com.tunnel.deal.tcp.plc.ximenzi.XiMenZiPlcControl;
 import com.tunnel.deal.tcp.util.NumberSystemConvert;
-import com.tunnel.deal.tcp.util.Obj2ListUtil;
-import com.tunnel.deal.tcp.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -41,26 +32,23 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.tunnel.deal.tcp.modbus.ModbusCmdGenerator.getHexByte;
-
-
 /**
- * describe: 西门子PLC控制类
+ * describe: PLC modbus tcp控制类
  *
  * @author zs
- * @date 2023/8/17
+ * @date 2023/10/26
  */
 @Component
-public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralBean {
+public class PlcTcpControl implements GeneralControlBean {
+
+    @Autowired
+    private CommonControlService commonControlService;
 
     @Autowired
     private ISdDevicesService sdDevicesService;
 
     @Autowired
     private ISdDeviceDataService deviceDataService;
-
-    @Autowired
-    private CommonControlService commonControlService;
 
     @Autowired
     private ISdDevicePointPlcService devicePointPlcService;
@@ -79,12 +67,11 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Autowired
-    private ModbusCmd modbusCmd;
+    private XiMenZiPlcControl xiMenZiPlcControl;
 
-    /**
-     * 批量控制标志,默认是关闭模式
-     */
-    public static boolean batchControl = false;
+    @Autowired
+    @Qualifier(value = "ModbusTcpMaster")
+    ModbusTcpMaster masterTcp;
 
 
     /**
@@ -170,10 +157,6 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
      * @param state    设备状态
      */
     public AjaxResult control(SdDevices sdDevices, String state) {
-
-        ModbusCmd.commandLock = false;
-        System.out.println("西门子--关闭指令锁：commandLock="+ModbusCmd.commandLock);
-
         //通过控制父设备控制子设备
         String fEqId = sdDevices.getfEqId();
         if(fEqId == null || "".equals(fEqId)){
@@ -183,28 +166,6 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
         String ip = fDevice.getIp();
         String port = fDevice.getPort();
         Integer portNum = Integer.valueOf(port);
-////        先关闭通道，解除查询指令占用的通道
-//        Channel cmdChannel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,Integer.valueOf(port)));
-//        if(cmdChannel != null){
-//            cmdChannel.close();
-//        }
-//        //获取连接通道
-//        TcpNettySocketClient.getInstance().connect(ip,portNum);
-//        int count = 100;
-//        int i = 0;
-//        //发送指令
-//        while(i < count){
-//            Channel channel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,portNum));
-//            if (channel != null && channel.isActive()) {
-//                System.out.println("获得了连接");
-//                break;
-//            }
-//            i++;
-//            modbusCmd.sleep(20);
-//        }
-//
-//        modbusCmd.sleep(100);
-
         String deviceId = sdDevices.getEqId();
         //点位类型：控制点位
         Long pointType = DevicePointControlTypeEnum.control_enable.getCode();
@@ -251,139 +212,29 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
         //功能码
         String functionCode = devicePointPlc.getFunctionCode();
 
+//        ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
+       ModbusMaster master = masterTcp.getSlave(ip, portNum);
 
-        //发送指令
-        AjaxResult ajaxResult = modbusCmd.sendControlCommand(XiMenZiPlcTask.deviceMap,fEqId,functionCode,address,writeLength,controlState);
-
-        //存储下发的控制指令
-        String command = modbusCmd.getCommand(functionCode,address,"",writeLength,controlState);
-        Map<String,String> map = new HashMap<>();
-        map.put("deviceId",fEqId);
-        String startAddress = getHexByte(Integer.valueOf(address));
-        map.put("address",startAddress);
-        map.put("value",controlState);
-        map.put("ip",ip);
-        map.put("port",port);
-        map.put("command",command);
-        XiMenZiPlcTask.controlCmdMap.put(fEqId+startAddress,map);
-
-        if(!batchControl){
-            //批量模式关闭时，打开控制锁
-            ModbusCmd.commandLock = true;
-            System.out.println("西门子--打开指令锁：commandLock="+ModbusCmd.commandLock);
+//        short writeValue = Short.valueOf(controlState);
+        int writeOffset = Integer.valueOf(address);
+        boolean result = Modbus4jWriteUtil.writeData(master,1,writeOffset,controlState,functionCode);
+        if(result){
+           return AjaxResult.success("设备指令发送成功");
+        }else{
+            return AjaxResult.error("设备指令发送报错");
         }
 
-        //每次指令保留300ms时间间隔，时间短PLC容易返回错误指令
-        modbusCmd.sleep(100);
-        return ajaxResult;
     }
 
-
-    /**
-     * 重新下发失败的指令
-     */
-    public void sendFailCmd(){
-        ModbusCmd.commandLock = false;
-        XiMenZiPlcTask.controlCmdMap.forEach((key,itemMap)->{
-            Map resultMap = XiMenZiPlcTask.controlResultMap.get(key);
-            if(resultMap == null){
-                //指令下发失败，重新下发
-                String deviceId = Optional.ofNullable(itemMap.get("deviceId")).orElse("").toString();
-                String ip = Optional.ofNullable(itemMap.get("ip")).orElse("").toString();
-                String port = Optional.ofNullable(itemMap.get("port")).orElse("").toString();
-                String command = Optional.ofNullable(itemMap.get("command")).orElse("").toString();
-                System.out.println("失败指令重新发送：ip="+ip+",deviceId="+deviceId+"command="+command);
-                modbusCmd.executeCommand(deviceId,ip,port,command);
-                modbusCmd.sleep(500);
-            }else{
-                XiMenZiPlcTask.controlCmdMap.remove(key);
-                XiMenZiPlcTask.controlResultMap.remove(key);
-            }
-        });
-        XiMenZiPlcTask.controlCmdMap.clear();
-        XiMenZiPlcTask.controlResultMap.clear();
-        ModbusCmd.commandLock = true;
-    }
-
-
-
-    /**
-     * 解析读取的数据
-     *
-     * @param ip       网关设备IP
-     * @param deviceId 网关设备ID
-     * @param msg      读取的数据
-     */
-    @Override
-    public void handleReadData(String ip, String deviceId, String msg) {
-
-        JSONObject jsonObject = ModbusCmdResolver.commandParse(ip,deviceId,msg);
-
-        String functionCode = jsonObject.getString("functionCode");
-        String readData = jsonObject.getString("readData");
-        if(ModbusFunctionCode.CODE_TWO.equals(functionCode)){
-
-            Integer num = Integer.parseInt(readData,16);
-            String binaryNum = Integer.toBinaryString(num);
-            binaryNum = StringUtil.fillStringWithZero(binaryNum,4);
-            jsonObject.put("data",binaryNum);
-        }
-        if(ModbusFunctionCode.CODE_THREE.equals(functionCode) || ModbusFunctionCode.CODE_FOUR.equals(functionCode)){
-            Integer length = readData.length();
-//            //按照功能码分析
-            //两个字节一个字（一个寄存器地址的长度）
-            if(length % 4 == 0){
-                List<String> list = ModbusCmdResolver.handleTwoBytesDataHex(readData);
-                jsonObject.put("data",list);
-            }
-        }
-        if(ModbusFunctionCode.CODE_SIX.equals(functionCode)){
-            //控制指令的返回指令，不需要解析
-            if(msg.length() >= ModbusCmdValues.FUNCTION_SIX_RECV_CMD_LENGTH){
-                //正常的返回指令
-                String startAddress = msg.substring(16,20);
-                String value = msg.substring(20,24);
-                Map<String,String> map = new HashMap<>();
-                map.put("deviceId",deviceId);
-                map.put("address",startAddress);
-                map.put("value",value);
-                map.put("result","1");
-
-                XiMenZiPlcTask.controlResultMap.put(deviceId+startAddress,map);
-            }else{
-                //序列码和起始地址相同,控制指令返回失败
-                String startAddress = msg.substring(0,4);
-                Map<String,String> map = new HashMap<>();
-                map.put("address",startAddress);
-                map.put("result","0");
-                XiMenZiPlcTask.controlResultMap.put(deviceId+startAddress,map);
-            }
-        }
-
-        dataParse(ip,deviceId,jsonObject);
-
-//        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
-//        String port = sdDevices.getPort();
-//        //关闭通道
-//        Channel channel = TcpNettySocketClient.channels.get(ChannelKey.getChannelKey(ip,Integer.valueOf(port)));
-//        channel.close();
-    }
-
-
-    /**
-     * 数据解析
-     * @param jsonObject 数据
-     */
-    public void dataParse(String ip,String deviceId,JSONObject jsonObject){
-
-        //功能码
-        String functionCode = jsonObject.getString("functionCode");
-        //起始地址
-        String address = jsonObject.getString("address");
-        Object data = jsonObject.get("data");
-        if(data == null){
-            return;
-        }
+    public void dateParse(String deviceId,String functionCode,String address,List<String> result){
+//        List<Object> dataList = Arrays.asList(result);
+//
+//        ArrayList<Integer> arrayList = new ArrayList<Integer>(result.length);
+//        Collections.addAll(arrayList, result);
+//
+//
+//        // 对于数组则可以使用 ImmutableList 的 copyOf() 方法创建
+//        List<String> i2 = ImmutableList.copyOf(result);
 
         List<String> idList = new ArrayList<>();
         idList.add(deviceId);
@@ -393,7 +244,6 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
 
         List<SdDevicePointPlc> pointList = devicePointPlcService.selectDevicePointByFEqId(idList,pointType,functionCode);
 
-
         switch (functionCode){
             case ModbusFunctionCode.CODE_TWO:
 //                getFunctionTwoData(pointList, String.valueOf(data),address);
@@ -401,12 +251,13 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             case ModbusFunctionCode.CODE_THREE:
             case ModbusFunctionCode.CODE_FOUR:
                 //实时数据
-                List<String> dataList = Obj2ListUtil.objToList(data,String.class);
-                getFunctionThreeData(pointList,dataList,address);
+                getFunctionThreeData(pointList,result,address);
             default: break;
         }
 
+
     }
+
 
     /**
      * 功能码03、04返回数据解析
@@ -415,19 +266,22 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
      * @param dataList
      * @param address
      */
-    public void getFunctionThreeData(List<SdDevicePointPlc> pointList,List<String> dataList,String address){
+    public void getFunctionThreeData(List<SdDevicePointPlc> pointList, List<String> dataList, String address){
         Map<Integer,String> valueMap = new HashMap<>();
 
-        //十六进制地址转换
-        Integer startAddress = Integer.valueOf(address,16);
+        //十进制地址
+        Integer startAddress = Integer.valueOf(address);
         for(int i = 0; i < dataList.size(); i++){
-            valueMap.put(startAddress,dataList.get(i));
+            String hexNum = dataList.get(i);
+//            short num = dataList[i];
+//            String hexNum = Integer.toHexString((-128 & 0xFF) | 0x100);
+//            String hexNum = Integer.toHexString(num);
+            valueMap.put(startAddress,hexNum);
             startAddress ++;
         }
 
         //按父设备ID、功能码筛选设备点位表中的地址，按照点位地址从小到大的顺序，将list数据跟设备点位对应
         // 将读取的数据保存到实时数据表中
-//        Integer addressCursor = Integer.valueOf(address);
         for(int j = 0; j < pointList.size();  j++){
             String result = "";
             SdDevicePointPlc devicePointPlc = pointList.get(j);
@@ -444,6 +298,9 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             if(data == null){
                 continue;
             }
+//            if(eqId.contains("JQ-ZiBo-TaiHe-QFL-JF-010+1")){
+//                System.out.println("测试");
+//            }
             String pointConfig = devicePointPlc.getPointConfig();
             if(pointConfig != null && !"".equals(pointConfig)){
                 //将十六进制数据转换为十进制，再做匹配
@@ -494,59 +351,18 @@ public class XiMenZiPlcControl  implements GeneralControlBean, TcpClientGeneralB
             deviceDataService.updateDeviceData(sdDevices, result,itemId);
 
             //储存历史数据
-            setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
+            xiMenZiPlcControl.setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
             //设置设备在线
             sdDevicesService.updateOnlineStatus(eqId,false);
-            //异步推送万集数据
-            threadPoolTaskExecutor.execute(()->{
-                pushWanJi(eqId);
-            });
-        }
-    }
-
-    /**
-     * 推送万集
-     * @param eqId
-     */
-    public void pushWanJi(String eqId){
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqId);
-        List<SdDevices> sdDevicesList =  new ArrayList<>();
-        sdDevicesList.add(sdDevices);
-        List<SdRadarDevice> deviceRadar = radarEventServiceImpl.getDeviceRadar(sdDevicesList);
-        kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(deviceRadar));
-    }
-
-    /**
-     * 储存设备数据历史记录表
-     *
-     * @param deviceId
-     * @param data
-     * @param itemId
-     */
-    public void setDeviceDataRecord(String deviceId,String data,Long itemId){
-        Long co = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
-        Long vi = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
-        Long fengsu = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
-        Long fengxiang = Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode());
-        Long dongnei = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
-        Long dongwai = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
-        Long yuanchuan = Long.valueOf(DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
-        Long wendu = Long.valueOf(DevicesTypeItemEnum.WEN_DU_CHUANGAN.getCode());
-        Long shidu  = Long.valueOf(DevicesTypeItemEnum.SHI_DU_CHUANGAN.getCode());
-        Long shuijin  = Long.valueOf(DevicesTypeItemEnum.SHUI_JIN_LEVEL.getCode());
-
-        if(itemId == co || itemId == vi || itemId == fengsu || itemId == fengxiang
-                || itemId == dongnei || itemId == dongwai || itemId == yuanchuan || itemId == wendu
-                || itemId == shidu|| itemId == shuijin){
-            SdDeviceDataRecord record = new SdDeviceDataRecord();
-            record.setDeviceId(deviceId);
-            record.setData(data);
-            record.setItemId(itemId);
-            record.setCreateTime(DateUtils.getNowDate());
-            //获取bean
-            SdDeviceDataRecordMapper bean = SpringUtils.getBean(SdDeviceDataRecordMapper.class);
-            //将数据存入历史记录表
-            bean.insertSdDeviceDataRecord(record);
+//            //异步推送万集数据
+//            threadPoolTaskExecutor.execute(()->{
+//                try{
+//                    xiMenZiPlcControl.pushWanJi(eqId);
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//
+//                }
+//            });
         }
     }
 }

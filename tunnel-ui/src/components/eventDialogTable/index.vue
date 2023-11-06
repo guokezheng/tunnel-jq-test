@@ -93,7 +93,7 @@
                 </div>
                 <span
                   class="icon-split"
-                  style="padding: 0 12px; color: #3cd3fe"
+                  style="padding: 0 7px 12px; color: #3cd3fe"
                 >
                   |</span
                 >

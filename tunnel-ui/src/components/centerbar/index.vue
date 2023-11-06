@@ -5,7 +5,7 @@
         :id="sideTheme == 'theme-dark' ? 'top_icon' : 'screenfull'"
         class="right-menu-item hover-effect white_icon"
       />
-      <!-- <el-dropdown class="right-menu-item bell">
+      <el-dropdown class="right-menu-item bell">
         <el-dropdown-menu style="display: none"></el-dropdown-menu>
         <el-tooltip content="监控一体化大屏" effect="dark" placement="bottom">
           <i
@@ -15,7 +15,7 @@
             title="监控一体化大屏"
           ></i>
         </el-tooltip>
-      </el-dropdown> -->
+      </el-dropdown>
       <!-- <el-badge
         :value="nodealNum"
         :hidden="nodealNum > 0 ? false : true"

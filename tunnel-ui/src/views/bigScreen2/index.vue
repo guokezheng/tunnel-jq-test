@@ -46,7 +46,7 @@
       @openTunnelInfo="openTunnelInfo"
       style="height: calc(100% - 72px) !important; z-index: 2;position: absolute;top: 72px;"
     ></gisMap>
-    <!-- <div style="width:100%;height:100%;background-color: #000;"></div> -->
+    <!-- <div style="width:100%;height:calc(100% - 72px) !important;background-color: #000;"></div> -->
     <bigScreen v-if="bigScreenList[0].type" class="charts" />
     <bigScreen2 v-if="bigScreenList[1].type" class="charts" />
     <bigScreen3 v-if="bigScreenList[2].type" class="charts" />

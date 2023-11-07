@@ -11,8 +11,8 @@
         <div>交通事件</div>
       </div>
     </div>
-    <el-table :data="list.list" height="220" size="mini" class="bigScreenTable">
-      <el-table-column prop="eventType" label="事件类型" width="80" align="center" />
+    <el-table :data="list.list" height="200" size="mini" class="bigScreenTable">
+      <el-table-column prop="eventType" label="事件类型" width="78" align="center" />
       <el-table-column
         label="内容"
         width="138"
@@ -23,8 +23,8 @@
          <span style="margin-right:4px">{{ scope.row.tunnelName}}</span>
          <span>{{ getDirection(scope.row.direction)}}</span>
       </template></el-table-column>
-      <el-table-column prop="eventState" label="状态" width="62" align="center" :formatter="eventStateFormat"/>
-      <el-table-column prop="createTime" label="发生时间" width="75" align="center">
+      <el-table-column prop="eventState" label="状态" width="65" align="center" :formatter="eventStateFormat"/>
+      <el-table-column prop="createTime" label="发生时间" width="74" align="center">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{h}:{m}:{s}') }}</span>
         </template>

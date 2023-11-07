@@ -1,5 +1,5 @@
 <template>
-  <div id="chart2"></div>
+  <div id="eventchart"></div>
 </template>
   <script>
 import * as echarts from "echarts";
@@ -32,6 +32,7 @@ export default {
   methods: {
     getList() {
       eventStat().then((res) => {
+        console.log(res.data,"分隧道事件统计")
         let list = res.data;
         // 到当月月份数组
         // let month = new Date().getMonth() + 1
@@ -52,7 +53,7 @@ export default {
           // 销毁
           this.myChart2.dispose();
         }
-        let e = document.getElementById("chart2")
+        let e = document.getElementById("eventchart")
         if(!e){
           return
         }
@@ -84,19 +85,14 @@ export default {
           legend: {
             show: true,
             data: [
-              "隧道停电",
-              "洞口边坡塌方",
-              "隧道衬砌垮塌",
-              "隧道渗漏水",
+              "变道",
+              "超速",
               "电话",
               "火灾",
-              "非机动车",
-              "行人",
-              "事故",
-              "停车",
-              "遗散",
-              "拥堵",
+              "慢行",
               "逆行",
+              "停车",
+              "应急车道",
             ],
             textStyle: {
               color: "#9ba0bc",
@@ -169,8 +165,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "拥堵",
-              data: chartData.yongdu,
+              name: "变道",
+              data: chartData.biandao,
               
             },
             ,
@@ -181,38 +177,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "行人",
-              data: chartData.xingren,
-            },
-            {
-              type: "line",
-              smooth: true, // 平滑曲线显示
-              showSymbol: false,
-              lineStyle: {
-                width: 1,
-              },
-              name: "非机动车",
-              data: chartData.feijidongche,
-            },
-            {
-              type: "line",
-              smooth: true, // 平滑曲线显示
-              showSymbol: false,
-              lineStyle: {
-                width: 1,
-              },
-              name: "停车",
-              data: chartData.tingche,
-            },
-            {
-              type: "line",
-              smooth: true, // 平滑曲线显示
-              showSymbol: false,
-              lineStyle: {
-                width: 1,
-              },
-              name: "逆行",
-              data: chartData.nixing,
+              name: "超速",
+              data: chartData.chaosu,
             },
             {
               type: "line",
@@ -231,8 +197,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "洞口边坡塌方",
-              data: chartData.dongkoubianpotafang,
+              name: "火灾",
+              data: chartData.huozai,
             },
             {
               type: "line",
@@ -241,8 +207,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "事故",
-              data: chartData.shigu,
+              name: "慢行",
+              data: chartData.manxing,
             },
             {
               type: "line",
@@ -251,8 +217,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "隧道衬砌垮塌",
-              data: chartData.suidaochenqikuata,
+              name: "逆行",
+              data: chartData.nixing,
             },
             {
               type: "line",
@@ -261,8 +227,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "隧道渗漏水",
-              data: chartData.suidaoshenloushui,
+              name: "停车",
+              data: chartData.tingche,
             },
             {
               type: "line",
@@ -271,18 +237,8 @@ export default {
               lineStyle: {
                 width: 1,
               },
-              name: "隧道停电",
-              data: chartData.suidaotingdian,
-            },
-            {
-              type: "line",
-              smooth: true, // 平滑曲线显示
-              showSymbol: false,
-              lineStyle: {
-                width: 1,
-              },
-              name: "遗散",
-              data: chartData.yisan,
+              name: "应急车道",
+              data: chartData.yingjichedao,
             },
           ],
         };
@@ -293,7 +249,7 @@ export default {
 };
 </script>
   <style scoped>
-#chart2 {
+#eventchart {
   height: calc(100% - 30px);
 }
 </style>

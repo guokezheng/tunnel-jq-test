@@ -687,7 +687,7 @@
       },
       //获取光亮的数据
       getEchartsData(row, type) {
-        // debugger
+        debugger
         //清空上次数据
         this.XDataLight = []
         this.yDataLight = []
@@ -708,7 +708,10 @@
           this.tunnelDisabled = false
           this.$nextTick(() => {
             this.initLoginChart();
+            this.initLoginChart1();
+            return
           });
+          return
         }
         if (!!row) {
           this.lightFilesModel.tunnelId = row.tunnelId
@@ -794,39 +797,7 @@
               // debugger
               let todayDate = ds[0].split(" ")[0]
 
-              //查询济南光照曲线
-              // dataLogInfoLineList(
-              //   this.addDateRange(this.queryParamsLight, ds1)
-              // ).then((response) => {
-              //   let list1 = response.rows;
-              //   list1 = this.lightDatafiler(list1)
-              //
-              //   if(list1.length>0){
-              //     //昨天光强
-              //     for (let i = 0; i < list1.length; i++) {
-              //       //前天
-              //       this.yDataLight.push(list1[i].data)
-              //     }
-              //   }else{
-              //     this.yDataLight = []
-              //   }
-              // });
-              // dataLogInfoLineList(
-              //   this.addDateRange(this.queryParamsLight, ds2)
-              // ).then((response) => {
-              //   // debugger
-              //   let list1 = response.rows;
-              //   list1 = this.lightDatafiler(list1)
-              //   if(list1.length>0){
-              //     //昨天光强
-              //     for (let i = 0; i < list1.length; i++) {
-              //       this.yDataLight1.push(list1[i].data)
-              //     }
-              //   }else{
-              //     this.yDataLight1 = []
-              //   }
-              //
-              // });
+
 
               let ds3 = []
               ds3.push(ds1[0])
@@ -868,19 +839,7 @@
                 console.log( this.XDataLight)
                 // this.XDataLight = this.generateTimeList(todayDate)
                 this.XDataLightOne = this.XDataLight
-                // debugger
 
-                // list1 = this.lightDatafiler(this.yDataLight2)
-
-
-                // if(list1.length>0){
-                //   for (let i = 0; i < list1.length; i++) {
-                //     // this.XDataLight.push(list1[i].createTime)
-                //     this.yDataLight2.push(list1[i].data)
-                //   }
-                // }else{
-                //   this.yDataLight2 = []
-                // }
                 setTimeout(() => {
                   this.$nextTick(() => {
 
@@ -918,28 +877,7 @@
                 }, 500);
               });
 
-              // //查询潍坊光照曲线
-              // dataLogInfoLineList(
-              //   this.addDateRange(this.queryParamsLight1, ds1)
-              // ).then((response) => {
-              //   let list1 = response.rows;
-              //   list1 = this.lightDatafiler(list1)
-              //   for (let i = 0; i < list1.length; i++) {
-              //     //前天
-              //     this.yDataLightOne.push(list1[i].data)
-              //   }
-              // });
-              // dataLogInfoLineList(
-              //   this.addDateRange(this.queryParamsLight1, ds2)
-              // ).then((response) => {
-              //   // debugger
-              //   let list1 = response.rows;
-              //   list1 = this.lightDatafiler(list1)
-              //   //昨天光强
-              //   for (let i = 0; i < list1.length; i++) {
-              //     this.yDataLightOne1.push(list1[i].data)
-              //   }
-              // });
+
 
               dataLogInfoLineList(
                 this.addDateRange(this.queryParamsLight1, ds3)
@@ -1053,7 +991,8 @@
       },
       //光强 修改隧道名称查看不同隧道 光强照明配置
       lightChangeEvent(indextabs) {
-        // debugger
+        debugger
+
         console.log(this.lightFilesModel.tunnelId,this.lightFilesModel.direction,"indextabs")
         if (!!this.lightFilesModel.tunnelId && !!this.lightFilesModel.direction) {
           let tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId == this.lightFilesModel.tunnelId)
@@ -1065,9 +1004,12 @@
             direction: this.lightFilesModel.direction,
             modeType: 0
           }
-
+          this.lightFilesModelWei.tunnelId = this.lightFilesModel.tunnelId
           this.lightListConfig(queryParams)
           this.$forceUpdate()
+          this.$nextTick(() => {
+            this.getEchartsData(null, "refresh")
+          });
         }
       },
 
@@ -1084,9 +1026,12 @@
             direction: this.lightFilesModelWei.direction,
             modeType: 0
           }
-
+          this.lightFilesModel.tunnelId = this.lightFilesModelWei.tunnelId
           this.lightListConfigWei(queryParams)
           this.$forceUpdate()
+          this.$nextTick(() => {
+            this.getEchartsData(null, "refresh")
+          });
         }
       },
       /** 查询隧道列表 */
@@ -1257,10 +1202,7 @@
           await this.getTunnels()
           //查询方向
           await this.getDirection()
-          //
-          // this.$nextTick(() => {
-          //   this.getEchartsData(true)
-          // });
+
         }
       }
     }

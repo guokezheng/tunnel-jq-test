@@ -19,6 +19,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="travelType"    column="travel_type"    />
+        <result property="time"    column="time"    />
     </resultMap>
 
     <sql id="selectSdVehicleDataVo">
@@ -61,6 +64,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="travelType != null">travel_type,</if>
+            <if test="time != null">time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="trackId != null">#{trackId},</if>
@@ -76,6 +81,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="travelType != null">#{travelType},</if>
+            <if test="time != null">#{time},</if>
          </trim>
     </insert>
 
@@ -187,10 +194,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_vehicle_data svm
         where 1=1
         <if test="endDate != null ">
-            and svm.create_time &lt;= #{endDate}
+            and svm.time &lt;= #{endDate}
         </if>
         <if test="startDate != null ">
-            and svm.create_time > #{startDate}
+            and svm.time > #{startDate}
         </if>
         <if test="direction != null ">
             and svm.direction = #{direction}

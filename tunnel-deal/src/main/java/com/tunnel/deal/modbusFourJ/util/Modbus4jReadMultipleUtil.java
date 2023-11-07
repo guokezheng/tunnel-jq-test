@@ -5,7 +5,10 @@ import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.serotonin.modbus4j.msg.*;
+import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
+
+import java.util.List;
 
 
 /**
@@ -17,18 +20,20 @@ import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
  */
 public class Modbus4jReadMultipleUtil {
 
-    public static short[] readRegister(ModbusMaster master,int offset, int numberOfBits,String functionCode,int dataLength){
+    public static List<String> readRegister(ModbusMaster master,int offset, int numberOfBits,String functionCode){
         int slaveId = 1;
-        return readRegister(master,slaveId,offset,numberOfBits,functionCode,dataLength);
+        return readRegister(master,slaveId,offset,numberOfBits,functionCode);
     }
 
 
-    public static short[] readRegister(ModbusMaster master, int slaveId, int offset, int numberOfBits,String functionCode,int dataLength){
-        short[] result = null;
+    public static List<String> readRegister(ModbusMaster master, int slaveId, int offset, int numberOfBits,String functionCode){
+        List<String> list = null;
+        byte[] result = null;
         try {
             switch (functionCode) {
                 case ModbusFunctionCode.CODE_THREE:
-                    result = readHoldingRegister(master, slaveId, offset, numberOfBits);
+//                    result = readHoldingRegister(master, slaveId, offset, numberOfBits);
+                    result =  Modbus4jReadMultipleUtil.readHoldingRegisterByte(master,slaveId,offset,numberOfBits);
                     break;
                 case ModbusFunctionCode.CODE_FOUR:
                     result = readInputRegisters(master, slaveId, offset, numberOfBits);
@@ -39,7 +44,11 @@ public class Modbus4jReadMultipleUtil {
         } catch (ModbusInitException | ModbusTransportException | ErrorResponseException e) {
             e.printStackTrace();
         }
-        return result;
+        String str = Modbus4jReadMultipleUtil.byte2Hex(result);
+        if(str != null){
+            list =  ModbusCmdResolver.handleTwoBytesDataHex(str);
+        }
+        return list;
     }
 
 
@@ -141,11 +150,11 @@ public class Modbus4jReadMultipleUtil {
      * @param slaveId slaveId-从站编号-自行约定
      * @param offset  位置-预访问的地址-地址范围：0-55
      */
-    public static short[] readInputRegisters(ModbusMaster master, int slaveId, int offset, int numberOfBits)
+    public static byte[] readInputRegisters(ModbusMaster master, int slaveId, int offset, int numberOfBits)
             throws ModbusTransportException, ErrorResponseException, ModbusInitException {
         ReadInputRegistersRequest request = new ReadInputRegistersRequest(slaveId, offset, numberOfBits);
         ReadInputRegistersResponse response = (ReadInputRegistersResponse) master.send(request);
-        return response.getShortData();
+        return response.getData();
     }
 
     /**

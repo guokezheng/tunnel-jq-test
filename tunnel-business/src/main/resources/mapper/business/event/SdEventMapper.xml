@@ -232,7 +232,7 @@
 
     <select id = "getEventUntreatedNum" resultType="java.lang.Integer">
         SELECT
-                count( id )+(
+                count( e.id )+(
                 SELECT
                     count( id )
                 FROM
@@ -241,20 +241,15 @@
                     fault_status = '0' and fallt_remove_statue = '1'
                   AND TO_DAYS( fault_fxtime ) = TO_DAYS(
                         NOW())
-                  AND tunnel_id in
-                      <foreach item="id" collection="array" open="(" separator="," close=")">
-                        #{id}
-                      </foreach>) as num
+                  AND tunnel_id  = #{tunnelId}) as num
         FROM
-            sd_event
+            sd_event e LEFT JOIN sd_event_type et ON e.event_type_id = et.id
         WHERE
-            event_state = '3'
-          AND TO_DAYS( event_time ) = TO_DAYS(
+            e.event_state = '3'
+          AND et.id IS NOT NULL
+          AND TO_DAYS( e.event_time ) = TO_DAYS(
                 NOW())
-        AND tunnel_id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+        AND e.tunnel_id = #{tunnelId}
     </select>
 
     <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">

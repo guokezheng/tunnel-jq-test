@@ -236,6 +236,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY a.create_time desc
     </select>
 
+    <select id="selectCatHistoryIds" resultType="hashmap">
+        SELECT
+        a.tunnel_id tunnelId,
+        t.tunnel_name AS tunnelName,
+        t.tunnel_station_name AS deptName,
+        d.pile,
+        sdd.dict_label AS direction,
+        a.device_id deviceId,
+        d.eq_id AS eqId,
+        d.eq_name eqName,
+        SUM( a.small_vehicle_num )+ SUM( a.mid_vehicle_num )+ SUM( a.heavy_vehicle_num ) AS DATA,
+        DATE_FORMAT( a.create_time, '%Y-%m-%d %H:%i' ) createTime
+        FROM
+        sd_microwave_periodic_statistics a
+        LEFT JOIN sd_devices d ON a.device_id = d.eq_id
+        LEFT JOIN sys_dict_data sdd ON d.eq_direction = sdd.dict_value
+        LEFT JOIN sd_tunnels t ON a.tunnel_id = t.tunnel_id
+        where 1=1
+        AND sdd.dict_type = 'sd_direction'
+        <if test="ids != null and ids != ''">
+            AND FIND_IN_SET(a.id,#{ids}) > 0
+        </if>
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+            and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and a.device_id  = #{deviceId}</if>
+        GROUP BY createTime
+        ORDER BY a.create_time desc
+    </select>
+
     <select id="selectCarNumber" resultType="hashmap">
         SELECT SUM(a.small_vehicle_num)+SUM(a.mid_vehicle_num)+SUM(a.heavy_vehicle_num)  as smallVehicleNum,a.eq_direction
         FROM sd_microwave_periodic_statistics a

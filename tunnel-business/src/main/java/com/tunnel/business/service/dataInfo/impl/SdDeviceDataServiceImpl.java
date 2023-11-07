@@ -405,28 +405,28 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
     @Override
     public List<Map<String, String>> handleWBExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistoryIds(sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId(), sdDeviceCOVIData.getIds());
         return maps;
     }
 
     @Override
     public List<Map<String, String>> handleWSDExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        List<Map<String, String>> maps = sdDeviceDataMapper.selectWSDDataList(
-                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        List<Map<String, String>> maps = sdDeviceDataMapper.selectWSDDataListIds(
+                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId(), sdDeviceCOVIData.getIds());
         return maps;
     }
 
     @Override
     public List<Map<String, String>> handleSJExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        List<Map<String, String>> maps = sdDeviceDataMapper.selectSJDataList(
-                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        List<Map<String, String>> maps = sdDeviceDataMapper.selectSJDataListIds(
+                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId(), sdDeviceCOVIData.getIds());
         return maps;
     }
 
     @Override
     public List<Map<String, String>> handleFJExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        List<Map<String, String>> maps = sdDeviceDataMapper.selectFJDataList(
-                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId());
+        List<Map<String, String>> maps = sdDeviceDataMapper.selectFJDataListIds(
+                sdDeviceCOVIData.getParams().get("beginTime").toString(), sdDeviceCOVIData.getParams().get("endTime").toString(), sdDeviceCOVIData.getDeviceId(), sdDeviceCOVIData.getIds());
         return maps;
     }
 

@@ -38,6 +38,9 @@ public interface SdMicrowavePeriodicStatisticsMapper
      */
     public int insertSdMicrowavePeriodicStatistics(SdMicrowavePeriodicStatistics sdMicrowavePeriodicStatistics);
 
+    public List<Map<String, String>>  selectCatHistoryIds(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId,
+                                                       @Param("ids") String ids);
+
     public List<Map<String, String>>  selectCatHistory(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
     public Map<String, String>  selectCarNumber(@Param("deviceId") String deviceId);

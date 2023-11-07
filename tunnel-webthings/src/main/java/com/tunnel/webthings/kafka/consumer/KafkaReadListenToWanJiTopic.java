@@ -312,16 +312,16 @@ public class KafkaReadListenToWanJiTopic {
         //图片数据
         //事件id
         Long eventId = jsonObject.getLongValue("eventId");
-        //删除历史图片视频
-        imageMapper.delImageByBusinessIds(new Long[]{eventId});
+        //查询视频图片
+        List<SdTrafficImage> list = imageMapper.selectImageByBusinessId(eventId.toString());
         //事件图片-视频
         String[] imgList = new String[3];
         String[] vedioList = new String[2];
         String imagePath1 = jsonObject.getString("imagePath1");
         String imagePath2 = jsonObject.getString("imagePath2");
         String imagePath3 = jsonObject.getString("imagePath3");
-        String vedioPath = jsonObject.getString("vedeoPath");
-        String vedioPath2 = jsonObject.getString("vedeoPath2");
+        String vedioPath = jsonObject.getString("videoPath");
+        String vedioPath2 = jsonObject.getString("videoPath2");
         imgList[0] = imagePath1;
         imgList[1] = imagePath2;
         imgList[2] = imagePath3;
@@ -330,6 +330,10 @@ public class KafkaReadListenToWanJiTopic {
         List<SdTrafficImage> imageList = new ArrayList<>();
         for(String img:imgList){
             if(img == null || "".equals(img)){
+                continue;
+            }
+            int count = checkImageData(list, img);
+            if(count == 1){
                 continue;
             }
             SdTrafficImage image = new SdTrafficImage();
@@ -341,6 +345,10 @@ public class KafkaReadListenToWanJiTopic {
         }
         for(String vedio:vedioList){
             if(vedio == null || "".equals(vedio)){
+                continue;
+            }
+            int count = checkImageData(list, vedio);
+            if(count == 1){
                 continue;
             }
             SdTrafficImage image = new SdTrafficImage();
@@ -846,5 +854,18 @@ public class KafkaReadListenToWanJiTopic {
         }
     }
 
-
+    /**
+     * 查询是否存在相同视频图片
+     * @param list
+     * @param data
+     * @return
+     */
+    public int checkImageData(List<SdTrafficImage> list, String data){
+        for(SdTrafficImage imageData : list){
+            if(data.equals(imageData.getImgUrl())){
+                return 1;
+            }
+        }
+        return 0;
+    }
 }

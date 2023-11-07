@@ -88,10 +88,10 @@ public interface ISdTunnelsService {
 
     /**
      * 查询隧道list根据权限
-     * @param deptId
+     * @param sdTunnels
      * @return
      */
-    List<SdTunnels> selectTunnelsDeptIdList(String deptId);
+    List<SdTunnels> selectTunnelsDeptIdList(SdTunnels sdTunnels);
 
     /**
      * 查询隧道列表

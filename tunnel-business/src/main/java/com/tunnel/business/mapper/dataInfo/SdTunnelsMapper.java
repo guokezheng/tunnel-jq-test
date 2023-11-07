@@ -101,6 +101,12 @@ public interface SdTunnelsMapper
      */
     List<SdTunnels> selectTunnelsDeptIdList(String deptId);
 
+    /**
+     * 查询隧道list
+     * @return
+     */
+    List<SdTunnels> selectTunList(SdTunnels sdTunnels);
+
 
     /**
      * 查询隧道列表

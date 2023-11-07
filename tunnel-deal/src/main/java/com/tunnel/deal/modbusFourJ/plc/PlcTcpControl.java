@@ -17,8 +17,10 @@ import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.modbusFourJ.util.Modbus4jReadMultipleUtil;
 import com.tunnel.deal.modbusFourJ.util.Modbus4jWriteUtil;
 import com.tunnel.deal.modbusFourJ.util.ModbusTcpMaster;
+import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import com.tunnel.deal.tcp.plc.ximenzi.XiMenZiPlcControl;
 import com.tunnel.deal.tcp.util.NumberSystemConvert;
@@ -72,6 +74,9 @@ public class PlcTcpControl implements GeneralControlBean {
     @Autowired
     @Qualifier(value = "ModbusTcpMaster")
     ModbusTcpMaster masterTcp;
+
+    @Autowired
+    private ModbusCmd modbusCmd;
 
 
     /**
@@ -212,17 +217,29 @@ public class PlcTcpControl implements GeneralControlBean {
         //功能码
         String functionCode = devicePointPlc.getFunctionCode();
 
-//        ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
-       ModbusMaster master = masterTcp.getSlave(ip, portNum);
-
-//        short writeValue = Short.valueOf(controlState);
         int writeOffset = Integer.valueOf(address);
-        boolean result = Modbus4jWriteUtil.writeData(master,1,writeOffset,controlState,functionCode);
-        if(result){
+
+        Map<String,Object> itemMap = new HashMap<>();
+        itemMap.put("ip",ip);
+        itemMap.put("portNum",portNum);
+        itemMap.put("fEqId",fEqId);
+        itemMap.put("offset",writeOffset);
+        itemMap.put("writeValue",controlState);
+        itemMap.put("functionCode",functionCode);
+        itemMap.put("priority",PlcTcpTask.writePriority);
+        PlcTcpTask.queue.add(itemMap);
+
+
+//        ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
+////       ModbusMaster master = masterTcp.getSlave(ip, portNum);
+//
+//        boolean result = Modbus4jWriteUtil.writeData(master,writeOffset,controlState,functionCode);
+
+//        if(result){
            return AjaxResult.success("设备指令发送成功");
-        }else{
-            return AjaxResult.error("设备指令发送报错");
-        }
+//        }else{
+//            return AjaxResult.error("设备指令发送报错");
+//        }
 
     }
 
@@ -364,5 +381,80 @@ public class PlcTcpControl implements GeneralControlBean {
 //                }
 //            });
         }
+    }
+
+
+    /**
+     * 读取数据
+     * @param map
+     */
+    public void executeRead(Map<String,Object> map){
+//    public void executeRead(String ip,int portNum,String fEqId,int offset, int numberOfBits,String functionCode){
+
+        String ip = String.valueOf(map.get("ip"));
+        String port = String .valueOf(map.get("portNum"));
+        int portNum = Integer.valueOf(port);
+        String fEqId = String.valueOf(map.get("fEqId"));
+        String offsetStr = String.valueOf(map.get("offset"));
+        int offset = Integer.valueOf(offsetStr);
+        String bits =  String.valueOf(map.get("numberOfBits"));
+        int numberOfBits = Integer.valueOf(bits);
+        String functionCode = String.valueOf(map.get("functionCode"));
+
+//        ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
+        ModbusMaster master = masterTcp.getSlave(ip, portNum);
+
+        List<String> list =  Modbus4jReadMultipleUtil.readRegister(master,offset,numberOfBits,functionCode);
+        if(list != null){
+            dateParse(fEqId,functionCode,offsetStr,list);
+        }else{
+            System.out.println("ip="+ip+",port="+port+",PLC="+fEqId+",读取不到数据");
+        }
+    }
+
+    /**
+     * 执行写入数据
+     * @param map
+     */
+    public void executeWrite(Map<String,Object> map){
+        String ip = String.valueOf(map.get("ip"));
+        String port = String .valueOf(map.get("portNum"));
+        int portNum = Integer.valueOf(port);
+        String fEqId = String.valueOf(map.get("fEqId"));
+        String offsetStr = String.valueOf(map.get("offset"));
+        int offset = Integer.valueOf(offsetStr);
+        String writeValue =  String.valueOf(map.get("writeValue"));
+        String functionCode = String.valueOf(map.get("functionCode"));
+
+//        ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
+       ModbusMaster master = masterTcp.getSlave(ip, portNum);
+
+        boolean result = Modbus4jWriteUtil.writeData(master,offset,writeValue,functionCode);
+
+    }
+
+
+    /**
+     * 队列数据依次执行
+     */
+    public void executeQueue(){
+        //获取头部元素
+        Map<String,Object> map = PlcTcpTask.queue.peek();
+        if(map == null){
+            return;
+        }
+        String priority = String.valueOf(map.get("priority"));
+        int priorityNum = Integer.valueOf(priority);
+        if(PlcTcpTask.readPriority == priorityNum){
+            //读取
+            executeRead(map);
+        }else{
+            modbusCmd.sleep(20);
+            //写入
+            executeWrite(map);
+            modbusCmd.sleep(20);
+        }
+        //移除头部元素
+        PlcTcpTask.queue.poll();
     }
 }

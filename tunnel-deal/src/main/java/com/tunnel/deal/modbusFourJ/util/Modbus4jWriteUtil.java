@@ -14,6 +14,12 @@ import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
  */
 public class Modbus4jWriteUtil {
 
+    public static boolean writeData(ModbusMaster master,int writeOffset, String writeValue,String functionCode){
+        int slaveId = 1;
+        return writeData(master,slaveId,writeOffset,writeValue,functionCode);
+    }
+
+
     public static boolean writeData(ModbusMaster master, int slaveId, int writeOffset, String writeValue,String functionCode){
         boolean result = false;
         switch (functionCode) {

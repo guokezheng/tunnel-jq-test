@@ -749,7 +749,7 @@ export default {
 
               for(let item of p){
                 content += "<div style='display:flex;justify-content:space-between;width:160px'>"
-                content += "<div>"+item.marker + item.seriesName+"</div><div style='margin-right:10px'>" + item.value +"kW-h</div>"
+                content += "<div>"+item.marker + item.seriesName+"</div><div style='margin-right:10px'>" + item.value +"kW·h</div>"
                 content += "</div>"
               }
               content += "</div>"

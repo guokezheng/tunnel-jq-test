@@ -161,9 +161,9 @@ export function eventPopAll(pageNum) {
   })
 }
 // 事件 获取总条数
-export function getEventUntreatedNum() {
+export function getEventUntreatedNum(tunnelId) {
   return request({
-    url: '/event/getEventUntreatedNum',
+    url: '/event/getEventUntreatedNum?tunnelId=' + tunnelId,
     method: 'get',
   })
 }

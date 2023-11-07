@@ -224,7 +224,8 @@ export default {
       }
     },
     getNodealNum() {
-      getEventUntreatedNum().then((res) => {
+      let tunnelId = JSON.parse(this.$cache.local.get("currentTunnel")).tunnelId;
+      getEventUntreatedNum(tunnelId).then((res) => {
         // console.log(res, "事件总数");
         this.nodealNum = res.data;
       });

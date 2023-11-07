@@ -503,9 +503,18 @@ public class WZBXiMenZiPlcControl implements GeneralControlBean, TcpClientGenera
         Long wendu = Long.valueOf(DevicesTypeItemEnum.WEN_DU_CHUANGAN.getCode());
         Long shidu  = Long.valueOf(DevicesTypeItemEnum.SHI_DU_CHUANGAN.getCode());
         Long shuijin  = Long.valueOf(DevicesTypeItemEnum.SHUI_JIN_LEVEL.getCode());
+
+        Long fjZdsd  = Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_SU_DU.getCode());
+        Long fjZdFd  = Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_FU_DU.getCode());
+        Long fjCjz  = Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_ZHI.getCode());
+        Long fjQxz  = Long.valueOf(DevicesTypeItemEnum.QING_XIE_ZHI.getCode());
+        Long fjzdgj  = Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode());
+        Long fjqxgj  = Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode());
+
         if(itemId == co || itemId == vi || itemId == fengsu || itemId == fengxiang
                 || itemId == dongnei || itemId == dongwai || itemId == yuanchuan|| itemId == wendu
-                || itemId == shidu|| itemId == shuijin){
+                || itemId == shidu|| itemId == shuijin || itemId == fjZdsd || itemId == fjZdFd || itemId == fjCjz
+                || itemId == fjQxz || itemId == fjzdgj || itemId == fjqxgj){
             SdDeviceDataRecord record = new SdDeviceDataRecord();
             record.setDeviceId(deviceId);
             record.setData(data);

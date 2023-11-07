@@ -320,8 +320,8 @@ public class KafkaReadListenToWanJiTopic {
         String imagePath1 = jsonObject.getString("imagePath1");
         String imagePath2 = jsonObject.getString("imagePath2");
         String imagePath3 = jsonObject.getString("imagePath3");
-        String vedioPath = jsonObject.getString("vedioPath");
-        String vedioPath2 = jsonObject.getString("vedioPath2");
+        String vedioPath = jsonObject.getString("vedeoPath");
+        String vedioPath2 = jsonObject.getString("vedeoPath2");
         imgList[0] = imagePath1;
         imgList[1] = imagePath2;
         imgList[2] = imagePath3;

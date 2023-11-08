@@ -495,7 +495,7 @@
                 <el-cascader
                   @change='eqTypeGet'
                   v-model="form.typeId"
-                  :options="eqTypeListData" 
+                  :options="eqTypeListData"
                   :props="equipmentTypeProps"
                   :show-all-levels="false"
                   style="width: 100%"
@@ -1090,7 +1090,7 @@ export default {
   },
   methods: {
     getEqId(){
-      
+
     },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
@@ -1598,10 +1598,13 @@ export default {
       // const response = getList()
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
-        this.form.tunnelId = response.data.tunnelId;
+
         // this.getDevices();
         this.form = response.data;
+        this.form.tunnelId = response.data.tunnelId;
+       // this.form.tunnelId =  String(response.data.tunnelId);
         this.form.typeId = String(response.data.typeId);
+        this.form.eqId = String(response.data.eqId);
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = true;
         this.disstateDevice = true;

@@ -1,9 +1,13 @@
 package com.tunnel.business.domain.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.Date;
 
 /**
  * 隧道车辆数据（单车数据）对象 sd_vehicle_data
@@ -42,6 +46,10 @@ public class SdVehicleData extends BaseEntity
     @Excel(name = "车辆类型")
     private String vehicleType;
 
+    /** 车辆类型 */
+    @Excel(name = "进入离开")
+    private String travelType;
+
     /** 车身颜色 */
     @Excel(name = "车身颜色")
     private String vehicleColor;
@@ -53,6 +61,11 @@ public class SdVehicleData extends BaseEntity
     /** 上下行标志 1：上行，2：下行 */
     @Excel(name = "上下行标志 1：上行，2：下行")
     private String direction;
+
+    /** 创建时间 */
+    @ApiModelProperty("驶入时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date time;
 
     public void setId(Long id)
     {
@@ -143,6 +156,22 @@ public class SdVehicleData extends BaseEntity
     public String getDirection()
     {
         return direction;
+    }
+
+    public String getTravelType() {
+        return travelType;
+    }
+
+    public void setTravelType(String travelType) {
+        this.travelType = travelType;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     @Override

@@ -102,7 +102,7 @@ public class SdTunnelsController extends BaseController
             }
             sdTunnels.setDeptId(deptId);
         }
-        List<SdTunnels> list = sdTunnelsService.selectTunnelsDeptIdList(sdTunnels.getDeptId());
+        List<SdTunnels> list = sdTunnelsService.selectTunnelsDeptIdList(sdTunnels);
         return getDataTable(list);
     }
     @GetMapping("/listAll")

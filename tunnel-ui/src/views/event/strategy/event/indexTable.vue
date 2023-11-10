@@ -1437,6 +1437,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       // debugger
+      this.queryParams.pageSize = 10;
       this.queryParams.pageNum = 1;
       this.queryParams.tunnelId = null
       this.queryParams.strategyName = null

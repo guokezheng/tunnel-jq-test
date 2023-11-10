@@ -66,4 +66,11 @@ public interface ISdDevicesProtocolService {
      * @return 结果
      */
     boolean checkUniqueForUpdate(SdDevicesProtocol sdDevicesProtocol);
+
+    /**
+     * 根据协议编码查询对应的协议ID
+     * @param protocolCode 协议编码
+     * @return 协议ID
+     */
+    Long selectProtocolIdByCode(String protocolCode);
 }

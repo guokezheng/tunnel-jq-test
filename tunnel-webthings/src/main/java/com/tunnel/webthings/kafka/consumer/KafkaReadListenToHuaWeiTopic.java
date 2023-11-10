@@ -60,6 +60,7 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -1737,12 +1738,19 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     public void addVehicleData(JSONObject jsonObject){
         String trackId = jsonObject.getString("trackID");
-        SdVehicleData vehicleData = new SdVehicleData();
-        vehicleData.setTrackId(Long.valueOf(trackId));
-        List<SdVehicleData> list = vehicleDataService.selectSdVehicleDataList(vehicleData);
-        if(list == null || list.size() == 0){
+        String plateNumber = jsonObject.getString("plateNumber");
+        String travelType = jsonObject.getString("travelType");
+        long time = Long.valueOf(jsonObject.getString("time"));
+        Date date = new Date(time);
+
+        //1代表进入的数据都存
+        if("1".equals(travelType)){
+            SdVehicleData vehicleData = new SdVehicleData();
+            vehicleData.setTrackId(Long.valueOf(trackId));
+            vehicleData.setPlateNumber(plateNumber);
             //根据trackID判断，没有数据，新增
             vehicleData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+            vehicleData.setTravelType("1");
             vehicleData.setPlateColor(getPlateColor(jsonObject.getString("plateColor")));
             vehicleData.setPlateNumber(jsonObject.getString("plateNumber"));
             vehicleData.setObjectType(jsonObject.getString("objectType"));
@@ -1751,7 +1759,10 @@ public class KafkaReadListenToHuaWeiTopic {
             vehicleData.setSpeed(jsonObject.getString("speed"));
             vehicleData.setDirection(jsonObject.getString("roadDir"));
             vehicleData.setCreateTime(DateUtils.getNowDate());
+            //驶入时间
+            vehicleData.setTime(date);
             vehicleDataService.insertSdVehicleData(vehicleData);
+
         }
     }
 

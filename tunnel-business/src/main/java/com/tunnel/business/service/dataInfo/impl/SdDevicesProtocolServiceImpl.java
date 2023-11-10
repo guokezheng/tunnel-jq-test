@@ -4,6 +4,8 @@ import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.mapper.dataInfo.SdDevicesProtocolMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +20,9 @@ import java.util.List;
  */
 @Service
 public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
+
+    private static final Logger log = LoggerFactory.getLogger(SdDevicesProtocolServiceImpl.class);
+
     @Autowired
     private SdDevicesProtocolMapper sdDevicesProtocolMapper;
 
@@ -106,5 +111,27 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
     public boolean checkUniqueForUpdate(SdDevicesProtocol sdDevicesProtocol) {
         List<SdDevicesProtocol> list = sdDevicesProtocolMapper.checkUniqueForUpdate(sdDevicesProtocol);
         return CollectionUtils.isEmpty(list) ? true : false;
+    }
+
+    /**
+     * 根据协议编码查询对应的协议ID
+     *
+     * @param protocolCode 协议编码
+     * @return 协议ID
+     */
+    @Override
+    public Long selectProtocolIdByCode(String protocolCode) {
+        SdDevicesProtocol sdDevicesProtocol = new SdDevicesProtocol();
+        sdDevicesProtocol.setProtocolCode(protocolCode);
+
+        List<SdDevicesProtocol> protocolList = selectSdDevicesProtocolList(sdDevicesProtocol);
+        if(protocolList == null || protocolList.size() == 0){
+            log.error("缓存设备信息报错,未查询到对应的协议：协议标识protocolCode="+protocolCode);
+            return null;
+        }
+
+        sdDevicesProtocol = protocolList.get(0);
+        Long protocolId = sdDevicesProtocol.getId();
+        return protocolId;
     }
 }

@@ -440,7 +440,7 @@ import {
   getStateTypeId,
   getTriggersByRelateId,
 } from "@/api/equipment/type/api";
-import { listTunnels } from "@/api/equipment/tunnel/api";
+import {listDepId, listTunnels} from "@/api/equipment/tunnel/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listItem } from "@/api/equipment/eqTypeItem/item";
 import { listRl, addRl } from "@/api/event/strategyRl";
@@ -703,13 +703,13 @@ export default {
     async getStrategyData(row) {
       this.getListEventType();
       //获取设备
-      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
+      await autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
       });
       // await listType(this.queryEqTypeParams).then((response) => {
       //   this.equipmentTypeData = response.rows;
       // });
-      getStrategy(this.id).then((response) => {
+      await  getStrategy(this.id).then( async (response) => {
         const loading = this.$loading({
           lock: true,
           text: "Loading",
@@ -733,7 +733,7 @@ export default {
         // });
 
         // 获取触发器的数据
-        getTriggersByRelateId({ relateId: response.data.id }).then((res) => {
+        await  getTriggersByRelateId({ relateId: response.data.id }).then((res) => {
           console.log(res, "触发器数据");
           this.strategyForm.triggers.id = res.data.id;
           this.strategyForm.triggers.comparePattern = res.data.comparePattern;
@@ -762,6 +762,7 @@ export default {
             eqDirection: params.eqDirection,
           }).then((data) => {
             this.deviceName = data.rows;
+            this.getListItem()
             // debugger
             this.$nextTick(() => {
               // debugger
@@ -1147,7 +1148,7 @@ export default {
     },
     getListItem() {
       //给设备数据项赋值
-      // debugger
+      debugger
       console.log(this.strategyForm.triggers.deviceId, "00000000000");
       if (this.strategyForm.triggers.deviceId) {
         listItem({
@@ -1298,7 +1299,8 @@ export default {
       if (this.$cache.local.get("manageStation") == "1") {
         this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       }
-      listTunnels(this.paramsData).then((response) => {
+      listDepId(this.paramsData).then((response) => {
+        debugger
         this.tunnelData = response.rows;
         this.getAutoEqTypeList();
         this.getSymbol();

@@ -7,6 +7,7 @@ import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
@@ -23,10 +24,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * describe: PLC modbus tcp定时任务类
@@ -52,10 +53,83 @@ public class PlcTcpTask {
     private TcpClientGeneralService tcpClientGeneralService;
 
     @Autowired
+    private ISdDevicesProtocolService sdDevicesProtocolService;
+
+    @Autowired
     private PlcTcpControl plcTcpControl;
 
     @Autowired
     private ModbusCmd modbusCmd;
+
+    /**
+     * 存储设备数据，key为deviceId,value为设备数据【ip,port】
+     * 将HashMap替换为线程安全类ConcurrentHashMap
+     */
+    public static Map<String, Map> deviceMap = new ConcurrentHashMap<>();
+
+    /**
+     * 队列初始化容量大小
+     * 按照四标PLC读取点位数设置
+     */
+    public static final int initialCapacity = 500;
+
+    /**
+     * 队列最大容量
+     * 目前的四标PLC点位数小于这个数
+     */
+    public static final int maxCapacity = 2000;
+    /**
+     * 定义写入优先级
+     */
+    public static final int writePriority = 2;
+
+    /**
+     * 定义读取优先级
+     */
+    public static final int readPriority = 1;
+
+    //    /**
+//     * 定义优先级队列
+//     * 指定初始化容量大小和排序规则
+//     * 优先级相同的数据会乱序
+//     */
+//    public static PriorityBlockingQueue<Map<String,Object>> queue = new PriorityBlockingQueue(initialCapacity,new Comparator<Map<String, Object>>() {
+//        @Override
+//        public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+//            //根据优先级排序，2在前，1在后
+//            String pOne = String.valueOf(o1.get("priority"));
+//            String pTwo = String.valueOf(o2.get("priority"));
+//            Integer pOneNum = Integer.valueOf(pOne);
+//            Integer pTwoNum = Integer.valueOf(pTwo);
+//            return pTwoNum - pOneNum;
+//        }
+//    });
+
+
+    /**
+     * 定义队列
+     * 不指定容量，使用Integer.MAX_VALUE初始化容量
+     */
+    public static Queue<Map<String, Object>> queue = new LinkedBlockingQueue<>(maxCapacity);
+
+    public static Long startTime;
+    public static Long endTime;
+
+
+//    /**
+//     * 每个PLC一个队列
+//     */
+//    public static Map<String,Queue<Map<String, Object>>> queueMap = new ConcurrentHashMap<>();
+//
+//    /**
+//     * 初始化队列Map集合
+//     */
+//    public void initQueue(){
+//        deviceMap.forEach((deviceId,itemMap) ->{
+//            Queue<Map<String, Object>> queue = new LinkedBlockingQueue<>(maxCapacity);
+//            queueMap.put(deviceId,queue);
+//        });
+//    }
 
 
     /**
@@ -65,13 +139,34 @@ public class PlcTcpTask {
     public void init()
     {
         deviceInfoCache();
+
+        //只创建一次线程
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    if (!queue.isEmpty()) {
+                        if(startTime == null){
+                            startTime = System.currentTimeMillis();
+                            System.out.println("第一次执行时间：startTime="+startTime);
+                        }
+                        //队列数据依次执行
+                        plcTcpControl.executeQueue();
+//                        modbusCmd.sleep(20);
+                    }else{
+                        if(startTime != null){
+                            endTime = System.currentTimeMillis();
+                            System.out.println("结束时间：endTime="+endTime);
+                            startTime = null;
+                        }
+                    }
+                }
+
+            }
+        };
+        thread.start();
     }
 
-    /**
-     * 存储设备数据，key为deviceId,value为设备数据【ip,port】
-     * 将HashMap替换为线程安全类ConcurrentHashMap
-     */
-    public static Map<String, Map> deviceMap = new ConcurrentHashMap<>();
 
     /**
      * 设备信息缓存
@@ -87,6 +182,16 @@ public class PlcTcpTask {
      */
 //    @Scheduled(cron="0/5 * * * * ?")
     public void getDeviceData(){
+
+        if(!queue.isEmpty()){
+            //队列不为空时，中断添加新的读取指令
+            return;
+        }
+//        if(queue.size() > maxCapacity){
+//           return;
+//        }
+
+
         long startTime = System.currentTimeMillis();
         System.out.println("轮询开启时间：startTime="+startTime);
         //拿到缓存设备数据
@@ -177,74 +282,57 @@ public class PlcTcpTask {
                         addressEnd = maxAddressNum;
                     }
                     Integer cmdLength = addressEnd + dataLengthNum - addressCursor;
+
+                    Map<String,Object> itemMap = new HashMap<>();
+                    itemMap.put("ip",ip);
+                    itemMap.put("portNum",portNum);
+                    itemMap.put("fEqId",fEqId);
+                    itemMap.put("offset",addressCursor);
+                    itemMap.put("numberOfBits",cmdLength);
+                    itemMap.put("functionCode",functionCode);
+                    itemMap.put("priority",readPriority);
+                    queue.add(itemMap);
+
+
 //                    ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
-                    System.out.println("下发了命令：fEqId="+fEqId+",addressCursor="+addressCursor+",addressEnd="+addressEnd+",time="+System.currentTimeMillis());
-                    ModbusMaster master = masterTcp.getSlave(ip, portNum);
-//                   short[] result = Modbus4jReadMultipleUtil.readRegister(master,addressCursor,cmdLength,functionCode,dataLengthNum);
-                    try {
-                      byte[]  result = Modbus4jReadMultipleUtil.readHoldingRegisterByte(master,1,addressCursor,cmdLength);
-                        if(result != null){
-//                       for(int i = 0; i < result.length; i++){
-//                            short snum = result[i];
-//                            if(snum < 0){
-//                                System.out.println("读取到负数了");
-//                            }
-//                       }
-                            String str = Modbus4jReadMultipleUtil.byte2Hex(result);
-                            List<String> list =  ModbusCmdResolver.handleTwoBytesDataHex(str);
-                            plcTcpControl.dateParse(fEqId,functionCode,String.valueOf(addressCursor),list);
-                        }else{
-                            System.out.println("ip="+ip+",port="+port+",PLC="+fEqId+",读取不到数据");
-                        }
-                    } catch (ModbusTransportException e) {
-                        e.printStackTrace();
-                    } catch (ErrorResponseException e) {
-                        e.printStackTrace();
-                    } catch (ModbusInitException e) {
-                        e.printStackTrace();
-                    }
-
-
-//                    modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,String.valueOf(addressCursor),String.valueOf(cmdLength));
-
+////                    System.out.println("下发了命令：fEqId="+fEqId+",addressCursor="+addressCursor+",addressEnd="+addressEnd+",time="+System.currentTimeMillis());
+////                    ModbusMaster master = masterTcp.getSlave(ip, portNum);
+//                        List<String> list =  Modbus4jReadMultipleUtil.readRegister(master,addressCursor,cmdLength,functionCode);
+//                        if(list != null){
+//                            plcTcpControl.dateParse(fEqId,functionCode,String.valueOf(addressCursor),list);
+//                        }else{
+//                            System.out.println("ip="+ip+",port="+port+",PLC="+fEqId+",读取不到数据");
+//                        }
 
                     addressCursor += intervalNum;
                     //添加延时，避免发送数据过快，出现粘包（用助手循环发送测试，300毫米循环下发可以正常回复）
-                    modbusCmd.sleep(100);
+//                    modbusCmd.sleep(100);
                 }
             }else{
                 //计算读取指令的地址长度, 最大 + 地址长度 - 最小
                 //比如：最大0026，地址长度=2，最小=0024，实际读取指令长度= （0026 + 2 - 1） - （0024 - 1） = 4
                 Integer cmdLength = maxAddressNum + Integer.valueOf(dataLength) - minAddressNum;
+
+                Map<String,Object> itemMap = new HashMap<>();
+                itemMap.put("ip",ip);
+                itemMap.put("portNum",portNum);
+                itemMap.put("fEqId",fEqId);
+                itemMap.put("offset",minAddressNum);
+                itemMap.put("numberOfBits",cmdLength);
+                itemMap.put("functionCode",functionCode);
+                itemMap.put("priority",readPriority);
+                queue.add(itemMap);
+
 //                ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
-                    ModbusMaster master = masterTcp.getSlave(ip, portNum);
-//                short[] result = Modbus4jReadMultipleUtil.readRegister(master,minAddressNum,cmdLength,functionCode,dataLengthNum);
-                try {
-                  byte[] result =  Modbus4jReadMultipleUtil.readHoldingRegisterByte(master,1,minAddressNum,cmdLength);
-                    String str = Modbus4jReadMultipleUtil.byte2Hex(result);
-                    List<String> list =  ModbusCmdResolver.handleTwoBytesDataHex(str);
-                    if(result != null){
-                        plcTcpControl.dateParse(fEqId,functionCode,minAddress,list);
-                    }else{
-                        System.out.println("ip="+ip+",port="+port+",PLC="+fEqId+",读取不到数据");
-                    }
-                } catch (ModbusTransportException e) {
-                    e.printStackTrace();
-                } catch (ErrorResponseException e) {
-                    e.printStackTrace();
-                } catch (ModbusInitException e) {
-                    e.printStackTrace();
-                }
+////
+//                List<String> list =  Modbus4jReadMultipleUtil.readRegister(master,minAddressNum,cmdLength,functionCode);
+//                if(list != null){
+//                    plcTcpControl.dateParse(fEqId,functionCode,minAddress,list);
+//                }else{
+//                    System.out.println("ip="+ip+",port="+port+",PLC="+fEqId+",读取不到数据");
+//                }
 
-
-
-
-
-//            System.out.println("sendMultiplePointCmd 读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength+",时间："+System.currentTimeMillis());
-
-//                modbusCmd.sendQueryCommand(deviceMap,fEqId,functionCode,minAddress,String.valueOf(cmdLength));
-//                        System.out.println("下发了命令：fEqId="+fEqId+",minAddressNum="+minAddressNum+",maxAddressNum="+maxAddressNum+",time="+System.currentTimeMillis());
-                modbusCmd.sleep(100);
+//                modbusCmd.sleep(100);
             }
         }
     }
@@ -283,5 +371,30 @@ public class PlcTcpTask {
     }
 
 
+
+    /**
+     * 监测设备在线/离线状态
+     */
+    public void monitorDeviceStatus(Integer offlineTime){
+        String protocolCode = DeviceProtocolCodeEnum.NEW_XI_MEN_ZI_PLC_TCP_PROTOCOL.getCode();
+        List<Long> noTypeList = new ArrayList<>();
+        //查询配置该协议编码的所有的设备，剔除掉PLC检测
+        noTypeList.add( DevicesTypeEnum.PLC.getCode());
+        Long protocolId = sdDevicesProtocolService.selectProtocolIdByCode(protocolCode);
+        List<SdDevices> list = sdDevicesService.getDevicesByProtocol(protocolId,noTypeList);
+        //在线设备（离线设备可能在实时数据表中没有任何记录，筛选在线设备避免遗漏离线设备）
+        List<String> onlineList = sdDevicesService.selectOnlineDeviceByUpdateTime(protocolId,noTypeList,offlineTime);
+        //遍历所有设备
+        list.forEach(device ->{
+            String deviceId = device.getEqId();
+            if(onlineList.contains(deviceId)){
+                //在线
+                sdDevicesService.updateOnlineStatus(deviceId,false);
+            }else{
+                //离线
+                sdDevicesService.updateOfflineStatus(deviceId,false);
+            }
+        });
+    }
 
 }

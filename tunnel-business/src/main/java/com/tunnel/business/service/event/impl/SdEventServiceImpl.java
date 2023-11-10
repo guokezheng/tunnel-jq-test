@@ -177,7 +177,7 @@ public class SdEventServiceImpl implements ISdEventService {
             if(sdTrafficImages.size() > 0){
                 collect.add(0,sdTrafficImages.get(0));
             }
-            sdEvent.setIconUrlList(collect.subList(0,image1.size() > 10 ? 10 : image1.size()));
+            sdEvent.setIconUrlList(collect.subList(0,collect.size() > 10 ? 10 : collect.size()));
             sdEvent.setConfidenceList(radarEventMapper.selectConfidence(sdEvent.getId()));
         }
         return sdEvent;
@@ -446,15 +446,18 @@ public class SdEventServiceImpl implements ISdEventService {
         if("0".equals(eventState) || "1".equals(eventState)){
             //事件处置-预案信息
             List<String[]> list3 = new ArrayList<>();
-            for(Map<String, Object> plan : planDisposal){
-                List<SdEventHandle> planList = (List<SdEventHandle>)plan.get("planList");
-                list3.add(new String[]{plan.get("planName") == null ? "" : plan.get("planName").toString(),""});
-                for(SdEventHandle item : planList){
-                    for(SdEventHandle temp : item.getChildren()){
-                        list3.add(new String[]{item.getFlowContent(),temp.getFlowContent()});
+            if(planDisposal != null){
+                for(Map<String, Object> plan : planDisposal){
+                    List<SdEventHandle> planList = (List<SdEventHandle>)plan.get("planList");
+                    list3.add(new String[]{plan.get("planName") == null ? "" : plan.get("planName").toString(),""});
+                    for(SdEventHandle item : planList){
+                        for(SdEventHandle temp : item.getChildren()){
+                            list3.add(new String[]{item.getFlowContent(),temp.getFlowContent()});
+                        }
                     }
                 }
             }
+
             //事件处置-处置记录
             List<String[]> list4 = new ArrayList<>();
             list4.add(new String[]{"处置日期","处置人","处置描述"});

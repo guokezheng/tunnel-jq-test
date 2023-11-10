@@ -188,6 +188,7 @@
   import {
     analysisDataByTime
   } from "@/api/system/trafficStatistics/api";
+  import {trafficVolumeList} from "@/api/monitor/vehicle";
 
   export default {
     name: "catCurveModal",
@@ -570,11 +571,12 @@
       //刷新车辆
       catHandleSave() {
         //获取车辆数据
-        this.getEchartsTrend();
+        this.getEchartsTrend(null, "refresh");
       },
 
       //获取车辆数据
       async getEchartsTrend(row, type) {
+
         this.XData = [];
         this.yData3 = [];
         this.yData2 = [];
@@ -605,44 +607,44 @@
         this.catFilesModel.direction = "2";
         this.catFilesModelWei.direction = "1";
         // debugger
-        if (!!row) {
-          //首次
-          // 济南方向
-          this.catFilesModel.tunnelId = row.tunnelId;
-          this.catFilesModel.direction = "2";
-          let tunnel = this.tunnelData.find(
-            (tunnelItem) => row.tunnelId == this.catFilesModel.tunnelId
-          );
-          console.log(tunnel);
-          // debugger
-          //车辆
-          let queryParams = {
-            tunnelName: row.tunnelName,
-            pageSize: 1,
-            pageNum: 2,
-            direction: this.catFilesModel.direction,
-            modeType: 1,
-          };
-          this.catListConfig(queryParams);
-
-          // 潍坊方向
-          this.catFilesModelWei.tunnelId = row.tunnelId;
-          this.catFilesModelWei.direction = "1";
-          let tunnelWei = this.tunnelData.find(
-            (tunnelItem) => row.tunnelId == this.catFilesModelWei.tunnelId
-          );
-          console.log(tunnelWei);
-          // debugger
-          //车辆
-          let queryParamsWei = {
-            tunnelName: row.tunnelName,
-            pageSize: 1,
-            pageNum: 2,
-            direction: this.catFilesModelWei.direction,
-            modeType: 1,
-          };
-          this.catListConfigWei(queryParamsWei);
-        }
+        // if (!!row) {
+        //   //首次
+        //   // 济南方向
+        //   this.catFilesModel.tunnelId = row.tunnelId;
+        //   this.catFilesModel.direction = "2";
+        //   let tunnel = this.tunnelData.find(
+        //     (tunnelItem) => row.tunnelId == this.catFilesModel.tunnelId
+        //   );
+        //   console.log(tunnel);
+        //   // debugger
+        //   //车辆
+        //   let queryParams = {
+        //     tunnelName: row.tunnelName,
+        //     pageSize: 1,
+        //     pageNum: 2,
+        //     direction: this.catFilesModel.direction,
+        //     modeType: 1,
+        //   };
+        //   this.catListConfig(queryParams);
+        //
+        //   // 潍坊方向
+        //   this.catFilesModelWei.tunnelId = row.tunnelId;
+        //   this.catFilesModelWei.direction = "1";
+        //   let tunnelWei = this.tunnelData.find(
+        //     (tunnelItem) => row.tunnelId == this.catFilesModelWei.tunnelId
+        //   );
+        //   console.log(tunnelWei);
+        //   // debugger
+        //   //车辆
+        //   let queryParamsWei = {
+        //     tunnelName: row.tunnelName,
+        //     pageSize: 1,
+        //     pageNum: 2,
+        //     direction: this.catFilesModelWei.direction,
+        //     modeType: 1,
+        //   };
+        //   this.catListConfigWei(queryParamsWei);
+        // }
 
         //济南
         let json = {
@@ -652,6 +654,96 @@
         };
         //今天
         console.log(json,"json")
+        debugger
+        //今天
+        console.log(json,"json")
+        debugger
+        if(!(row==null && type == null)){
+          //济南
+          let queryParamsCat = {}
+          queryParamsCat.tunnelId = this.catFilesModelWei.tunnelId
+          queryParamsCat.dateType = 1
+          queryParamsCat.direction = 2
+          queryParamsCat.startDate = ds1[0]
+          queryParamsCat.endDate = ds[1]
+          queryParamsCat.pageNum = 1
+          queryParamsCat.pageSize = 9999
+          trafficVolumeList(queryParamsCat).then(
+            (response) => {
+              debugger
+              let list1= response.rows;
+              let historyDs = ds2[0].split(" ")[0]
+              let historyDs1 = ds1[0].split(" ")[0]
+              let todayListDs1 = ds[0].split(" ")[0]
+              debugger
+              for (let i = 0; i < list1.length; i++) {
+                if(list1[i].carTime.indexOf(ds2[0].split(" ")[0])>-1){
+
+                  this.yData1.push(list1[i].carNum)
+                }
+                if(list1[i].carTime.indexOf(ds1[0].split(" ")[0])>-1){
+                  this.yData2.push(list1[i].carNum)
+                }
+                if(list1[i].carTime.indexOf(ds[0].split(" ")[0])>-1){
+                  this.yData3.push(list1[i].carNum)
+                }
+              }
+              this.yData1.reverse()
+              this.yData2.reverse()
+              this.yData3.reverse()
+              console.log(this.yData1)
+              console.log(this.yData2)
+              console.log(this.yData3)
+              setTimeout(() => {
+                this.$nextTick(() => {
+                  //获取车辆数据
+                  this.initCatChart();
+                });
+              }, 10);
+            }
+          );
+          //潍坊
+          let queryParamsWeiCat = {}
+          queryParamsWeiCat.tunnelId = this.catFilesModelWei.tunnelId
+          queryParamsWeiCat.dateType = 1
+          queryParamsWeiCat.direction = 1
+          queryParamsWeiCat.startDate = ds1[0]
+          queryParamsWeiCat.endDate = ds[1]
+          queryParamsWeiCat.pageNum = 1
+          queryParamsWeiCat.pageSize = 9999
+          trafficVolumeList(queryParamsWeiCat).then(
+            (response) => {
+              debugger
+              let list1= response.rows;
+              let historyDs = ds2[0].split(" ")[0]
+              let historyDs1 = ds1[0].split(" ")[0]
+              let todayListDs1 = ds[0].split(" ")[0]
+              debugger
+              for (let i = 0; i < list1.length; i++) {
+                if(list1[i].carTime.indexOf(ds2[0].split(" ")[0])>-1){
+
+                  this.yDataOne1.push(list1[i].carNum)
+                }
+                if(list1[i].carTime.indexOf(ds1[0].split(" ")[0])>-1){
+                  this.yDataOne2.push(list1[i].carNum)
+                }
+                if(list1[i].carTime.indexOf(ds[0].split(" ")[0])>-1){
+                  this.yDataOne3.push(list1[i].carNum)
+                }
+              }
+              this.yDataOne1.reverse()
+              this.yDataOne2.reverse()
+              this.yDataOne3.reverse()
+              setTimeout(() => {
+                this.$nextTick(() => {
+                  //获取车辆数据
+                  this.initCatChart1();
+                });
+              }, 10);
+            }
+          );
+        }
+
         await analysisDataByTime(this.addDateRange(json, ds)).then((response) => {
           console.log(response,"response")
           if (response.code == 200) {
@@ -659,36 +751,12 @@
               const randomNumber = Math.floor(Math.random() * 70);
               this.XData.push(response.data[i].date);
               // this.yData3.push(response.data[i].byVehicelNum)
-              this.yData3.push(response.data[i].byVehicelNum);
+              // this.yData3.push(response.data[i].byVehicelNum);
             }
           }
         });
-        //昨天
-        await analysisDataByTime(this.addDateRange(json, ds2)).then(
-          (response) => {
-            if (response.code == 200) {
-              for (let i = 0; i < response.data.length; i++) {
-                // this.XData.push(response.data[i].date)
-                const randomNumber = Math.floor(Math.random() * 70);
-                // this.yData2.push(response.data[i].byVehicelNum)
-                this.yData2.push(response.data[i].byVehicelNum);
-              }
-            }
-          }
-        );
-        //历史
-        await analysisDataByTime(this.addDateRange(json, ds1)).then(
-          (response) => {
-            if (response.code == 200) {
-              for (let i = 0; i < response.data.length; i++) {
-                // this.XData.push(response.data[i].date)
-                // this.yData1.push(response.data[i].byVehicelNum)
-                const randomNumber = Math.floor(Math.random() * 70);
-                this.yData1.push(response.data[i].byVehicelNum);
-              }
-            }
-          }
-        );
+
+
         await setTimeout(() => {
           this.$nextTick(() => {
             //获取车辆数据
@@ -709,36 +777,12 @@
                 const randomNumber = Math.floor(Math.random() * 70);
                 this.XDataOne.push(response.data[i].date);
                 // this.yData3.push(response.data[i].byVehicelNum)
-                this.yDataOne3.push(response.data[i].byVehicelNum);
+                // this.yDataOne3.push(response.data[i].byVehicelNum);
               }
             }
           }
         );
-        //昨天
-        await analysisDataByTime(this.addDateRange(json1, ds2)).then(
-          (response) => {
-            if (response.code == 200) {
-              for (let i = 0; i < response.data.length; i++) {
-                const randomNumber = Math.floor(Math.random() * 70);
-                // this.yData2.push(response.data[i].byVehicelNum)
-                this.yDataOne2.push(response.data[i].byVehicelNum);
-              }
-            }
-          }
-        );
-        //历史
-        await analysisDataByTime(this.addDateRange(json1, ds1)).then(
-          (response) => {
-            if (response.code == 200) {
-              for (let i = 0; i < response.data.length; i++) {
-                // this.XData.push(response.data[i].date)
-                // this.yData1.push(response.data[i].byVehicelNum)
-                const randomNumber = Math.floor(Math.random() * 70);
-                this.yDataOne1.push(response.data[i].byVehicelNum);
-              }
-            }
-          }
-        );
+
         await setTimeout(() => {
           this.$nextTick(() => {
             //获取车辆数据
@@ -1048,7 +1092,14 @@
             direction: this.catFilesModel.direction,
             modeType: 1,
           };
+          this.catFilesModelWei.tunnelId = this.catFilesModel.tunnelId
           this.catListConfig(queryParams);
+          setTimeout(() => {
+            this.$nextTick(() => {
+              //获取车辆数据
+              this.catHandleSave();
+            });
+          }, 10);
         }
       },
       //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
@@ -1069,7 +1120,14 @@
             direction: this.catFilesModelWei.direction,
             modeType: 1,
           };
+          this.catFilesModel.tunnelId = this.catFilesModelWei.tunnelId
           this.catListConfigWei(queryParams);
+           setTimeout(() => {
+            this.$nextTick(() => {
+              //获取车辆数据
+              this.catHandleSave();
+            });
+          }, 10);
         }
       },
       //车辆照明配置查询

@@ -1007,9 +1007,12 @@
           this.lightFilesModelWei.tunnelId = this.lightFilesModel.tunnelId
           this.lightListConfig(queryParams)
           this.$forceUpdate()
-          this.$nextTick(() => {
-            this.getEchartsData(null, "refresh")
-          });
+          // setTimeout(() => {
+          //   this.$nextTick(() => {
+          //     //获取车辆数据
+          //     this.refreshlightForm();
+          //   });
+          // }, 10);
         }
       },
 
@@ -1029,9 +1032,12 @@
           this.lightFilesModel.tunnelId = this.lightFilesModelWei.tunnelId
           this.lightListConfigWei(queryParams)
           this.$forceUpdate()
-          this.$nextTick(() => {
-            this.getEchartsData(null, "refresh")
-          });
+          // setTimeout(() => {
+          //   this.$nextTick(() => {
+          //     //获取车辆数据
+          //     this.refreshlightFormWei();
+          //   });
+          // }, 10);
         }
       },
       /** 查询隧道列表 */
@@ -1039,6 +1045,8 @@
         if (this.$cache.local.get("manageStation") == "1") {
           this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
         }
+        console.log(this.paramsData)
+        debugger
         await listDepId(this.paramsData).then((response) => {
           this.tunnelData = response.rows;
           console.log(this.tunnelData, "隧道列表");

@@ -660,6 +660,8 @@
       handleExportRecord() {
         this.querysParams.searchValue = this.searchValue;
         this.querysParams.deviceId = this.deviceId;
+        console.log("12312312")
+        console.log(this.querysParams.ids,"this.querysParams.ids");
         this.querysParams.ids = this.ids.join();
         const queryParams = this.querysParams;
         let confirmInfo;
@@ -897,7 +899,7 @@
           var xAxis = [{
             type: "category",
             name: this.currentData,
-            data: this.dnTime,
+            data: this.dnTime.reverse(),
             axisLine: {
               lineStyle: {
                 color: "#ffffff", // 设置x轴额色为白色
@@ -933,7 +935,7 @@
           var xAxis = [{
             type: "category",
             name: this.currentData,
-            data: this.dwTime,
+            data: this.dwTime.reverse(),
             axisLine: {
               lineStyle: {
                 color: "#ffffff", // 设置x轴额色为白色
@@ -1221,7 +1223,6 @@
         this.queryParams8 = this.queryParams;
         if (deviceId != null && deviceId != "") {
           //COVI
-          debugger
           console.log(this.queryParams)
           console.log(this.dateRange)
           dataLogInfoList(
@@ -1247,6 +1248,7 @@
 
             this.total = response.total;
             this.loading = false;
+            this.ids = [];
           });
         }
       },
@@ -1256,7 +1258,6 @@
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
-            debugger
             let list1 = response.rows;
             if (this.searchValue == "1") {
               this.CO = list1.map((item) => item.CO);
@@ -1272,7 +1273,6 @@
               this.wbData = list1.map((item) => item.data);
               this.wbTime = list1.map((item) => item.createTime);
             } else if (this.searchValue == "5") {
-              debugger
               this.fjcjzData = list1.map((item) => item.CJZ);
               this.fjqqxzData = list1.map((item) => item.QXZ);
               this.fjzdfdData = list1.map((item) => item.ZDFD);
@@ -1383,7 +1383,6 @@
     },
     watch: {
       "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-        console.log(newVal, "0000000000000000000000");
         this.getListTab();
         this.getTunnel(this.userDeptId);
       },

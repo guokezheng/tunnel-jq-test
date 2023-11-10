@@ -177,7 +177,7 @@ public class SdEventServiceImpl implements ISdEventService {
             if(sdTrafficImages.size() > 0){
                 collect.add(0,sdTrafficImages.get(0));
             }
-            sdEvent.setIconUrlList(collect.subList(0,image1.size() > 10 ? 10 : image1.size()));
+            sdEvent.setIconUrlList(collect.subList(0,collect.size() > 10 ? 10 : collect.size()));
             sdEvent.setConfidenceList(radarEventMapper.selectConfidence(sdEvent.getId()));
         }
         return sdEvent;

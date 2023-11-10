@@ -488,6 +488,27 @@ public interface SdDevicesMapper {
 	 */
 	List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
 
+	/**
+	 * 根据协议Id、设备IP等条件查询设备列表
+	 *
+	 * @param protocolId 协议ID
+	 * @param noTypeList 排除的设备类型
+	 * @return
+	 */
+	List<SdDevices> getDevicesByProtocol(@Param("protocolId") Long protocolId,@Param("noTypeList") List<Long> noTypeList);
+
+
+	/**
+	 * 按照设备实时数据的时间筛选在线设备
+	 * @param protocolId 协议ID
+	 * @param noTypeList 排除的设备类型
+	 * @param offlineTime 离线时间
+	 * @return
+	 */
+	List<String> selectOnlineDeviceByUpdateTime(@Param("protocolId") Long protocolId,
+												@Param("noTypeList") List<Long> noTypeList,
+												@Param("offlineTime") int offlineTime);
+
 	int updateFireMonitorStatus(SdDevices sdDevices);
 
 	/**

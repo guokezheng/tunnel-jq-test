@@ -408,7 +408,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND FIND_IN_SET(a.id,#{ids}) > 0
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
-        GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i'),eqId
+        GROUP BY createTime,eqId
         ORDER BY a.create_time desc
     </select>
 
@@ -566,7 +566,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
             <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
             <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
-        GROUP BY a.id
+        GROUP BY eqId,
+        createTime
         ORDER BY a.create_time desc
 
     </select>
@@ -587,7 +588,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
-        GROUP BY a.id
+        GROUP BY eqId,createTime
         ORDER BY a.create_time desc
     </select>
 
@@ -604,7 +605,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
-        GROUP BY a.id
+        GROUP BY eqId,createTime
         ORDER BY a.create_time desc
     </select>
 
@@ -620,7 +621,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
-        GROUP BY a.id
+        GROUP BY eqId,createTime
         ORDER BY a.create_time desc
     </select>
 
@@ -704,10 +705,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             sdd.device_id AS deviceId,
             sdd.`data` AS deviceData,
             sdd.item_id AS devicesItemId,
-            dti.device_type_id AS eqType
+            dti.device_type_id AS eqType,
+            d.lane,
+            d.eq_tunnel_id AS tunnelId
         FROM
             sd_device_data sdd
         LEFT JOIN sd_device_type_item dti ON sdd.item_id = dti.id
+        LEFT JOIN sd_devices d ON sdd.device_id = d.eq_id
         WHERE
             1 = 1
           AND sdd.device_id IN (

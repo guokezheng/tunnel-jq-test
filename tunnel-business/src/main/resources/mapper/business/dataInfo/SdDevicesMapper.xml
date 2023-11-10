@@ -1655,8 +1655,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             D.tunnel_id as tunnlId,
             D.tunnel_name as tunnelName,
             case WHEN AA.eq_name is null
-                     THEN   case when D.tunnel_id = 'JQ-JiNan-WenZuBei-MJY' and A.query_point_address = '1' then '东变电所PLC' else  '西变电所PLC' end
-                 else AA.eq_name  END as pName,
+            THEN
+            case
+
+            when D.tunnel_id = 'JQ-JiNan-WenZuBei-MJY'
+
+            then case when  A.query_point_address = '1' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-ZiBo-TaiHe-QFL'
+
+            then case when  A.query_point_address = '5' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-ZiBo-TaiHe-PDS'
+
+            then case
+
+            when  A.query_point_address = '3' then '东变电所PLC'
+
+            when  A.query_point_address = '2' then '横洞配电室'
+
+            else  '西变电所PLC'  end
+
+            else  AA.eq_name  end
+
+            else AA.eq_name  END as pName,
             A.eq_id as eqId,
             A.eq_name as eqName,
             -- A.query_point_address,

@@ -1226,4 +1226,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
         return sdDevicesMapper.updateFDeviceStatusByEqId(sdDevices);
     }
+
+
+    @Override
+    public List<Map> devicesOfSubstationInfo(List<String> eqTunnelList) {
+        return sdDevicesMapper.devicesOfSubstationInfo(eqTunnelList);
+    }
 }

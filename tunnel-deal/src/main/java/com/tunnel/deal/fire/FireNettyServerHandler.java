@@ -253,6 +253,12 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 } else if (sourceDevice.equals("声光")) {
                     sourceDevice = "声光报警器报警";
                     itemId = Long.valueOf(DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
+                } else if (sourceDevice.equals("点型感温")) {
+                    sourceDevice = "智能感温探测器";
+                    itemId = Long.valueOf(DevicesTypeItemEnum.ZHI_NENG_GAN_WEN_TAN_CE_QI.getCode());
+                } else if (sourceDevice.equals("点型感烟")) {
+                    sourceDevice = "智能感烟探测器";
+                    itemId = Long.valueOf(DevicesTypeItemEnum.ZHI_NENG_GAN_YAN_TAN_CE_QI.getCode());
                 }
                 Long eventTypeId = 0L;
                 if (sdEventType.getEventType() != null) {

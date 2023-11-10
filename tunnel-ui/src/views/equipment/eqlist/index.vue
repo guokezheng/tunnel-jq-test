@@ -649,6 +649,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="设备安装位置" prop="lane">
+              <el-select
+                v-model="form.installAddr"
+                placeholder="请选择设备安装位置"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="dict in dict.type.device_install_addr"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="设备安装时间" prop="installTime">
               <el-date-picker
                 v-model="form.installTime"
@@ -978,13 +994,14 @@ import { getTeams } from "@/api/electromechanicalPatrol/teamsManage/teams";
 import { getCategoryAllTree } from "@/api/event/strategy";
 export default {
   name: "Devices",
-  //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
+  //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，设备安装位置，诱导灯控制状态
   dicts: [
     "sd_direction",
     "brand",
     "sd_lane",
     "sd_use_status",
     "sd_is_monitor",
+    "device_install_addr",
     "inductionlamp_control_type",
   ],
   data() {
@@ -1615,7 +1632,7 @@ export default {
       const eqId = row.eqId || 0;
       const eqType = row.eqType || 0;
       const protocolId = row.protocolId || 0;
-      
+
       this.flag = true
       this.$router.push({
         path: "/equipment/eqlist-point/index",
@@ -1674,6 +1691,7 @@ export default {
       getDevices(eqId).then((response) => {
         console.log(response.data, "修改按钮操作");
         this.form = response.data;
+        this.form.installAddr = String(response.data.installAddr);
         this.form.eqType = String(response.data.eqType);
         this.open = true;
         this.submitMode = 0;

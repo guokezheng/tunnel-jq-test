@@ -273,6 +273,10 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     @Excel(name = "维保截止时间", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date warrantyEndTime;
 
+    @Excel(name = "安装位置 0 隧道  1弱电室 2高压室 3低压室 4柴发室",type= Excel.Type.IMPORT)
+    @ApiModelProperty("安装位置 0 隧道  1弱电室 2高压室 3低压室 4柴发室")
+    private String installAddr;
+
     /**
      * 设备安装时间
      */
@@ -379,6 +383,14 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
         this.eqId = eqId;
     }
 
+
+    public String getInstallAddr() {
+        return installAddr;
+    }
+
+    public void setInstallAddr(String installAddr) {
+        this.installAddr = installAddr;
+    }
 
     /**
      * 指令模式

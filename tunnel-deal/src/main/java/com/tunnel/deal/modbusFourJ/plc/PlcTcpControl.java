@@ -371,15 +371,15 @@ public class PlcTcpControl implements GeneralControlBean {
             xiMenZiPlcControl.setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
             //设置设备在线
             sdDevicesService.updateOnlineStatus(eqId,false);
-//            //异步推送万集数据
-//            threadPoolTaskExecutor.execute(()->{
-//                try{
-//                    xiMenZiPlcControl.pushWanJi(eqId);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//
-//                }
-//            });
+            //异步推送万集数据
+            threadPoolTaskExecutor.execute(()->{
+                try{
+                    xiMenZiPlcControl.pushWanJi(eqId);
+                }catch (Exception e){
+                    e.printStackTrace();
+
+                }
+            });
         }
     }
 

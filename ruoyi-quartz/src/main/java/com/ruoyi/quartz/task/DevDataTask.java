@@ -77,8 +77,8 @@ public class DevDataTask {
         for(String tunnelId : list){
             List<Map<String, Object>> devRealData = sdDeviceDataMapper.getDevRealData(tunnelId);
             devRealData.stream().forEach(item -> {
-                JSONObject definitionObject = definitionParam(item.get("deviceId").toString(), item.get("deviceData").toString(), Long.valueOf(item.get("devicesItemId").toString()));
-                JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject);
+                JSONObject definitionObject = definitionParam(item);
+                JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject, item.get("tunnelId").toString());
                 threadPoolTaskExecutor.execute(()->{
                     sentWlData(jsonObject);
                 });
@@ -100,16 +100,15 @@ public class DevDataTask {
     /**
      * 重新定义参数名
      *
-     * @param deviceId
-     * @param deviceData
-     * @param deviceItemId
+     * @param item
      * @return
      */
-    public JSONObject definitionParam(String deviceId, String deviceData, Long deviceItemId){
+    public JSONObject definitionParam(Map<String, Object> item){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deviceId",deviceId);
-        jsonObject.put("deviceData",deviceData);
-        jsonObject.put("deviceItemId",deviceItemId);
+        jsonObject.put("deviceId",item.get("deviceId").toString());
+        jsonObject.put("deviceData",item.get("deviceData").toString());
+        jsonObject.put("deviceItemId",Long.valueOf(item.get("devicesItemId").toString()));
+        jsonObject.put("laneNo",item.get("lane").toString());
         return jsonObject;
     }
 
@@ -120,7 +119,7 @@ public class DevDataTask {
      * @param object
      * @return
      */
-    public JSONObject devReaStatus(Long eqType, JSONObject object){
+    public JSONObject devReaStatus(Long eqType, JSONObject object, String tunnelId){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("devNo", "S00063700001980001");
         jsonObject.put("devType",eqType);
@@ -129,6 +128,7 @@ public class DevDataTask {
         jsonObject.put("netstatus","1");
         jsonObject.put("source","suidao");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        jsonObject.put("tunnelId",tunnelId);
         JSONObject obj = new JSONObject();
         obj.put("deviceData",object);
         jsonObject.put("expands",obj);
@@ -148,6 +148,7 @@ public class DevDataTask {
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus",sdDevices.getEqStatus());
         jsonObject.put("source","suidao");
+        jsonObject.put("tunnelId",sdDevices.getEqTunnelId());
         if("1".equals(sdDevices.getEqStatus())){
             jsonObject.put("netstatus",sdDevices.getEqStatus());
             jsonObject.put("netStatusRemark","连通");

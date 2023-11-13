@@ -52,7 +52,7 @@
     "element-resize-detector": "^1.2.4",
     "element-ui": "2.15.6",
     "fabric": "^4.1.0",
-    "file-saver": "2.0.5",
+    "file-saver": "^2.0.5",
     "fuse.js": "6.4.3",
     "gis-map-tunnel": "^0.1.2",
     "highlight.js": "9.18.5",

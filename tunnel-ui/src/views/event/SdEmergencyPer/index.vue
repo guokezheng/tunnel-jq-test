@@ -595,5 +595,8 @@ export default {
 .vue-treeselect__single-value {
   color: #ffffff !important;
 }
+.el-tree{
+  background:red;
+}
 </style>
 

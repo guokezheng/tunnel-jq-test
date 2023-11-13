@@ -1126,6 +1126,31 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     /**
+     * 根据协议Id、设备IP等条件查询设备列表
+     *
+     * @param protocolId 协议ID
+     * @param noTypeList 排除的设备类型
+     * @return
+     */
+    @Override
+    public List<SdDevices> getDevicesByProtocol(Long protocolId, List<Long> noTypeList) {
+        return sdDevicesMapper.getDevicesByProtocol(protocolId,noTypeList);
+    }
+
+    /**
+     * 按照设备实时数据的时间筛选在线设备
+     *
+     * @param protocolId 协议ID
+     * @param noTypeList 排除的设备类型
+     * @param offlineTime 离线时间
+     * @return
+     */
+    @Override
+    public List<String> selectOnlineDeviceByUpdateTime(Long protocolId, List<Long> noTypeList,int offlineTime) {
+        return sdDevicesMapper.selectOnlineDeviceByUpdateTime(protocolId,noTypeList,offlineTime);
+    }
+
+    /**
      * 获取测控执行器设备
      * @return
      */
@@ -1225,5 +1250,11 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         sdDevices.setUpdateTime(new Date());
 
         return sdDevicesMapper.updateFDeviceStatusByEqId(sdDevices);
+    }
+
+
+    @Override
+    public List<Map> devicesOfSubstationInfo(List<String> eqTunnelList) {
+        return sdDevicesMapper.devicesOfSubstationInfo(eqTunnelList);
     }
 }

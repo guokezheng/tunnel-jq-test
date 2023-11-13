@@ -7,6 +7,7 @@ import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
@@ -50,6 +51,9 @@ public class PlcTcpTask {
 
     @Autowired
     private TcpClientGeneralService tcpClientGeneralService;
+
+    @Autowired
+    private ISdDevicesProtocolService sdDevicesProtocolService;
 
     @Autowired
     private PlcTcpControl plcTcpControl;
@@ -367,5 +371,30 @@ public class PlcTcpTask {
     }
 
 
+
+    /**
+     * 监测设备在线/离线状态
+     */
+    public void monitorDeviceStatus(Integer offlineTime){
+        String protocolCode = DeviceProtocolCodeEnum.NEW_XI_MEN_ZI_PLC_TCP_PROTOCOL.getCode();
+        List<Long> noTypeList = new ArrayList<>();
+        //查询配置该协议编码的所有的设备，剔除掉PLC检测
+        noTypeList.add( DevicesTypeEnum.PLC.getCode());
+        Long protocolId = sdDevicesProtocolService.selectProtocolIdByCode(protocolCode);
+        List<SdDevices> list = sdDevicesService.getDevicesByProtocol(protocolId,noTypeList);
+        //在线设备（离线设备可能在实时数据表中没有任何记录，筛选在线设备避免遗漏离线设备）
+        List<String> onlineList = sdDevicesService.selectOnlineDeviceByUpdateTime(protocolId,noTypeList,offlineTime);
+        //遍历所有设备
+        list.forEach(device ->{
+            String deviceId = device.getEqId();
+            if(onlineList.contains(deviceId)){
+                //在线
+                sdDevicesService.updateOnlineStatus(deviceId,false);
+            }else{
+                //离线
+                sdDevicesService.updateOfflineStatus(deviceId,false);
+            }
+        });
+    }
 
 }

@@ -358,6 +358,9 @@ public class KafkaReadListenToWanJiTopic {
             image.setCreateTime(DateUtils.getNowDate());
             imageList.add(image);
         }
+        if(imageList.size() == 0){
+            return;
+        }
         //将图片视频存入
         imageMapper.brachInsertFaultIconFile(imageList);
     }

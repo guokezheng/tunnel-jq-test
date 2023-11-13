@@ -371,15 +371,15 @@ public class PlcTcpControl implements GeneralControlBean {
             xiMenZiPlcControl.setDeviceDataRecord(eqId,result,Long.valueOf(itemId));
             //设置设备在线
             sdDevicesService.updateOnlineStatus(eqId,false);
-//            //异步推送万集数据
-//            threadPoolTaskExecutor.execute(()->{
-//                try{
-//                    xiMenZiPlcControl.pushWanJi(eqId);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//
-//                }
-//            });
+            //异步推送万集数据
+            threadPoolTaskExecutor.execute(()->{
+                try{
+                    xiMenZiPlcControl.pushWanJi(eqId);
+                }catch (Exception e){
+                    e.printStackTrace();
+
+                }
+            });
         }
     }
 
@@ -448,11 +448,12 @@ public class PlcTcpControl implements GeneralControlBean {
         if(PlcTcpTask.readPriority == priorityNum){
             //读取
             executeRead(map);
+            modbusCmd.sleep(100);
         }else{
-            modbusCmd.sleep(20);
+//            modbusCmd.sleep(20);
             //写入
             executeWrite(map);
-            modbusCmd.sleep(20);
+            modbusCmd.sleep(100);
         }
         //移除头部元素
         PlcTcpTask.queue.poll();

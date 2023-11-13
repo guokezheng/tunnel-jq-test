@@ -6,16 +6,17 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.StatisticTypeEnum;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 用电统计Controller
@@ -30,6 +31,42 @@ public class EnergySjfxElectricityController extends BaseController {
 
     @Autowired
     private EnergySjfxElectricityService energySjfxElectricityService;
+
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
+    @Value("${spring.profiles.active}")
+    private String active;
+
+
+    @GetMapping("/substation/devicesInfo")
+    public AjaxResult devicesOfSubstationInfo() {
+
+        List<String> eqTunnelList = null;
+
+        if(active.equals("wzbprod") ){
+            eqTunnelList = new ArrayList<>();
+            eqTunnelList.add("JQ-JiNan-WenZuBei-MJY");
+        }else if(active.equals("ytsprod")){
+            eqTunnelList = new ArrayList<>();
+            eqTunnelList.add("JQ-WeiFang-YangTianShan-SZS");
+            eqTunnelList.add("JQ-WeiFang-YangTianShan-YTS");
+        }else if(active.equals("thprod")){
+            eqTunnelList = new ArrayList<>();
+            eqTunnelList.add("JQ-ZiBo-TaiHe-PDS");
+            eqTunnelList.add("JQ-ZiBo-TaiHe-QFL");
+        }else if(active.equals("mzprod")){
+            eqTunnelList = new ArrayList<>();
+            eqTunnelList.add("JQ-WeiFang-MiaoZi-BJY");
+            eqTunnelList.add("JQ-WeiFang-MiaoZi-WCL");
+        }else if(active.equals("jlyprod")){
+            eqTunnelList = new ArrayList<>();
+            eqTunnelList.add("JQ-WeiFang-JiuLongYu-JJL");
+            eqTunnelList.add("JQ-WeiFang-JiuLongYu-MAS");
+        }
+
+        return AjaxResult.success(sdDevicesService.devicesOfSubstationInfo(eqTunnelList));
+    }
 
 
 

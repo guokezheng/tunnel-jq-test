@@ -132,6 +132,9 @@
                           <if test="dept != null and dept != ''">
                               AND (t.dept_id = #{dept} OR t.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
                           </if>
+                          <if test="tunnelId != null and tunnelId != ''">
+                              AND A.tunnel_id = #{tunnelId}
+                          </if>
                     ) a UNION
                 SELECT
                     id,
@@ -178,6 +181,9 @@
                           <if test="dept != null and dept != ''">
                             AND (tunnel.dept_id = #{dept} OR tunnel.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
                           </if>
+                          <if test="tunnelId != null and tunnelId != ''">
+                              AND fault.tunnel_id = #{tunnelId}
+                          </if>
                     ) b
             ) AS MERGE
         ORDER BY
@@ -214,6 +220,9 @@
           <if test="dept != null and dept != ''">
               AND (t.dept_id = #{dept} OR t.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
           </if>
+          <if test="tunnelId != null and tunnelId != ''">
+              AND A.tunnel_id = #{tunnelId}
+          </if>
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="sdEvent">
@@ -225,6 +234,9 @@
         where fault.fault_status = '0' and fault.fallt_remove_statue = '1' and TO_DAYS(fault.fault_fxtime) = TO_DAYS(NOW())
         <if test="dept != null and dept != ''">
             AND (tunnel.dept_id = #{dept} OR tunnel.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
+        </if>
+        <if test="tunnelId != null and tunnelId != ''">
+            AND fault.tunnel_id = #{tunnelId}
         </if>
         ORDER BY
             fault.fault_fxtime DESC
@@ -277,7 +289,7 @@
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
             <if test="tunnelId != null  and tunnelId != ''">and A.tunnel_id = #{tunnelId}</if>
             <if test="eventTypeId != null">and A.event_type_id = #{eventTypeId}</if>
-            <if test="prevControlType != null">and B.prev_control_type = #{prevControlType}</if>
+            <if test="prevControlType != null and prevControlType != ''">and B.prev_control_type = #{prevControlType}</if>
             <if test="eventTitle != null  and eventTitle != ''">and A.event_title = #{eventTitle}</if>
             <if test="eventTime != null ">and DATE_FORMAT(A.event_time,'%Y-%m-%d') = DATE_FORMAT(#{eventTime},'%Y-%m-%d')</if>
             <if test="eventState != null  and eventState != ''">and FIND_IN_SET(A.event_state, #{eventState}) > 0</if>

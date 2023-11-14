@@ -77,7 +77,7 @@
                   <img :src="item.iconUrl" />
                 </div>
               </el-col>
-              <el-col :span="4" style="display: flex">
+              <el-col :span="6" style="display: flex">
                 <div
                   :style="{
                     color:
@@ -87,7 +87,7 @@
                         ? '#F6AC10'
                         : 'rgb(11,146,254)',
                   }"
-                  style="width: 100%"
+                  style="width: 100%;"
                 >
                   {{ item.simplifyName }}
                 </div>
@@ -99,7 +99,7 @@
                 >
               </el-col>
               <el-col
-                :span="19"
+                :span="17"
                 style="display: flex; justify-content: space-between"
               >
                 <el-tooltip

@@ -459,3 +459,9 @@ h6 {
     color: white;
   }
 }
+.el-cascader-panel .el-scrollbar{
+  overflow:inherit;
+}
+.el-select-dropdown .el-scrollbar{
+  overflow: visible;
+}

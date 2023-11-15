@@ -58,7 +58,7 @@
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
                create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num,road_id,level_code,length_code,construct_year,
-               manager_id,org_name,org_code,level_name,length_name,road_code,road_name ,activate_time from sd_tunnels
+               manager_id,org_name,org_code,level_name,length_name,road_code,road_name ,activate_time,order_num from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -129,6 +129,10 @@
                 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
         </where>
+    </select>
+
+    <select id="getTunnelDataDept" parameterType="java.lang.String" resultType="sdTunnels">
+        <include refid="selectSdTunnelsVo"/> t where 1=1 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
     </select>
 
     <select id="selectTunList" parameterType="SdTunnels" resultMap="SdTunnelsResult">

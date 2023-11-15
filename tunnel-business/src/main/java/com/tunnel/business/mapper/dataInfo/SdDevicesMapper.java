@@ -588,4 +588,11 @@ public interface SdDevicesMapper {
     int updateFDeviceStatusByEqId(SdDevices sdDevices);
 
 	List<Map> devicesOfSubstationInfo(@Param("eqTunnelList") List<String> eqTunnelList);
+
+	/**
+	 * 查询各隧道下所有设备
+	 * @param tunnelIds
+	 * @return
+	 */
+	List<SdDevices> getDevTunnelData(@Param("tunnelIds") String tunnelIds);
 }

@@ -102,6 +102,13 @@ public interface SdTunnelsMapper
     List<SdTunnels> selectTunnelsDeptIdList(String deptId);
 
     /**
+     * 查询各管理站隧道详细信息
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> getTunnelDataDept(@Param("deptId") String deptId);
+
+    /**
      * 查询隧道list
      * @return
      */

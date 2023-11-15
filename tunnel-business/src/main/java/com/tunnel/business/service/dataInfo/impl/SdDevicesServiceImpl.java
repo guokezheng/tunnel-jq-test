@@ -1,5 +1,6 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.ServiceException;
@@ -1256,5 +1257,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<Map> devicesOfSubstationInfo(List<String> eqTunnelList) {
         return sdDevicesMapper.devicesOfSubstationInfo(eqTunnelList);
+    }
+
+    @Override
+    public void syncData(String objectData) {
+        JSONObject jsonObject = JSONObject.parseObject(objectData);
     }
 }

@@ -1706,4 +1706,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and (A.install_addr is not null and A.install_addr != '0')
         order by B.id
     </select>
+
+    <select id="getDevTunnelData" parameterType="java.lang.String" resultType="sdDevices">
+        <include refid="selectSdDevicesVo"/> where 1 = 1
+        AND FIND_IN_SET( eq_tunnel_id, #{tunnelIds} ) > 0
+    </select>
 </mapper>

@@ -424,4 +424,10 @@ public interface ISdDevicesService {
      * @return
      */
     List<Map> devicesOfSubstationInfo(List<String> eqTunnelList);
+
+    /**
+     * 高速云同步设备隧道
+     * @param objectData
+     */
+    void syncData(String objectData);
 }

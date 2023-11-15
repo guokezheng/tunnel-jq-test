@@ -1658,7 +1658,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             THEN
             case
 
-            when D.tunnel_id = 'JQ-JiNan-WenZuBei-MJY'
+            when D.tunnel_id = 'JQ-JiNan-WenZuBei-MJY'  -- and A.query_point_address = '1' then '东变电所PLC'
 
             then case when  A.query_point_address = '1' then '东变电所PLC' else  '西变电所PLC'  end
 
@@ -1676,7 +1676,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             else  '西变电所PLC'  end
 
+            when D.tunnel_id = 'JQ-WeiFang-MiaoZi-WCL'
+
+            then case when  A.query_point_address = '2' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-MiaoZi-BJY'
+
+            then case when  A.query_point_address = '5' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-YangTianShan-SZS'
+
+            then case when  A.query_point_address = '3' then '双子山西PLC' else  '双子山东PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-YangTianShan-YTS'
+
+            then case when  A.query_point_address = '1' then '仰天山西PLC' else  '仰天山东PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-JiuLongYu-JJL'
+
+            then case when  A.query_point_address = '3' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-JiuLongYu-MAS'
+
+            then case when  A.query_point_address = '5' then '东变电所PLC' else  '西变电所PLC'  end
+
             else  AA.eq_name  end
+
 
             else AA.eq_name  END as pName,
             A.eq_id as eqId,
@@ -1685,23 +1710,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             E.dict_label as installAddr,
             -- B.id,
             B.item_name as itemName,
-            IFNULL(C.`data` ,'0') as data
-        FROM
-            sd_devices A
-                left join sd_devices AA on A.f_eq_id = AA.eq_id
-                LEFT JOIN sd_device_type_item B ON A.eq_type = B.device_type_id
-                LEFT JOIN sd_device_data C ON A.eq_id = C.device_id
-                AND B.id = C.item_id
-                left join sd_tunnels D on A.eq_tunnel_id = D.tunnel_id
-                left join sys_dict_data E on A.install_addr = E.dict_value and E.dict_type = 'device_install_addr'
+            IFNULL(C.`data` ,'0') as `data`
+            FROM
+        sd_devices A
+        left join sd_devices AA on A.f_eq_id = AA.eq_id
+        LEFT JOIN sd_device_type_item B ON A.eq_type = B.device_type_id
+        LEFT JOIN sd_device_data C ON A.eq_id = C.device_id
+        AND B.id = C.item_id
+        left join sd_tunnels D on A.eq_tunnel_id = D.tunnel_id
+        left join sys_dict_data E on A.install_addr = E.dict_value and E.dict_type = 'device_install_addr'
         WHERE
             A.eq_type IN ( 41, 42 ,50 , 51,32)
           AND A.eq_tunnel_id in
-
-        <foreach collection="eqTunnelList" item="item" index="index" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-
+            <foreach collection="eqTunnelList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          and A.eq_tunnel_id != 'JQ-WeiFang-JiuLongYu-HSD'
           and B.id  in (56,89,90,105,106,107)
           and (A.install_addr is not null and A.install_addr != '0')
         order by B.id

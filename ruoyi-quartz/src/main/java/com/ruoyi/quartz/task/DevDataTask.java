@@ -5,16 +5,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TopicEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.datacenter.domain.enumeration.WjCarVolumeEnum;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,17 +67,20 @@ public class DevDataTask {
     @Value("${wj_carVolume}")
     private String glzName;
 
-    @Value("${authorize.name}")
+    /*@Value("${authorize.name}")
     private String authorizeName;
 
     @Value("${tunnel_dept_id}")
-    private String tunnelDeptId;
+    private String tunnelDeptId;*/
 
     @Autowired
     private SdTunnelsMapper tunnelsMapper;
 
     @Autowired
     private SdDevicesMapper devicesMapper;
+
+    @Resource(name = "HttpTemplate")
+    private RestTemplate template;
 
     public void sentDevData(){
         List<String> list = new ArrayList<>();
@@ -200,7 +207,7 @@ public class DevDataTask {
         }
     }
 
-    public void syncDevTunnelData(){
+    /*public void syncDevTunnelData(){
         if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
             List<SdTunnels> tunnelDataDept = tunnelsMapper.getTunnelDataDept(tunnelDeptId);
             String collect = tunnelDataDept.stream().map(SdTunnels::getTunnelId).collect(Collectors.joining(","));
@@ -211,22 +218,18 @@ public class DevDataTask {
             HttpHeaders headers = new HttpHeaders();
             MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
             headers.setContentType(type);
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://10.168.64.171:7080/dev-api/devices/syncData")
-                    .queryParam("objectData",jsonObject.toString());
-            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+            HashMap<String, Object> requestBody = new HashMap<>();
+            requestBody.put("requestData",jsonObject.toString());
+
+            HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
             try{
-                HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-                httpRequestFactory.setConnectionRequestTimeout(3 * 1000);
-                httpRequestFactory.setConnectTimeout(3 * 1000);
-                httpRequestFactory.setReadTimeout(3 * 1000);
-                RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
-                ResponseEntity<String> exchange = restTemplate.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, String.class);
-                JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
+                ResponseEntity<Map> exchange = template.exchange("http://10.168.64.171:7080/dev-api/devices/syncData", HttpMethod.POST, httpEntity, Map.class);
+                Map body = exchange.getBody();
             }catch(Exception ex){
                 ex.printStackTrace();
             }
         }else {
             return;
         }
-    }
+    }*/
 }

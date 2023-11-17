@@ -715,7 +715,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark,ip,eq_tunnel_id
         from sd_devices
         where eq_tunnel_id =#{tunnelId}
-        and eq_type in (1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,36,39,40)
+        and eq_type in (1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,36,39,40,45)
     </select>
 
     <select id="selectDeviceByHost" resultType="String">
@@ -1735,4 +1735,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdDevicesVo"/> where 1 = 1
         AND FIND_IN_SET( eq_tunnel_id, #{tunnelIds} ) > 0
     </select>
+
+    <delete id="deleteDev" parameterType="String">
+        delete from sd_devices where FIND_IN_SET( eq_tunnel_id, #{tunnels} ) > 0
+    </delete>
 </mapper>

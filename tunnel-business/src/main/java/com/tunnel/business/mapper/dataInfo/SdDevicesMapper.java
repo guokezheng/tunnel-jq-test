@@ -595,4 +595,6 @@ public interface SdDevicesMapper {
 	 * @return
 	 */
 	List<SdDevices> getDevTunnelData(@Param("tunnelIds") String tunnelIds);
+
+	int deleteDev(@Param("tunnels") String tunnels);
 }

@@ -1,5 +1,6 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -67,6 +68,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Autowired
     private DeviceDataStrategyFactory deviceDataStrategyFactory;
+
+    @Autowired
+    private SdTunnelsMapper tunnelsMapper;
 
 
     /**
@@ -1260,7 +1264,28 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     @Override
-    public void syncData(String objectData) {
-        JSONObject jsonObject = JSONObject.parseObject(objectData);
+    public void syncData(HashMap<String, Object> requestData) {
+        JSONObject jsonObject = JSONObject.parseObject(requestData.get("requestData").toString());
+        JSONArray tunnels = jsonObject.getJSONArray("tunnelList");
+        JSONArray devices = jsonObject.getJSONArray("deviceList");
+        List<String> list = new ArrayList<>();
+        for(int i = 0; i < tunnels.size(); i++){
+            SdTunnels sdTunnels = JSONObject.parseObject(tunnels.get(i).toString(), SdTunnels.class);
+            tunnelsMapper.updateSdTunnels(sdTunnels);
+            list.add(sdTunnels.getTunnelId());
+        }
+        if(list.size() > 0){
+            String tunnelIds = StringUtils.join(list,",");
+            sdDevicesMapper.deleteDev(tunnelIds);
+            for(int i = 0; i < devices.size(); i++){
+                try {
+                    SdDevices sdDevices = JSONObject.parseObject(devices.get(i).toString(), SdDevices.class);
+                    sdDevicesMapper.insertSdDevices(sdDevices);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    System.out.println("同步设备数据报错：" + e.getMessage());
+                }
+            }
+        }
     }
 }

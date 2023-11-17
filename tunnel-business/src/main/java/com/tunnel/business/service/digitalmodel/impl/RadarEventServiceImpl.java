@@ -893,7 +893,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             com.alibaba.fastjson.JSONObject deviceData = new com.alibaba.fastjson.JSONObject();
             if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
                     || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType())
-                    || "30".equals(sdRadarDevice.getDeviceType()) || "31".equals(sdRadarDevice.getDeviceType())) {
+                    || "30".equals(sdRadarDevice.getDeviceType()) || "31".equals(sdRadarDevice.getDeviceType()) || "45".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);

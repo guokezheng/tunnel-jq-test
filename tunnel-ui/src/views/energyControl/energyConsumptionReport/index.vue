@@ -472,6 +472,7 @@ export default {
         console.log(this.queryParams, "this.queryParams");
         // 接口请求
         const res = await getElectricityReportList(this.queryParams);
+          console.log(res, "数据源")
         if (res.code === 200) {
           console.log(res, "second");
           this.list1 = res.data;
@@ -607,6 +608,10 @@ export default {
         if (res.code === 200) {
           console.log(res);
           this.list1 = res.data;
+          this.list1.map(item=>{
+            item.value==0?item.value = 0:item.value;
+          })
+          this.$forceUpdate();
           this.$nextTick(() => {
             //清除选中行
             this.$refs.multipleTable.doLayout();
@@ -689,7 +694,7 @@ export default {
             symbol: "circle",
             showAllSymbol: true,
             symbolSize: 8,
-            data: n.value,
+            data: Number(n.value),
             color: "#0090D8",
           });
           this.xData = n.rt;
@@ -705,7 +710,13 @@ export default {
           obj = {};
           for (let i in this.xData) {
             let a = this.xData[i];
-            obj[a] = item.value[i];
+            console.log(item.value[i])
+            if(!item.value[i]){
+              obj[a] = 0;
+            }else{
+              obj[a] = Number(item.value[i]);
+            }
+            
             obj["sum"] = item.sum;
             obj["name"] = item.name;
           }

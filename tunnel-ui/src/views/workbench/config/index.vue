@@ -2320,16 +2320,17 @@
         }
       },
       mouseSrollAuto(e) {
-        // console.log(e.target.scrollLeft, "e.target.scrollLeft");
-        if (e.target.scrollLeft > 0) {
-          this.resetCanvasFlag = true;
-        } else {
-          this.resetCanvasFlag = false;
+        console.log(e.target.scrollLeft,"=>left",e.target.scrollTop, "=>top");
+        if(e.target.scrollTop == 0){
+          if (e.target.scrollLeft > 0) {
+            this.resetCanvasFlag = true;
+          } else {
+            this.resetCanvasFlag = false;
+          }
         }
       },
       // 管理站级联回显选中效果
       cascaderHandleChange() {
-        // console.log(1);
         // console.log(this.siteList, "siteList");
         // let handleText = "";
         // for (let item of this.siteList) {

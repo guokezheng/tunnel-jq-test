@@ -67,11 +67,11 @@ public class DevDataTask {
     @Value("${wj_carVolume}")
     private String glzName;
 
-    /*@Value("${authorize.name}")
+    @Value("${authorize.name}")
     private String authorizeName;
 
     @Value("${tunnel_dept_id}")
-    private String tunnelDeptId;*/
+    private String tunnelDeptId;
 
     @Autowired
     private SdTunnelsMapper tunnelsMapper;
@@ -207,7 +207,7 @@ public class DevDataTask {
         }
     }
 
-    /*public void syncDevTunnelData(){
+    public void syncDevTunnelData(){
         if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
             List<SdTunnels> tunnelDataDept = tunnelsMapper.getTunnelDataDept(tunnelDeptId);
             String collect = tunnelDataDept.stream().map(SdTunnels::getTunnelId).collect(Collectors.joining(","));
@@ -231,5 +231,5 @@ public class DevDataTask {
         }else {
             return;
         }
-    }*/
+    }
 }

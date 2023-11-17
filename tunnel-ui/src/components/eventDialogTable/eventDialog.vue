@@ -2321,6 +2321,7 @@ hr {
   video {
     width: 100%;
     height: auto;
+    max-height:550px;
   }
 }
 .el-carousel {

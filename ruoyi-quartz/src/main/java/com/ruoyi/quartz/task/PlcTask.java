@@ -320,7 +320,7 @@ public class PlcTask {
         }
         sdDeviceDataRecord.setData(value);
         sdDeviceDataRecord.setCreateTime(new Date());
-        sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+//        sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
         sendData.pushDevicesDataRecord(sdDeviceDataRecord);
     }
 }

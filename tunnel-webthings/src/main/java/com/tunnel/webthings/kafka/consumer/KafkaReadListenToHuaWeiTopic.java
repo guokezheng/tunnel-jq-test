@@ -1026,7 +1026,7 @@ public class KafkaReadListenToHuaWeiTopic {
         //获取bean
         SdDeviceDataRecordMapper bean = SpringUtils.getBean(SdDeviceDataRecordMapper.class);
         //将数据存入历史记录表
-        bean.insertSdDeviceDataRecord(record);
+//        bean.insertSdDeviceDataRecord(record);
     }
 
     /**

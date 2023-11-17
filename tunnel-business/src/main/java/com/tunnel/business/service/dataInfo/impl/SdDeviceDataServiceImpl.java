@@ -717,7 +717,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             sdDeviceDataRecord.setItemId(Long.valueOf(itemId));
             sdDeviceDataRecord.setData(value);
             sdDeviceDataRecord.setCreateTime(new Date());
-            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+//            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
         }
 
     }
@@ -777,7 +777,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             sdDeviceDataRecord.setItemId(Long.valueOf(itemId));
             sdDeviceDataRecord.setData(value);
             sdDeviceDataRecord.setCreateTime(new Date());
-            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+//            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
         }
     }
 

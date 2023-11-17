@@ -219,12 +219,12 @@ public class OmronTask {
             sdDeviceDataService.insertSdDeviceData(sdDeviceData);
         }
         //存入数据记录表中
-        SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
-        sdDeviceDataRecord.setDeviceId(sdDevicePoint.getEqId());
-        sdDeviceDataRecord.setItemId(Long.valueOf(sdDevicePoint.getItemId()));
-        sdDeviceDataRecord.setData(data);
-        sdDeviceDataRecord.setCreateTime(new Date());
-        sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+//        SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
+//        sdDeviceDataRecord.setDeviceId(sdDevicePoint.getEqId());
+//        sdDeviceDataRecord.setItemId(Long.valueOf(sdDevicePoint.getItemId()));
+//        sdDeviceDataRecord.setData(data);
+//        sdDeviceDataRecord.setCreateTime(new Date());
+//        sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
     }
 
 

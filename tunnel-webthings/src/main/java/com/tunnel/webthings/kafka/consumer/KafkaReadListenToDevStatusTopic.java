@@ -76,11 +76,12 @@ public class KafkaReadListenToDevStatusTopic {
                         //Object o = jsonObject.get("deviceDataRecord");
                         SdDeviceDataRecord sdDeviceDataRecord = JSONUtil.toBean(deviceDataRecordObject.toString(), SdDeviceDataRecord.class);
                         SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecordService.selectSdDeviceDataRecordById(sdDeviceDataRecord.getId());
-                        if (deviceDataRecord != null) {
-                            sdDeviceDataRecordService.updateSdDeviceDataRecord(sdDeviceDataRecord);
-                        } else {
-                            sdDeviceDataRecordService.insertSdDeviceDataRecord(sdDeviceDataRecord);
-                        }
+                        //历史数据表
+//                        if (deviceDataRecord != null) {
+//                            sdDeviceDataRecordService.updateSdDeviceDataRecord(sdDeviceDataRecord);
+//                        } else {
+//                            sdDeviceDataRecordService.insertSdDeviceDataRecord(sdDeviceDataRecord);
+//                        }
                     }
                     //设备运行数据信息操作
                     if(deviceDataObject != null){

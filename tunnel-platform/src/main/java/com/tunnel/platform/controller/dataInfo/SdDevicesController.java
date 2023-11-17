@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -624,5 +625,16 @@ public class SdDevicesController extends BaseController {
     private String getCacheKey(String configKey)
     {
         return Constants.CAR_TOKEN + configKey;
+    }
+
+    /**
+     * 高速云同步设备隧道
+     * @param requestData
+     */
+    @PostMapping("/syncData")
+    public void syncData(@RequestBody HashMap<String, Object> requestData){
+        if (PlatformAuthEnum.GSY.getCode().equals(platformName)) {
+            sdDevicesService.syncData(requestData);
+        }
     }
 }

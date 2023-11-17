@@ -1,11 +1,13 @@
 package com.tunnel.business.service.dataInfo;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -427,7 +429,7 @@ public interface ISdDevicesService {
 
     /**
      * 高速云同步设备隧道
-     * @param objectData
+     * @param requestData
      */
-    void syncData(String objectData);
+    void syncData(HashMap<String, Object> requestData);
 }

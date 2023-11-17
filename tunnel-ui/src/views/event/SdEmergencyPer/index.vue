@@ -387,6 +387,7 @@ export default {
     },
 
     changeParentDept() {
+      // debugger
       this.$refs.form.validateField("deptId");
     },
     // 筛选节点
@@ -594,9 +595,94 @@ export default {
 <style scoped lang="scss">
 .vue-treeselect__single-value {
   color: #ffffff !important;
+  background: #0090d8 !important;
 }
-.el-tree{
-  background:red;
+::v-deep .treeselect{
+  background: #0090d8 !important;
+}
+::v-deep .vue-treeselect__menu-container{
+  background: #0090d8 !important;
+  background-color: #0090d8 !important;
+}
+::v-deep .vue-treeselect__label{
+  background: #0090d8 !important;
+}
+::v-deep .vue-treeselect__control{
+  background: #0090d8 !important;
+}
+
+::v-deep .vue-treeselect__control {
+  background: transparent;
+  height: 100%;
+}
+// ::v-deep .vue-treeselect__placeholder {
+//   font-size: 20px;
+//   font-family: PingFang SC-Regular, PingFang SC;
+//   font-weight: 400;
+//   line-height: 47px;
+//   color: #2aebff;
+// }
+//foucs时的placeholder
+// ::v-deep.vue-treeselect--focus .vue-treeselect__input{
+// color: #2aebff !important;
+// }
+//foucs时有值的input
+// ::v-deep .vue-treeselect--has-value .vue-treeselect__single-value{
+// color: #2aebff !important;
+// }
+::v-deep .vue-treeselect__menu {
+  background: #0090d8;
+  border: none;
+}
+// ::v-deep.vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused)
+//   .vue-treeselect__control:hover {
+//   border-color: rgba(2, 189, 253, 0.35);
+// }
+::v-deep .vue-treeselect__list:hover > .vue-treeselect__list-item {
+  background: #0090d8;
+}
+//选中的
+// ::v-deep .vue-treeselect__single-value {
+//   color: #2aebff;
+//   line-height: 47px;
+//   font-size: 20px;
+// }
+//input箭头
+// ::v-deep .vue-treeselect__control-arrow-container .vue-treeselect__control-arrow {
+//   color: #1b4691 !important;
+// }
+//清空icon
+// ::v-deep .vue-treeselect__x-container .vue-treeselect__x{
+//   color: #1b4691 !important;
+ 
+// }
+//hover
+::v-deep .vue-treeselect__option--highlight{
+background-color: #0090d8 !important;
+}
+//选中的menu
+::v-deep .vue-treeselect__option--selected{
+background: #0090d8;
+}
+// /deep/ .vue-treeselect__option--selected
+// :hover{
+// background: #202a60;
+// }
+// /deep/ .vue-treeselect__option--selected
+// :hover{
+// background: #202a60;
+// }
+// /deep/ .vue-treeselect__option--selected
+// :hover .vue-treeselect__option-arrow-placeholder{
+// background: #202a60;
+// }
+//menu文字
+::v-deep .vue-treeselect__label{
+color: #fff;
+}
+//menu-icon
+::v-deep .vue-treeselect__option-arrow-container .vue-treeselect__option-arrow{
+  color: #fff !important;
 }
 </style>
 

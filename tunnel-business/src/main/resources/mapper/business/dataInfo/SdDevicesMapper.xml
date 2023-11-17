@@ -32,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="deliveryTime"    column="delivery_time"    />
         <result property="warrantyEndTime"    column="warranty_end_time"    />
         <result property="installTime"    column="install_time"    />
+        <result property="installAddr"    column="install_addr"    />
         <result property="useLife"    column="use_life"    />
         <result property="useStatus"    column="use_status"    />
         <result property="isMonitor"    column="is_monitor"    />
@@ -84,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
         eq_status_time, control_point_address, query_point_address, create_by, create_time,
-        update_by, update_time, remark,road_id,message_protocol,protocol_id,sn,external_device_id, associated_device_id
+        update_by, update_time, remark,road_id,message_protocol,protocol_id,sn,external_device_id, associated_device_id,install_addr
         from sd_devices
     </sql>
 
@@ -137,7 +138,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
-        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name,a.external_device_id, a.associated_device_id
+        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name,a.external_device_id, a.associated_device_id,a.install_addr
         from sd_devices a
         left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
         left join sys_dept c on c.dept_id = b.dept_id
@@ -177,7 +178,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name
+        ,c.tunnel_name,a.install_addr
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -282,7 +283,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name, a.external_device_id,a.protocol_id
+        ,c.tunnel_name, a.external_device_id,a.protocol_id,a.install_addr
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -396,6 +397,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sn != null">sn,</if>
             <if test="externalDeviceId != null">external_device_id,</if>
             <if test="associatedDeviceId != null">associated_device_id,</if>
+            <if test="installAddr != null">install_addr,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
@@ -446,6 +448,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sn != null">#{sn},</if>
             <if test="externalDeviceId != null">#{externalDeviceId},</if>
             <if test="associatedDeviceId != null">#{associatedDeviceId},</if>
+            <if test="installAddr != null">#{installAddr},</if>
          </trim>
     </insert>
 
@@ -475,6 +478,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deliveryTime != null">delivery_time = #{deliveryTime},</if>
             <if test="warrantyEndTime != null">warranty_end_time = #{warrantyEndTime},</if>
             <if test="installTime != null">install_time = #{installTime},</if>
+            <if test="installAddr != null">install_addr = #{installAddr},</if>
             <if test="useLife != null">use_life = #{useLife},</if>
             <if test="useStatus != null">use_status = #{useStatus},</if>
             <if test="isMonitor != null">is_monitor = #{isMonitor},</if>
@@ -663,7 +667,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name
+        ,c.tunnel_name,a.install_addr
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -1644,5 +1648,91 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         order by AA.pile_num asc
 
+    </select>
+
+    <select id="devicesOfSubstationInfo" resultType="map">
+        SELECT
+            D.tunnel_id as tunnlId,
+            D.tunnel_name as tunnelName,
+            case WHEN AA.eq_name is null
+            THEN
+            case
+
+            when D.tunnel_id = 'JQ-JiNan-WenZuBei-MJY'  -- and A.query_point_address = '1' then '东变电所PLC'
+
+            then case when  A.query_point_address = '1' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-ZiBo-TaiHe-QFL'
+
+            then case when  A.query_point_address = '5' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-ZiBo-TaiHe-PDS'
+
+            then case
+
+            when  A.query_point_address = '3' then '东变电所PLC'
+
+            when  A.query_point_address = '2' then '横洞配电室'
+
+            else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-MiaoZi-WCL'
+
+            then case when  A.query_point_address = '2' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-MiaoZi-BJY'
+
+            then case when  A.query_point_address = '5' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-YangTianShan-SZS'
+
+            then case when  A.query_point_address = '3' then '双子山西PLC' else  '双子山东PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-YangTianShan-YTS'
+
+            then case when  A.query_point_address = '1' then '仰天山西PLC' else  '仰天山东PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-JiuLongYu-JJL'
+
+            then case when  A.query_point_address = '3' then '东变电所PLC' else  '西变电所PLC'  end
+
+            when D.tunnel_id = 'JQ-WeiFang-JiuLongYu-MAS'
+
+            then case when  A.query_point_address = '5' then '东变电所PLC' else  '西变电所PLC'  end
+
+            else  AA.eq_name  end
+
+
+            else AA.eq_name  END as pName,
+            A.eq_id as eqId,
+            A.eq_name as eqName,
+            -- A.query_point_address,
+            E.dict_label as installAddr,
+            -- B.id,
+            B.item_name as itemName,
+            IFNULL(C.`data` ,'0') as `data`
+            FROM
+        sd_devices A
+        left join sd_devices AA on A.f_eq_id = AA.eq_id
+        LEFT JOIN sd_device_type_item B ON A.eq_type = B.device_type_id
+        LEFT JOIN sd_device_data C ON A.eq_id = C.device_id
+        AND B.id = C.item_id
+        left join sd_tunnels D on A.eq_tunnel_id = D.tunnel_id
+        left join sys_dict_data E on A.install_addr = E.dict_value and E.dict_type = 'device_install_addr'
+        WHERE
+            A.eq_type IN ( 41, 42 ,50 , 51,32)
+          AND A.eq_tunnel_id in
+            <foreach collection="eqTunnelList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          and A.eq_tunnel_id != 'JQ-WeiFang-JiuLongYu-HSD'
+          and B.id  in (56,89,90,105,106,107)
+          and (A.install_addr is not null and A.install_addr != '0')
+        order by B.id
+    </select>
+
+    <select id="getDevTunnelData" parameterType="java.lang.String" resultType="sdDevices">
+        <include refid="selectSdDevicesVo"/> where 1 = 1
+        AND FIND_IN_SET( eq_tunnel_id, #{tunnelIds} ) > 0
     </select>
 </mapper>

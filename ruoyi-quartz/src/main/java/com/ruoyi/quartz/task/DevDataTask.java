@@ -1,29 +1,40 @@
 package com.ruoyi.quartz.task;
 
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
+import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TopicEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.datacenter.domain.enumeration.WjCarVolumeEnum;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 设备数据同步
@@ -55,6 +66,21 @@ public class DevDataTask {
 
     @Value("${wj_carVolume}")
     private String glzName;
+
+    /*@Value("${authorize.name}")
+    private String authorizeName;
+
+    @Value("${tunnel_dept_id}")
+    private String tunnelDeptId;*/
+
+    @Autowired
+    private SdTunnelsMapper tunnelsMapper;
+
+    @Autowired
+    private SdDevicesMapper devicesMapper;
+
+    @Resource(name = "HttpTemplate")
+    private RestTemplate template;
 
     public void sentDevData(){
         List<String> list = new ArrayList<>();
@@ -180,4 +206,30 @@ public class DevDataTask {
             e.getMessage();
         }
     }
+
+    /*public void syncDevTunnelData(){
+        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
+            List<SdTunnels> tunnelDataDept = tunnelsMapper.getTunnelDataDept(tunnelDeptId);
+            String collect = tunnelDataDept.stream().map(SdTunnels::getTunnelId).collect(Collectors.joining(","));
+            List<SdDevices> devTunnelData = devicesMapper.getDevTunnelData(collect);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tunnelList", tunnelDataDept);
+            jsonObject.put("deviceList", devTunnelData);
+            HttpHeaders headers = new HttpHeaders();
+            MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+            headers.setContentType(type);
+            HashMap<String, Object> requestBody = new HashMap<>();
+            requestBody.put("requestData",jsonObject.toString());
+
+            HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
+            try{
+                ResponseEntity<Map> exchange = template.exchange("http://10.168.64.171:7080/dev-api/devices/syncData", HttpMethod.POST, httpEntity, Map.class);
+                Map body = exchange.getBody();
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }else {
+            return;
+        }
+    }*/
 }

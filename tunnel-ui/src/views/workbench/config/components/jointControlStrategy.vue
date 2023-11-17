@@ -1139,8 +1139,8 @@
   }
 
   .content-centre-one {
-    height: 23%;
-    width: 24%;
+    height: 24%;
+    width: 25%;
     position: relative;
     float: left;
     // background-color: #042d5f;
@@ -1150,8 +1150,8 @@
   }
 
   .content-centre-tree {
-    height: 23%;
-    width: 24%;
+    height: 24%;
+    width: 25%;
     position: relative;
     float: left;
     // background-color: #042d5f;

@@ -219,7 +219,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             a.device_id deviceId,
             d.eq_id AS eqId,
             d.eq_name eqName,
-            SUM( a.small_vehicle_num )+ SUM( a.mid_vehicle_num )+ SUM( a.heavy_vehicle_num ) AS DATA,
+        CAST(ROUND(SUM( a.small_vehicle_num )+ SUM( a.mid_vehicle_num )+ SUM( a.heavy_vehicle_num ),2) AS CHAR) AS DATA,
             DATE_FORMAT( a.create_time, '%Y-%m-%d %H:%i' ) createTime
         FROM
             sd_microwave_periodic_statistics a

@@ -10,6 +10,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -17,16 +18,20 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
+import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.domain.wulian.KafkaRadar;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
+import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
+import com.tunnel.business.utils.util.DataUtils;
 import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -107,6 +112,12 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     @Autowired
     private SdDeviceDataMapper deviceDataMapper;
+
+    @Autowired
+    private IotBoardReleaseLogMapper iotBoardReleaseLogMapper;
+
+    @Autowired
+    private ISdIotDeviceService sdIotDeviceService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -891,7 +902,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                             deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
                         }
                     }else if (map.get("data") != null || !"".equals(map.get("data"))) {
-                        if("远程".equals(map.get("data").toString()) || "就地".equals(map.get("data").toString())){
+                        if("远程".equals(map.get("data").toString()) || "就地".equals(map.get("data").toString()) || "".equals(map.get("data"))){
                             continue;
                         }
                         deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
@@ -954,7 +965,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("runDate", map.get("data").toString());
                     }
                 }
-            } else if ("16".equals(sdRadarDevice.getDeviceType()) || "36".equals(sdRadarDevice.getDeviceType())) {
+            } else if ("16".equals(sdRadarDevice.getDeviceType())) {
                 //隧道内情报板
                 List<Map<String, Object>> vmsData = deviceDataMapper.getVmsData(f.getEqId());
                 for (int i = 0;i < vmsData.size();i++) {
@@ -970,12 +981,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                     //设备id
                     devMap.put("deviceCode",sdDevices.getEqId());
                     //情报板数据
-                    String data = map.get("data").toString();
-                    JSONArray objects = new JSONArray();
-                    if(data != null && !"".equals(data) && data.contains("[")){
-                        objects = JSONObject.parseArray(data);
-                    }
-                    devMap.put("list",objects);
+                    JSONObject board = getBoard(deviceId);
+                    devMap.put("list",board.getJSONArray("parameters"));
                     sdRadarDevice.setDeviceData(devMap);
                     list.add(sdRadarDevice);
                 }
@@ -1006,5 +1013,69 @@ public class RadarEventServiceImpl implements RadarEventService {
             list.add(sdRadarDevice);
         }
         return list;
+    }
+
+
+    /**
+     * 获取情报板数据信息
+     * @param deviceId
+     * @return
+     */
+    public JSONObject getBoard(String deviceId){
+        SdDevices sdDevices = devicesMapper.selectBoardSdDevicesById(deviceId);
+        if(sdDevices == null){
+            return null;
+        }
+        Map<String, Object> boardContentData = iotBoardReleaseLogMapper.getBoardContentData(sdDevices.getAssociatedDeviceId().toString());
+        SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(sdDevices.getAssociatedDeviceId());
+        String protocolType = sdIotDevice.getProtocolName();
+        if(boardContentData != null){
+            Object content2 = boardContentData.get("content");
+            if(content2 == null || "".equals(content2)){
+                return null;
+            }
+            String content = boardContentData.get("content").toString();
+            String substring = "";
+            substring = content.substring(31,content.length());
+                /*if(!protocolType.startsWith(IDeviceProtocol.SANSI)){
+                    substring = content.substring(31,content.length());
+                }else {
+                    substring = content.substring(27,content.length());
+                }*/
+            String boardCon = DataUtils.itemContentToJson(substring, protocolType);
+            JSONArray objects = new JSONArray();
+            if(boardCon != null && !"".equals(boardCon) && boardCon.contains("[")){
+                objects = JSONObject.parseArray(boardCon);
+            }
+            String o = "";
+            List<JSONObject> list = new ArrayList<>();
+            for(int i = 0; i < objects.size(); i++){
+                JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
+                if(protocolType.startsWith("GUANGDIAN") || protocolType.startsWith("DINGEN") || protocolType.startsWith("TONGZHOU") || protocolType.startsWith("DIANMING") || protocolType.startsWith("SANSI")){
+                    JSONArray jsonArray = JSONObject.parseArray(jsonObject1.get("ITEM" + String.format("%03d", i)).toString());
+                    for(int a = 0; a < jsonArray.size(); a++){
+                        JSONObject jsonObject2 = JSONObject.parseObject(jsonArray.get(a).toString());
+                            /*o = jsonObject2.get("ITEM" + String.format("%03d", i)).toString();
+                            String s = o.replaceAll("\\[", "").replaceAll("]", "");
+                            JSONObject jsonObject = JSONObject.parseObject(s);*/
+                        if(protocolType.startsWith("DINGEN")){
+                            String content1 = jsonObject2.getString("CONTENT");
+                            if(content1.contains("W")){
+                                content1 = content1.substring(1, jsonObject2.getString("CONTENT").length());
+                            }
+                            jsonObject2.put("CONTENT",content1);
+                        }
+                        list.add(jsonObject2);
+                    }
+
+                }
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("deviceIds",sdDevices.getAssociatedDeviceId());
+            jsonObject.put("parameters", com.alibaba.fastjson.JSON.toJSON(list));
+            return jsonObject;
+        }else {
+            return null;
+        }
     }
 }

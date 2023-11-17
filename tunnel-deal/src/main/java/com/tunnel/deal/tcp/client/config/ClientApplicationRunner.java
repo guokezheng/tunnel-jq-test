@@ -58,7 +58,7 @@ public class ClientApplicationRunner implements ApplicationRunner {
                 mcaTask.connect();
                 warningLightStripTask.connect();
                 omronFinsTask.connect();
-                xiMenZiPlcTask.connect();
+//                xiMenZiPlcTask.connect();
                 wzbXiMenZiPlcTask.connect();
             } catch (Exception e) {
                 e.printStackTrace();

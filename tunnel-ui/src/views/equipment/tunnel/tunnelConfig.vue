@@ -546,7 +546,7 @@ export default {
           e.eqId = e.id + e.sdName;
           e.pile = "";
         });
-        debugger
+        // debugger
         var newDict = that.dict.type.sd_sys_name;
         if (that.selectedTunnel.name != "胡山隧道") {
           that.deviceEqTypeList = newDict.slice(0, 8);

@@ -165,7 +165,7 @@
           <el-table-column label="管理机构" align="center" prop="deptName" />
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="车流量" align="center" prop="data" />
+          <el-table-column label="车流量" align="center" prop="DATA" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
         <!--  温湿度传感器-->

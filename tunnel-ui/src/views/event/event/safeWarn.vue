@@ -2780,6 +2780,7 @@ export default {
       if (this.fuzzySearch1) {
         this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g, "");
       }
+      console.log(this.queryParams,"this.queryParamsthis.queryParamsthis.queryParams");
       listEvent(this.queryParams).then((response) => {
         console.log(response, "responseresponse");
         for (let item of response.rows) {

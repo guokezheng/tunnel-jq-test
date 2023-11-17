@@ -251,10 +251,12 @@ export default {
       if (this.searchValue != 3) {
         prevControlType = this.searchValue;
       }
+      let tunnelId = JSON.parse(this.$cache.local.get("currentTunnel")).tunnelId;
       const params = {
         prevControlType: prevControlType,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
+        tunnelId: tunnelId
       };
       eventPopData(params).then((res) => {
                 if (num) {
@@ -381,10 +383,12 @@ export default {
       if (searchValue != 3) {
         prevControlType = searchValue;
       }
+      let tunnelId = JSON.parse(this.$cache.local.get("currentTunnel")).tunnelId;
       const params = {
         prevControlType: prevControlType,
         pageNum: 1,
         pageSize: 10,
+        tunnelId: tunnelId,
       };
       eventPopData(params).then((res) => {
         this.list = res.rows;

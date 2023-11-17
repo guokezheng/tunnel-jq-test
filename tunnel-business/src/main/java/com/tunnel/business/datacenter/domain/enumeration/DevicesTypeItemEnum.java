@@ -100,9 +100,9 @@ public enum DevicesTypeItemEnum {
 
     SHUI_JIN_LEVEL(105,"水浸液位"),
 
+    ZHI_NENG_GAN_WEN_TAN_CE_QI(106,"智能感温探测器"),
 
-
-
+    ZHI_NENG_GAN_YAN_TAN_CE_QI(107,"智能感烟探测器"),
 
     // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性
     // 1000 巡检机器人  对应devicesType 29

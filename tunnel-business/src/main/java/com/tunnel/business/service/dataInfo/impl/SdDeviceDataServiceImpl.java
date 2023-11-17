@@ -626,36 +626,28 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
-
+        List<Map<String, String>> maps = new ArrayList<>();
         if (sdDeviceData.getSearchValue().equals(DeviceType.COVIITEM.getCode())) {//covi
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectCOVIDataList(beginTime, endTime, deviceId);
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.FENGSHUFENGXIANGITEM.getCode())) {//风速风向
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectFSFXDataList(beginTime, endTime, deviceId);
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectDNDataList(beginTime, endTime, deviceId);
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
         }  else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGFANGDUITEM.getCode())) {//风机内外振动仪检测器
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectFJDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectFJDataList(beginTime, endTime, deviceId);
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWATERGDUITEM.getCode())) {//水浸传感器
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectSJDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectSJDataList(beginTime, endTime, deviceId);
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGHUMIDGDUITEM.getCode())) {//温湿度传感器
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectWSDDataList(beginTime, endTime, deviceId);
-            return maps;
+            maps = sdDeviceDataMapper.selectWSDDataList(beginTime, endTime, deviceId);
         }else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGCATGDUITEM.getCode())) {//微波车辆检测器
-            List<Map<String, String>> maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);
-            return maps;
+            maps = SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).selectCatHistory(beginTime, endTime, deviceId);
         }else {
             return null;
         }
 
-
+        return maps;
     }
 
     /**

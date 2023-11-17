@@ -701,6 +701,7 @@ export default {
     },
     /** 获取当前策略数据 */
     async getStrategyData(row) {
+      debugger
       this.getListEventType();
       //获取设备
       await autoEqTypeList(this.queryAnalogEqParams).then((res) => {
@@ -762,12 +763,13 @@ export default {
             eqDirection: params.eqDirection,
           }).then((data) => {
             this.deviceName = data.rows;
-            this.getListItem()
+
             // debugger
             this.$nextTick(() => {
               // debugger
               this.strategyForm.triggers.deviceId =
                 res.data.deviceId.split(",");
+              this.getListItem()
             });
           });
           listRl({ strategyId: row.id }).then((response) => {
@@ -1299,6 +1301,7 @@ export default {
       if (this.$cache.local.get("manageStation") == "1") {
         this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       }
+      console.log(this.paramsData)
       listDepId(this.paramsData).then((response) => {
         debugger
         this.tunnelData = response.rows;

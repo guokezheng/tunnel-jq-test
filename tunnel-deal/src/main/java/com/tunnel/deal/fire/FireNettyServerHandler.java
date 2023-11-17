@@ -11,15 +11,20 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
+import com.tunnel.business.utils.util.UUIDUtil;
+import com.tunnel.deal.xiaofangpao.msgEnum.DevicesDirectionCodeEnum;
 import com.zc.common.core.websocket.WebSocketService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
@@ -60,6 +65,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
     private static SdDeviceDataMapper sdDeviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
     private static ExternalSystemMapper externalSystemMapper = SpringUtils.getBean(ExternalSystemMapper.class);
+
+    private static SdFaultListMapper sdFaultListMapper = SpringUtils.getBean(SdFaultListMapper.class);
+
+    private static ISdFaultListService sdFaultListService = SpringUtils.getBean(ISdFaultListService.class);
+
     private EventLoopGroup group;
 
     /**
@@ -243,6 +253,12 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 } else if (sourceDevice.equals("声光")) {
                     sourceDevice = "声光报警器报警";
                     itemId = Long.valueOf(DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
+                } else if (sourceDevice.equals("点型感温")) {
+                    sourceDevice = "智能感温探测器";
+                    itemId = Long.valueOf(DevicesTypeItemEnum.ZHI_NENG_GAN_WEN_TAN_CE_QI.getCode());
+                } else if (sourceDevice.equals("点型感烟")) {
+                    sourceDevice = "智能感烟探测器";
+                    itemId = Long.valueOf(DevicesTypeItemEnum.ZHI_NENG_GAN_YAN_TAN_CE_QI.getCode());
                 }
                 Long eventTypeId = 0L;
                 if (sdEventType.getEventType() != null) {
@@ -272,17 +288,41 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                    // sendData.pushDevicesDataNowTime(devData);
                 }
 
+                // 设备故障
+                if (alarmType.contains("故障")) {
+                    String direction="";
+                    if(sdDevices.getEqDirection().equals(DevicesDirectionCodeEnum.JINANFANGXIANG.getCode())){
+                        direction = DevicesDirectionCodeEnum.JINANFANGXIANG.getName()+sdDevices.getPile();
+                    }else{
+                        direction = DevicesDirectionCodeEnum.WEIFANGFANGXIANG.getName()+sdDevices.getPile();
+                    }
+                    //故障位置处理
+                    //存 故障清单表sd_fault_list
+                    SdFaultList sdFaultList = new SdFaultList();
+                    sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+                    sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+                    sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+                    sdFaultList.setTunnelId(sdDevices.getEqTunnelId());//隧道
+                    sdFaultList.setFaultLocation(direction);//设备位置   方向+桩号拼接
+                    sdFaultList.setFaultType("6");//故障类型  其他
+                    sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
+                    sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
+                    sdFaultList.setEqId(sdDevices.getEqId());//设备id
+                    sdFaultList.setEqStatus("3");//设备状态  故障
+                    sdFaultList.setFaultLevel("0");//故障等级  一般
+                    sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
+                    sdFaultList.setFaultStatus("0");//故障状态  已发布
+                    sdFaultListMapper.insertSdFaultList(sdFaultList);
+                //    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
+                }
+
                 // 火警产生事件
                 if (alarmType.contains("火警")) {
                     //存储事件到事件表
                     SdEvent sdEvent = new SdEvent();
                     sdEvent.setTunnelId(sdDevices.getEqTunnelId());
                     sdEvent.setEventTypeId(eventTypeId);
-                    if (alarmType.contains("故障")) {
-                        sdEvent.setEventTitle(sourceDevice + "故障事件");
-                    } else {
-                        sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
-                    }
+                    sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
                     sdEvent.setEventSource("3");
                     sdEvent.setStartTime(DateUtils.getTime());
                     //要改

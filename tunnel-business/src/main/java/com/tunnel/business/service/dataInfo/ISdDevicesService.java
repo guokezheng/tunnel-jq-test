@@ -418,4 +418,16 @@ public interface ISdDevicesService {
      * @return
      */
     int updateFDeviceStatusByEqId(String deviceId, String status);
+
+    /**
+     * 配电室设备信息
+     * @return
+     */
+    List<Map> devicesOfSubstationInfo(List<String> eqTunnelList);
+
+    /**
+     * 高速云同步设备隧道
+     * @param objectData
+     */
+    void syncData(String objectData);
 }

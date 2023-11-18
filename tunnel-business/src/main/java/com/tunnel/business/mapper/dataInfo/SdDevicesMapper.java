@@ -597,4 +597,10 @@ public interface SdDevicesMapper {
 	List<SdDevices> getDevTunnelData(@Param("tunnelIds") String tunnelIds);
 
 	int deleteDev(@Param("tunnels") String tunnels);
+
+	/**
+	 * 消防炮设备下线
+	 * @return
+	 */
+	int updateFireMonitorOfflineStatus();
 }

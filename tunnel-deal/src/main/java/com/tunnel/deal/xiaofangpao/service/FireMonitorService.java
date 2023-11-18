@@ -16,4 +16,6 @@ public interface FireMonitorService {
      * @return
      */
     int updateFireMonitorStatus(String deviceAddress, String eqStatus, String dataStatus);
+
+    void updateFireMonitorOfflineStatus();
 }

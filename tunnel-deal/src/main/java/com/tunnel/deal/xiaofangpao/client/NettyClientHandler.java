@@ -4,6 +4,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.xiaofangpao.msgEnum.SendMsgCodeEnum;
 import com.tunnel.deal.xiaofangpao.service.FireMonitorDataParse;
+import com.tunnel.deal.xiaofangpao.service.FireMonitorService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,6 +27,8 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf>{
 
     private FireMonitorDataParse fireMonitorDataParse = SpringUtils.getBean(FireMonitorDataParse.class);
 
+    private FireMonitorService fireMonitorService = SpringUtils.getBean(FireMonitorService.class);
+
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
@@ -37,10 +40,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf>{
             //JSONObject jsonObject = ModbusCmdResolver.commandParse(strMsg);
             //数据解析
             int code = fireMonitorDataParse.dataParse(ctx,strMsg);
-
+            SocketAddress socketAddress = ctx.channel().remoteAddress();
             // 登录成功
             if(code == 201){
-                SocketAddress socketAddress = ctx.channel().remoteAddress();
                 log.info(socketAddress + " 消防炮服务验签成功");
                 ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
                 executorService.scheduleAtFixedRate(() -> {
@@ -53,6 +55,8 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf>{
                         e.printStackTrace();
                     }
                 }, 60, 60, TimeUnit.SECONDS);
+            }else if (code == 401){
+                log.error(socketAddress + " 消防炮服务验签失败");
             }
             ctx.flush();
         }catch (Exception e){
@@ -78,6 +82,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf>{
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info(ctx.channel().remoteAddress() + " 已断开连接");
+
+        //离线
+        fireMonitorService.updateFireMonitorOfflineStatus();
 
         // 移除
         super.handlerRemoved(ctx);

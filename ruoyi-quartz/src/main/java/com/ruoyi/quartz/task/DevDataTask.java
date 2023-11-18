@@ -223,7 +223,7 @@ public class DevDataTask {
 
             HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
             try{
-                ResponseEntity<Map> exchange = template.exchange("http://10.168.64.171:7080/dev-api/devices/syncData", HttpMethod.POST, httpEntity, Map.class);
+                ResponseEntity<Map> exchange = template.exchange("http://10.166.157.192:31028/dev-api/devices/syncData", HttpMethod.POST, httpEntity, Map.class);
                 Map body = exchange.getBody();
             }catch(Exception ex){
                 ex.printStackTrace();

@@ -1414,6 +1414,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 (select f_eq_id as id from sd_devices where eq_id = #{eqId}) as A)
     </update>
 
+    <update id="updateFireMonitorOfflineStatus">
+        UPDATE sd_devices
+        set eq_status = 2,
+            eq_status_time = now(),
+            update_time = now()
+        WHERE eq_type = 33
+    </update>
+
 
     <select id="getFireMonitorId" parameterType="java.lang.String" resultType="java.lang.String">
         select eq_id

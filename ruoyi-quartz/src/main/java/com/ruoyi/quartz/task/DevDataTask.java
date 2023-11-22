@@ -103,11 +103,13 @@ public class DevDataTask {
         for(String tunnelId : list){
             List<Map<String, Object>> devRealData = sdDeviceDataMapper.getDevRealData(tunnelId);
             devRealData.stream().forEach(item -> {
-                JSONObject definitionObject = definitionParam(item);
-                JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject, item.get("tunnelId").toString());
-                threadPoolTaskExecutor.execute(()->{
-                    sentWlData(jsonObject);
-                });
+                if(item.get("eqType") != null){
+                    JSONObject definitionObject = definitionParam(item);
+                    JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject, item.get("tunnelId").toString());
+                    threadPoolTaskExecutor.execute(()->{
+                        sentWlData(jsonObject);
+                    });
+                }
             });
         }
         //推送设备在线离线状态
@@ -134,7 +136,7 @@ public class DevDataTask {
         jsonObject.put("deviceId",item.get("deviceId").toString());
         jsonObject.put("deviceData",item.get("deviceData").toString());
         jsonObject.put("deviceItemId",Long.valueOf(item.get("devicesItemId").toString()));
-        jsonObject.put("laneNo",item.get("lane").toString());
+        jsonObject.put("laneNo",item.get("lane") == null ? "" : item.get("lane").toString());
         return jsonObject;
     }
 

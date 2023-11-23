@@ -70,4 +70,9 @@ public class FireMonitorServiceImpl implements FireMonitorService {
         return result;
 
     }
+
+    @Override
+    public void updateFireMonitorOfflineStatus() {
+        sdDevicesMapper.updateFireMonitorOfflineStatus();
+    }
 }

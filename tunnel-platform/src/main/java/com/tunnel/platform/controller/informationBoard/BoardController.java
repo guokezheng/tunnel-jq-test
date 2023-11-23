@@ -785,7 +785,7 @@ public class BoardController extends BaseController {
                 iotBoardReleaseLog.setDeviceId(sdDevices.getAssociatedDeviceId().toString());
                 iotBoardReleaseLog.setReleaseTime(new Date());
                 iotBoardReleaseLog.setReleaseStatus("0");
-                iotBoardReleaseLog.setReleaseNewContent(content.toString());
+                iotBoardReleaseLog.setReleaseNewContent("万集："+content.toString());
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                 return AjaxResult.success();
             }else if(protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)){
@@ -832,7 +832,7 @@ public class BoardController extends BaseController {
             iotBoardReleaseLog.setDeviceId(sdDevices.getAssociatedDeviceId().toString());
             iotBoardReleaseLog.setReleaseTime(new Date());
             iotBoardReleaseLog.setReleaseStatus("0");
-            iotBoardReleaseLog.setReleaseNewContent(content.toString());
+            iotBoardReleaseLog.setReleaseNewContent("万集："+content.toString());
             iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             return AjaxResult.success();
         } catch (Exception e) {
@@ -1262,14 +1262,14 @@ public class BoardController extends BaseController {
         //储存发布失败的设备
         List<String> failDevList = new ArrayList<>();
         for (int i = 0;i < devices.length;i++) {
-            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devices[i]);
+            SdDevices sdDevices = sdDevicesService.selectBoardSdDevicesById(devices[i]);
             String deviceId = sdDevices.getAssociatedDeviceId().toString();
             SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(Long.parseLong(deviceId));
             IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
             iotBoardReleaseLog.setDeviceId(deviceId);
             iotBoardReleaseLog.setReleaseTime(new Date());
             String releaseOldContent = releaseContentMap.get(deviceId);
-            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
+            iotBoardReleaseLog.setReleaseOldContent("万集："+releaseOldContent);
 //            if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
 //                flag = true;
 //                iotBoardReleaseLog.setReleaseStatus("1");
@@ -1321,7 +1321,7 @@ public class BoardController extends BaseController {
                 if (flag) {
                     newContent = newContent.replaceAll("\n", "<n>");
                     newContent = newContent.replaceAll("\r", "<r>");
-                    iotBoardReleaseLog.setReleaseNewContent(newContent);
+                    iotBoardReleaseLog.setReleaseNewContent("万集："+newContent);
                     iotBoardReleaseLog.setReleaseStatus("1");
                     iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                     return AjaxResult.error("发送的内容包含不恰当的关键字，请修改后重试！");
@@ -1348,7 +1348,7 @@ public class BoardController extends BaseController {
                 }
                 parameters = parameters.replaceAll("\n", "<n>");
                 parameters = parameters.replaceAll("\r", "<r>");
-                iotBoardReleaseLog.setReleaseNewContent(parameters);
+                iotBoardReleaseLog.setReleaseNewContent("万集："+parameters);
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                 releaseContentMap.clear();
             } catch (Exception e) {
@@ -1357,7 +1357,7 @@ public class BoardController extends BaseController {
                 } else {
                     parameters = parameters.replaceAll("\n", "<n>");
                     parameters = parameters.replaceAll("\r", "<r>");
-                    iotBoardReleaseLog.setReleaseNewContent(parameters);
+                    iotBoardReleaseLog.setReleaseNewContent("万集："+parameters);
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "网络异常,发送失败");
                 }
                 iotBoardReleaseLog.setReleaseStatus("1");

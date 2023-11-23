@@ -667,25 +667,6 @@
                 this.catStrategyList.push(response.rows[i]);
               }
             }
-            // this.catStrategyList = []
-            // for (let i = 0; i < response.rows.length; i++) {
-            //   if(response.rows[i].direction==2){
-            //     response.rows[i].directionName = "济南方向"
-            //   }else if(response.rows[i].direction==1){
-            //     response.rows[i].directionName = "潍坊方向"
-            //   }else{
-            //     response.rows[i].directionName = ""
-            //   }
-            //   if(!!response.rows[i].timeSlot){
-            //     let jsonArray = JSON.parse(response.rows[i].timeSlot);
-            //     response.rows[i].instructNum =jsonArray.length
-            //   }else{
-            //     response.rows[i].instructNum =0
-            //   }
-            //
-            //
-            //   this.catStrategyList.push( response.rows[i])
-            // }
           }
           this.$forceUpdate();
         });

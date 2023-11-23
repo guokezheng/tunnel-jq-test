@@ -532,7 +532,7 @@
                       <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 41">
                         {{ item.num }}
                       </label>
-                      
+
                       <!-- 风机 -->
                       <label style="color: #f2a520" class="labelClass labelClass9"
                         v-if="item.eqType == 10">
@@ -2158,7 +2158,7 @@
 
         if (this.manageStation == "1") {
           this.tunnelQueryParams.deptId = this.$cache.local.get("deptId").split(",")
-          
+
         }
         this.getTunnelList();
       },
@@ -2714,14 +2714,14 @@
 
             if (type == "content") {
               return arr;
-            } 
+            }
             // else if (type == "fontSize") {
             //   if (eqType && eqType == 16) {
             //     return fontS / 2;
             //   } else if (eqType && eqType == 36) {
             //     return fontS / 4;
             //   }
-            // } 
+            // }
             else if (type == "array") {
               return array;
             }
@@ -2741,7 +2741,7 @@
               }
             } else if (type == "content") {
               return "山东高速欢迎您";
-            } 
+            }
             // else if (type == "fontSize") {
             //   return 15;
             // }
@@ -3354,6 +3354,7 @@
                 }
               });
             }
+            debugger
             a(options);
             if (childs.length == 0) {
               this.siteList = options[0].children;
@@ -4495,7 +4496,7 @@
                             this.selectedIconList[j].electricity =
                               deviceData.electricity;
                           } else if (deviceData.eqType == 10) {
-                            this.selectedIconList[j].electricity = 
+                            this.selectedIconList[j].electricity =
                               deviceData.mode == "远程" ? "" : deviceData.mode
                               // + " " + deviceData.electricity;
                           }

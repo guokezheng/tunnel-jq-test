@@ -241,7 +241,7 @@ public class StrategyTask {
             }
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
             //检查智慧照明 灯光控制是否开启
-            map = this.wisdomLight(map, sdStrategy, sdDevices);
+//            map = this.wisdomLight(map, sdStrategy, sdDevices);
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
 
             //查询设备协议表
@@ -268,15 +268,19 @@ public class StrategyTask {
                 if(sdWisdomCatLight.getIsStatus()==0){
                     SdStrategy sdStrategy = new SdStrategy();
                     sdStrategy.setStrategyType("1");
+                    sdStrategy.setStrategyState("0");
                     sdStrategy.setStrategyGroup("1");
                     sdStrategy.setTunnelId(sdWisdomCatLight.getTunnelId());
-                    sdStrategy.setTimingType("0");
+//                    sdStrategy.setTimingType("0");
                     List<SdStrategy> sdStrategies = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyList(sdStrategy);
                     //过滤 方向 以及改定时策略是否启用
                     List<SdStrategy> sdStrategyCollect = sdStrategies.stream()
                             .filter(strategy -> (strategy.getDirection().equals(sdWisdomCatLight.getDirection()) || strategy.getDirection().equals("3"))&&
                                     "0".equals(strategy.getStrategyState()) )
                             .collect(Collectors.toList());
+                    if(sdStrategyCollect.size()==0){
+                        return;
+                    }
                     //时间
                     //事件表达式转换为时间
                     for(SdStrategy strategy:sdStrategyCollect){

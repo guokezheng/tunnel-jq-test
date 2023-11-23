@@ -1,7 +1,8 @@
-package com.tunnel.business.service.enhancedLighting;
+package com.tunnel.platform.service.enhancedLighting;
+
+import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 
 import java.util.List;
-import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 
 /**
  *

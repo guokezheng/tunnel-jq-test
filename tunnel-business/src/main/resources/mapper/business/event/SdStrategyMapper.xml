@@ -54,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>
             <if test="strategyName != null  and strategyName != ''"> and A.strategy_name like concat('%', #{strategyName}, '%')</if>
             <if test="strategyType != null  and strategyType != ''"> and A.strategy_type = #{strategyType}</if>
+            <if test="strategyState != null  and strategyState != ''"> and A.strategy_state = #{strategyState}</if>
             <if test="strategyInfo != null  and strategyInfo != ''"> and A.strategy_info = #{strategyInfo}</if>
             <if test="schedulerTime != null  and schedulerTime != ''"> and A.scheduler_time = #{schedulerTime}</if>
             <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>

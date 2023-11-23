@@ -8,23 +8,19 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
-import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
-import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
+import com.tunnel.business.mapper.enhancedLighting.SdEnhancedLightingConfigMapper;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.deal.light.impl.SanJingLight;
-import com.tunnel.deal.light.impl.SansiLightImpl;
-import com.zc.common.core.ThreadPool.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +34,7 @@ public class LightFixedTimeTask {
 
     private static final Logger log = LoggerFactory.getLogger(LightFixedTimeTask.class);
 
-    private static ISdEnhancedLightingConfigService sdEnhancedLightingConfigService = SpringUtils.getBean(ISdEnhancedLightingConfigService.class);
+    private static SdEnhancedLightingConfigMapper sdEnhancedLightingConfigService = SpringUtils.getBean(SdEnhancedLightingConfigMapper.class);
 
     private GeneralControlService generalControlService  = SpringUtils.getBean(GeneralControlService.class);
 
@@ -184,7 +180,7 @@ public class LightFixedTimeTask {
                             //查看是否开启车流量模式  0关闭  1开启
                             if(sdEnhancedLightingConfig.getIsTrafficVolume() == 1){
                                 //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
-                                nowLuminanceRange =  sdEnhancedLightingConfigService.getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
+                                nowLuminanceRange =  getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
                             }else{
                                 nowLuminanceRange = luminanceRange;
                             }
@@ -297,4 +293,19 @@ public class LightFixedTimeTask {
             }
         }
     }
+    public int getLuminanceByParam(Integer nowTrafficFlow, Integer maxTrafficFlow, Integer maxLuminanceRange, Integer minLuminanceRange, Integer luminanceRange) {
+        if(nowTrafficFlow >= maxTrafficFlow ){
+            //当前车流量大于现在车流量
+            return luminanceRange+maxLuminanceRange;
+        }else{
+            Integer regionLuminanceRange = maxLuminanceRange - minLuminanceRange;
+            //计算公式  (当前车流量/最大车流量)*亮度区间值
+            BigDecimal nowTrafficFlowBig = new BigDecimal(nowTrafficFlow);
+            BigDecimal maxTrafficFlowBig = new BigDecimal(maxTrafficFlow);
+            BigDecimal regionLuminanceRangeBig = new BigDecimal(regionLuminanceRange);
+            nowTrafficFlowBig = nowTrafficFlowBig.divide(maxTrafficFlowBig, 2,BigDecimal.ROUND_HALF_UP).multiply(regionLuminanceRangeBig);
+            return luminanceRange + (nowTrafficFlowBig.intValue()/5)*5;
+        }
+    }
+
 }

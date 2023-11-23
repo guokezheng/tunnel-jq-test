@@ -95,6 +95,7 @@ public class DevDataTask {
         }else if("jly".equals(glzName)){
             list.add(TunnelEnum.JIN_JIA_LOU.getCode());
             list.add(TunnelEnum.MA_AN_SHAN.getCode());
+            list.add(TunnelEnum.HANG_SHAN_DONG.getCode());
         }else if("yts".equals(glzName)){
             list.add(TunnelEnum.SHUANG_ZI_SHAN.getCode());
             list.add(TunnelEnum.YANG_TIAN_SHAN.getCode());

@@ -264,4 +264,10 @@ public interface ISdEventService {
     void downLoadVedio(String camId, String downLoadTime,HttpServletResponse response);
 
     void eventDemonstrate(String hyData);
+
+    /**
+     * 接收万集事件
+     * @param eventJson
+     */
+    void upload(String eventJson);
 }

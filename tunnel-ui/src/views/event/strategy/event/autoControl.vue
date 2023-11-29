@@ -691,7 +691,7 @@ export default {
           // ||res.rows[i].eventType=="大雾"||res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
           //   eventTypeList.push(res.rows[i])
           // }
-          if(res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"){
+          if(res.rows[i].eventType=="能见度异常"||res.rows[i].eventType=="光强异常"||res.rows[i].eventType=="CO异常"||res.rows[i].eventType=="液位预警"){
             eventTypeList.push(res.rows[i])
           }
         }
@@ -1316,6 +1316,7 @@ export default {
     },
     // 查询触发器设备类型
     getAutoEqTypeList() {
+      debugger
       autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
         console.log(this.eqTypeList, "触发器设备类型");

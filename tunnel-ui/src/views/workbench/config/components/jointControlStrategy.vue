@@ -555,6 +555,10 @@
           queryParams.direction = this.queryParams.direction;
         }
 
+        if (!!this.queryParams.strategyName) {
+          queryParams.strategyName = this.queryParams.strategyName;
+        }
+
         listStrategy(queryParams)
           .then((response) => {
             this.strategyList = response.rows;
@@ -580,6 +584,9 @@
         }
         if (!!this.queryParams.tunnelId) {
           queryParams.tunnelId = this.queryParams.tunnelId;
+        }
+        if (!!this.queryParams.strategyName) {
+          queryParams.tunnelName = this.queryParams.strategyName;
         }
         //查询出原有配置并且显示
         this.lightStrategyList = [];
@@ -631,6 +638,9 @@
         }
         if (!!this.queryParams.tunnelId) {
           queryParams.tunnelId = this.queryParams.tunnelId;
+        }
+        if (!!this.queryParams.strategyName) {
+          queryParams.tunnelName = this.queryParams.strategyName;
         }
         //查询出原有配置并且显示
         this.catStrategyList = [];

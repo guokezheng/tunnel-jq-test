@@ -629,6 +629,7 @@
           let queryParamsCat = {}
           queryParamsCat.tunnelId = this.catFilesModelWei.tunnelId
           queryParamsCat.modeType = 1
+          queryParamsCat.dateType = 1
           queryParamsCat.direction = 2
           queryParamsCat.startDate = ds1[0]
           queryParamsCat.endDate = ds[1]
@@ -673,6 +674,7 @@
           let queryParamsWeiCat = {}
           queryParamsWeiCat.tunnelId = this.catFilesModelWei.tunnelId
           queryParamsWeiCat.modeType = 1
+          queryParamsWeiCat.dateType = 1
           queryParamsWeiCat.direction = 1
           queryParamsWeiCat.startDate = ds1[0]
           queryParamsWeiCat.endDate = ds[1]

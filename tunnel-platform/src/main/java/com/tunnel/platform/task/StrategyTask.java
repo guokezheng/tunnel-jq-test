@@ -617,7 +617,8 @@ public class StrategyTask {
         //所有隧道Map
         Map<String,String> tunnelMap = SpringUtils.getBean(ISdTunnelsService.class).getTunnelNameMap();
         sdEvent.setTunnelId(s.get("tunnel_id").toString());
-        sdEvent.setEventSource("1");
+//        sdEvent.setEventSource("1");
+        sdEvent.setEventSource("6");
         sdEvent.setDirection(s.get("eq_direction").toString());
         sdEvent.setStakeNum(s.get("pile").toString());
         if(s.get("lane")!=null){
@@ -788,7 +789,7 @@ public class StrategyTask {
             split = SpringUtils.getBean(SdStrategyRlMapper.class).selectAllDirectionSdDevListByDevId(split,sdStrategy.getTunnelId(),sdStrategyRl.getEqTypeId());
 
         }
-
+        Integer devNum  = 0;
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
 
@@ -840,9 +841,10 @@ public class StrategyTask {
             }
             Boolean numType = false;
             //判断是否是最后一条
-            if(num == Listnum){
+            if(num == Listnum &&devNum ==split.length-1 ){
                 numType = true;
             }
+            devNum++;
             //生成处置记录
             this.disposeRecord(integer,sdEvent,stateObject,sdStrategyRl,numType,stringBuffer);
         }

@@ -169,6 +169,14 @@
             </el-form-item>
           </el-col> -->
         </el-row>
+        <!-- 42:水浸液位传感器 -->
+<!--        <el-row v-if="eqInfo.clickEqType == 15">-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="液位:">-->
+<!--              {{ stateForm2.state }} <span style="padding-left: 5px" v-show="stateForm2.state">m</span>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
       </el-form>
     </el-dialog>
   </div>

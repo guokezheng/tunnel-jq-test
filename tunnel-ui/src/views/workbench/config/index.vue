@@ -342,7 +342,6 @@
                     </div>
                     <div v-show="
                         (item.eqType != 7 &&
-                          item.eqType != 15 &&
                           item.eqType != 8 &&
                           item.eqType != 9 &&
                           item.display == true) ||
@@ -532,6 +531,11 @@
                       <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 41">
                         {{ item.num }}
                       </label>
+                      <!-- 水池液位 -->
+                      <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 15">
+                        {{ item.num }}
+                      </label>
+
 
                       <!-- 风机 -->
                       <label style="color: #f2a520" class="labelClass labelClass9"
@@ -4400,6 +4404,7 @@
                   let arr = [
                     "5",
                     "14",
+                    "15",
                     "17",
                     "18",
                     "19",
@@ -4475,6 +4480,16 @@
                             this.selectedIconList[j].num =
                               "温度：" + deviceData.temperature +
                               " 湿度：" + deviceData.humidity
+                          }
+                        } else if (deviceData.eqType == 15) {
+                          debugger
+                          if (deviceData.state) {
+                            if(deviceData.eqTunnelId=="JQ-WeiFang-JiuLongYu-MAS"||deviceData.eqTunnelId=="JQ-WeiFang-JiuLongYu-JJL"){
+                              deviceData.state =  parseFloat(deviceData.state)/100
+                            }
+                            console.log(this.selectedIconList[j])
+                            this.selectedIconList[j].num =
+                              "液位：" +  parseFloat(deviceData.state).toFixed(2) + "m";
                           }
                         }
                       }

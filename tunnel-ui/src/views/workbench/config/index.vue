@@ -864,6 +864,8 @@
     <com-vehicleDetec class="comClass" ref="vehicleDetecRef"></com-vehicleDetec>
     <com-callPolice class="comClass" ref="callPoliceRef"></com-callPolice>
     <com-xfp class="comClass" ref="xfpRef"></com-xfp>
+    <com-dianBanRe class="comClass" ref="comDianBanReRef"></com-dianBanRe>
+
     <div v-if="robotIframeShow">
       <robot class="comClass robotHtmlBox"></robot>
       <img @click="dialogClose" src="../../../assets/cloudControl/closeIcon.png" class="closeRobot" />
@@ -1287,6 +1289,7 @@
   import robot from "@/views/workbench/config/components/robotManagement"; //机器人弹窗
   import comKzq from "@/views/workbench/config/components/kzq"; //鸿蒙控制器
   import comXfp from "@/views/workbench/config/components/xfp"; //消防炮
+  import comDianBanRe from "@/views/workbench/config/components/dianbanre"; //电伴热
 
   import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
   import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
@@ -1409,6 +1412,7 @@
       comDeawer, //抽屉
       comFooter, //底部echarts
       comXfp,
+      comDianBanRe,
       jointControlStrategy,
       comControl,
       offlineDeviceModal
@@ -3155,6 +3159,8 @@
         this.$refs.radioRef.handleClosee();
         this.$refs.kzqRef.handleClosee();
         this.$refs.xfpRef.handleClosee();
+        this.$refs.comDianBanReRef.handleClosee();
+
 
         this.robotIframeShow = false;
       },
@@ -4418,6 +4424,7 @@
                     "40",
                     "41",
                     "42",
+                    "44",
                     "47",
                     "48",
                   ];
@@ -4889,6 +4896,14 @@
             } else if (item.eqType == 7 || item.eqType == 9) {
               // 照明
               this.$refs.lightRef.init(
+                this.eqInfo,
+                this.brandList,
+                this.directionList,
+                this.eqTypeDialogList
+              );
+            } else if (item.eqType == 44) {
+              // 电伴热
+              this.$refs.comDianBanReRef.init(
                 this.eqInfo,
                 this.brandList,
                 this.directionList,

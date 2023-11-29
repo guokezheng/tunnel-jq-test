@@ -95,6 +95,7 @@ public class DevDataTask {
         }else if("jly".equals(glzName)){
             list.add(TunnelEnum.JIN_JIA_LOU.getCode());
             list.add(TunnelEnum.MA_AN_SHAN.getCode());
+            list.add(TunnelEnum.HANG_SHAN_DONG.getCode());
         }else if("yts".equals(glzName)){
             list.add(TunnelEnum.SHUANG_ZI_SHAN.getCode());
             list.add(TunnelEnum.YANG_TIAN_SHAN.getCode());
@@ -225,8 +226,8 @@ public class DevDataTask {
 
             HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
             try{
-                ResponseEntity<Map> exchange = template.exchange("http://10.166.157.192:31028/prod-api/devices/syncData", HttpMethod.POST, httpEntity, Map.class);
-                Map body = exchange.getBody();
+                ResponseEntity<String> exchange = template.exchange("http://10.166.157.192:31028/prod-api/devices/syncData", HttpMethod.POST, httpEntity, String.class);
+                exchange.getBody();
             }catch(Exception ex){
                 ex.printStackTrace();
             }

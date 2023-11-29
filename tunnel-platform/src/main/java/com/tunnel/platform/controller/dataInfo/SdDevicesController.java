@@ -632,9 +632,10 @@ public class SdDevicesController extends BaseController {
      * @param requestData
      */
     @PostMapping("/syncData")
-    public void syncData(@RequestBody HashMap<String, Object> requestData){
+    public String syncData(@RequestBody HashMap<String, Object> requestData){
         if (PlatformAuthEnum.GSY.getCode().equals(platformName)) {
             sdDevicesService.syncData(requestData);
         }
+        return "";
     }
 }

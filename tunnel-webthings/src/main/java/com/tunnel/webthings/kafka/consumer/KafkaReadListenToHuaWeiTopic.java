@@ -1466,7 +1466,7 @@ public class KafkaReadListenToHuaWeiTopic {
                         //0：正常 1：报警
                         item.setData("0");
                         sdDeviceDataMapper.updateSdDeviceData(item);
-                        sendData.pushDevicesDataNowTime(sdDeviceData);
+                        sendData.pushDevicesDataNowTime(sdDeviceData, sdDevices.getLane(), sdDevices.getEqTunnelId());
                     }
                     //复位清除预警
                     SdEvent sdEvent = new SdEvent();
@@ -1484,13 +1484,13 @@ public class KafkaReadListenToHuaWeiTopic {
                     sdDeviceData.setCreateTime(new Date());
                     sdDeviceData.setItemId(deviceTypeItem.getId());
                     sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
-                    sendData.pushDevicesDataNowTime(sdDeviceData);
+                    sendData.pushDevicesDataNowTime(sdDeviceData, sdDevices.getLane(), sdDevices.getEqTunnelId());
                 } else {
                     SdDeviceData devData = sdDeviceDataList.get(0);
                     devData.setUpdateTime(new Date());
                     devData.setData("1");
                     sdDeviceDataMapper.updateSdDeviceData(devData);
-                    sendData.pushDevicesDataNowTime(devData);
+                    sendData.pushDevicesDataNowTime(devData, sdDevices.getLane(), sdDevices.getEqTunnelId());
                 }
             } else {
                 log.error("当前报文格式异常，请检查设备！");

@@ -157,12 +157,12 @@ public class WarningLightStripTask {
             data.setData(value);
             data.setUpdateTime(new Date());
             deviceDataMapper.updateSdDeviceData(data);
-            sendData.pushDevicesDataNowTime(data);
+            sendData.pushDevicesDataNowTime(data, sdDevices.getLane(), sdDevices.getEqTunnelId());
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setCreateTime(new Date());
             deviceDataMapper.insertSdDeviceData(sdDeviceData);
-            sendData.pushDevicesDataNowTime(sdDeviceData);
+            sendData.pushDevicesDataNowTime(sdDeviceData, sdDevices.getLane(), sdDevices.getEqTunnelId());
         }
 
     }

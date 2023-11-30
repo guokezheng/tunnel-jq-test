@@ -46,15 +46,15 @@ public class SendDeviceStatusToKafkaService {
     @Autowired
     private ISdDevicesService sdDevicesService;
 
-    public void pushDevicesDataNowTime(SdDeviceData data, String laneNo, String tunnelId) {
+    public void pushDevicesDataNowTime(SdDeviceData data, SdDevices sdDevices) {
         if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
             /*com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
             jsonObject.put("devNo", "S00063700001980001");
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
             jsonObject.put("deviceData", data);*/
             //参数名定义
-            JSONObject jsonObjectParam = definitionParam(data.getDeviceId(), data.getData(), data.getItemId(), laneNo);
-            JSONObject jsonObject = devReaStatus(jsonObjectParam,tunnelId);
+            JSONObject jsonObjectParam = definitionParam(data.getDeviceId(), data.getData(), data.getItemId(), sdDevices.getLane());
+            JSONObject jsonObject = devReaStatus(jsonObjectParam,sdDevices.getEqTunnelId(),sdDevices.getEqType());
             kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
             log.info("推送物联中台kafka内容：" + jsonObject);
         }
@@ -143,10 +143,10 @@ public class SendDeviceStatusToKafkaService {
      * @param object
      * @return
      */
-    public JSONObject devReaStatus(JSONObject object, String tunnelId){
+    public JSONObject devReaStatus(JSONObject object, String tunnelId, Long eqType){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("devNo", "SDEV00063700001980003");
-        jsonObject.put("devType", "");
+        jsonObject.put("devType", eqType);
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus","1");
         jsonObject.put("netstatus","1");

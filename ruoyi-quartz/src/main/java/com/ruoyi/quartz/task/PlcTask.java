@@ -289,12 +289,12 @@ public class PlcTask {
             deviceData.setData(value);
             deviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.updateSdDeviceData(deviceData);
-            sendData.pushDevicesDataNowTime(deviceData, devices.getLane(),devices.getEqTunnelId());
+            sendData.pushDevicesDataNowTime(deviceData, devices);
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
-            sendData.pushDevicesDataNowTime(sdDeviceData, devices.getLane(),devices.getEqTunnelId());
+            sendData.pushDevicesDataNowTime(sdDeviceData, devices);
         }
         //redis存储设备实时数据
         redisCache.setCacheMapValue("deviceData",sdDeviceData.getDeviceId()+"-"+sdDeviceData.getItemId(),sdDeviceData);

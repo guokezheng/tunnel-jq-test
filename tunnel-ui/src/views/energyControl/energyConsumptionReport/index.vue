@@ -290,8 +290,6 @@ export default {
   watch:{
     "tableData":{
       handler(){
-      console.log(22222)
-
         this.$nextTick(()=>{
           this.$refs.multipleTable.doLayout()
         });
@@ -308,14 +306,12 @@ export default {
     /******站点******/
     //默认选中回路回调
     defaultCheckLoop(keys) {
-      console.log(keys, "keys1111");
       this.loopIds = keys;
       if (this.activeName === "second") this.getData();
     },
     //节点选中状态发生变化时的回调
     handleCheckChange(data, checked) {
       this.loopIds = checked.checkedKeys; //选中回路的id
-      console.log(this.loopIds, "this.loopIds11111");
       this.getData();
     },
 

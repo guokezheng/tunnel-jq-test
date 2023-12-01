@@ -209,7 +209,6 @@ export default {
       });
     },
     ondbclick(item){
-      console.log(item,'12312312')
       let data = {
         id:item.id,
         content:item.tcontents[0].content,

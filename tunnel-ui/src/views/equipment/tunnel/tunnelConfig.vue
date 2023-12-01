@@ -364,7 +364,6 @@ export default {
     };
   },
   created:  async function () {
-    // console.log("我被穿件了");
     this.saveLoading = true;
     img = [];
     let lane = this.getLanUrl(this.$route.query.lane);
@@ -373,7 +372,6 @@ export default {
       name: this.$route.query.name,
       lane: lane,
     };
-    // console.log(this.selectedTunnel, "this.selectedTunnel");
     await this.selectEquipmentType();
     await this.selectEnvironment();
     await this.getTunnels(this.selectedTunnel.id);
@@ -423,7 +421,6 @@ export default {
     };
     //鼠标拖动
     window.ondrag = function (e) {
-      console.log(e)
       let oDiv = document.getElementById("imageId");
       this.pageXimage = e.pageX;
       this.pageYimage = e.pageY;
@@ -433,7 +430,6 @@ export default {
         oDiv.clientWidth + oDiv.getBoundingClientRect().left - e.pageX < 5 ||
         oDiv.clientHeight + oDiv.getBoundingClientRect().top - e.pageY < 5
       ) {
-        console.log(11111111111111)
         let num = "";
         let selectedIconLists = JSON.parse(
           JSON.stringify(that.selectedIconList)
@@ -567,9 +563,7 @@ export default {
               (e) =>
                 e.environmentType == that.dict.type.environment[index].value
             );
-            // console.log(obj, "符合条件的obj");
             if (obj == undefined) {
-              // console.log(obj, "666666");
               let one = [
                 {
                   url: [],
@@ -581,7 +575,6 @@ export default {
             }
           }
         }
-        // console.log(that.Clist, "that.Clist");
         that.planRoadmapEnvironmentUrl(that.Clist);
       });
     },
@@ -883,19 +876,14 @@ export default {
       this.saveLoading = true;
       let eqList = [];
       //遍历设备，获取位置
-      // console.log(this.selectedIconList, "this.selectedIconList", img);
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (this.selectedIconList[i].eqType == 12) {
-          // console.log(this.selectedIconList[i], "111111111w");
           this.selectedIconList[i].pileNum = this.selectedIconList[
             i
           ].pile.replace(/[^\d.]/g, "");
-          // console.log(this.selectedIconList[i].pileNum);
         }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
-          // console.log(2222222);
           if (img[i]) {
-            // console.log(3333333333);
             this.selectedIconList[i].position = {
               left:
                 img[i].attr("transform").localMatrix.e +
@@ -1207,7 +1195,6 @@ export default {
             //       id: item.eqId,
             //     });
             // } else if (item.eqType == 21) {
-            //   console.log(1111111111111111);
             //   // "紧急电话"
             //   img3 = this.svg.paper
             //     .image(url, iconWidth + 18, 0, iconWidth, iconHeight)
@@ -1215,7 +1202,6 @@ export default {
             //       id: item.eqId,
             //     });
             // } else if (item.eqType == 25) {
-            //   console.log(1111111111111111);
             //   // "抓拍摄像机"
             //   img3 = this.svg.paper
             //     .image(url, iconWidth + 12, 0, iconWidth, iconHeight)
@@ -1223,7 +1209,6 @@ export default {
             //       id: item.eqId,
             //     });
             // } else {
-            //   console.log(222222222222);
             //   img3 = this.svg.paper
             //     .image(
             //       url,
@@ -1754,7 +1739,6 @@ export default {
                     type: "h",
                   };
                   event.toElement.parentNode;
-                  // console.log(event.toElement.parentNode);
 
                   let style = window.getComputedStyle(
                     event.toElement.parentNode,
@@ -1762,22 +1746,17 @@ export default {
                   );
                   let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
                   let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
-                  // console.log(paddingL);
-                  // console.log(paddingtop);
-                  // console.log("ddddddddddddddddddddddddddddddd");
+
                   // let ds = getElementPosition(event.toElement.parentNode)
-                  // console.log(ds)
                   let oDiv = document.getElementById("imageId");
 
                   let svgs = document.getElementById("svgRow");
                   let svgss = document.querySelector(".config-content");
                   let svgeimage = document.querySelector(".el-image");
-                  // console.log(svgss);
 
                   let stylea = window.getComputedStyle(svgs, null);
                   let styleas = window.getComputedStyle(svgss, null);
                   let styleas1 = window.getComputedStyle(svgeimage, null);
-                  // console.log(styleas);
 
                   let paddingLa = parseFloat(
                     stylea.getPropertyValue("padding-top")
@@ -1788,9 +1767,6 @@ export default {
                   let paddingLa2 = parseFloat(
                     styleas1.getPropertyValue("width")
                   ); //获取左侧内边距
-                  // console.log(paddingLa1 - paddingLa2);
-                  // console.log(44444444444444444444444444444444444);
-                  // console.log(event.toElement.width.animVal.value);
                   guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
                   guide1.top = paddingtop + paddingLa;
                   chosenGuides[prop].guide = guide1;

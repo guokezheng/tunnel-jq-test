@@ -755,8 +755,6 @@ export default {
         strategyType:1
       }
       getSdStrategyAll(queryParams).then((response) => {
-        // debugger
-        console.log(response)
         let rows = response.rows;
 
         if(!!rows&&rows.length>0){
@@ -847,12 +845,10 @@ export default {
           listDevices(params).then((res) => {
             this.equipmentData = res.rows;
           });
-          console.log(response.rows, "设备列表");
           this.strategyFormList[indextabs].autoControl = response.rows;
           for (var i = 0; i < response.rows.length; i++) {
             let autoControl = this.strategyFormList[indextabs].autoControl[i];
             var attr = response.rows[i];
-            console.log(attr.eqStateList)
             // debugger
             this.strategyFormList[indextabs].autoControl[i].eqStateList = attr.eqStateList;
             this.strategyFormList[indextabs].autoControl[i].state = attr.state;
@@ -974,7 +970,6 @@ export default {
                 this.lightFilesModel.direction = "1"
               }
               let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
-              console.log(tunnel)
               // debugger
               let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
 
@@ -1006,12 +1001,6 @@ export default {
             let ds = this.getdate(currentDate)
             let ds1 = this.getdate(twoDaysAgo)//前天
             let ds2 = this.getdate(threeDaysAgo)//昨天
-            console.log(ds)
-            // debugger
-            // let ds = ['2023-07-22 00:00:00', '2023-07-22 23:59:59']
-            // let ds1 = ['2023-07-21 00:00:00', '2023-07-21 23:59:59']
-            // let ds2 = ['2023-07-20 00:00:00', '2023-07-20 23:59:59']
-            // debugger
             // this.XDataLight = this.generateTimeList()
 
             dataLogInfoLineList(
@@ -1024,8 +1013,6 @@ export default {
                 // this.XDataLight.push(list1[i].createTime)
                 this.yDataLight.push(list1[i].data)
               }
-              // console.log(this.XDataLight)
-              console.log(this.XDataLight)
               // debugger
               // setTimeout(() => {
               //   this.$nextTick(() => {
@@ -1043,8 +1030,6 @@ export default {
                 // this.XDataLight.push(list1[i].createTime)
                 this.yDataLight1.push(list1[i].data)
               }
-              console.log(this.yDataLight1)
-              console.log(this.yDataLight1)
               // debugger
               // setTimeout(() => {
               //   this.$nextTick(() => {
@@ -1501,7 +1486,6 @@ export default {
       this.tabsTimeList.push(tabsTime)
       //定时策略策略头集合
       this.strategyRowList.push(strate)
-      console.log(this.strategyRowList)
       this.resetForm(this.tabsTimeList.length-1)
     },
     //选项卡删除
@@ -1525,7 +1509,6 @@ export default {
     },
     //删除操作
     removeItem(indextabs ,index) {
-      console.log(indextabs);
       if (this.strategyFormList[indextabs].autoControl.length == 1) {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
@@ -1635,20 +1618,17 @@ export default {
       }
       listEqTypeStateIsControl(params).then((response) => {
         // debugger
-        console.log(response.rows)
         this.strategyFormList[indextabs].autoControl[index].eqStateList = response.rows;
       });
     },
     //选中设备
     qbgChange(indextabs,index, value,flag) {
-      console.log(value, "当前选中板子");
       let data = value;
       if (
         this.strategyFormList[indextabs].autoControl[index].equipmentTypeId == 16 ||
         this.strategyFormList[indextabs].autoControl[index].equipmentTypeId == 36
       ) {
         getVMSTemplatesByDevIdAndCategory(data).then((res) => {
-          console.log(res.data, "模板信息");
           // this.templatesList = res.data;
           this.$set(
             this.strategyFormList[indextabs].autoControl[index],
@@ -1664,8 +1644,6 @@ export default {
       }
     },
     selectStateVal(indextabs,index){
-      // debugger
-      console.log(index)
       if(this.strategyFormList[indextabs].autoControl[index].state == 1){
         this.$set(this.strategyFormList[indextabs].autoControl[index], "stateNum", 100);
         //基本照明限制 最低亮度为 30
@@ -1682,7 +1660,6 @@ export default {
       this.tabsTimeList[index].label = this.strategyFormList[index].execTime
 
       let date =  this.strategyFormList[index].execTime;
-      console.log(date)
       let dateTime = new Date(date).getTime();
       // if(this.strategyForm.execDate && this.strategyForm.execTime && dateTime < new Date()){
       //   this.$modal.msgWarning("执行时间不得早于当前时间");
@@ -1736,12 +1713,10 @@ export default {
           // debugger
           var autoControl = this.strategyFormList[this.activeName].autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
-          console.log(response,"response")
           let result = response.every(function (item) {
             return item.equipmentTypeId != "" && item.state != "" && item.equipments != "" &&
               item.equipmentTypeId != null && item.state != null && item.equipments != null
           });
-          console.log(result);
           if(!result){
             return this.$modal.msgError("请填写完整策略信息！");
           }
@@ -1914,7 +1889,6 @@ export default {
     //光强 修改隧道名称查看不同隧道 光强照明配置
     lightChangeEvent(indextabs) {
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
-      console.log(tunnel)
       // debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
 
@@ -1924,14 +1898,12 @@ export default {
     //车辆 修改隧道名称查看不同隧道 车来灯亮照明配置
     catChangeEvent(){
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
-      console.log(tunnel)
       // debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
       this.catListConfig(queryParams)
     },
     beforeLuminanceEvent(e){
       // debugger
-      console.log(e)
       this.catFilesModel.beforeLuminance  = e
       this.$forceUpdate()
     },
@@ -2112,11 +2084,6 @@ export default {
       });
       setTimeout(() => {
         this.$nextTick(() => {
-          // debugger
-          console.log( this.yData1)
-          console.log( this.yData2)
-          console.log( this.yData3)
-          console.log(  this.XData)
           //获取车辆数据
           this.initCatChart();
         });

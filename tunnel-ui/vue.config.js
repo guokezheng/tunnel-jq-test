@@ -35,7 +35,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
 
-        target: `http://10.168.64.171:8000/`,//翟昌宏 公司
+        target: `http://10.168.64.171:8010/`,//翟昌宏 公司
         // target: `http://10.168.64.75:8888/`,//吴昊阳 公司
         // target: `http://10.168.65.230:8000/`,// 展双
         // target: `http://10.168.77.73:8000/`,// 何义伟

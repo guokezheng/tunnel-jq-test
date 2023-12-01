@@ -2297,7 +2297,6 @@
             }
           }
           this.eventTypeList = eventTypeList;
-          // console.log(this.eventTypeList, "事件类型");
         });
       },
       // 关闭小的一键控制弹框
@@ -3045,7 +3044,6 @@
                 param[0].scrollLeft =
                   (this.currentTunnel.lane.width - 1728) *
                   ((this.zoom / 100) * 2);
-                // console.log(param[0].scrollLeft,"param[0].scrollLeft")
               }
               if (this.zoom != 100) {
                 if (item.position.top < 300) {
@@ -3081,14 +3079,11 @@
               this.resetCanvasFlag = true;
             }
           }
-          // console.log(bigType, "bigType")
           if (bigType.includes("0")) {
             this.displayControl(0, "全部设备");
           } else {
-            console.log(this.dictList, "this.dictList")
             for (let itm of this.dictList) {
               if (bigType == itm.value) {
-                // console.log(bigType, itm.label, "111111")
                 this.displayControl(bigType, itm.label);
               }
             }
@@ -4214,10 +4209,8 @@
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
-            // console.log(res,"获取隧道配置信息")
             listType("")
               .then((response) => {
-                // console.log(response,"response888")
                 for (let i = 0; i < res.eqList.length; i++) {
                   res.eqList[i].focus = false;
                   for (let j = 0; j < response.rows.length; j++) {
@@ -4303,7 +4296,6 @@
               }
             }
           } else {
-            console.log("不存在");
             //不存在
             that.selectedIconList = [];
             //工作台默认背景图
@@ -4315,7 +4307,6 @@
         });
         // 树状搜索
         getCategoryDeviceTree(tunnelId).then((res) => {
-          // console.log(res.data, "res.data");
           this.treeData = res.data;
         });
       },
@@ -4428,7 +4419,6 @@
                       this.eqTypeStateList[k].state == deviceData.eqStatus
                     ) {
                       // if(deviceData.eqType == '41'){
-                      //   console.log(deviceData,"deviceData11111111111")
                       // }
                       //取设备监测状态图标
                       this.selectedIconList[j].url = this.eqTypeStateList[k].url;

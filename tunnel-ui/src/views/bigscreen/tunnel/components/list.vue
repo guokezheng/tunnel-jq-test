@@ -231,7 +231,7 @@ export default {
   mounted() {},
   metheds: {
     handleClick(tab, event) {
-      console.log(tab, event,'111');
+
     },
   },
 };

@@ -205,9 +205,6 @@ export default {
           }
         }
         this.brightValue = yData1[yData1.length - 1];
-        console.log(xData, "xData");
-        console.log(yData1, "yData1");
-        console.log(yData2, "yData2");
 
         this.$nextTick(() => {
           this.initChart(xData, yData1, yData2);

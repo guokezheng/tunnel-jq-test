@@ -674,7 +674,6 @@ export default {
       this.upload.open = true;
     },
     onJsonChange(value) {
-      console.log("=====================value:", value);
     },
     /** 查询设备点位状态详情列表 */
     getList() {
@@ -683,7 +682,6 @@ export default {
         this.queryParams.eqId = this.eqId;
       }
       listPoint(this.queryParams).then((response) => {
-        console.log(response);
         this.pointList = response.rows;
         this.total = response.total;
         this.loading = false;

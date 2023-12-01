@@ -701,14 +701,11 @@
       handleDelete(row) {
         const ids = row.id || this.ids;
         const rlIds = row.fileId || this.rlIds;
-        console.log(row,rlIds)
         this.$confirm('是否确认删除?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          console.log(2);
-          console.log(Array.isArray(rlIds),rlIds.length)
           if (Array.isArray(rlIds) && rlIds.length) {
             return delComponentById(ids);
           }

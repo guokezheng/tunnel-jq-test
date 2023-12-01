@@ -950,7 +950,6 @@ export default {
           this.$refs.timeControl.closeBoard();
           break;
       }
-      // console.log(this.strategyForm.strategyType,"0000000000");
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
       this.$refs.tableFile1.clearSelection();
@@ -1119,7 +1118,6 @@ export default {
     strategyTypeClose(row) {
       console.log(this.$refs.manualControl, "获取组件");
       this.$nextTick(() => {
-        console.log(this.strategyForm.strategyType)
         switch (this.strategyForm.strategyType) {
           case "0":
             this.insertStrategyTypeOptionsCopy=[]
@@ -1128,7 +1126,6 @@ export default {
             this.$refs.manualControl.sink = this.sink;
             this.$refs.manualControl.init();
             if (this.sink == "edit") {
-              console.log(this.$refs, "ppppppppp");
               // this.$refs.manualControl.sink = "edit";
               this.$refs.manualControl.id = row.id;
               this.$refs.manualControl.getStrategyData(row);
@@ -1136,8 +1133,6 @@ export default {
             break;
 
           case "1":
-            // debugger
-            console.log(this.insertStrategyTypeOptions)
             this.insertStrategyTypeOptionsCopy=[]
             let dictLabelStrategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="定时控制")
             this.insertStrategyTypeOptionsCopy.push(dictLabelStrategy)
@@ -1624,12 +1619,10 @@ export default {
       }
     },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
     },
     tableType:{
       handler(val){
-        console.log(val,"tableTypetableTypetableTypetableTypetableTypetableTypetableTypetableType")
         this.strategyList = []
         this.tableType = val
         if(val=="shoudong"){

@@ -439,7 +439,6 @@ export default {
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
                 ) {
-                  console.log(item, "000000000000000000000");
                   // this.dictList = this.dict.type.sd_sys_name;
                   this.robotShow = true;
                 } else {
@@ -492,18 +491,14 @@ export default {
     getPreview() {
       previewDisplay(this.id, this.eventId).then((res) => {
         this.previewList = res;
-        console.log(this.previewList, ";;;;;;;;;");
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
           var item = this.previewList[i].strategyRl.equipments.split(",");
-          console.log(item)
           var arr = this.previewList[i].iFileList;
           for (let z = 0; z < item.length; z++) {
             var arr = this.previewList[i].iFileList[0];
-            console.log(item[z],"设备信息")
             if (item[z].equipments != "") {
               if (item[z]) {
-                console.log(item[z].equipments, "////////////");
                 deviceList.push({
                   list: item,
                   state: this.previewList[i].strategyRl.state,
@@ -529,28 +524,22 @@ export default {
           }
         }
         this.deviceList = deviceList;
-        console.log(this.deviceList, "12312312321");
         this.ChangeDeviceState();
       });
       this.workbenchOpen = true;
     },
     // 操作设备，改变设备状态
     ChangeDeviceState() {
-      // console.log(this.selectedIconList, "-------------");
-      console.log(this.deviceList, "mmmmmmmmmmmmmmmmmmmm");
       for (let i = 0; i < this.selectedIconList.length; i++) {
         for (let x = 0; x < this.deviceList.length; x++) {
           let eqType = this.selectedIconList[i].eqType;
           if ((eqType ?? "") !== "") {
             if (eqType == this.deviceList[x].eqId) {
               let brr = this.deviceList[x].list;
-              console.log(brr, "zzzzzzzzzzzzzzzzz");
               for (let p = 0; p < brr.length; p++) {
                 if (this.selectedIconList[i].eqId == brr[p]) {
                   this.selectedIconList[i].url = [];
-                  console.log(this.deviceList[x].file)
                   let url = this.deviceList[x].file;
-                  console.log(url,"设备图标");
                   if(url != undefined){
                     url.forEach((item) => {
                       this.selectedIconList[i].url.push(item.url);

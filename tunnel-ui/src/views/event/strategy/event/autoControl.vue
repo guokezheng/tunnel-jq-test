@@ -1133,8 +1133,6 @@ export default {
       }
     },
     selectDataItem(e) {
-      // debugger
-      console.log(this.strategyForm.triggers.deviceId, "111111111");
       if (e == true) {
         if (!this.strategyForm.tunnelId) {
           this.$modal.msgWarning("请先选择隧道");
@@ -1150,8 +1148,6 @@ export default {
     },
     getListItem() {
       //给设备数据项赋值
-      debugger
-      console.log(this.strategyForm.triggers.deviceId, "00000000000");
       if (this.strategyForm.triggers.deviceId) {
         listItem({
           deviceTypeId: this.strategyForm.triggers.deviceTypeId,

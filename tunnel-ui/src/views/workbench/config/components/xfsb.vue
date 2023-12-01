@@ -189,7 +189,6 @@ export default {
     };
   },
   created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getMessage();
   },
   methods: {
@@ -255,9 +254,6 @@ export default {
       this.visible = true;
     },
     getDirection(num) {
-      // debugger
-      // console.log(num,"num")
-      // console.log(this.directionList,"this.directionList");
       for (var item of this.directionList) {
         if (item.dictValue == num) {
           return item.dictLabel;

@@ -60,8 +60,6 @@
         clearInterval(this.timerId)
         this.timerId = null
       }
-      //   console.info("123");
-      //   console.log(this.rtsp,"this.rtsp")
     },
     destroyed() {
       console.log("destorying video");
@@ -122,7 +120,6 @@
             try {
               this.player.load();
               this.player.play().then(() => {
-                // console.log(new Date().getTime() - time1);
                 this.loading = false
               })
             } catch (error) {
@@ -131,9 +128,6 @@
             let that = this
             this.player.on(flvjs.Events.ERROR, function (errorType, errorDetails) {
               // 处理错误
-              // console.log("3333333333333333333333333333333333333")
-              // console.error(`FLV.js Error - Type: ${errorType}, Details: ${errorDetails}`);
-              // debugger
               // if (this.player) {
               // debugger
               that.destroyFlv();
@@ -145,7 +139,6 @@
                   const end = that.$refs.player.buffered.end(0);  // 视频结尾时间
                   const current = that.$refs.player.currentTime;  //  视频当前时间
                   const diff = end - current;// 相差时间
-                  // console.log(diff);
                   const diffCritical = 4; // 这里设定了超过4秒以上就进行跳转
                   const diffSpeedUp = 1; // 这里设置了超过1秒以上则进行视频加速播放
                   const maxPlaybackRate = 4;// 自定义设置允许的最大播放速度
@@ -210,7 +203,6 @@
             try {
               this.player.load();
               this.player.play().then(() => {
-                // console.log(new Date().getTime() - time1);
                 // this.loading = false
               })
             } catch (error) {
@@ -219,8 +211,6 @@
             let that = this
             this.player.on(flvjs.Events.ERROR, function (errorType, errorDetails) {
               // 处理错误
-              console.log("视频处理错误")
-              // console.log("3333333333333333333333333333333333333")
               that.destroyFlv();
               that.init();
             });

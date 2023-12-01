@@ -1448,13 +1448,10 @@ export default {
     allNumber(value) {
       value = value.replace(/[^\d]/g, ""); //只能输入数字
       this.form.levelCode = value; //注意这里是string，你要数字类型记得自己转一下
-
-      console.log(value);
     },
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
     },
   },

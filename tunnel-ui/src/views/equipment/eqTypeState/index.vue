@@ -799,9 +799,7 @@ export default {
         staTyId = this.sid;
       }
 
-      // console.log(staTyId,'11111111111111')
       getEqTypeStatesByType(id, staTyId).then((response) => {
-        console.log(response, "resres");
         if (response.data.length == 0) {
           let item = {
             deviceState: "",
@@ -847,16 +845,13 @@ export default {
     //  async planRoadmapUrl(iFileList) {
     //   var that = this
     //   // that.fileList = []
-    //   // console.log(iFileList,'iFileListiFileListiFileList')
     //     // let iconName = iFileList[i].stateIconName
     //     let iconUrl = await that.picture(iFileList)
-    //     // console.log(iconUrl,'iconUrliconUrl')
     //       this.equipmentStates.forEach(item=>{
     //           item.iFileList.forEach(it=>{
     //              it.url=iconUrl
     //           })
     //       })
-    //   console.log(that.equipmentStates,'gggggggggggggggg');
     // },
     // /* 请求图片base64地址*/
     // picture(fileUrl) {
@@ -1129,12 +1124,9 @@ export default {
     uploadFile(param) {
       let obj = new FormData();
       obj.append("file", param.file);
-      // console.log(obj.getAll('file'),'aaaaaaaaaaaaaaaa')
-      // console.log(param)
       this.idx = param.data.index;
       if (this.title == "添加设备类型状态关系") {
         addEqTypeState1(obj).then((res) => {
-          //  console.log(res,'resssssss')
           //  this.iconFileIdAll+=res+','
           //  this.form.equipmentList.forEach((item,index)=>{
           //   item.stateTypeId=this.form.stateTypeId
@@ -1142,7 +1134,6 @@ export default {
           //       this.form.equipmentList[index].iconFileId += res+','
           //     }
           //  })
-          // console.log(res,'shanchuantupa');
         });
       } else {
         addEqTypeState1(obj).then((res) => {
@@ -1160,12 +1151,10 @@ export default {
       // this.form.equipmentList[param.data].fileList.push(param.file)
     },
     getImageIndex(index) {
-      console.log(index, "mmmmmmmmm");
     },
     //监控上传文件列表
     handleChange(file, fileList) {
       // this.fileList = fileList;
-      console.log(file, fileList, "uuuuuuuuuuuuuuu");
     },
     handleSuccess(response, file, fileList) {
       console.log(response, file, fileList, "文件上传成功");

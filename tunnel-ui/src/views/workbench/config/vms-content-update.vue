@@ -998,10 +998,6 @@ export default {
       if (data.length == 0) {
         return util.$message.showInfo2("内容不能为空:" + item.word);
       }
-      console.log(data,'正义！');
-      // for(let i = 0;i<data.length;i++){
-        
-      // }
       this.checkStatus = true;
     },
     divStyles: function (vmsSize, a) {

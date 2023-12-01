@@ -64,14 +64,12 @@ export default {
     },
     // 单选回路
     checkChange(data) {
-      // console.log(data);
       this.$emit('getTree', data.code)
     },
     // 默认选中第一个
     firstSelectItemFn(item) {
       item.forEach(i => {
         if (!i.children) {
-          // console.log('1111111111',i);
           this.firstSelectItem.push(i)
           return
         } else {
@@ -82,7 +80,6 @@ export default {
     /** 查询回路树结构 */
     //当复选框勾选中时，给下拉框赋值并且给查询条件赋值
     // checkChange(data, checked) {
-    //   // console.log(checked);
     //   let arrLabel = [];
     //   let arr = [];
     //   this.selectIds=[]

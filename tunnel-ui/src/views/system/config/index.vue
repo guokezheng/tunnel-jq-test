@@ -499,7 +499,6 @@ export default {
         if (valid) {
           if (this.form.configId != undefined) {
             if (this.form.configKey == "sd.moduleSwitch") {
-              console.log("进来了进来了");
               this.$store.dispatch(
                 "manage/changeManage",
                 this.form.configValue

@@ -333,7 +333,6 @@ export default {
       });
     },
     handleConfig(row){
-        console.log(row,"row")
         const params = {
             id:row.id
         }

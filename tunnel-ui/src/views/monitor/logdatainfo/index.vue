@@ -735,13 +735,9 @@ export default {
       this.loading = true;
       this.xt_boxShow = false;
       this.cz_boxShow = false;
-      console.log(inx, this.activeName, "+++++++++++++");
       if (inx == "1" || this.activeName == "1") {
-        console.log(this.activeName, "this.activeName");
-        console.log(this.queryParam, "this.queryParam");
         list(this.addDateRange(this.queryParam, this.dateRangeDl)).then(
           (response) => {
-            console.log(response, "系统日志");
 
             this.list = response.rows;
             this.total = response.total;

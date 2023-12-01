@@ -498,7 +498,6 @@ export default {
       this.getTreeselect();
       const id = row.id || this.ids;
       getSdEmergencyPer(id).then((response) => {
-        console.log(response.data, "response.data");
         this.form = response.data;
         this.form.tunnelName = response.data.tunnelName;
         this.open = true;
@@ -580,7 +579,6 @@ export default {
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
       this.getTunnels();
     },

@@ -729,7 +729,6 @@ export default {
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
       this.getTunnel();
     },

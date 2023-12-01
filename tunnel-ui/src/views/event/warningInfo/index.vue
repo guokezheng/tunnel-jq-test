@@ -1131,7 +1131,6 @@ export default {
           let array = [];
           for (let i = 0; i < this.planList.length; i++) {
             for (let j = 0; j < this.multipleSelection.length; j++) {
-              console.log("===" + j);
               if (this.multipleSelection[j] == this.planList[i].id) {
                 array.push(this.planList[i]);
               }

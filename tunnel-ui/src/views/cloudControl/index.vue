@@ -1967,12 +1967,10 @@ export default {
       this.move = false;
       let str = [108, 110,18, 21, 13, 14, 15, 16, 5, 6, 7, 8, 9];
       let list = this.selectedIconList;
-      console.log(list,'当前工作台设备列表');
       for (let i = 0; i < list.length; i++) {
         // 传入每个设备并判断是否在范围之内
         let inRange = this.inRange(list[i]);
         if (inRange == true) {
-          console.log(list[i].eqId,'在范围内')
           this.selectedIconList[i].isfocus = true;
           if (boxEqList.length > 0) {
             let index = -1;
@@ -1994,29 +1992,21 @@ export default {
               }
             }
           } else {
-            console.log(parseInt(list[i].eqType),'值')
-            console.log(str.includes(100),'222222222222')
             if (!str.includes(parseInt(list[i].eqType))) {
               boxEqList.push({
                 typeId: list[i].eqType,
                 eqlist: [list[i]],
               });
               this.boxType(list[i].eqType);
-              console.log(boxEqList,'111111')
-              console.log(this.boxTypeList,'333333333333')
             }
           }
         }else{
           console.log('bu在范围内')
         }
       }
-      console.log(boxEqList.length,this.boxTypeList.length,'6666666666666666666')
-      console.log(this.boxTypeList)
       if (boxEqList.length > 0 && this.boxTypeList.length > 0) {
-        console.log(boxEqList)
         if (boxEqList.length == 1 && boxEqList[0].eqlist.length == 1) {
           //单个配置
-          console.log(boxEqList[0].eqlist[0])
           this.openStateSwitch(boxEqList[0].eqlist[0]);
         } else {
           //超过1个设备进行批量配置
@@ -2060,8 +2050,6 @@ export default {
     },
     boxType(type) {
       for (let i = 0; i < this.eqTypeList.length; i++) {
-        console.log(this.eqTypeList.length,'7777')
-        console.log(this.eqTypeList[i].typeId,'999999')
         if (type == this.eqTypeList[i].typeId ||type == 100 ) {
           this.boxTypeList.push({
             typeId: type,

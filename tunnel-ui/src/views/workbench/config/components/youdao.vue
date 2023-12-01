@@ -213,13 +213,11 @@ export default {
       if (this.eqInfo.equipmentId) {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-          console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
         });
 
         await getDevice(this.eqInfo.equipmentId).then((response) => {
-          console.log(response, "诱导灯频率、亮度等");
           // this.stateForm2 = response.data
           this.stateForm2 = {
             frequency: Number(response.data.frequency),
@@ -257,7 +255,6 @@ export default {
           //   let data = res.data;
           //   this.fireMarkData = data;
           //   //
-          //   console.log(this.fireMarkData, "000");
           // });
         } else if (this.eqInfo.clickEqType == 31) {
           this.openState.push(

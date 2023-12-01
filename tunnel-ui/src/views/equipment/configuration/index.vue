@@ -540,7 +540,6 @@ export default {
       this.title = "添加隧道环境配置";
     },
     uploadSuccess() {
-      console.log("成功了");
       this.$refs.upload.clearFiles();
     },
     /** 修改按钮操作 */
@@ -550,7 +549,6 @@ export default {
       var that = this;
       this.eqObj.uploadDisabled = true;
       getConfiguration(id).then((response) => {
-        console.log(response.data, "row");
         this.form = response.data;
         if (that.form.iFileList.length > 0) {
           that.planRoadmapUrl(that.form.iFileList);
@@ -588,8 +586,6 @@ export default {
                 this.fileData.append("id", this.form.id);
                 this.fileData.append("url", this.form.url);
                 this.fileData.append("removeIds", this.removeIds);
-                console.log(this.fileData, "this.fileData");
-                
                 updateConfiguration(this.fileData).then((response) => {
                   this.$modal.msgSuccess("修改成功");
                   this.open = false;
@@ -624,7 +620,6 @@ export default {
               this.fileData.append("id", this.form.id);
               this.fileData.append("url", this.form.url);
               this.fileData.append("removeIds", this.removeIds);
-              console.log(this.fileData, "this.fileData");
               updateConfiguration(this.fileData).then((response) => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;

@@ -311,11 +311,9 @@ export default {
     },
     // 点击查看 图片
     handlePic(row){
-        console.log(row,"row")
         this.openPic = true
     },
     handleSign(row){
-        console.log(row,"row")
         if(row.vehicleSign == '0'){
             row.vehicleSign = "1"
         }else{

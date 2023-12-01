@@ -398,7 +398,6 @@
       getUserDept() {
         let that = this;
         getUserDeptId(this.userQueryParams).then((response) => {
-          console.log(response, "管理站级联222222");
           that.userDeptId = response.rows[0].deptId;
           that.getDeptList();
         });
@@ -407,7 +406,6 @@
         var userDeptId = this.userDeptId;
         const params = { status: 0 };
         getTreeByDeptId(params).then((response) => {
-          console.log(response, "级联");
           const options = response.data;
           let childs = [];
           function a(list) {
@@ -439,12 +437,10 @@
       },
       // 清空站点
       beforeClearAll() {
-        console.log(111111)
         this.form.deptId = null;
       },
       // 改变站点
       changeSite(index) {
-        console.log(index, "changeSite")
         this.form.tunnel = "";
         this.boardDirectionList = [];
         if (index.children != undefined && index.children.length == 1) {

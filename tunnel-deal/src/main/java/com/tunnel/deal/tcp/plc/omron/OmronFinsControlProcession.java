@@ -199,8 +199,16 @@ public class OmronFinsControlProcession {
         //状态匹配
         JSONObject stateJson = new JSONObject();
 
-        // 电伴热 直接写入值
+        // 电伴热 模拟量写入
         if(sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.DIAN_BAN_RE.getCode()).longValue()){
+
+            // 6标 双子山  仰天山  电伴热值*10
+            if(sdDevices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-SZS") || sdDevices.getEqTunnelId().equals("JQ-WeiFang-YangTianShan-YTS")){
+                BigDecimal dValue = new BigDecimal(state);
+                dValue = dValue.multiply(BigDecimal.valueOf(10));
+                state = String.valueOf(dValue);
+            }
+
             stateJson.put("value", NumberSystemConvert.convertFloatToHex(Float.parseFloat(state)));
             //stateJson.put("value", to Float.floatToIntBits(Float.parseFloat(state)));
             //stateJson.put("value",  state);

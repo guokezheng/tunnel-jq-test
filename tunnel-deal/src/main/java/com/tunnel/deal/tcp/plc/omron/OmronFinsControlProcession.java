@@ -8,10 +8,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
@@ -198,17 +195,27 @@ public class OmronFinsControlProcession {
 
         String pointConfig = devicePointPlc.getPointConfig();
         JSONObject jsonConfig = JSONObject.parseObject(pointConfig);
-        //点位状态
-        String stateStr = jsonConfig.getString("stateConfig");
-        JSONArray jsonArray = JSONArray.parseArray(stateStr);
+
         //状态匹配
         JSONObject stateJson = new JSONObject();
-        for(Object obj : jsonArray){
-            JSONObject jsonObject = (JSONObject) obj;
-            String stateConfig = jsonObject.getString("state");
-            if(state.equals(stateConfig)){
-                stateJson = jsonObject;
-                break;
+
+        // 电伴热 直接写入值
+        if(sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.DIAN_BAN_RE.getCode()).longValue()){
+            stateJson.put("value", NumberSystemConvert.convertFloatToHex(Float.parseFloat(state)));
+            //stateJson.put("value", to Float.floatToIntBits(Float.parseFloat(state)));
+            //stateJson.put("value",  state);
+
+        }else {
+            //点位状态
+            String stateStr = jsonConfig.getString("stateConfig");
+            JSONArray jsonArray = JSONArray.parseArray(stateStr);
+            for (Object obj : jsonArray) {
+                JSONObject jsonObject = (JSONObject) obj;
+                String stateConfig = jsonObject.getString("state");
+                if (state.equals(stateConfig)) {
+                    stateJson = jsonObject;
+                    break;
+                }
             }
         }
 

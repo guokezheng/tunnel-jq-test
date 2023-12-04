@@ -3364,7 +3364,6 @@
                 }
               });
             }
-            debugger
             a(options);
             if (childs.length == 0) {
               this.siteList = options[0].children;
@@ -4489,7 +4488,6 @@
                               " 湿度：" + deviceData.humidity
                           }
                         } else if (deviceData.eqType == 15) {
-                          debugger
                           if (deviceData.state) {
                             if(deviceData.eqTunnelId=="JQ-WeiFang-JiuLongYu-MAS"||deviceData.eqTunnelId=="JQ-WeiFang-JiuLongYu-JJL"){
                               deviceData.state =  parseFloat(deviceData.state)/100

@@ -367,7 +367,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 //        }
         //1  自动模式  2 节能模式   0定时模式
         switch (modeType){
-            case 1:  //自动模式
+            case 1:  //自动模式  废弃
 
                 //忽略车流量
                 //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
@@ -376,121 +376,121 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                 //亮度值计算:
                 // 后期修改为 根据洞外亮度计算当前亮度值
                 // 当前亮度值 根据定时模式获取当前路段亮度。
-                int nowLuminanceRange =  beforeLuminance;
-
-                //推送调光值时，按照隧道入口 -> 出口顺序处理
-                ThreadPool.executor.execute(() -> {
-                    log.info("【"+Thread.currentThread().getName()+"】开始准备调光：");
-                    //查看当前线程  threadArrs  集合是否存在。
-                    Thread[] threadArrs;
-                    String key = tunnelId+"_"+roadDir;
-                    if(threadArrsMap.containsKey(key)){
-                        threadArrs = threadArrsMap.get(key);
-                    }else{
-                        threadArrs = new Thread[1];
-                        threadArrsMap.put(key,threadArrs);
-                    }
-                    ThreadPool.executor.execute(() -> {
-                        for (SdDevices devices:deviceIds) {
-                            //查看当前设备是否关闭。  如果为关闭。则开启当前设备
-                            SdDeviceData sdDeviceData = new SdDeviceData();
-                            sdDeviceData.setDeviceId(devices.getEqId());
-                            List<SdDeviceData> sdDeviceDataList =   sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-                            //当前设备开关
-                            String deviceState = null;
-                            //当前设备亮度
-                            String luminance = null;
-
-                            //解析  开关状态与亮度值
-                            for (SdDeviceData sdDeviceDataInfo:sdDeviceDataList) {
-                                //获取开关状态
-                                if(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode() == sdDeviceDataInfo.getItemId()||DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode() == sdDeviceDataInfo.getItemId()){
-                                    deviceState = sdDeviceDataInfo.getData();
-                                }else if(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode() == sdDeviceDataInfo.getItemId()||DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode() == sdDeviceDataInfo.getItemId()){
-                                    luminance = sdDeviceDataInfo.getData();
-                                }
-                            }
-
-                            String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
-
-                            //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
-                            Integer num = redisCache.getCacheObject(redisLuminanceRangeKey);
-
-                            if(threadArrs[0]==null|| num == null || num != nowLuminanceRange){
-                                //查看原有亮度是否为null
-                                if(num == null ){
-                                    if(sdDeviceDataList.size()<=0){
-                                        //无亮度 默认给个最小亮度值
-                                        num = sdEnhancedLightingConfig.getMinLuminance();
-                                    }else{
-                                        num = Integer.parseInt(luminance);
-                                    }
-                                    redisCache.setCacheObject(redisLuminanceRangeKey,num);
-                                }
-                                //循环  开启灯光
-                                try{
-                                    //1开启   2关闭
-                                    if("2".equals(deviceState)){
-                                        log.info("当前[{}]设备状态为关闭状态,需要开启照明方可进行调光。",devices.getEqId());
-                                        int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),1,null);
-                                        SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
-                                        if(devicesProtocol == null){
-                                            continue;
-                                        }
-                                        String className = devicesProtocol.getClassName();
-                                        if(className.contains("sansi")){
-                                            flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
-                                        }else{
-                                            flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
-                                        }
-                                        if(flag == 0){
-                                            log.error("当前[{}]加强照明为关闭状态，开启失败。请联系管理员",devices.getEqId());
-                                            continue;
-                                        }
-                                    }
-                                    log.info("开始亮光值:[{}]当前亮度num：{} 根据车流量计算的亮度nowLuminanceRange:{}", devices.getEqId(), num, nowLuminanceRange);
-                                    int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
-                                    if(flag == 0){
-                                        log.error("【{}】推送调光指令异常，未能成功发送调光指令",devices.getEqId());
-                                    }
-                                }catch (Exception e){
-                                    log.error("【{}】推送调光指令异常，未能成功发送调光指令",devices.getEqId());
-                                }
-                            }
-                        }
-                    });
-                    try{
-                        //替换线程
-                        Threads.replaceThread(threadArrs,Thread.currentThread());
-                        //等待30秒后 执行 降低 光照强度功能
-                        //降低光照强度执行完毕,推送调光 指令。
-                        Thread.sleep(respondTime);
-                        ThreadPool.executor.execute(() -> {
-                            for (SdDevices devices:deviceIds) {
-                                log.info("结束亮光值:["+ tunnelId +"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                                SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
-                                if(devicesProtocol == null){
-                                    continue;
-                                }
-                                String className = devicesProtocol.getClassName();
-                                int flag =0;
-                                if(className.contains("sansi")){
-                                     flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
-                                }else{
-                                    flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
-                                }
-//                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
-                                if(flag == 0){
-                                    log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
-                                }
-                            }
-                        });
-                        //清除当前记录线程
-                        threadArrs[0] =  null;
-                    }catch (Exception e){
-                        log.error("经过一辆车，当前线程被阻断。");
-                    }
-                });
+//                int nowLuminanceRange =  beforeLuminance;
+//
+//                //推送调光值时，按照隧道入口 -> 出口顺序处理
+//                ThreadPool.executor.execute(() -> {
+//                    log.info("【"+Thread.currentThread().getName()+"】开始准备调光：");
+//                    //查看当前线程  threadArrs  集合是否存在。
+//                    Thread[] threadArrs;
+//                    String key = tunnelId+"_"+roadDir;
+//                    if(threadArrsMap.containsKey(key)){
+//                        threadArrs = threadArrsMap.get(key);
+//                    }else{
+//                        threadArrs = new Thread[1];
+//                        threadArrsMap.put(key,threadArrs);
+//                    }
+//                    ThreadPool.executor.execute(() -> {
+//                        for (SdDevices devices:deviceIds) {
+//                            //查看当前设备是否关闭。  如果为关闭。则开启当前设备
+//                            SdDeviceData sdDeviceData = new SdDeviceData();
+//                            sdDeviceData.setDeviceId(devices.getEqId());
+//                            List<SdDeviceData> sdDeviceDataList =   sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+//                            //当前设备开关
+//                            String deviceState = null;
+//                            //当前设备亮度
+//                            String luminance = null;
+//
+//                            //解析  开关状态与亮度值
+//                            for (SdDeviceData sdDeviceDataInfo:sdDeviceDataList) {
+//                                //获取开关状态
+//                                if(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode() == sdDeviceDataInfo.getItemId()||DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode() == sdDeviceDataInfo.getItemId()){
+//                                    deviceState = sdDeviceDataInfo.getData();
+//                                }else if(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode() == sdDeviceDataInfo.getItemId()||DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode() == sdDeviceDataInfo.getItemId()){
+//                                    luminance = sdDeviceDataInfo.getData();
+//                                }
+//                            }
+//
+//                            String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
+//
+//                            //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
+//                            Integer num = redisCache.getCacheObject(redisLuminanceRangeKey);
+//
+//                            if(threadArrs[0]==null|| num == null || num != nowLuminanceRange){
+//                                //查看原有亮度是否为null
+//                                if(num == null ){
+//                                    if(sdDeviceDataList.size()<=0){
+//                                        //无亮度 默认给个最小亮度值
+//                                        num = sdEnhancedLightingConfig.getMinLuminance();
+//                                    }else{
+//                                        num = Integer.parseInt(luminance);
+//                                    }
+//                                    redisCache.setCacheObject(redisLuminanceRangeKey,num);
+//                                }
+//                                //循环  开启灯光
+//                                try{
+//                                    //1开启   2关闭
+//                                    if("2".equals(deviceState)){
+//                                        log.info("当前[{}]设备状态为关闭状态,需要开启照明方可进行调光。",devices.getEqId());
+//                                        int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),1,null);
+//                                        SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
+//                                        if(devicesProtocol == null){
+//                                            continue;
+//                                        }
+//                                        String className = devicesProtocol.getClassName();
+//                                        if(className.contains("sansi")){
+//                                            flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+//                                        }else{
+//                                            flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
+//                                        }
+//                                        if(flag == 0){
+//                                            log.error("当前[{}]加强照明为关闭状态，开启失败。请联系管理员",devices.getEqId());
+//                                            continue;
+//                                        }
+//                                    }
+//                                    log.info("开始亮光值:[{}]当前亮度num：{} 根据车流量计算的亮度nowLuminanceRange:{}", devices.getEqId(), num, nowLuminanceRange);
+//                                    int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
+//                                    if(flag == 0){
+//                                        log.error("【{}】推送调光指令异常，未能成功发送调光指令",devices.getEqId());
+//                                    }
+//                                }catch (Exception e){
+//                                    log.error("【{}】推送调光指令异常，未能成功发送调光指令",devices.getEqId());
+//                                }
+//                            }
+//                        }
+//                    });
+//                    try{
+//                        //替换线程
+//                        Threads.replaceThread(threadArrs,Thread.currentThread());
+//                        //等待30秒后 执行 降低 光照强度功能
+//                        //降低光照强度执行完毕,推送调光 指令。
+//                        Thread.sleep(respondTime);
+//                        ThreadPool.executor.execute(() -> {
+//                            for (SdDevices devices:deviceIds) {
+//                                log.info("结束亮光值:["+ tunnelId +"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
+//                                SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById(sdDevices.getProtocolId());
+//                                if(devicesProtocol == null){
+//                                    continue;
+//                                }
+//                                String className = devicesProtocol.getClassName();
+//                                int flag =0;
+//                                if(className.contains("sansi")){
+//                                     flag = sansiLightImpl.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+//                                }else{
+//                                    flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+//                                }
+////                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+//                                if(flag == 0){
+//                                    log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
+//                                }
+//                            }
+//                        });
+//                        //清除当前记录线程
+//                        threadArrs[0] =  null;
+//                    }catch (Exception e){
+//                        log.error("经过一辆车，当前线程被阻断。");
+//                    }
+//                });
                 break;
             case 2://2节能模式
                 for (SdDevices devices:deviceIds) {

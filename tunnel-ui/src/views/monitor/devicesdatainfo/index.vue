@@ -660,8 +660,6 @@
       handleExportRecord() {
         this.querysParams.searchValue = this.searchValue;
         this.querysParams.deviceId = this.deviceId;
-        console.log("12312312")
-        console.log(this.querysParams.ids,"this.querysParams.ids");
         this.querysParams.ids = this.ids.join();
         const queryParams = this.querysParams;
         let confirmInfo;

@@ -476,16 +476,11 @@
       async handleQuery1(){
         let  ds = await this.Encrypt("demo")
         let  ds1 = await this.Encrypt("Mapabc&2016123")
-        debugger
-        console.log(ds)
-        console.log(ds1)
       },
       async getJseKey(text) {
         var encrypted = ""
         await getEncryption().then((res)=>{
-          debugger
           let jseKey = res.data.cllData.length>0?res.data.cllData:[0,0]
-          debugger
           sessionStorage.setItem("jseKey", jseKey)
           encrypted = this.getEncrypted(jseKey, text)
         })
@@ -506,7 +501,6 @@
 
       },
       getEncrypted(jseKey, text){
-        console.log(jseKey, text)
         let jse = new JSEncrypt({
           default_key_size: 2048
         });
@@ -652,8 +646,6 @@
               let tunnelItem = this.catStrategyList.find(
                 (item) => item.tunnelId == response.rows[i].tunnelId
               );
-              console.log(this.catStrategyList);
-              console.log(tunnelItem);
               if (!!tunnelItem) {
                 let tunnelItem = this.catStrategyList.find(
                   (item) => item.tunnelId == response.rows[i].tunnelId

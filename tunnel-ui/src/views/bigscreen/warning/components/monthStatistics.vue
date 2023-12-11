@@ -27,7 +27,6 @@ export default {
       var date = new Date().getDate();
       var dateArr = [];
       getSameMonthEventWarning().then((res) => {
-        console.log(res, "-------");
         // let dateValArr1 =
         let dateValArr1 = res.data.fault;
         let dateValArr2 = res.data.event;

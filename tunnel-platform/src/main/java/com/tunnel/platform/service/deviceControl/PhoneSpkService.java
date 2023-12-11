@@ -417,7 +417,9 @@ public class PhoneSpkService {
             return AjaxResult.error();
         } else if ("GLZ".equals(deploymentType) && StringUtils.isBlank(operIp)) {
             try {
-                operIp = InetAddress.getLocalHost().getHostAddress();
+                if(operIp == null || "".equals(operIp)){
+                    operIp = InetAddress.getLocalHost().getHostAddress();
+                }
             } catch (UnknownHostException e) {
 
             }

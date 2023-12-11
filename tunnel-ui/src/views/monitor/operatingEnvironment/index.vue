@@ -397,13 +397,11 @@ export default {
     },
     // 左侧树形组件点击事件
     handleClick(data) {
-      console.log(data)
       this.powerCode = data.code
       this.getTypeFn()
     },
     //默认高亮选中回路回调
     defaultSelectLoop(key, node) {
-      // console.log(key, node)
       // this.loopId = key
       // this.dataName = node.loopName
       // this.queryParams.code = node.deviceCode
@@ -437,15 +435,12 @@ export default {
     async getCameraDataListFn() {
       // 获取摄像头编号
       const f = await getSelectListEqApi({ powerCode: this.powerCode, categoryCode: 'hik-camera' })
-      // console.log(f)
       // 获取摄像头url
       // if (f.data) {
       //   this.cameraUrlList = []
       //   f.data.forEach(async item => {
       //     const g = await getCameraListApi({ powerCode: this.powerCode, deviceCode: item.id })
-      //     console.log(g);
       //     // this.cameraUrlList.push(g.data)
-      //     // console.log(this.cameraUrlList);
       //   })
       // }
     },
@@ -467,18 +462,14 @@ export default {
         bjo.powerCode = this.powerCode
         bjo.deviceCode = this.GongYeValue
         const d = await getSelectListDataEqApi(bjo)
-        // console.log(d)
         // // 获取摄像头编号
         // const f = await getSelectListEqApi({ powerCode: this.powerCode, categoryCode: 'hik-camera' })
-        // // console.log(f)
         // // 获取摄像头url
         // this.cameraUrlList = []
         // if (f.data) {
         //   f.data.forEach(async item => {
         //     const g = await getCameraListApi({ powerCode: this.powerCode, deviceCode: item.id })
-        //     // console.log(g);
         //     this.cameraUrlList.push(g.data)
-        //     // console.log(this.cameraUrlList);
         //   })
         // }
       }
@@ -487,7 +478,6 @@ export default {
       // if (n.data) {
       //   n.data.forEach(async item => {
       //     const u = await getSelectListDataEqApi({ powerCode: this.powerCode, deviceCode: item.id })
-      //     console.log(u)
       //   })
       // }
     },
@@ -527,9 +517,7 @@ export default {
       let bjo = {}
       bjo.powerCode = this.powerCode
       bjo.deviceCode = this.GongYeValue
-      console.log(bjo)
       const d = await getSelectListDataEqApi(bjo)
-      console.log(d)
     },
 
     // 方法

@@ -1852,7 +1852,6 @@ export default {
       this.getTunnelLane();
     },
     sdEventList(event) {
-      console.log(event, "websockt推送一件事");
       this.evtWebsoktList = event;
     },
   },
@@ -1874,7 +1873,6 @@ export default {
     });
     this.fileData = new FormData(); // new formData对象
     this.getDicts("sd_event_state").then((response) => {
-      console.log(response.data, "事件状态");
       this.eventStateOptions = response.data;
     });
     this.getDicts("sd_incident_level").then((response) => {
@@ -1920,7 +1918,6 @@ export default {
   },
   methods: {
     confidenceListRules(rule, value, callback) {
-      console.log(value, "value");
       if (value) {
         const plateNumber =
           /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/;
@@ -1935,7 +1932,6 @@ export default {
     },
     //下载录像
     // downloadVedio(){
-    //   console.log(this.eventDiscovery,"22223333")
     //   if(this.eventDiscovery.downLoadTime == null){
     //     this.$modal.msgError("请选择下载时间！");
     //   }else {
@@ -1943,7 +1939,6 @@ export default {
     //       this.$modal.msgError("请先查看视频后下载！");
     //     }
     //     downloadVedio(this.vedioData.camID,this.eventDiscovery.downLoadTime).then((res) => {
-    //       console.log(res,"下载下载下载");
     //       window.open(res.data.fileUrl)
     //     })
     //   }
@@ -1952,12 +1947,10 @@ export default {
 
     //查看录像
     // viewVedio(){
-    //   console.log(this.eventDiscovery,"111222")
     //   if(this.eventDiscovery.startTime == null){
     //     this.$modal.msgError("请选择历史时间！");
     //   }else {
     //     //请求前先关闭
-    //     console.log(this.vedioData,"hhjjhhjj");
     //     if(this.vedioData != {} && this.vedioData != undefined){
     //       this.closeDialog();
     //     }
@@ -1967,18 +1960,14 @@ export default {
     //       startTime: this.eventDiscovery.startTime
     //     }
     //     getVedioData(param).then((res) => {
-    //       console.log(res,"sssssssssssssssss");
     //       this.vedioData = res.data.vedioData;
     //       this.eventDiscovery.historyUrlList = res.data.vedioList
     //       this.vedioPlayer = true;
-    //       console.log(this.eventDiscovery,"111222")
     //     })
     //   }
 
     // },
     // closeDialog(){
-    //   console.log("关闭了关闭了")
-    //   console.log(this.vedioData)
     //   if(this.vedioData.camID != undefined){
     //     closeVedio(this.vedioData.camID,this.vedioData.playId).then((res) => {
     //       this.vedioPlayer = false;
@@ -2295,7 +2284,6 @@ export default {
     },
     // 复核提交
     submitDialog() {
-      console.log(this.eventFormDetail, "1123123");
       this.$refs["eventFormDetail"].validate((valid) => {
         if (valid) {
           this.$cache.local.set("currencyId", this.eventFormDetail.currencyId);
@@ -2396,7 +2384,6 @@ export default {
     // changeEndTime() {
     //   let startTime = new Date(this.eventFormDetail.eventTime).getTime();
     //   let endTime = new Date(this.eventFormDetail.endTime).getTime();
-    //   console.log(startTime, endTime);
     //   if (endTime < startTime) {
     //     this.$modal.msgWarning("结束时间必须大于开始时间");
     //     this.eventFormDetail.endTime = "";
@@ -2474,10 +2461,8 @@ export default {
     },
     //详情弹窗
     detailsButton(item) {
-      console.log(item, "000000000");
       // 获取对应事件
       this.getEventType(item);
-      console.log(item, "点击弹窗");
       this.imgUrlList = [];
       this.iconUrlListAll = [];
       this.miniDialog = true;
@@ -2514,8 +2499,6 @@ export default {
         let stake = "";
 
         let letterCount = this.countLetters(item.stakeNum.split("+")[0]);
-        console.log("字母数量：" + letterCount);
-        console.log(item.stakeNum.split("+")[0]);
         if (letterCount >= 2) {
           stake = item.stakeNum.split("+")[0].substr(2);
         } else if (letterCount >= 1) {
@@ -2586,11 +2569,9 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
-      console.log(item, "itemitem");
       //现场
       // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
       //   getDeviceById(res.data[0].eqId).then((response)=>{
-      //     console.log(response,"00000000000000000")
       //     displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
       //   })
       // })

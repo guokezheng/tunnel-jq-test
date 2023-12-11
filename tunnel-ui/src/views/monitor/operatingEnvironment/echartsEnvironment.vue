@@ -32,8 +32,6 @@ export default {
     powerCode: {
       // 自动触发,只能使用handler
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
         // this.echartsInit()
         if (this.WenShiDuValue) {
           this.getInitECharts()
@@ -47,8 +45,6 @@ export default {
     WenShiDuDateValue: {
       // 自动触发,只能使用handler
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
         // this.echartsInit()
         this.getInitECharts()
       }
@@ -60,9 +56,6 @@ export default {
     WenShiDuValue: {
       // 自动触发,只能使用handler
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
-        // console.log(this.WenShiDuValue);
         // this.echartsInit()
         this.getInitECharts()
       }

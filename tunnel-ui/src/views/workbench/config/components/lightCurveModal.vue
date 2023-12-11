@@ -470,7 +470,6 @@
       },
       // 获取潍坊光照照图表数据信息
       initLoginChart1() {
-        console.log()
         let newPromise = new Promise((resolve) => {
           resolve();
         });
@@ -822,21 +821,11 @@
                     this.XDataLight.push(list1[i].createTime)
                   }
                 }
-                console.log(this.yDataLight1)
-                console.log( this.yDataLight)
-                console.log( this.yDataLight2)
-                console.log( this.XDataLight)
                 let sd = [2,1,4,45,32,2]
-                console.log(sd.reverse())
                 this.XDataLight = this.XDataLight.sort()
-                console.log( this.XDataLight)
                //   this.yDataLight2.reverse()
                //   this.yDataLight.reverse()
                // this.yDataLight1.reverse()
-                console.log(this.yDataLight1)
-                console.log( this.yDataLight)
-                console.log( this.yDataLight2)
-                console.log( this.XDataLight)
                 // this.XDataLight = this.generateTimeList(todayDate)
                 this.XDataLightOne = this.XDataLight
 
@@ -868,7 +857,6 @@
                     var max3 = mathList.sort(function (a, b) {
                       return b - a;
                     })[0];
-                    console.log(max3)
                     if (!!max3) {
                       this.mathNum = max3
                     }
@@ -897,9 +885,6 @@
                     this.yDataLightOne2.push(list1[i].data)
                   }
                 }
-                console.log(this.yDataLightOne1)
-                console.log( this.yDataLightOne)
-                console.log( this.yDataLightOne2)
                 list1 = this.lightDatafiler(this.yDataLightOne2)
                 //今天
 
@@ -1074,7 +1059,6 @@
           }
         }
         // debugger
-        console.log(this.lightFilesModel)
         //模式1 车辆 0光强
         this.lightFilesModel.modeType = 0
         //下修比例
@@ -1108,7 +1092,6 @@
           }
         }
         // debugger
-        console.log(this.lightFilesModelWei)
         //模式1 车辆 0光强
         this.lightFilesModelWei.modeType = 0
         this.lightFilesModelWei.beforeLuminance = JSON.stringify(this.lightFormItemsWei)

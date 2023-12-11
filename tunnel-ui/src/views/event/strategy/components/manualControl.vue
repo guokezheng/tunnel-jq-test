@@ -405,7 +405,6 @@ export default {
     init() {
       if (this.sink == "add") {
         this.resetForm();
-        console.log("123");
       }
       console.log("init");
     //  this.getEquipmentType();

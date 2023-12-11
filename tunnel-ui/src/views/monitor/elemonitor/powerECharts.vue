@@ -30,8 +30,6 @@ export default {
     cityOptionsTable: {
       // 自动触发,只能使用handler
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
         this.getInitFn()
       },
       // true表示侦听器立即触发(immediate默认为false)
@@ -42,8 +40,6 @@ export default {
     riEChartsList: {
       // 自动触发,只能使用handler
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
         this.getInitFn()
       },
       // true表示侦听器立即触发(immediate默认为false)
@@ -54,8 +50,6 @@ export default {
     cityOptionsValue: {
       // 自动触发,只能使用handler
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
         this.getInitFn()
       }
       // true表示侦听器立即触发(immediate默认为false)

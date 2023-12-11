@@ -701,10 +701,8 @@ export default {
                 }
             }
         }
-        console.log(this.dataForm,"this.dataForm2222222")
         saveControlMeasure(this.dataForm).then(response => {
           this.openMeasures = false;
-          console.log(response,"response")
           this.$modal.msgSuccess("配置成功");
 
         });

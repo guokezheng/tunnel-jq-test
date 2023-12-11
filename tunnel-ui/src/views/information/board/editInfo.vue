@@ -608,7 +608,6 @@ export default {
           textBoard1[0].style.position = "static";
           divContent1[0].style.justifyContent = "center";
           divContent1[0].style.alignItems = "center";
-          // console.log(textBoard1,"111111alignmentNum")
            break;
         // 右对齐
         case 3:

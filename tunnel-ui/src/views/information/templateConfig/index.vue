@@ -399,11 +399,9 @@ export default {
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {
       this.screenSizeList = res.data;
-      console.log(this.screenSizeList,'this.screenSizeList')
     });
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
     });
   },
   methods: {

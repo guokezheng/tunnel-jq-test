@@ -147,7 +147,6 @@ export default {
     },
     test(data,index) {
       // 触发父组件contentList事件
-      console.log(data,'我点击的数据');
       this.$emit("contentList", index);
     },
     up(data, index) {
@@ -237,7 +236,6 @@ export default {
     /* 追加发布按钮 */
     addRelease(addRelease) {
       let addParams = {};
-      console.log(addRelease,'666666666666666666666')
       if (addRelease != null) {
         addParams = addRelease
         // addParams = {

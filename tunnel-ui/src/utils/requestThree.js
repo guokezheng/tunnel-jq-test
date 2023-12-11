@@ -57,16 +57,16 @@ service.interceptors.response.use(res => {
     // 获取错误信息
     const msg = errorCode[code] || res.data.msg || errorCode['default']
     if (code === 401) {
-      console.log("code========================="+code);
+
     } else if (code === 500) {
-      console.log("code========================="+code);
+
     } else if (code !== 200) {
       Notification.error({
         title: msg
       })
       return Promise.reject('error')
     } else if (code === 900) {
-      console.log("code========================="+code);
+
     }else {
       return res.data
     }

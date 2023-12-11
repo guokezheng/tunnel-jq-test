@@ -1637,7 +1637,6 @@ export default {
 
     // 获取设备table
     getTable() {
-      console.log(11111111);
       if (this.boxShow1) {
         this.boxShow1 = false;
       }
@@ -1696,12 +1695,9 @@ export default {
         this.pageNum,
         this.pageSize
       ).then((res) => {
-        console.log(res, "获取故障table getGzTable");
-        console.log(this.boxList, "boxList");
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList.length > 0) {
-          // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
           this.$refs.multipleTable2.clearSelection();
 
@@ -2438,7 +2434,6 @@ export default {
       },
     },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
     },
     isShow2: {

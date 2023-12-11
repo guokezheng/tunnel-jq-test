@@ -608,11 +608,7 @@ export default {
       var obj = {};
       var state = "";
       // 查询单选框弹窗信息 -----------------------
-      console.log("获取设备Id:");
-      console.log(this.eqInfo);
-      console.log(this.eqInfo.equipmentId);
       await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-        console.log(res, "查询单选框弹窗信息");
         obj = res.data;
 
         this.title = obj.eqName;
@@ -642,18 +638,15 @@ export default {
           infrared: obj.infrared, //红外
           eqStatus: obj.eqStatus,
         };
-        console.log(this.stateForm, "stateForm");
       });
       // } else {
       //   this.$modal.msgWarning("没有设备Id");
       // }
     },
     getDirection(num) {
-      console.log(this.directionList);
 
       for (var item of this.directionList) {
         if (item.dictValue == num) {
-          console.log(item.dictLabel);
           return item.dictLabel;
         }
       }

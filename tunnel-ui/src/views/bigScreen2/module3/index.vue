@@ -102,7 +102,6 @@
     },
     methods: {
       init(){
-        console.log(111111111111111)
       }
     },
   };

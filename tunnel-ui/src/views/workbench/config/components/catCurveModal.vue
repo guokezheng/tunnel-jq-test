@@ -395,7 +395,6 @@
         //   this.$modal.msgError("隧道名称不能为空");
         //   return;
         // }
-        // console.log()
         // if (
         //   this.catFilesModel.direction == null ||
         //   this.catFilesModel.direction == ""
@@ -618,12 +617,6 @@
           tunnelId: this.catFilesModel.tunnelId,
           holes: 2,
         };
-        //今天
-        console.log(json,"json")
-        debugger
-        //今天
-        console.log(json,"json")
-        debugger
         if(!(row==null && type == null)){
           //济南
           let queryParamsCat = {}
@@ -638,12 +631,10 @@
           this.catListConfig(queryParamsCat)
           trafficVolumeList(queryParamsCat).then(
             (response) => {
-              debugger
               let list1= response.rows;
               let historyDs = ds2[0].split(" ")[0]
               let historyDs1 = ds1[0].split(" ")[0]
               let todayListDs1 = ds[0].split(" ")[0]
-              debugger
               for (let i = 0; i < list1.length; i++) {
                 if(list1[i].carTime.indexOf(ds2[0].split(" ")[0])>-1){
 
@@ -659,9 +650,6 @@
               this.yData1.reverse()
               this.yData2.reverse()
               this.yData3.reverse()
-              console.log(this.yData1)
-              console.log(this.yData2)
-              console.log(this.yData3)
               setTimeout(() => {
                 this.$nextTick(() => {
                   //获取车辆数据
@@ -683,12 +671,10 @@
           this.catListConfigWei(queryParamsWeiCat)
           trafficVolumeList(queryParamsWeiCat).then(
             (response) => {
-              debugger
               let list1= response.rows;
               let historyDs = ds2[0].split(" ")[0]
               let historyDs1 = ds1[0].split(" ")[0]
               let todayListDs1 = ds[0].split(" ")[0]
-              debugger
               for (let i = 0; i < list1.length; i++) {
                 if(list1[i].carTime.indexOf(ds2[0].split(" ")[0])>-1){
 
@@ -715,7 +701,6 @@
         }
 
         await analysisDataByTime(this.addDateRange(json, ds)).then((response) => {
-          console.log(response,"response")
           if (response.code == 200) {
             for (let i = 0; i < response.data.length; i++) {
               const randomNumber = Math.floor(Math.random() * 70);

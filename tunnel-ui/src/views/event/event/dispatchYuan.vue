@@ -967,9 +967,7 @@ export default {
         eventTypeId: this.eventForm.eventTypeId,
       }).then((res) => {
         let list = this.handleTree(res.data, "flowId", "flowPid");
-        console.log(list, "事件处置");
         //  for(let item of list){
-        //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
         for (var i = 0; i < list.length; i++) {
           for (var j = i; j < list.length - 1; j++) {

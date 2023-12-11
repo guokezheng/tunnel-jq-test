@@ -519,11 +519,9 @@ export default {
       // this.title = "新增";
       this.isAdd = !this.dataForm.id;
       this.dialogVisible = true;
-      console.log(this.dataForm.id, "这是模板id");
       this.templateDelContent = [];
       this.$nextTick(() => {
         if (this.isAdd) {
-          console.log("-----------------------");
           this.$refs["dataForm"] && this.$refs["dataForm"].resetFields();
           this.dataForm.id = "";
           this.dataForm = {};
@@ -601,7 +599,6 @@ export default {
     },
     // 获取信息
     // getInfo() {
-    //   console.log("=================")
     //   getTemplateInfo(this.dataForm.id).then((data) => {
     //     this.dataForm = data.data;
     //     this.width = this.dataForm.screenSize.split("*")[0];
@@ -752,7 +749,6 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      // console.log(alignmentNum,"alignmentNum")
       this.alignmentNum = alignmentNum;
       var divContent2 = document.getElementsByClassName("blackBoard2");
       var textBoard2 = document.getElementsByClassName("textBoard2");
@@ -762,15 +758,8 @@ export default {
       // // 获取黑盒子长宽
       // let divWidth = divContent2[0].offsetWidth;
       // let divHeight = divContent2[0].offsetHeight;
-      // console.log(
-      //   document.getElementsByClassName("textBoard2"),
-      //   "document.getElementsByClassName('textBoard2')"
-      // );
       // var args =  [...divContent2];
-      // console.log(divContent2, "divContent2");
-      // console.log(args, "divContent2");
 
-      // console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
         // 左对齐
         case 1:

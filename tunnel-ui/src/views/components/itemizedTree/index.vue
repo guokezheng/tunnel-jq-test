@@ -185,7 +185,6 @@ export default {
     },
     //默认选中--复选框
     showCheckBox() {
-      console.log("11111111111");
       if (this.show_checkbox) {
         //默认全选
         if (this.default_check_all) {

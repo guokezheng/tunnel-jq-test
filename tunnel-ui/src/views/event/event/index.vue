@@ -940,7 +940,6 @@ export default {
     getEventMsg() {
       // 获取事件预警信息
       getTodayEventCount().then((result) => {
-        console.log(result, "11111111111111");
         this.eventMsg = result.data;
         this.$forceUpdate();
       });

@@ -1681,7 +1681,6 @@ export default {
       }).then((res) => {
         let list = this.handleTree(res.data, "flowId", "flowPid");
         //  for(let item of list){
-        //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
         for (var i = 0; i < list.length; i++) {
           for (var j = i; j < list.length - 1; j++) {
@@ -1701,7 +1700,6 @@ export default {
                   Number(list[i].children[b + 1].flowSort)
                 ) {
                   const temp = list[i].children[a];
-                  // console.log(temp,"temptemptemptemptemptemp")
                   list[i].children[a] = list[i].children[b + 1];
                   list[i].children[b + 1] = temp;
                 }
@@ -1713,13 +1711,11 @@ export default {
         this.incHandList.map((item) => {
           if (item.children) {
             item.children.map((res) => {
-              // console.log(res);
               // if (res.eqTypeId == 29) {
               //   this.clickEqType = 29;
               // }
             });
           }
-          // console.log(item);
         });
         this.$nextTick(() => {
           let heightBox = document.querySelectorAll(".heightBox > *");

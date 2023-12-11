@@ -318,7 +318,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND et.eq_system = #{eqSystemType}
             AND sfl.fault_status = #{faultStatus}
             <if test="tunnelId != null and tunnelId != ''">
-                AND sfl.tunnel_id = #{tunnelId}
+                AND sd.eq_tunnel_id = #{tunnelId}
             </if>
             GROUP BY
             et.eq_system

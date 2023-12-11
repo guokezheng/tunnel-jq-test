@@ -915,9 +915,15 @@ public class RadarEventServiceImpl implements RadarEventService {
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
                     if (map.get("data") != null || !"".equals(map.get("data"))) {
-                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()) == 0 ? 1 : 0);
+                        if(map.get("itemId") != null && !"".equals(map.get("itemId"))){
+                            Integer itemId = Integer.valueOf(map.get("itemId").toString());
+                            if(itemId != DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode() && itemId != DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode()){
+                                continue;
+                            }
+                        }
+                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
                     } else {
-                        deviceData.put("runStatus", 0);
+                        continue;
                     }
                 }
             } else if ("5".equals(sdRadarDevice.getDeviceType()) || "15".equals(sdRadarDevice.getDeviceType()) || "28".equals(sdRadarDevice.getDeviceType()) || "18".equals(sdRadarDevice.getDeviceType())) {

@@ -400,9 +400,7 @@
               const param = {
                 objectData: JSON.stringify(objAll)
               }
-              console.log(param, "param")
               gantryVmsInfo(param).then((res)=>{
-                console.log(res,"res")
                 loading.close();
               }).catch(() => {
                 loading.close();
@@ -412,8 +410,6 @@
             // let parameters = []
             // parameters.push(obj)
 
-            // console.log(arr,"确定发布情报板arr");
-            // console.log(parameters,"确定发布情报板parameters");
 
             // var content = "";
             // var playList = "[Playlist]<r><n>";
@@ -424,7 +420,6 @@
             // var Item_No = Item_Start + length + "<r><n>";
             // var value = "";
             // content += Item_No;
-            // console.log("确定发布情报板111111");
             // for (var i = 0; i < this.contentList.length; i++) {
             //   value = ("000" + i).slice(-3);
             //   content += Item_Content + value + "=";
@@ -449,15 +444,12 @@
             //   if (i + 1 != this.contentList.length) {
             //     content += "<r><n>";
             //   }
-            //   console.log(content, "content");
             // }
-            // console.log("确定发布情报板22222222");
             // let protocolType = "GUANGDIAN_V33";
             // let deviceld = this.associatedDeviceId.toString();
             // uploadBoardEditInfo(deviceld, protocolType, content).then(
             //   (response) => {
             //     this.$modal.msgSuccess("发布成功");
-            //     console.log(response, "返回结果");
             //   }
             // );
             // .catch(() => {

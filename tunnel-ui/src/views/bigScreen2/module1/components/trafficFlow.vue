@@ -357,7 +357,6 @@
       //   // });
       // },
       initEchats2(xData,yData) {
-        console.log(xData,yData,"_____")
         if (
           this.myChart2 != null &&
           this.myChart2 != "" &&
@@ -367,7 +366,6 @@
           this.myChart2.dispose();
         }
         let myChart2 = this.$refs.top10;
-        console.log(myChart2,"myChart2")
         if (!myChart2) {
           return
         }

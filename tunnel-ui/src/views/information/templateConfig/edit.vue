@@ -1100,9 +1100,7 @@ export default {
       let params = {
         vmsSize: this.dataForm.screenSize,
       };
-      console.log(params, "params");
       getGalleryList(params).then((data) => {
-        console.log(data, "data");
 
         if (!data) {
           return;
@@ -1118,7 +1116,6 @@ export default {
           dataA.id - dataB.id;
         });
         this.imgUrl.push(...list);
-        console.log(this.imgUrl, "this.imgUrl");
       });
     },
   },

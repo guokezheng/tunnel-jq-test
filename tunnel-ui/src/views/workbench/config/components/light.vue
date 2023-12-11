@@ -248,10 +248,8 @@
             } else {
               this.ipShow = false
             }
-            console.log(this.ipShow, "this.ipShow")
             // 查询设备当前状态 --------------------------------
             // getDevice(this.eqInfo.equipmentId).then((response) => {
-            //   console.log(response, "查询设备当前状态");
             //   this.stateForm.state = response.data.state;
             this.getEqTypeStateIcon();
             // });

@@ -830,8 +830,6 @@
     },
     methods: {
       init(workBenchProp) {
-        console.log(workBenchProp, "workBenchProp");
-        // console.log(this.robotPositon,"robotPositon11111")
         window.clearInterval(this.robotTimer);
         this.robotTimer = null;
         this.getDict();
@@ -843,7 +841,6 @@
         this.getEqTypeStateIcon();
         this.lightSwitchFunc();
         this.getDictList();
-        // console.log(this.dict.type.sd_sys_name, "this.dict.type.sd_sys_name");
         // 隧道调取数据两秒一次
         this.timer = setInterval(() => {
           setTimeout(this.getRealTimeData, 0);
@@ -851,7 +848,6 @@
         }, 10000);
         window.addEventListener("click", this.otherClose);
         // if (this.$refs["divRoller"]) {
-        //   console.log(111111111)
         // 获取指定元素
         // this.scrollview = this.$refs["divRoller"];
         // // 添加滚动监听，该滚动监听了拖拽滚动条
@@ -862,7 +858,6 @@
           this.robotShow = true
           this.robotTimer = setInterval(() => {
             this.robotPositon = this.$parent.robotPositon
-            // console.log(this.robotPositon, "this.robotPositonsetInterval")
           }, 2000);
         } else {
           this.robotShow = false

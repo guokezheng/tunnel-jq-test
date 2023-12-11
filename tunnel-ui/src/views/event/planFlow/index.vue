@@ -294,7 +294,6 @@ export default {
     // 查询预案流程树
     selectTypeFlowList() {
       getTypeFlowList().then(res => {
-        console.log(res,"1111111111111111111")
         const dataList = this.handleTree(res,"id","pid");
         for(var i = 0; i < dataList.length; i++){
           for(var j = i; j < dataList.length - 1; j++){
@@ -320,7 +319,6 @@ export default {
           }
         }
         this.fromData = dataList;
-        console.log(this.fromData,"2222222222")
       })
     },
 

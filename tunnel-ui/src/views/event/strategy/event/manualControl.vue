@@ -317,7 +317,6 @@ export default {
       // 事件类型
       let data = {prevControlType:"1"};
       listEventType(data).then(res=>{
-        console.log(res.rows,']]]]]]]]]]]]]]]]]]')
         this.eventTypeList = res.rows;
       })
       this.getEquipmentType();

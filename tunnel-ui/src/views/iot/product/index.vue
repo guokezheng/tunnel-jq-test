@@ -394,7 +394,6 @@ export default {
     });
     this.getDicts("iot_product_net_type").then(response => {
       this.netTypeOptions = response.data;
-      console.log(this.netTypeOptions,'111111111111');
     });
     this.getDicts("iot_category_field").then(response => {
       this.categoryFieldOptions = response.data;

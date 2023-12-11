@@ -1257,8 +1257,8 @@ public class BoardController extends BaseController {
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
                 String content = jsonObject.getString("CONTENT");
-                content = content.replaceAll("<n>", "\n");
-                content = content.replaceAll("<r>", "\n");
+                content = content.replaceAll("<n>", "<br>");
+                content = content.replaceAll("<r>", "\r");
                 jsonObject.put("CONTENT",content);
                 array.add(jsonObject);
             }

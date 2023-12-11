@@ -52,10 +52,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -657,5 +654,10 @@ public class SdEventController extends BaseController
         sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
         sdEventMapper.insertSdEvent(sdEvent);
         return AjaxResult.success();
+    }
+
+    @PostMapping("/upload")
+    public void upload(@RequestBody String eventJson){
+        sdEventService.upload(eventJson);
     }
 }

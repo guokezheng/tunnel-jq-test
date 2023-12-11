@@ -36,6 +36,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.business.utils.work.CustomXWPFDocument;
@@ -150,6 +151,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private ISdTunnelsService tunnelsService;
+
+    @Autowired
+    private ISdEventTypeService sdEventTypeService;
 
     /**
      * 查询事件管理
@@ -732,6 +736,122 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public void eventDemonstrate(String hyData) {
         protocolAnalysis(hyData);
+    }
+
+    @Override
+    public void upload(String eventJson) {
+        JSONObject jsonObject = JSONObject.parseObject(eventJson);
+        //隧道id
+        String tunnelId = jsonObject.getString("tunnelId");
+        //隧道方向
+        String direction = jsonObject.getString("direction");
+        //事件id
+        Long eventId = jsonObject.getLongValue("eventId");
+        SdEvent data = sdEventMapper.selectSdEventById(eventId);
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setId(eventId);
+        sdEvent.setTunnelId(tunnelId);
+        sdEvent.setEventGrade("1");
+        sdEvent.setEventTypeId(eventTypeCompare(jsonObject.getString("eventType")));
+        sdEvent.setEventLatitude(jsonObject.getString("lat"));
+        sdEvent.setEventLongitude(jsonObject.getString("lon"));
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = sdEventTypeService.getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = tunnelsService.getTunnelNameMap();
+        sdEvent.setEventTitle(getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap));
+        sdEvent.setStartTime(jsonObject.getString("startTime"));
+        sdEvent.setEventTime(DateUtils.parseDate(sdEvent.getStartTime()));
+        sdEvent.setLaneNo(jsonObject.getString("laneNo"));
+        sdEvent.setEventSource("1");
+        sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
+        sdEvent.setStakeNum(jsonObject.getString("stakeNum"));
+        sdEvent.setDirection(direction);
+        sdEvent.setConfidenceList(jsonObject.getString("plate"));
+        if(data != null){
+            sdEvent.setEventState(data.getEventState());
+            sdEventMapper.updateSdEvent(sdEvent);
+            if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+                sdEventMapper.updateEventConfidence(sdEvent);
+            }
+        }else {
+            insertSdEvent(sdEvent);
+            if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+                sdEventMapper.insertEventConfidence(sdEvent);
+            }
+            //将事件推送到前端展示
+            /*eventSendWeb(jsonObject);*/
+                /*Long typeId = sdEvent.getEventTypeId();
+                if(typeId == 1L || typeId == 2L || typeId == 11L || typeId == 12L || typeId == 13L || typeId == 14L
+                        || typeId == 18L || typeId == 19L || typeId == 20L){
+                    //如果是未处理状态改为处理中
+                    if(sdEvent.getEventState().equals(EventStateEnum.unprocessed.getCode())){
+                        sdEvent.setEventState(EventStateEnum.processing.getCode());
+                        sdEvent.setUpdateTime(DateUtils.getNowDate());
+                    }
+                    String[] split = sdEvent.getEventTitle().split(",");
+                    String eventTitle = getEventTitle(sdEvent);
+                    sdEvent.setEventTitle(split[0] + "," + eventTitle);
+                    noNullStringAttr(sdEvent);
+                    Map<String, Object> map = setEventData(sdEvent);
+                    //向物联推送事件
+                    threadPoolTaskExecutor.execute(()->{
+                        sendWlEvent(map);;
+                    });
+                    //radarEventServiceImpl.sendDataToOtherSystem(map);
+                }*/
+        }
+        //查询视频图片
+        List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(eventId.toString());
+        //事件图片-视频
+        String[] imgList = new String[3];
+        String[] vedioList = new String[2];
+        String imagePath1 = jsonObject.getString("imagePath1");
+        String imagePath2 = jsonObject.getString("imagePath2");
+        String imagePath3 = jsonObject.getString("imagePath3");
+        String vedioPath = jsonObject.getString("videoPath");
+        String vedioPath2 = jsonObject.getString("videoPath2");
+        imgList[0] = imagePath1;
+        imgList[1] = imagePath2;
+        imgList[2] = imagePath3;
+        vedioList[0] = vedioPath;
+        vedioList[1] = vedioPath2;
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        for(String img:imgList){
+            if(img == null || "".equals(img)){
+                continue;
+            }
+            int count = checkImageData(list, img);
+            if(count == 1){
+                continue;
+            }
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(img);
+            image.setBusinessId(eventId.toString());
+            image.setImgType("0");
+            image.setCreateTime(DateUtils.getNowDate());
+            imageList.add(image);
+        }
+        for(String vedio:vedioList){
+            if(vedio == null || "".equals(vedio)){
+                continue;
+            }
+            int count = checkImageData(list, vedio);
+            if(count == 1){
+                continue;
+            }
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(vedio);
+            image.setBusinessId(eventId.toString());
+            image.setImgType("1");
+            image.setCreateTime(DateUtils.getNowDate());
+            imageList.add(image);
+        }
+        if(imageList.size() == 0){
+            return;
+        }
+        //将图片视频存入
+        sdTrafficImageMapper.brachInsertFaultIconFile(imageList);
     }
 
     /**
@@ -2273,5 +2393,53 @@ public class SdEventServiceImpl implements ISdEventService {
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());
         }
+    }
+
+    /**
+     * 事件类型对应
+     * @param type
+     * @return
+     */
+    public Long eventTypeCompare(String type){
+        Long eventType = 0L;
+        switch (type){
+            case "1" :
+                eventType = 4L;
+                break;
+            case "3" :
+                eventType = 1L;
+                break;
+            case "6" :
+                eventType = 14L;
+                break;
+            case "8" :
+                eventType = 11L;
+                break;
+            case "16" :
+                eventType = 13L;
+                break;
+            case "19" :
+                eventType = 15L;
+                break;
+            default:
+                eventType = Long.valueOf(type);
+                break;
+        }
+        return eventType;
+    }
+
+    /**
+     * 查询是否存在相同视频图片
+     * @param list
+     * @param data
+     * @return
+     */
+    public int checkImageData(List<SdTrafficImage> list, String data){
+        for(SdTrafficImage imageData : list){
+            if(data.equals(imageData.getImgUrl())){
+                return 1;
+            }
+        }
+        return 0;
     }
 }

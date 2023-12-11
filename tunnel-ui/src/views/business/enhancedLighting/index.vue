@@ -96,32 +96,46 @@
         :formatter="getModeType"
       />
       <!-- <el-table-column label="时间段配置参数" align="center" prop="timeSlot" /> -->
-      <el-table-column
-        label="当前亮度值"
-        align="center"
-        prop="beforeLuminance"
-      />
-      <el-table-column
-        label="最大车流量(辆)"
-        align="center"
-        prop="maxTrafficFlow"
-      />
+<!--      <el-table-column-->
+<!--        label="当前亮度值"-->
+<!--        align="center"-->
+<!--        prop="beforeLuminance"-->
+<!--      />-->
+<!--      <el-table-column-->
+<!--        label="最大车流量(辆)"-->
+<!--        align="center"-->
+<!--        prop="maxTrafficFlow"-->
+<!--      />-->
       <el-table-column label="最小亮度值" align="center" prop="minLuminance" />
-      <el-table-column
-        label="响应时长(毫秒)"
-        align="center"
-        prop="respondTime"
-      />
-      <el-table-column
-        label="调光最大区间"
-        align="center"
-        prop="maxLuminanceRange"
-      />
-      <el-table-column
-        label="调光最小区间"
-        align="center"
-        prop="minLuminanceRange"
-      />
+<!--      <el-table-column-->
+<!--        label="响应时长(毫秒)"-->
+<!--        align="center"-->
+<!--        prop="respondTime"-->
+<!--      />-->
+<!--      <el-table-column-->
+<!--        label="调光最大区间"-->
+<!--        align="center"-->
+<!--        prop="maxLuminanceRange"-->
+<!--      />-->
+<!--      <el-table-column-->
+<!--        label="调光最小区间"-->
+<!--        align="center"-->
+<!--        prop="minLuminanceRange"-->
+<!--      />-->
+<!--      <el-table-column label="状态" align="center" prop="schedulerTime"  v-if="tableType != 'shoudong'" >-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-switch-->
+<!--            v-model="scope.row.strategyState"-->
+<!--            active-color="#39ADFF"-->
+<!--            inactive-color="#ccc"-->
+<!--            active-value="0"-->
+<!--            inactive-value="1"-->
+<!--            v-hasPermi="['system:strategy:state']"-->
+<!--            @change="changeStrategyState(scope.row,scope.row.index)"-->
+<!--          >-->
+<!--          </el-switch>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column
         label="操作"
         align="center"
@@ -521,14 +535,14 @@ export default {
       //根据隧道
       directionEqList: [],
       modeTypeList: [
-        {
-          name: "定时模式",
-          value: 0,
-        },
-        {
-          name: "洞外亮度",
-          value: 1,
-        },
+        // {
+        //   name: "定时模式",
+        //   value: 0,
+        // },
+        // {
+        //   name: "洞外亮度",
+        //   value: 1,
+        // },
         {
           name: "车来灯亮",
           value: 2,

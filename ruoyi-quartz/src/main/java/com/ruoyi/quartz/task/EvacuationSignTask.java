@@ -224,12 +224,12 @@ public class EvacuationSignTask {
             data.setData(value);
             data.setUpdateTime(new Date());
             deviceDataMapper.updateSdDeviceData(data);
-            sendData.pushDevicesDataNowTime(data);
+            sendData.pushDevicesDataNowTime(data,sdDevices);
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setCreateTime(new Date());
             deviceDataMapper.insertSdDeviceData(sdDeviceData);
-            sendData.pushDevicesDataNowTime(sdDeviceData);
+            sendData.pushDevicesDataNowTime(sdDeviceData,sdDevices);
         }
     }
 

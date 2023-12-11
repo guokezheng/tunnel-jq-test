@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.serotonin.modbus4j.ModbusMaster;
-import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
+import com.serotonin.modbus4j.code.DataType;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
@@ -194,12 +192,21 @@ public class PlcTcpControl implements GeneralControlBean {
         String pointConfig = devicePointPlc.getPointConfig();
         JSONArray jsonArray = JSONArray.parseArray(pointConfig);
         JSONObject jsonConfig = new JSONObject();
-        for(Object obj : jsonArray){
-            JSONObject jsonObject = (JSONObject) obj;
-            String stateConfig = jsonObject.getString("state");
-            if(state.equals(stateConfig)){
-                jsonConfig = jsonObject;
-                break;
+
+        // 电伴热 直接写入值
+        if(sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.DIAN_BAN_RE.getCode()).longValue()){
+            //jsonConfig.put("value", NumberSystemConvert.convertFloatToHex(Float.parseFloat(state)));
+            //jsonConfig.put("value",  Float.floatToIntBits(Float.parseFloat(state)));
+            jsonConfig.put("value",  state);
+
+        }else{
+            for(Object obj : jsonArray){
+                JSONObject jsonObject = (JSONObject) obj;
+                String stateConfig = jsonObject.getString("state");
+                if(state.equals(stateConfig)){
+                    jsonConfig = jsonObject;
+                    break;
+                }
             }
         }
 
@@ -218,12 +225,15 @@ public class PlcTcpControl implements GeneralControlBean {
         String functionCode = devicePointPlc.getFunctionCode();
 
         int writeOffset = Integer.valueOf(address);
+        //数据类型
+        String dataType = devicePointPlc.getDataType();
 
         Map<String,Object> itemMap = new HashMap<>();
         itemMap.put("ip",ip);
         itemMap.put("portNum",portNum);
         itemMap.put("fEqId",fEqId);
         itemMap.put("offset",writeOffset);
+        itemMap.put("dataType",dataType);
         itemMap.put("writeValue",controlState);
         itemMap.put("functionCode",functionCode);
         itemMap.put("priority",PlcTcpTask.writePriority);
@@ -425,11 +435,20 @@ public class PlcTcpControl implements GeneralControlBean {
         int offset = Integer.valueOf(offsetStr);
         String writeValue =  String.valueOf(map.get("writeValue"));
         String functionCode = String.valueOf(map.get("functionCode"));
+        String dataType = String.valueOf(map.get("dataType"));
 
 //        ModbusMaster master = masterTcp.getSlave("127.0.0.1", 502);
        ModbusMaster master = masterTcp.getSlave(ip, portNum);
 
-        boolean result = Modbus4jWriteUtil.writeData(master,offset,writeValue,functionCode);
+       // 电伴热写入
+       // 8 FOUR_BYTE_FLOAT
+       if(dataType.equals(DataType.FOUR_BYTE_FLOAT+"")){
+           Modbus4jWriteUtil.writeHoldingRegister(master,1,offset,Float.parseFloat(writeValue), DataType.FOUR_BYTE_FLOAT);
+       }else{
+           boolean result = Modbus4jWriteUtil.writeData(master,offset,writeValue,functionCode);
+       }
+
+
 
     }
 

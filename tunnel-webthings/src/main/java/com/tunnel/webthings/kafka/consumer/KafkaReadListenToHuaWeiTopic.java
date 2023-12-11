@@ -586,7 +586,7 @@ public class KafkaReadListenToHuaWeiTopic {
                 SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
                 JSONObject jsonObject1 = devStatus(sdDevices1);
                 //将实时设备状态数据推送至高速云
-                kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObject1.toString());
+                //kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObject1.toString());
             }
         }
     }
@@ -712,7 +712,7 @@ public class KafkaReadListenToHuaWeiTopic {
             }
             JSONObject jsonObjectDev = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(itemId).getDeviceTypeId() : sdDevices1.getEqType(), objectDev);
             //将设备运行状态上传至高速云
-            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectDev.toString());
+            //kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectDev.toString());
         }
     }
 
@@ -767,10 +767,10 @@ public class KafkaReadListenToHuaWeiTopic {
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             JSONObject jsonObjectCo = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(coId).getDeviceTypeId() : sdDevices1.getEqType(), objectCo);
             //将co数据上传至高速云
-            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectCo.toString());
+            //kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectCo.toString());
             //将vi数据上传至高速云
             JSONObject jsonObjectVi = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(viId).getDeviceTypeId() : sdDevices1.getEqType(), objectVi);
-            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectVi.toString());
+            //kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectVi.toString());
         }
     }
 
@@ -826,8 +826,8 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObjectFs = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(fsId).getDeviceTypeId() : sdDevices1.getEqType(), objectFs);
             JSONObject jsonObjectFx = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(fxId).getDeviceTypeId() : sdDevices1.getEqType(), objectFx);
             //将风速风向数据上传至高速云
-            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectFs.toString());
-            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectFx.toString());
+            //kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectFs.toString());
+            //kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectFx.toString());
         }
     }
 
@@ -1466,7 +1466,7 @@ public class KafkaReadListenToHuaWeiTopic {
                         //0：正常 1：报警
                         item.setData("0");
                         sdDeviceDataMapper.updateSdDeviceData(item);
-                        sendData.pushDevicesDataNowTime(sdDeviceData);
+                        sendData.pushDevicesDataNowTime(sdDeviceData, sdDevices);
                     }
                     //复位清除预警
                     SdEvent sdEvent = new SdEvent();
@@ -1484,13 +1484,13 @@ public class KafkaReadListenToHuaWeiTopic {
                     sdDeviceData.setCreateTime(new Date());
                     sdDeviceData.setItemId(deviceTypeItem.getId());
                     sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
-                    sendData.pushDevicesDataNowTime(sdDeviceData);
+                    sendData.pushDevicesDataNowTime(sdDeviceData, sdDevices);
                 } else {
                     SdDeviceData devData = sdDeviceDataList.get(0);
                     devData.setUpdateTime(new Date());
                     devData.setData("1");
                     sdDeviceDataMapper.updateSdDeviceData(devData);
-                    sendData.pushDevicesDataNowTime(devData);
+                    sendData.pushDevicesDataNowTime(devData, sdDevices);
                 }
             } else {
                 log.error("当前报文格式异常，请检查设备！");

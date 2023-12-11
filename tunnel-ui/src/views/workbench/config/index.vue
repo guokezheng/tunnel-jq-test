@@ -342,7 +342,6 @@
                     </div>
                     <div v-show="
                         (item.eqType != 7 &&
-                          item.eqType != 15 &&
                           item.eqType != 8 &&
                           item.eqType != 9 &&
                           item.display == true) ||
@@ -532,7 +531,12 @@
                       <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 41">
                         {{ item.num }}
                       </label>
-                      
+                      <!-- 水池液位 -->
+                      <label style="color: #79e0a9" class="labelClass" v-if="item.eqType == 15">
+                        {{ item.num }}
+                      </label>
+
+
                       <!-- 风机 -->
                       <label style="color: #f2a520" class="labelClass labelClass9"
                         v-if="item.eqType == 10">
@@ -864,6 +868,8 @@
     <com-vehicleDetec class="comClass" ref="vehicleDetecRef"></com-vehicleDetec>
     <com-callPolice class="comClass" ref="callPoliceRef"></com-callPolice>
     <com-xfp class="comClass" ref="xfpRef"></com-xfp>
+    <com-dianBanRe class="comClass" ref="comDianBanReRef"></com-dianBanRe>
+
     <div v-if="robotIframeShow">
       <robot class="comClass robotHtmlBox"></robot>
       <img @click="dialogClose" src="../../../assets/cloudControl/closeIcon.png" class="closeRobot" />
@@ -1287,6 +1293,7 @@
   import robot from "@/views/workbench/config/components/robotManagement"; //机器人弹窗
   import comKzq from "@/views/workbench/config/components/kzq"; //鸿蒙控制器
   import comXfp from "@/views/workbench/config/components/xfp"; //消防炮
+  import comDianBanRe from "@/views/workbench/config/components/dianbanre"; //电伴热
 
   import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
   import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
@@ -1409,6 +1416,7 @@
       comDeawer, //抽屉
       comFooter, //底部echarts
       comXfp,
+      comDianBanRe,
       jointControlStrategy,
       comControl,
       offlineDeviceModal
@@ -2158,7 +2166,7 @@
 
         if (this.manageStation == "1") {
           this.tunnelQueryParams.deptId = this.$cache.local.get("deptId").split(",")
-          
+
         }
         this.getTunnelList();
       },
@@ -2713,14 +2721,14 @@
 
             if (type == "content") {
               return arr;
-            } 
+            }
             // else if (type == "fontSize") {
             //   if (eqType && eqType == 16) {
             //     return fontS / 2;
             //   } else if (eqType && eqType == 36) {
             //     return fontS / 4;
             //   }
-            // } 
+            // }
             else if (type == "array") {
               return array;
             }
@@ -2740,7 +2748,7 @@
               }
             } else if (type == "content") {
               return "山东高速欢迎您";
-            } 
+            }
             // else if (type == "fontSize") {
             //   return 15;
             // }
@@ -3150,6 +3158,8 @@
         this.$refs.radioRef.handleClosee();
         this.$refs.kzqRef.handleClosee();
         this.$refs.xfpRef.handleClosee();
+        this.$refs.comDianBanReRef.handleClosee();
+
 
         this.robotIframeShow = false;
       },
@@ -4390,6 +4400,7 @@
                   let arr = [
                     "5",
                     "14",
+                    "15",
                     "17",
                     "18",
                     "19",
@@ -4408,6 +4419,7 @@
                     "40",
                     "41",
                     "42",
+                    "44",
                     "47",
                     "48",
                   ];
@@ -4465,6 +4477,15 @@
                               "温度：" + deviceData.temperature +
                               " 湿度：" + deviceData.humidity
                           }
+                        } else if (deviceData.eqType == 15) {
+                          if (deviceData.state) {
+                            if(deviceData.eqTunnelId=="JQ-WeiFang-JiuLongYu-MAS"||deviceData.eqTunnelId=="JQ-WeiFang-JiuLongYu-JJL"){
+                              deviceData.state =  parseFloat(deviceData.state)/100
+                            }
+                            console.log(this.selectedIconList[j])
+                            this.selectedIconList[j].num =
+                              "液位：" +  parseFloat(deviceData.state).toFixed(2) + "m";
+                          }
                         }
                       }
                     }
@@ -4485,7 +4506,7 @@
                             this.selectedIconList[j].electricity =
                               deviceData.electricity;
                           } else if (deviceData.eqType == 10) {
-                            this.selectedIconList[j].electricity = 
+                            this.selectedIconList[j].electricity =
                               deviceData.mode == "远程" ? "" : deviceData.mode
                               // + " " + deviceData.electricity;
                           }
@@ -4878,6 +4899,14 @@
             } else if (item.eqType == 7 || item.eqType == 9) {
               // 照明
               this.$refs.lightRef.init(
+                this.eqInfo,
+                this.brandList,
+                this.directionList,
+                this.eqTypeDialogList
+              );
+            } else if (item.eqType == 44) {
+              // 电伴热
+              this.$refs.comDianBanReRef.init(
                 this.eqInfo,
                 this.brandList,
                 this.directionList,

@@ -226,7 +226,7 @@
 
 
     <select id="selectDevicePointByGroupNum" resultType="java.util.Map">
-        SELECT d.f_eq_id fEqId,p.function_code functionCode,p.data_length dataLength,min(p.address + 0) minAddress,max(p.address + 0) maxAddress,d.f_eq_type fEqType
+        SELECT d.f_eq_id fEqId,p.function_code functionCode,p.data_type as dataType,p.data_length dataLength,min(p.address + 0) minAddress,max(p.address + 0) maxAddress,d.f_eq_type fEqType
         FROM sd_device_point_plc p
         left join sd_devices  d on p.eq_id = d.eq_id
         where p.is_reserved = #{pointType}
@@ -240,6 +240,6 @@
                 #{item}
             </foreach>
         </if>
-        group by d.f_eq_id ,p.function_code,p.data_length
+        group by d.f_eq_id,p.data_type,p.function_code,p.data_length
     </select>
 </mapper>

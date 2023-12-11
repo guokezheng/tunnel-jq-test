@@ -1,29 +1,24 @@
 package com.tunnel.deal.vehicleinspection;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.Threads;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
-import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
+import com.tunnel.business.mapper.enhancedLighting.SdEnhancedLightingConfigMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
-import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
 import com.tunnel.business.utils.util.RadixUtil;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
@@ -44,7 +39,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.InetSocketAddress;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +51,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
     private SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
 
-    private ISdEnhancedLightingConfigService sdEnhancedLightingConfigService = SpringUtils.getBean(ISdEnhancedLightingConfigService.class);
+    private SdEnhancedLightingConfigMapper sdEnhancedLightingConfigService = SpringUtils.getBean(SdEnhancedLightingConfigMapper.class);
 
     private GeneralControlService generalControlService = SpringUtils.getBean(GeneralControlService.class);
 

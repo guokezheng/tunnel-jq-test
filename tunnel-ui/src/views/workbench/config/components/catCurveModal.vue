@@ -243,17 +243,17 @@
         directionOptions: [],
         //车辆 x 时间
         XData: [],
-        //前天车辆数
-        yData1: [],
         //昨天车辆数
+        yData1: [],
+        //前天车辆数
         yData2: [],
         //今天车辆数
         yData3: [],
         //车辆 x 时间
         XDataOne: [],
-        //前天车辆数
-        yDataOne1: [],
         //昨天车辆数
+        yDataOne1: [],
+        //前天车辆数
         yDataOne2: [],
         //今天车辆数
         yDataOne3: [],
@@ -605,45 +605,11 @@
         let ds2 = this.getCatdate(threeDaysAgo); //昨天
         this.catFilesModel.direction = "2";
         this.catFilesModelWei.direction = "1";
-        // debugger
-        // if (!!row) {
-        //   //首次
-        //   // 济南方向
-        //   this.catFilesModel.tunnelId = row.tunnelId;
-        //   this.catFilesModel.direction = "2";
-        //   let tunnel = this.tunnelData.find(
-        //     (tunnelItem) => row.tunnelId == this.catFilesModel.tunnelId
-        //   );
-        //   console.log(tunnel);
-        //   // debugger
-        //   //车辆
-        //   let queryParams = {
-        //     tunnelName: row.tunnelName,
-        //     pageSize: 1,
-        //     pageNum: 2,
-        //     direction: this.catFilesModel.direction,
-        //     modeType: 1,
-        //   };
-        //   this.catListConfig(queryParams);
-        //
-        //   // 潍坊方向
-        //   this.catFilesModelWei.tunnelId = row.tunnelId;
-        //   this.catFilesModelWei.direction = "1";
-        //   let tunnelWei = this.tunnelData.find(
-        //     (tunnelItem) => row.tunnelId == this.catFilesModelWei.tunnelId
-        //   );
-        //   console.log(tunnelWei);
-        //   // debugger
-        //   //车辆
-        //   let queryParamsWei = {
-        //     tunnelName: row.tunnelName,
-        //     pageSize: 1,
-        //     pageNum: 2,
-        //     direction: this.catFilesModelWei.direction,
-        //     modeType: 1,
-        //   };
-        //   this.catListConfigWei(queryParamsWei);
-        // }
+
+        if (!!row) {
+          this.catFilesModel.tunnelId = row.tunnelId
+          this.catFilesModelWei.tunnelId = row.tunnelId
+        }
 
         //济南
         let json = {
@@ -655,12 +621,14 @@
           //济南
           let queryParamsCat = {}
           queryParamsCat.tunnelId = this.catFilesModelWei.tunnelId
+          queryParamsCat.modeType = 1
           queryParamsCat.dateType = 1
           queryParamsCat.direction = 2
           queryParamsCat.startDate = ds1[0]
           queryParamsCat.endDate = ds[1]
           queryParamsCat.pageNum = 1
           queryParamsCat.pageSize = 9999
+          this.catListConfig(queryParamsCat)
           trafficVolumeList(queryParamsCat).then(
             (response) => {
               let list1= response.rows;
@@ -693,12 +661,14 @@
           //潍坊
           let queryParamsWeiCat = {}
           queryParamsWeiCat.tunnelId = this.catFilesModelWei.tunnelId
+          queryParamsWeiCat.modeType = 1
           queryParamsWeiCat.dateType = 1
           queryParamsWeiCat.direction = 1
           queryParamsWeiCat.startDate = ds1[0]
           queryParamsWeiCat.endDate = ds[1]
           queryParamsWeiCat.pageNum = 1
           queryParamsWeiCat.pageSize = 9999
+          this.catListConfigWei(queryParamsWeiCat)
           trafficVolumeList(queryParamsWeiCat).then(
             (response) => {
               let list1= response.rows;
@@ -890,20 +860,20 @@
                 smooth: true,
                 data: this.yData1,
               },
-              {
-                name: "历史车辆数",
-                type: "line",
-                color: "#00DCA2",
-                symbol: "circle",
-                symbolSize: [7, 7],
-                itemStyle: {
-                  normal: {
-                    borderColor: "white",
-                  },
-                },
-                smooth: true,
-                data: this.yData2,
-              },
+              // {
+              //   name: "历史车辆数",
+              //   type: "line",
+              //   color: "#00DCA2",
+              //   symbol: "circle",
+              //   symbolSize: [7, 7],
+              //   itemStyle: {
+              //     normal: {
+              //       borderColor: "white",
+              //     },
+              //   },
+              //   smooth: true,
+              //   data: this.yData2,
+              // },
               {
                 name: "今天车辆数",
                 type: "line",
@@ -1024,20 +994,20 @@
                 smooth: true,
                 data: this.yDataOne1,
               },
-              {
-                name: "历史车辆数",
-                type: "line",
-                color: "#00DCA2",
-                symbol: "circle",
-                symbolSize: [7, 7],
-                itemStyle: {
-                  normal: {
-                    borderColor: "white",
-                  },
-                },
-                smooth: true,
-                data: this.yDataOne2,
-              },
+              // {
+              //   name: "历史车辆数",
+              //   type: "line",
+              //   color: "#00DCA2",
+              //   symbol: "circle",
+              //   symbolSize: [7, 7],
+              //   itemStyle: {
+              //     normal: {
+              //       borderColor: "white",
+              //     },
+              //   },
+              //   smooth: true,
+              //   data: this.yDataOne2,
+              // },
               {
                 name: "今天车辆数",
                 type: "line",
@@ -1120,45 +1090,34 @@
         listConfig(queryParams).then((response) => {
           console.log(response,"response车辆")
           if (response.rows.length > 0) {
-            let rows = response.rows[0];
-            this.catFilesModel.id = rows.id;
-            this.catFilesModel.isStatus = rows.isStatus.toString();
-            if (!!rows.beforeLuminance) {
-              this.catFilesModel.beforeLuminance = rows.beforeLuminance;
-            } else {
-              this.catFilesModel.beforeLuminance = "";
-            }
+            for (let i = 0; i < response.rows.length; i++) {
+                let rows = response.rows[i];
+                this.catFilesModel.id = rows.id;
+                this.catFilesModel.isStatus = rows.isStatus.toString();
+                if (!!rows.beforeLuminance) {
+                  this.catFilesModel.beforeLuminance = rows.beforeLuminance;
+                } else {
+                  this.catFilesModel.beforeLuminance = "";
+                }
 
-            let jsonArray = JSON.parse(rows.timeSlot);
-            if (!!jsonArray) {
-              this.formItems = JSON.parse(rows.timeSlot);
-              if (this.formItems) {
-                for (let index = 0; index < this.formItems.length; index++) {
-                  const param = this.formItems[index];
-                  param.startTime = new Date(
-                    ("1970-01-01 " + param.startTime).replace(/-/g, "/")
-                  );
-                  param.endTime = new Date(
-                    ("1970-01-01 " + param.endTime).replace(/-/g, "/")
-                  );
+                let jsonArray = JSON.parse(rows.timeSlot);
+                if (!!jsonArray) {
+                  this.formItems = JSON.parse(rows.timeSlot);
+                  if (this.formItems) {
+                    for (let index = 0; index < this.formItems.length; index++) {
+                      const param = this.formItems[index];
+                      param.startTime = new Date(
+                        ("1970-01-01 " + param.startTime).replace(/-/g, "/")
+                      );
+                      param.endTime = new Date(
+                        ("1970-01-01 " + param.endTime).replace(/-/g, "/")
+                      );
+                    }
+                  }
                 }
               }
-            } else {
-              this.formItems = [{
-                label: "",
-                startTime: "",
-                endTime: "",
-              }, ];
             }
-          } else {
-            this.catFilesModel.id = "";
-            this.catFilesModel.beforeLuminance = "";
-            this.formItems = [{
-              label: "",
-              startTime: "",
-              endTime: "",
-            }, ];
-          }
+
           this.$forceUpdate();
           // this.total = response.total;
           // this.loading = false;
@@ -1168,45 +1127,49 @@
       catListConfigWei(queryParams) {
         listConfig(queryParams).then((response) => {
           if (response.rows.length > 0) {
-            let rows = response.rows[0];
-            this.catFilesModelWei.id = rows.id;
-            this.catFilesModelWei.isStatus = rows.isStatus.toString();
-            if (!!rows.beforeLuminance) {
-              this.catFilesModelWei.beforeLuminance = rows.beforeLuminance;
-            } else {
-              this.catFilesModelWei.beforeLuminance = "";
-            }
+            for (let i = 0; i < response.rows.length; i++) {
+              let rows = response.rows[i];
+              this.catFilesModelWei.id = rows.id;
+              this.catFilesModelWei.isStatus = rows.isStatus.toString();
+              if (!!rows.beforeLuminance) {
+                this.catFilesModelWei.beforeLuminance = rows.beforeLuminance;
+              } else {
+                this.catFilesModelWei.beforeLuminance = "";
+              }
 
-            let jsonArray = JSON.parse(rows.timeSlot);
-            if (!!jsonArray) {
-              this.formItemsWei = JSON.parse(rows.timeSlot);
-              if (this.formItemsWei) {
-                for (let index = 0; index < this.formItemsWei.length; index++) {
-                  const param = this.formItemsWei[index];
-                  param.startTime = new Date(
-                    ("1970-01-01 " + param.startTime).replace(/-/g, "/")
-                  );
-                  param.endTime = new Date(
-                    ("1970-01-01 " + param.endTime).replace(/-/g, "/")
-                  );
+              let jsonArray = JSON.parse(rows.timeSlot);
+              if (!!jsonArray) {
+                this.formItemsWei = JSON.parse(rows.timeSlot);
+                if (this.formItemsWei) {
+                  for (let index = 0; index < this.formItemsWei.length; index++) {
+                    const param = this.formItemsWei[index];
+                    param.startTime = new Date(
+                      ("1970-01-01 " + param.startTime).replace(/-/g, "/")
+                    );
+                    param.endTime = new Date(
+                      ("1970-01-01 " + param.endTime).replace(/-/g, "/")
+                    );
+                  }
                 }
               }
-            } else {
-              this.formItemsWei = [{
-                label: "",
-                startTime: "",
-                endTime: "",
-              }, ];
             }
-          } else {
-            this.catFilesModelWei.id = "";
-            this.catFilesModelWei.beforeLuminance = "";
-            this.formItemsWei = [{
-              label: "",
-              startTime: "",
-              endTime: "",
-            }, ];
           }
+          //    else {
+          //     this.formItemsWei = [{
+          //       label: "",
+          //       startTime: "",
+          //       endTime: "",
+          //     }, ];
+          //   }
+          // } else {
+          //   this.catFilesModelWei.id = "";
+          //   this.catFilesModelWei.beforeLuminance = "";
+          //   this.formItemsWei = [{
+          //     label: "",
+          //     startTime: "",
+          //     endTime: "",
+          //   }, ];
+          // }
           this.$forceUpdate();
           // this.total = response.total;
           // this.loading = false;

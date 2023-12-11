@@ -36,6 +36,15 @@ public class NumberSystemConvert {
     }
 
     /**
+     * 32位浮点数转换16进制
+     * @return
+     */
+    public static String convertFloatToHex(float v){
+        return Integer.toHexString(Float.floatToIntBits(v));
+    }
+
+
+    /**
      * 32位高低字节转换：CDAB
      * @param s
      * @return

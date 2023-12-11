@@ -95,6 +95,7 @@ public class DevDataTask {
         }else if("jly".equals(glzName)){
             list.add(TunnelEnum.JIN_JIA_LOU.getCode());
             list.add(TunnelEnum.MA_AN_SHAN.getCode());
+            list.add(TunnelEnum.HANG_SHAN_DONG.getCode());
         }else if("yts".equals(glzName)){
             list.add(TunnelEnum.SHUANG_ZI_SHAN.getCode());
             list.add(TunnelEnum.YANG_TIAN_SHAN.getCode());
@@ -103,11 +104,13 @@ public class DevDataTask {
         for(String tunnelId : list){
             List<Map<String, Object>> devRealData = sdDeviceDataMapper.getDevRealData(tunnelId);
             devRealData.stream().forEach(item -> {
-                JSONObject definitionObject = definitionParam(item);
-                JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject, item.get("tunnelId").toString());
-                threadPoolTaskExecutor.execute(()->{
-                    sentWlData(jsonObject);
-                });
+                if(item.get("eqType") != null){
+                    JSONObject definitionObject = definitionParam(item);
+                    JSONObject jsonObject = devReaStatus(Long.valueOf(item.get("eqType").toString()), definitionObject, item.get("tunnelId").toString());
+                    threadPoolTaskExecutor.execute(()->{
+                        sentWlData(jsonObject);
+                    });
+                }
             });
         }
         //推送设备在线离线状态
@@ -134,7 +137,7 @@ public class DevDataTask {
         jsonObject.put("deviceId",item.get("deviceId").toString());
         jsonObject.put("deviceData",item.get("deviceData").toString());
         jsonObject.put("deviceItemId",Long.valueOf(item.get("devicesItemId").toString()));
-        jsonObject.put("laneNo",item.get("lane").toString());
+        jsonObject.put("laneNo",item.get("lane") == null ? "" : item.get("lane").toString());
         return jsonObject;
     }
 
@@ -223,8 +226,8 @@ public class DevDataTask {
 
             HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
             try{
-                ResponseEntity<Map> exchange = template.exchange("http://10.166.157.192:31028/prod-api/devices/syncData", HttpMethod.POST, httpEntity, Map.class);
-                Map body = exchange.getBody();
+                ResponseEntity<String> exchange = template.exchange("http://10.166.157.192:31028/prod-api/devices/syncData", HttpMethod.POST, httpEntity, String.class);
+                exchange.getBody();
             }catch(Exception ex){
                 ex.printStackTrace();
             }

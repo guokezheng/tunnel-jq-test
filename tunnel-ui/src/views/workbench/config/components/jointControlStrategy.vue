@@ -549,6 +549,10 @@
           queryParams.direction = this.queryParams.direction;
         }
 
+        if (!!this.queryParams.strategyName) {
+          queryParams.strategyName = this.queryParams.strategyName;
+        }
+
         listStrategy(queryParams)
           .then((response) => {
             this.strategyList = response.rows;
@@ -574,6 +578,9 @@
         }
         if (!!this.queryParams.tunnelId) {
           queryParams.tunnelId = this.queryParams.tunnelId;
+        }
+        if (!!this.queryParams.strategyName) {
+          queryParams.tunnelName = this.queryParams.strategyName;
         }
         //查询出原有配置并且显示
         this.lightStrategyList = [];
@@ -626,6 +633,9 @@
         if (!!this.queryParams.tunnelId) {
           queryParams.tunnelId = this.queryParams.tunnelId;
         }
+        if (!!this.queryParams.strategyName) {
+          queryParams.tunnelName = this.queryParams.strategyName;
+        }
         //查询出原有配置并且显示
         this.catStrategyList = [];
         listConfig(queryParams).then((response) => {
@@ -659,25 +669,6 @@
                 this.catStrategyList.push(response.rows[i]);
               }
             }
-            // this.catStrategyList = []
-            // for (let i = 0; i < response.rows.length; i++) {
-            //   if(response.rows[i].direction==2){
-            //     response.rows[i].directionName = "济南方向"
-            //   }else if(response.rows[i].direction==1){
-            //     response.rows[i].directionName = "潍坊方向"
-            //   }else{
-            //     response.rows[i].directionName = ""
-            //   }
-            //   if(!!response.rows[i].timeSlot){
-            //     let jsonArray = JSON.parse(response.rows[i].timeSlot);
-            //     response.rows[i].instructNum =jsonArray.length
-            //   }else{
-            //     response.rows[i].instructNum =0
-            //   }
-            //
-            //
-            //   this.catStrategyList.push( response.rows[i])
-            // }
           }
           this.$forceUpdate();
         });

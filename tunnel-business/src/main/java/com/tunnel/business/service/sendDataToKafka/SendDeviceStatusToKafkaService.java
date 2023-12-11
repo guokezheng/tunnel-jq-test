@@ -46,15 +46,15 @@ public class SendDeviceStatusToKafkaService {
     @Autowired
     private ISdDevicesService sdDevicesService;
 
-    public void pushDevicesDataNowTime(SdDeviceData data) {
+    public void pushDevicesDataNowTime(SdDeviceData data, SdDevices sdDevices) {
         if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
             /*com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
             jsonObject.put("devNo", "S00063700001980001");
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
             jsonObject.put("deviceData", data);*/
             //参数名定义
-            JSONObject jsonObjectParam = definitionParam(data.getDeviceId(), data.getData(), data.getItemId());
-            JSONObject jsonObject = devReaStatus(jsonObjectParam);
+            JSONObject jsonObjectParam = definitionParam(data.getDeviceId(), data.getData(), data.getItemId(), sdDevices.getLane());
+            JSONObject jsonObject = devReaStatus(jsonObjectParam,sdDevices.getEqTunnelId(),sdDevices.getEqType());
             kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
             log.info("推送物联中台kafka内容：" + jsonObject);
         }
@@ -128,11 +128,12 @@ public class SendDeviceStatusToKafkaService {
      * @param deviceItemId
      * @return
      */
-    public JSONObject definitionParam(String deviceId, String deviceData, Long deviceItemId){
+    public JSONObject definitionParam(String deviceId, String deviceData, Long deviceItemId, String laneNo){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("deviceId",deviceId);
         jsonObject.put("deviceData",deviceData);
         jsonObject.put("deviceItemId",deviceItemId);
+        jsonObject.put("laneNo",laneNo);
         return jsonObject;
     }
 
@@ -142,14 +143,15 @@ public class SendDeviceStatusToKafkaService {
      * @param object
      * @return
      */
-    public JSONObject devReaStatus(JSONObject object){
+    public JSONObject devReaStatus(JSONObject object, String tunnelId, Long eqType){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("devNo", "SDEV00063700001980003");
-        jsonObject.put("devType", "");
+        jsonObject.put("devType", eqType);
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus","1");
         jsonObject.put("netstatus","1");
         jsonObject.put("source","suidao");
+        jsonObject.put("tunnelId",tunnelId);
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
         JSONObject obj = new JSONObject();
         obj.put("deviceData",object);

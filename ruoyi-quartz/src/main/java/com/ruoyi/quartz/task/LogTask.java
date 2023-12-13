@@ -93,8 +93,8 @@ public class LogTask {
                     vmsCount.add(mapv2);
                 }
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("vmsNum",vmsCount);
-                jsonObject.put("phoneNum",phoneCount);
+                jsonObject.put("vmsData",vmsCount);
+                jsonObject.put("phoneData",phoneCount);
                 jsonObject.put("tunnelId",tunnelId);
                 kafkaOneTemplate.send(TopicEnum.TUNNEL_RELEASE_NUM_TOPIC.getCode(),jsonObject.toString());
             }

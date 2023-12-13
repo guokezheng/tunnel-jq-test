@@ -260,7 +260,7 @@ export const singleCat = {
             continue
           }
         }else {
-          if(math.add(math.multiply(+carKm * this.proportion) + 190)>this.tunnelLength || math.add(math.multiply(+carKm * this.proportion) + 200)>this.tunnelLength){
+          if(math.add(math.multiply(+carKm * this.proportion) + 40)>this.tunnelLength || math.add(math.multiply(+carKm * this.proportion) + 40)>this.tunnelLength){
             this.carList.delete(event[i].vehicleLicense);
             continue
           }

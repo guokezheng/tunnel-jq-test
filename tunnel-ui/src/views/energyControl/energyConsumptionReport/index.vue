@@ -8,210 +8,211 @@
         @tab-click="handleClick"
         style="width: 100%"
       >
-        <el-tab-pane label="站点用能" name="second">
-          <el-card class="my-card-height left_tree" shadow="never">
-            <site-tree
-              @nodeCheck="handleCheckChange"
-              @defaultCheck="defaultCheckLoop"
-              :show_checkbox="true"
-              :default_check_first="true"
-            ></site-tree>
-          </el-card>
-        </el-tab-pane>
-<!--        <el-tab-pane label="分项用能" name="third">-->
-<!--          <el-card class="my-card-height left_tree" shadow="never">-->
-<!--            <department-select2-->
-<!--              @getTreeFirst="getFirstId2"-->
-<!--              @getTree="clickTree2"-->
-<!--              @clearTree="clearTree2"-->
-<!--              class="top_select"-->
-<!--            ></department-select2>-->
-<!--            <itemized-tree-->
-<!--              @nodeCheck="handleCheckChange3"-->
-<!--              @defaultCheck="defaultCheckLoop3"-->
-<!--              :show_checkbox="true"-->
-<!--              :default_check_first="true"-->
-<!--              height="calc(100vh - 320px)"-->
-<!--            ></itemized-tree>-->
-<!--          </el-card>-->
-<!--        </el-tab-pane>-->
-        <el-tab-pane label="分类用能" name="four">
-          <el-card class="my-card-height left_tree" shadow="never">
-            <department-select3
-              @getTreeFirst="getFirstId3"
-              @getTree="clickTree3"
-              @clearTree="clearTree3"
-              class="top_select"
-            ></department-select3>
-            <classification-tree
-              @nodeCheck="handleCheckChange4"
-              @defaultCheck="defaultCheckLoop4"
-              :show_checkbox="true"
-              :default_check_first="true"
-              height="calc(100vh - 320px)"
-            ></classification-tree>
-          </el-card>
-        </el-tab-pane>
-      </el-tabs>
-    </el-row>
-    <el-row
-      :gutter="20"
-      style="width: 83%; float: right; height: calc(100% - 7vh)"
-    >
-      <!-- 右侧内容 -->
-      <el-col :span="24" style="height: 100%">
-        <div class="my-card-height rightBox">
-          <div style="width: 100%; height: 53%" class="top">
-            <!-- tab选择器 -->
-            <div class="right_tabs">
-              <p>用能曲线</p>
-              <div style="display: flex; align-items: center">
-                <el-select
-                  v-model="tabType"
-                  size="mini"
-                  style="width: 80px; margin-right: 10px"
-                  @change="changeTab"
-                >
-                  <el-option label="日报" value="day"></el-option>
-                  <el-option label="月报" value="month"></el-option>
-                  <el-option label="年报" value="year"></el-option>
-                </el-select>
-                <el-date-picker
-                  v-if="tabType === 'day'"
-                  size="mini"
-                  class="date-picker"
-                  v-model="base_date"
-                  align="center"
-                  type="date"
-                  :clearable="false"
-                  :picker-options="setDateRange"
-                ></el-date-picker>
-                <el-date-picker
-                  v-if="tabType === 'month'"
-                  size="mini"
-                  class="date-picker"
-                  v-model="base_date"
-                  format="yyyy-MM"
-                  align="center"
-                  type="month"
-                  :clearable="false"
-                  :picker-options="setDateRange"
-                ></el-date-picker>
-                <el-date-picker
-                  v-if="tabType === 'year'"
-                  size="mini"
-                  class="date-picker"
-                  v-model="base_date"
-                  format="yyyy"
-                  align="center"
-                  type="year"
-                  :clearable="false"
-                  :picker-options="setDateRange"
-                ></el-date-picker>
-                <el-button size="mini" class="search" @click="getData"
-                  >搜索</el-button
-                >
-                <el-button size="mini" class="search" @click="export_excel"
-                  >导出</el-button
-                >
-              </div>
-            </div>
-            <!-- 图表 -->
-            <div class="echart">
-              <div
-                id="chart"
-                style="width: 100%; height: 100%; overflow: hidden"
-              ></div>
-            </div>
-          </div>
-          <!-- 表格 -->
-          <div class="table" id="tableId">
-            <el-table
-              v-if="activeName == 'second'"
-              :data="tableData"
-              border
-              ref="multipleTable"
-              max-height="100%"
-              class="allTable"
-              :key="Math.random()"
-            >
-              <el-table-column
-                fixed="left"
-                :label="this.tableName"
-                min-width="200"
-                align="center"
-                prop="name"
-              >
-              </el-table-column>
-              <el-table-column
-                v-for="item in xData"
-                :key="item.id"
-                :label="item"
-                min-width="120"
-                align="center"
-                :prop="item"
-              >
-                <!-- <template slot-scope="scope">
+                  <el-tab-pane label="站点用能" name="second">
+                <el-card class="my-card-height left_tree" shadow="never">
+                  <site-tree
+                    @nodeCheck="handleCheckChange"
+                    @defaultCheck="defaultCheckLoop"
+                    :show_checkbox="true"
+                    :default_check_first="true"
+                  ></site-tree>
+                </el-card>
+              </el-tab-pane>
+      <!--        <el-tab-pane label="分项用能" name="third">-->
+      <!--          <el-card class="my-card-height left_tree" shadow="never">-->
+      <!--            <department-select2-->
+      <!--              @getTreeFirst="getFirstId2"-->
+      <!--              @getTree="clickTree2"-->
+      <!--              @clearTree="clearTree2"-->
+      <!--              class="top_select"-->
+      <!--            ></department-select2>-->
+      <!--            <itemized-tree-->
+      <!--              @nodeCheck="handleCheckChange3"-->
+      <!--              @defaultCheck="defaultCheckLoop3"-->
+      <!--              :show_checkbox="true"-->
+      <!--              :default_check_first="true"-->
+      <!--              height="calc(100vh - 320px)"-->
+      <!--            ></itemized-tree>-->
+      <!--          </el-card>-->
+      <!--        </el-tab-pane>-->
+              <el-tab-pane label="分类用能" name="four">
+                <el-card class="my-card-height left_tree" shadow="never">
+                  <department-select3
+                    @getTreeFirst="getFirstId3"
+                    @getTree="clickTree3"
+                    @clearTree="clearTree3"
+                    class="top_select"
+                  ></department-select3>
+                  <classification-tree
+                    @nodeCheck="handleCheckChange4"
+                    @defaultCheck="defaultCheckLoop4"
+                    :show_checkbox="true"
+                    :default_check_first="true"
+                    height="calc(100vh - 320px)"
+                  ></classification-tree>
+                </el-card>
+              </el-tab-pane>
+            </el-tabs>
+          </el-row>
+          <el-row
+            :gutter="20"
+            style="width: 83%; float: right; height: calc(100% - 7vh)"
+          >
+            <!-- 右侧内容 -->
+            <el-col :span="24" style="height: 100%">
+              <div class="my-card-height rightBox">
+                <div style="width: 100%; height: 53%" class="top">
+                  <!-- tab选择器 -->
+                  <div class="right_tabs">
+                    <p>用能曲线</p>
+                    <div style="display: flex; align-items: center">
+                      <el-select
+                        v-model="tabType"
+                        size="mini"
+                        style="width: 80px; margin-right: 10px"
+                        @change="changeTab"
+                      >
+                        <el-option label="日报" value="day"></el-option>
+                        <el-option label="月报" value="month"></el-option>
+                        <el-option label="年报" value="year"></el-option>
+                      </el-select>
+                      <el-date-picker
+                        v-if="tabType === 'day'"
+                        size="mini"
+                        class="date-picker"
+                        v-model="base_date"
+                        align="center"
+                        type="date"
+                        :clearable="false"
+                        :picker-options="setDateRange"
+                      ></el-date-picker>
+                      <el-date-picker
+                        v-if="tabType === 'month'"
+                        size="mini"
+                        class="date-picker"
+                        v-model="base_date"
+                        format="yyyy-MM"
+                        align="center"
+                        type="month"
+                        :clearable="false"
+                        :picker-options="setDateRange"
+                      ></el-date-picker>
+                      <el-date-picker
+                        v-if="tabType === 'year'"
+                        size="mini"
+                        class="date-picker"
+                        v-model="base_date"
+                        format="yyyy"
+                        align="center"
+                        type="year"
+                        :clearable="false"
+                        :picker-options="setDateRange"
+                      ></el-date-picker>
+                      <el-button size="mini" class="search" @click="getData"
+                        >搜索</el-button
+                      >
+                      <el-button size="mini" class="search" @click="export_excel"
+                        >导出</el-button
+                      >
+                    </div>
+                  </div>
+                  <!-- 图表 -->
+                  <div class="echart">
+                    <div
+                      id="chart"
+                      style="width: 100%; height: 100%; overflow: hidden"
+                    ></div>
+                  </div>
+                </div>
+                <!-- 表格 -->
+                <div class="table" id="tableId">
+                  <el-table
+                    v-if="activeName == 'second'"
+                    :data="tableData"
+                    border
+                    ref="multipleTable"
+                    max-height="100%"
+                    class="allTable"
+                    :key="Math.random()"
+                  >
+                    <el-table-column
+                      fixed="left"
+                      :label="this.tableName"
+                      min-width="200"
+                      align="center"
+                      prop="name"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      v-for="item in xData"
+                      :key="item.id"
+                      :label="item"
+                      min-width="120"
+                      align="center"
+                      :prop="item"
+                    >
+                      <!-- <template slot-scope="scope">
                     <span>{{ scope.row.value }}</span>
                   </template> -->
-              </el-table-column>
-              <el-table-column
-                min-width="120"
-                fixed="right"
-                label="合计"
-                align="center"
-                prop="sum"
-              >
-                <!-- <template slot-scope="scope">
+                    </el-table-column>
+                    <el-table-column
+                      min-width="120"
+                      fixed="right"
+                      label="合计"
+                      align="center"
+                      prop="sum"
+                    >
+                      <!-- <template slot-scope="scope">
                     <span>{{ row_sum(scope.row) }}</span>
                   </template> -->
-              </el-table-column>
-            </el-table>
-            <el-table
-              v-else
-              border
-              :data="tableData"
-              style="width: 100%"
-              ref="multipleTable"
-              max-height="100%"
-              :summary-method="getSummaries"
-              show-summary
-              class="allTable"
-            >
-              <el-table-column
-                fixed="left"
-                :label="this.tableName"
-                min-width="200"
-                align="center"
-                prop="name"
-              >
-              </el-table-column>
-              <el-table-column
-                v-for="item in xData"
-                :key="item.id"
-                :label="item"
-                min-width="120"
-                align="center"
-                :prop="item"
-              >
-              </el-table-column>
-              <el-table-column
-                min-width="120"
-                fixed="right"
-                label="合计"
-                align="center"
-                prop="sum"
-              >
-              </el-table-column>
-            </el-table>
+                  </el-table-column>
+                </el-table>
+                <el-table
+                  v-else
+                  border
+                  :data="tableData"
+                  style="width: 100%"
+                  ref="multipleTable"
+                  max-height="100%"
+                  :summary-method="getSummaries"
+                  show-summary
+                  class="allTable"
+                >
+                  <el-table-column
+                    fixed="left"
+                    :label="this.tableName"
+                    min-width="200"
+                    align="center"
+                    prop="name"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    v-for="item in xData"
+                    :key="item.id"
+                    :label="item"
+                    min-width="120"
+                    align="center"
+                    :prop="item"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    min-wi
+dth="120"
+                  fixed="right"
+                  label="合计"
+                  align="center"
+                  prop="sum"
+                >
+                </el-table-column>
+              </el-table>
+            </div>
           </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+        </el-col>
+      </el-row>
+    </div>
 </template>
 
-  <script>
+<script>
 import * as echarts from "echarts";
 import { mapState } from "vuex";
 
@@ -287,14 +288,14 @@ export default {
       tableName: "站点名称",
     };
   },
-  watch:{
-    "tableData":{
-      handler(){
-        this.$nextTick(()=>{
+  watch: {
+    "tableData": {
+      handler() {
+        this.$nextTick(() => {
           this.$refs.multipleTable.doLayout()
         });
       },
-      deep:true
+      deep: true
     }
   },
   computed: {
@@ -348,14 +349,12 @@ export default {
     /******分项******/
     //默认选中回路回调
     defaultCheckLoop3(keys) {
-      console.log(keys, "keys");
       this.loopIds3 = keys;
       if (this.activeName === "third") this.getData();
     },
     //节点选中状态发生变化时的回调
     handleCheckChange3(data, checked) {
       this.loopIds3 = checked.checkedKeys; //选中回路的id
-      console.log(this.loopIds3, "this.loopIds3");
       this.getData();
     },
     // 获取初始站点id
@@ -444,7 +443,6 @@ export default {
     //查询
     async getData() {
       if (this.activeName === "second") {
-        // console.log(11, this.loopIds)
         this.clearData();
         //校验参数
         if (this.loopIds.length === 0) {
@@ -465,12 +463,9 @@ export default {
         this.queryParams.type = this.tabType;
         this.queryParams.tabType = 1;
         this.queryParams.deptCode = "null";
-        console.log(this.queryParams, "this.queryParams");
         // 接口请求
         const res = await getElectricityReportList(this.queryParams);
-          console.log(res, "数据源")
         if (res.code === 200) {
-          console.log(res, "second");
           this.list1 = res.data;
           this.$nextTick(() => {
             //清除选中行
@@ -481,7 +476,6 @@ export default {
         this.openChart();
       }
       // else if (this.activeName === 'first') {
-      //   // console.log(this.loopIds2)
       //   this.clearData()
       //   if (!this.siteIdCircuit) {
       //     this.$message({
@@ -513,7 +507,6 @@ export default {
       //   // 接口请求
       // //   const res = await getElectricityReportList(this.queryParams)
       // //   if (res.code === 200) {
-      // //     console.log(res)
       // //     this.list1 = res.data
       // //     this.$nextTick(() => {
       // //       //清除选中行
@@ -524,7 +517,6 @@ export default {
       //   this.openChart()
       // }
       else if (this.activeName === "third") {
-        // console.log(this.loopIds3)
         this.clearData();
         if (!this.siteIdItemized) {
           this.$message({
@@ -558,7 +550,6 @@ export default {
         // 接口请求
         const res = await getElectricityReportList(this.queryParams);
         if (res.code === 200) {
-          console.log(res);
           this.list1 = res.data;
           this.$nextTick(() => {
             //清除选中行
@@ -568,7 +559,6 @@ export default {
         }
         this.openChart();
       } else if (this.activeName === "four") {
-        // console.log(this.loopIds4)
         this.clearData();
         if (!this.siteIdClass) {
           this.$message({
@@ -602,10 +592,9 @@ export default {
         // 接口请求
         const res = await getElectricityReportList(this.queryParams);
         if (res.code === 200) {
-          console.log(res);
           this.list1 = res.data;
-          this.list1.map(item=>{
-            item.value==0?item.value = 0:item.value;
+          this.list1.map(item => {
+            item.value == 0 ? item.value = 0 : item.value;
           })
           this.$forceUpdate();
           this.$nextTick(() => {
@@ -641,7 +630,6 @@ export default {
           this.myChart.dispose();
         }
         this.myChart = echarts.init(document.getElementById("chart"));
-
         // 拆分成单条数据
         let series = {
           name: "",
@@ -650,9 +638,7 @@ export default {
           sum: 0,
         };
         for (let item of this.list1) {
-          // console.log(item);
           for (let item1 of item) {
-            // console.log(item1);
             series.name = item1.name;
             if (item1.rt != null) {
               if (item1.value === null || item1.value === undefined) {
@@ -682,6 +668,7 @@ export default {
         }
 
         // 处理图表数据
+        // this.lists = JSON.parse(JSON.stringify(this.lists));
         for (let n of this.lists) {
           this.seriesData.push({
             name: n.name,
@@ -706,7 +693,6 @@ export default {
           obj = {};
           for (let i in this.xData) {
             let a = this.xData[i];
-            console.log(item.value[i])
             if(!item.value[i]){
               obj[a] = 0;
             }else{
@@ -718,9 +704,7 @@ export default {
           }
           this.tableData.push(obj);
         }
-        // console.log(this.tableData)
-
-        var option = {
+                let option = {
           dataZoom: [
             {
               moveOnMouseMove: true,
@@ -750,7 +734,6 @@ export default {
             // appendToBody: true,
             // enterable: true, // 防止tooltip浮层在折线或柱体等上时，触发mouseover事件
             formatter: function(p){
-              // console.log(p)
               let content = p[0].name
               content += "<div style='max-height:240px;overflow-x:auto'>"
 
@@ -785,6 +768,8 @@ export default {
           yAxis: {
             type: "value",
             name:'kW·h',
+            max:800,
+            min:0,
             nameTextStyle:{
               color:"#fff"
             },
@@ -801,12 +786,15 @@ export default {
           },
           series: this.seriesData,
         };
-
-        this.myChart.setOption(option);
+        this.$nextTick(()=>{
+          this.myChart.setOption(option);
         window.addEventListener("resize", function () {
           this.mychart.resize();
         });
+        })
+
       });
+
     },
     //导出excel
     export_excel() {
@@ -858,7 +846,6 @@ export default {
         });
         if (!values.every((value) => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
-            // console.log(prev, curr)
             if (prev == null && curr == null) {
               return null;
             } else {

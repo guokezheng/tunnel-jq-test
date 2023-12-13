@@ -158,7 +158,7 @@
     methods: {
       /** 查询设备列表 **/
       getList() {
-        this.loading = false;
+        this.loading = true;
         if (this.manageStatin == "1") {
           this.queryParams.tunnelId = this.$cache.local.get(
             "manageStationSelect"

@@ -78,5 +78,5 @@ public interface IotBoardReleaseLogMapper
      * @param tunnelId
      * @return
      */
-    int getVmsCount(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getVmsCount(@Param("tunnelId") String tunnelId);
 }

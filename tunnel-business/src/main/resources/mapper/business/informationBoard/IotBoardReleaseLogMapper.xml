@@ -174,7 +174,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getVmsCount" parameterType="java.lang.String" resultType="int">
         SELECT
-            count(*)
+            count(*) AS vmsNum,
+            d.eq_direction AS direction
         FROM
             sd_devices d
                 LEFT JOIN iot_board_release_log brl ON d.associated_device_id = brl.device_id
@@ -182,8 +183,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1 = 1
           AND d.eq_tunnel_id = #{tunnelId}
           AND d.eq_type = 16
-          AND DATE_FORMAT( brl.release_time, '%Y-%m-%d' ) = DATE_FORMAT(
-                NOW(),
-                '%Y-%m-%d')
+          AND DATE_FORMAT( brl.release_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
+        GROUP BY
+            d.eq_direction
     </select>
 </mapper>

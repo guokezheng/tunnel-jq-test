@@ -106,5 +106,5 @@ public interface SdOperationLogMapper
      * @param tunnelId
      * @return
      */
-    int getPhoneCount(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getPhoneCount(@Param("tunnelId") String tunnelId);
 }

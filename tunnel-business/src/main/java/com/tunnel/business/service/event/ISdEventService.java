@@ -270,4 +270,10 @@ public interface ISdEventService {
      * @param eventJson
      */
     void upload(String eventJson);
+
+    /**
+     * 接收万集结束事件
+     * @param eventJson
+     */
+    void wjEventUpdate(String eventJson);
 }

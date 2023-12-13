@@ -656,8 +656,21 @@ public class SdEventController extends BaseController
         return AjaxResult.success();
     }
 
+    /**
+     * 万集推送事件
+     * @param eventJson
+     */
     @PostMapping("/upload")
     public void upload(@RequestBody String eventJson){
         sdEventService.upload(eventJson);
+    }
+
+    /**
+     * 万集推送结束事件
+     * @param eventJson
+     */
+    @PostMapping("/wjEventUpdate")
+    public void wjEventUpdate(@RequestBody String eventJson){
+        sdEventService.wjEventUpdate(eventJson);
     }
 }

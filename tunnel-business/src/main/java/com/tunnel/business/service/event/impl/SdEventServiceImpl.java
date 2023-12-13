@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -154,6 +156,14 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private ISdEventTypeService sdEventTypeService;
+
+    /**
+     * 线程池
+     */
+    @Resource(name = "threadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    private static final Logger log = LoggerFactory.getLogger(SdEventServiceImpl.class);
 
     /**
      * 查询事件管理
@@ -781,39 +791,23 @@ public class SdEventServiceImpl implements ISdEventService {
             }
             //将事件推送到前端展示
             /*eventSendWeb(jsonObject);*/
-                /*Long typeId = sdEvent.getEventTypeId();
-                if(typeId == 1L || typeId == 2L || typeId == 11L || typeId == 12L || typeId == 13L || typeId == 14L
-                        || typeId == 18L || typeId == 19L || typeId == 20L){
-                    //如果是未处理状态改为处理中
-                    if(sdEvent.getEventState().equals(EventStateEnum.unprocessed.getCode())){
-                        sdEvent.setEventState(EventStateEnum.processing.getCode());
-                        sdEvent.setUpdateTime(DateUtils.getNowDate());
-                    }
-                    String[] split = sdEvent.getEventTitle().split(",");
-                    String eventTitle = getEventTitle(sdEvent);
-                    sdEvent.setEventTitle(split[0] + "," + eventTitle);
-                    noNullStringAttr(sdEvent);
-                    Map<String, Object> map = setEventData(sdEvent);
-                    //向物联推送事件
-                    threadPoolTaskExecutor.execute(()->{
-                        sendWlEvent(map);;
-                    });
-                    //radarEventServiceImpl.sendDataToOtherSystem(map);
-                }*/
+            sendWuLian(sdEvent);
         }
         //查询视频图片
         List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(eventId.toString());
         //事件图片-视频
-        String[] imgList = new String[3];
+        String[] imgList = new String[4];
         String[] vedioList = new String[2];
         String imagePath1 = jsonObject.getString("imagePath1");
         String imagePath2 = jsonObject.getString("imagePath2");
         String imagePath3 = jsonObject.getString("imagePath3");
+        String carImg = jsonObject.getString("carImg");
         String vedioPath = jsonObject.getString("videoPath");
         String vedioPath2 = jsonObject.getString("videoPath2");
         imgList[0] = imagePath1;
         imgList[1] = imagePath2;
         imgList[2] = imagePath3;
+        imgList[3] = carImg;
         vedioList[0] = vedioPath;
         vedioList[1] = vedioPath2;
         List<SdTrafficImage> imageList = new ArrayList<>();
@@ -852,6 +846,19 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         //将图片视频存入
         sdTrafficImageMapper.brachInsertFaultIconFile(imageList);
+    }
+
+    @Override
+    public void wjEventUpdate(String eventJson) {
+        JSONObject jsonObject = JSONObject.parseObject(eventJson);
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setId(jsonObject.getLongValue("eventId"));
+        sdEvent.setEventState(EventStateEnum.processed.getCode());
+        sdEvent.setEndTime(jsonObject.getString("endTime"));
+        sdEvent.setUpdateTime(DateUtils.parseDate(jsonObject.getString("endTime")));
+        sdEventMapper.updateSdEvent(sdEvent);
+        SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
+        sendWuLian(sdEvent1);
     }
 
     /**
@@ -2441,5 +2448,96 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }
         return 0;
+    }
+
+    /**
+     * 大脑标题
+     * @param sdEvent
+     * @return
+     */
+    public String getEventTitle(SdEvent sdEvent){
+        String title = "";
+        switch (sdEvent.getEventTypeId().toString()){
+            case "18" :
+                title = "行人/非机动车";
+            case "19" :
+                title = "行人/非机动车";
+            case "11" :
+                title = "其他";
+            case "1" :
+                title = "倒车";
+            case "14" :
+                title = "其他";
+            case "13" :
+                title = "其他";
+            case "2" :
+                title = "交通拥堵";
+            case "12" :
+                title = "交通事故";
+            case "20" :
+                title = "烟火";
+            default: title = sdEvent.getEventTitle().split(",")[1];
+        }
+        return title;
+    }
+
+    /**
+     * 推送物联事件
+     * @param map
+     */
+    public void sendWlEvent(Map<String, Object> map){
+        Executor executor = Executors.newSingleThreadExecutor();
+        CompletionService<Object> completionService = new ExecutorCompletionService<>(executor);
+        Future<?> future = completionService.submit(new Callable<Object>() {
+            public Object call() throws Exception {
+                // 这里是要执行的方法
+                radarEventServiceImpl.sendDataToOtherSystem(map);
+                return 1;
+            }
+        });
+
+        // 获取执行结果
+        try {
+            Object result = completionService.poll(3000L, TimeUnit.MILLISECONDS);
+            if (result == null) {
+                //System.out.println("超时了，结束该方法的执行");
+                log.error("推送物联事件超时{}", JSON.toJSONString(map));
+                future.cancel(true);
+            } else {
+                // 方法执行完毕，处理执行结果
+                //System.out.println("方法执行完毕，结果：" + result.toString());
+                log.info("推送物联事件成功{}",JSON.toJSONString(map));
+            }
+        } catch (InterruptedException e) {
+            //System.out.println("出现异常，结束该方法的执行");
+            log.error("推送物联事件出现异常{}",JSON.toJSONString(map));
+            future.cancel(true);
+        }
+    }
+
+    /**
+     * 推送物联
+     * @param sdEvent
+     */
+    public void sendWuLian(SdEvent sdEvent){
+        Long typeId = sdEvent.getEventTypeId();
+        if(typeId == 1L || typeId == 2L || typeId == 11L || typeId == 12L || typeId == 13L || typeId == 14L
+                || typeId == 18L || typeId == 19L || typeId == 20L){
+            //如果是未处理状态改为处理中
+            if(sdEvent.getEventState().equals(EventStateEnum.unprocessed.getCode())){
+                sdEvent.setEventState(EventStateEnum.processing.getCode());
+                sdEvent.setUpdateTime(DateUtils.getNowDate());
+            }
+            String[] split = sdEvent.getEventTitle().split(",");
+            String eventTitle = getEventTitle(sdEvent);
+            sdEvent.setEventTitle(split[0] + "," + eventTitle);
+            noNullStringAttr(sdEvent);
+            Map<String, Object> map = setEventData(sdEvent);
+            //向物联推送事件
+            threadPoolTaskExecutor.execute(()->{
+                sendWlEvent(map);;
+            });
+            //radarEventServiceImpl.sendDataToOtherSystem(map);
+        }
     }
 }

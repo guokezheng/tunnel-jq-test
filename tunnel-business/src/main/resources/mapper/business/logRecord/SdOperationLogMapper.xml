@@ -423,17 +423,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
-    <select id="getPhoneCount" parameterType="java.lang.String" resultType="int">
+    <select id="getPhoneCount" parameterType="java.lang.String" resultType="hashmap">
         SELECT
-            count(*)
+            count(*) AS phoneNum,
+            d.eq_direction AS direction
         FROM
             sd_operation_log ol
+                LEFT JOIN sd_devices d ON ol.eq_id = d.eq_id
         WHERE
             1 = 1
           AND ol.eq_type_id = 22
-          AND DATE_FORMAT( ol.create_time, '%Y-%m-%d' ) = DATE_FORMAT(
-                NOW(),
-                '%Y-%m-%d')
+          AND DATE_FORMAT( ol.create_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
           AND ol.tunnel_id = #{tunnelId}
+        GROUP BY
+            d.eq_direction
     </select>
 </mapper>

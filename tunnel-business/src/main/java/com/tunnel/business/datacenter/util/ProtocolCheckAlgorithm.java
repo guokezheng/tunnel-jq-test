@@ -80,7 +80,35 @@ public abstract class ProtocolCheckAlgorithm {
 		}
 		return newstr;
 	}
+	public static String gen_LightMd5(String plaintText) {
+		String newstr = null;
+		if (plaintText == null || plaintText.trim().length() <= 0){
+			throw new IllegalArgumentException("input argument plaintText is null!");
+		}
 
+		try {
+			// 获取MD5哈希算法实例
+			MessageDigest md = MessageDigest.getInstance("MD5");
+
+			// 将输入字符串转换为字节数组
+			byte[] inputBytes = plaintText.getBytes();
+
+			// 计算MD5哈希值
+			byte[] hashBytes = md.digest(inputBytes);
+
+			// 将哈希值转换为十六进制字符串
+			StringBuilder sb = new StringBuilder();
+			for (byte b : hashBytes) {
+				sb.append(String.format("%02x", b));
+			}
+
+			// 输出加密后的字符串
+			newstr = sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newstr;
+	}
 	/**
 	 * 
 	 * 计算crc校验。

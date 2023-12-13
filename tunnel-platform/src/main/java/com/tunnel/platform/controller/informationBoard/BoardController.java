@@ -10,8 +10,10 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.domain.dataInfo.EventTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.informationBoard.*;
@@ -25,6 +27,7 @@ import com.tunnel.business.utils.exception.BusinessException;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
+import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -88,8 +91,11 @@ public class BoardController extends BaseController {
 
     private static Map<String, Object> boardContentMap = new HashMap<>();
 
-    //默认不准控制
+    //默认情报板不准控制
     private static int wjModelNum = 0;
+
+    //默认广播不准控制
+    private static int wjGbModelNum = 0;
 
     @Autowired
     private IotBoardReleaseLogMapper iotBoardReleaseLogMapper;
@@ -1213,9 +1219,9 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/getRealTimeBoard")
     public AjaxResult getRealTimeBoard(String deviceId){
-        if(wjModelNum == 0){
+        /*if(wjModelNum == 0){
             return null;
-        }
+        }*/
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
         if(sdDevices == null || sdDevices.getAssociatedDeviceId() == null || "".equals(sdDevices.getAssociatedDeviceId())){
             return AjaxResult.error("设备不存在");
@@ -1248,7 +1254,17 @@ public class BoardController extends BaseController {
             }*/
             IotDeviceAccess deviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(sdDevices.getAssociatedDeviceId());
             JSONObject boardJsonObject = new JSONObject();
-            boardJsonObject.put("content",board.get("parameters"));
+            JSONArray jsonArray = JSONObject.parseArray(board.get("parameters").toString());
+            JSONArray array = new JSONArray();
+            for(int i = 0; i < jsonArray.size(); i++){
+                JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+                String content = jsonObject.getString("CONTENT");
+                content = content.replaceAll("<n>", "<br>");
+                content = content.replaceAll("<r>", "\r");
+                jsonObject.put("CONTENT",content);
+                array.add(jsonObject);
+            }
+            boardJsonObject.put("content",array);
             boardJsonObject.put("devicePixel",deviceAccess.getDevicePixel());
             return AjaxResult.success("返回成功",boardJsonObject);
         }
@@ -1373,13 +1389,57 @@ public class BoardController extends BaseController {
     }
 
     /**
-     * 对外情报板开启关闭
+     * 第三方控制广播
+     * @param objectData
+     * @return
+     */
+    @GetMapping("/commonControlPhone")
+    public AjaxResult commonControlPhone(@RequestBody String objectData){
+        if(wjGbModelNum == 0){
+            return null;
+        }
+        Map<String, Object> map = new HashMap<>();
+        JSONObject jsonObject = JSONObject.parseObject(objectData);
+        PhoneSpkService phoneSpkService = SpringUtils.getBean(PhoneSpkService.class);
+        //获取文件列表
+        Map<String, Object> audioMap = new HashMap<>();
+        audioMap.put("deviceId",jsonObject.getString("spkDeviceIds"));
+        AjaxResult audioFileList = phoneSpkService.getAudioFileList(audioMap);
+        List<Map> list = new ArrayList<>();
+        if("200".equals(audioFileList.get("code").toString())){
+            //list = (ArrayList)audioFileList.get("data");
+            list = JSONObject.parseArray(audioFileList.get("data").toString(), Map.class);
+        }
+        List<String> fileName = new ArrayList<>();
+        List<String> devId = new ArrayList<>();
+        String fileNameData = "";
+        if(jsonObject.getLongValue("eventTypeId") == 1){
+            fileNameData = "正常情况";
+        }
+        for(Map<String, Object> item : list){
+            if(fileNameData.equals(item.get("name").toString())){
+                fileName.add(item.get("fileUrl").toString());
+            }
+        }
+        devId.add(jsonObject.getString("spkDeviceIds"));
+        map.put("fileNames",fileName);
+        map.put("spkDeviceIds",devId);
+        map.put("controlType","0");
+        map.put("operIp",jsonObject.getString("operIp"));
+        map.put("tunnelId",jsonObject.getString("tunnelId"));
+        //phoneSpkService.playVoice(map);
+        return AjaxResult.success(map);
+    }
+
+    /**
+     * 对外情报板广播开启关闭
      * @param wjModel
      * @return
      */
     @GetMapping("/setWjModel/{wjModel}")
     public AjaxResult setWjModel(@PathVariable("wjModel") int wjModel){
         wjModelNum = wjModel;
+        //wjGbModelNum = wjModel;
         return AjaxResult.success();
     }
 }

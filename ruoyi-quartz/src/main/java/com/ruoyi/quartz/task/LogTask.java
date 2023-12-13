@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhai
@@ -43,8 +44,8 @@ public class LogTask {
 
     //@Scheduled(fixedRate = 1000)
     public void getVmsOrPhone(){
-        int phoneCount = 0;
-        int vmsCount = 0;
+        List<Map<String, Object>> phoneCount = new ArrayList<>();
+        List<Map<String, Object>> vmsCount = new ArrayList<>();
         List<String> list = new ArrayList<>();
         if("wzb".equals(glzName)){
             list.add(TunnelEnum.HU_SHAN.getCode());
@@ -63,8 +64,34 @@ public class LogTask {
         }
         if(list.size() > 0){
             for(String tunnelId : list){
-                phoneCount = operationLogMapper.getPhoneCount(tunnelId);
-                vmsCount = boardReleaseLogMapper.getVmsCount(tunnelId);
+                List<Map<String, Object>> phoneCount1 = operationLogMapper.getPhoneCount(tunnelId);
+                List<Map<String, Object>> vmsCount1 = boardReleaseLogMapper.getVmsCount(tunnelId);
+                if(phoneCount1.size() > 0){
+                    phoneCount = phoneCount1;
+                }else {
+                    //笨办法应急用
+                    Map<String, Object> mapp1 = new HashMap<>();
+                    Map<String, Object> mapp2 = new HashMap<>();
+                    mapp1.put("phoneNum",0);
+                    mapp1.put("direction","1");
+                    mapp2.put("phoneNum",0);
+                    mapp2.put("direction","2");
+                    phoneCount.add(mapp1);
+                    phoneCount.add(mapp2);
+                }
+                if(vmsCount1.size() > 0){
+                    vmsCount = vmsCount1;
+                }else {
+                    //笨办法应急用
+                    Map<String, Object> mapv1 = new HashMap<>();
+                    Map<String, Object> mapv2 = new HashMap<>();
+                    mapv1.put("vmsNum",0);
+                    mapv1.put("direction","1");
+                    mapv2.put("vmsNum",0);
+                    mapv2.put("direction","2");
+                    vmsCount.add(mapv1);
+                    vmsCount.add(mapv2);
+                }
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("vmsNum",vmsCount);
                 jsonObject.put("phoneNum",phoneCount);

@@ -10,8 +10,10 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.domain.dataInfo.EventTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.business.domain.informationBoard.*;
@@ -1398,19 +1400,24 @@ public class BoardController extends BaseController {
         }
         Map<String, Object> map = new HashMap<>();
         JSONObject jsonObject = JSONObject.parseObject(objectData);
-        PhoneSpkService phoneSpkService = new PhoneSpkService();
+        PhoneSpkService phoneSpkService = SpringUtils.getBean(PhoneSpkService.class);
         //获取文件列表
         Map<String, Object> audioMap = new HashMap<>();
         audioMap.put("deviceId",jsonObject.getString("spkDeviceIds"));
         AjaxResult audioFileList = phoneSpkService.getAudioFileList(audioMap);
-        List<Map<String, Object>> list = new ArrayList<>();
+        List<Map> list = new ArrayList<>();
         if("200".equals(audioFileList.get("code").toString())){
-            list = (ArrayList)audioFileList.get("data");
+            //list = (ArrayList)audioFileList.get("data");
+            list = JSONObject.parseArray(audioFileList.get("data").toString(), Map.class);
         }
         List<String> fileName = new ArrayList<>();
         List<String> devId = new ArrayList<>();
+        String fileNameData = "";
+        if(jsonObject.getLongValue("eventTypeId") == 1){
+            fileNameData = "正常情况";
+        }
         for(Map<String, Object> item : list){
-            if(jsonObject.getString("fileName").equals(item.get("name").toString())){
+            if(fileNameData.equals(item.get("name").toString())){
                 fileName.add(item.get("fileUrl").toString());
             }
         }
@@ -1420,8 +1427,8 @@ public class BoardController extends BaseController {
         map.put("controlType","0");
         map.put("operIp",jsonObject.getString("operIp"));
         map.put("tunnelId",jsonObject.getString("tunnelId"));
-        phoneSpkService.playVoice(map);
-        return null;
+        //phoneSpkService.playVoice(map);
+        return AjaxResult.success(map);
     }
 
     /**

@@ -620,6 +620,7 @@ export default {
     },
     //图表
     openChart() {
+      this.myChart = echarts.init(document.getElementById("chart"));
       this.$nextTick(function () {
         if (
           this.myChart != null &&
@@ -637,7 +638,10 @@ export default {
           rt: [],
           sum: 0,
         };
-        for (let item of this.list1) {
+        
+        let list1 = JSON.parse(JSON.stringify(this.list1));
+        console.log(list1)
+        for (let item of list1) {
           for (let item1 of item) {
             series.name = item1.name;
             if (item1.rt != null) {
@@ -645,7 +649,7 @@ export default {
                 item1.value = null;
               }
               // series.value.push(item1.value.toFixed(2));
-              series.value.push(item1.value);
+              series.value.push(Number(item1.value));
               series.rt.push(item1.rt);
             }
           }
@@ -668,28 +672,30 @@ export default {
         }
 
         // 处理图表数据
-        // this.lists = JSON.parse(JSON.stringify(this.lists));
-        for (let n of this.lists) {
-          this.seriesData.push({
+        let lists = JSON.parse(JSON.stringify(this.lists));
+        let seriesData = [];
+        for (let n of lists) {
+          console.log(n.value)
+          seriesData.push({
             name: n.name,
             type: "line",
             smooth: true,
             symbol: "circle",
             showAllSymbol: true,
             symbolSize: 8,
-            data: Number(n.value),
+            data:n.value,
             color: "#0090D8",
           });
           this.xData = n.rt;
         }
-
+        console.log(seriesData)
         this.$nextTick(() => {
           //清除选中行
           this.$refs.multipleTable.doLayout();
         });
         // 处理表格数据
         let obj = {};
-        for (let item of this.lists) {
+        for (let item of lists) {
           obj = {};
           for (let i in this.xData) {
             let a = this.xData[i];
@@ -704,7 +710,7 @@ export default {
           }
           this.tableData.push(obj);
         }
-                let option = {
+        let option = {
           dataZoom: [
             {
               moveOnMouseMove: true,
@@ -784,8 +790,9 @@ export default {
               color: "#fff",
             },
           },
-          series: this.seriesData,
+          series: seriesData,
         };
+        console.log(seriesData)
         this.$nextTick(()=>{
           this.myChart.setOption(option);
         window.addEventListener("resize", function () {

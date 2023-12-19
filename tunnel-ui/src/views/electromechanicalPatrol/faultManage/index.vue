@@ -474,7 +474,7 @@
               <div class="tableTopHr" style="display: none"></div>
             </el-col>
 
-            <el-col :span="8">
+            <el-col :span="8" v-if="isWritable">
               <el-form-item label="设备类型" prop="typeId">
                 <!-- <el-select
                   v-model="form.typeId"
@@ -505,7 +505,7 @@
                 ></el-cascader>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" v-if="isWritable">
               <el-form-item label="设备名称" prop="eqId">
                 <el-select
                   v-model="form.eqId"
@@ -543,6 +543,26 @@
                 </el-select>
               </el-form-item>
             </el-col>-->
+            <el-col :span="8" v-if="!isWritable">
+              <el-form-item label="设备类型" prop="typeId">
+                <el-input
+                  ref="faultLocation"
+                  :disabled="disstate"
+                  v-model="form.typeName"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8" v-if="!isWritable">
+              <el-form-item label="设备类型" prop="typeId">
+                <el-input
+                  ref="faultLocation"
+                  :disabled="disstate"
+                  v-model="form.eqName"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
             <el-col :span="8">
               <el-form-item label="故障位置" prop="faultLocation">
                 <el-input
@@ -1479,7 +1499,7 @@ export default {
         eqTunnelId: this.form.tunnelId,
         eqType: this.form.typeId,
       }).then((response) => {
-        console.log(this.eqListData,"this.eqListData")
+        console.log("load listDevices");
         this.eqListData = response.rows;
         this.$forceUpdate()
       });
@@ -1488,7 +1508,7 @@ export default {
     /** 设备类型 */
     getDevicesType() {
       getCategoryAllTree().then((response) => {
-        console.log(response.data,"response.data设备类型")
+        console.log("load getDevicesType");
         this.eqTypeListData = response.data;
       });
     },
@@ -1584,6 +1604,7 @@ export default {
     },
     // 故障详情
     async handleCheckDetail(row) {
+      this.getDevices();
       this.uploadDisabled = false;
       this.openDialogScreen();
       this.holderRunStatus = "";

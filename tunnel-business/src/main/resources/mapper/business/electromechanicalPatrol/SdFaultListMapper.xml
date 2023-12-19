@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectSdFaultListById" parameterType="String" resultMap="SdFaultListResult">
-        select f.*,t.type_name,t.type_id from sd_fault_list f
+        select f.*,t.type_name,d.eq_name,t.type_id from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_equipment_type t on d.eq_type = t.type_id
         where f.id = #{id}

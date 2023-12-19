@@ -1233,8 +1233,11 @@ public class SdEventServiceImpl implements ISdEventService {
             SdEvent endReport = sdEventMapper.getEndReport(sdEvent);
             SdEventFlow sdEventFlow = new SdEventFlow();
             sdEventFlow.setEventId(sdEvent.getId().toString());
-            String flowDescription = sdEventFlowMapper.selectSdEventFlowList(sdEventFlow).get(0).getFlowDescription();
-            endReport.setRemark(flowDescription);
+            List<SdEventFlow> sdEventFlowList = sdEventFlowMapper.selectSdEventFlowList(sdEventFlow);
+            if(sdEventFlowList.size() != 0){
+                endReport.setRemark(sdEventFlowList.get(0).getFlowDescription());
+            }
+
             //计算累计时间
             if("1".equals(endReport.getEventState())){
                 String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(endReport.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(endReport.getEndTime()), DateUtils.parseDate(endReport.getStartTime()));

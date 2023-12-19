@@ -200,24 +200,24 @@
         <!--  风机内外振动仪检测器-->
         <el-table ref="tables" v-loading="loading" :data="list5" @selection-change="handleSelectionChange4"
           v-show="searchValue == '5'" class="allTable" height="58vh" :row-key="getRowKey">
-          <el-table-column type="selection" width="55" align="center" />
-          <el-table-column type="index" :index="indexMethod5" label="序号" width="68" align="center"></el-table-column>
+          <el-table-column type="selection" width="40" align="center" />
+          <el-table-column type="index" :index="indexMethod5" label="序号" width="40" align="center"></el-table-column>
           <!-- <el-table-column label="设备编码" align="center" prop="eqId" /> -->
           <el-table-column label="设备名称" align="center" prop="eqName" />
           <el-table-column label="所属隧道" align="center" prop="tunnelName" />
-          <el-table-column label="管理机构" align="center" prop="deptName" />
-          <el-table-column label="方向" align="center" prop="direction" />
-          <el-table-column label="桩号" align="center" prop="pile" />
-          <el-table-column label="振动速度值(mm/s)" align="center" prop="ZDSD" />
-          <el-table-column label="振动幅度值(μm)" align="center" prop="data" />
-          <el-table-column label="沉降值(mm)" align="center" prop="CJZ" />
-          <el-table-column label="倾斜值(°)" align="center" prop="QXZ" />
-          <el-table-column label="沉降倾斜告警" align="center" prop="CJQXGJ">
+          <el-table-column label="管理机构"  width="120" align="center" prop="deptName" />
+          <el-table-column label="方向" width="80" align="center" prop="direction" />
+          <el-table-column label="桩号" width="100" align="center" prop="pile" />
+          <el-table-column label="振动速度值(mm/s)" width="70" align="center" prop="ZDSD" />
+          <el-table-column label="振动幅度值(μm)" width="60" align="center" prop="data" />
+          <el-table-column label="沉降值(mm)" width="50" align="center" prop="CJZ" />
+          <el-table-column label="倾斜值(°)" width="50" align="center" prop="QXZ" />
+          <el-table-column label="沉降倾斜告警" width="50" align="center" prop="CJQXGJ">
             <template slot-scope="scope">
               {{ getshakeAlaram(scope.row.CJQXGJ) }}
             </template>
           </el-table-column>
-          <el-table-column label="振动告警" align="center" prop="ZDGJ">
+          <el-table-column label="振动告警" width="50" align="center" prop="ZDGJ">
             <template slot-scope="scope">
               {{ getshakeAlaram(scope.row.ZDGJ) }}
             </template>

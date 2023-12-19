@@ -150,6 +150,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                         SdEvent event = sdEvents.get(i);
                         event.setEventState("1");
                         event.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+                        event.setUpdateTime(new Date());
                         sdEventMapper.updateSdEvent(event);
                     }
                    // 模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02
@@ -381,7 +382,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             log.error("收到的消息为空！");
             return;
         }
-        log.info("收到火灾报警消息：" + fireAlarmData);
+        log.error("收到火灾报警消息：" + fireAlarmData);
         protocolAnalysis(fireAlarmData.replaceAll("活", ""), clientIp);
         ctx.flush();
     }

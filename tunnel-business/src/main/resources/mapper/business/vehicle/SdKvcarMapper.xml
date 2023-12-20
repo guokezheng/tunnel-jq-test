@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.vehicle.SdKvcarMapper">
+    
+    <resultMap type="SdKvcar" id="SdKvcarResult">
+        <result property="id"    column="id"    />
+        <result property="plate"    column="plate"    />
+        <result property="carColor"    column="car_color"    />
+        <result property="carType"    column="car_type"    />
+        <result property="speed"    column="speed"    />
+        <result property="inTime"    column="in_time"    />
+        <result property="outTime"    column="out_time"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="direction"    column="direction"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdKvcarVo">
+        select id, plate, car_color, car_type, speed, in_time, out_time, tunnel_id, direction, create_by, create_time, update_by, update_time from sd_kvcar
+    </sql>
+
+    <select id="selectSdKvcarList" parameterType="SdKvcar" resultMap="SdKvcarResult">
+        <include refid="selectSdKvcarVo"/>
+        <where>  
+            <if test="plate != null  and plate != ''"> and plate = #{plate}</if>
+            <if test="carColor != null  and carColor != ''"> and car_color = #{carColor}</if>
+            <if test="carType != null  and carType != ''"> and car_type = #{carType}</if>
+            <if test="speed != null "> and speed = #{speed}</if>
+            <if test="inTime != null  and inTime != ''"> and in_time = #{inTime}</if>
+            <if test="outTime != null  and outTime != ''"> and out_time = #{outTime}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdKvcarById" parameterType="Long" resultMap="SdKvcarResult">
+        <include refid="selectSdKvcarVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdKvcar" parameterType="SdKvcar">
+        insert into sd_kvcar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="plate != null">plate,</if>
+            <if test="carColor != null">car_color,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="speed != null">speed,</if>
+            <if test="inTime != null">in_time,</if>
+            <if test="outTime != null">out_time,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="direction != null">direction,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time,
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="plate != null">#{plate},</if>
+            <if test="carColor != null">#{carColor},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="inTime != null">#{inTime},</if>
+            <if test="outTime != null">#{outTime},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="direction != null">#{direction},</if>
+            NOW(),
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdKvcar" parameterType="SdKvcar">
+        update sd_kvcar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="plate != null">plate = #{plate},</if>
+            <if test="carColor != null">car_color = #{carColor},</if>
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="inTime != null">in_time = #{inTime},</if>
+            <if test="outTime != null">out_time = #{outTime},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdKvcarById" parameterType="Long">
+        delete from sd_kvcar where id = #{id}
+    </delete>
+
+    <delete id="deleteSdKvcarByIds" parameterType="String">
+        delete from sd_kvcar where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

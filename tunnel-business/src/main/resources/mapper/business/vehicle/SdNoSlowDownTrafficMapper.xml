@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.vehicle.SdNoSlowDownTrafficMapper">
+    
+    <resultMap type="SdNoSlowDownTraffic" id="SdNoSlowDownTrafficResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="inAvgSpeed"    column="in_avg_speed"    />
+        <result property="outAvgSpeed"    column="out_avg_speed"    />
+        <result property="direction"    column="direction"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdNoSlowDownTrafficVo">
+        select id, tunnel_id, in_avg_speed, out_avg_speed, direction, create_by, create_time, update_by, update_time from sd_no_slow_down_traffic
+    </sql>
+
+    <select id="selectSdNoSlowDownTrafficList" parameterType="SdNoSlowDownTraffic" resultMap="SdNoSlowDownTrafficResult">
+        <include refid="selectSdNoSlowDownTrafficVo"/>
+        <where>  
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="inAvgSpeed != null "> and in_avg_speed = #{inAvgSpeed}</if>
+            <if test="outAvgSpeed != null "> and out_avg_speed = #{outAvgSpeed}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdNoSlowDownTrafficById" parameterType="Long" resultMap="SdNoSlowDownTrafficResult">
+        <include refid="selectSdNoSlowDownTrafficVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdNoSlowDownTraffic" parameterType="SdNoSlowDownTraffic">
+        insert into sd_no_slow_down_traffic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="inAvgSpeed != null">in_avg_speed,</if>
+            <if test="outAvgSpeed != null">out_avg_speed,</if>
+            <if test="direction != null">direction,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time,
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="inAvgSpeed != null">#{inAvgSpeed},</if>
+            <if test="outAvgSpeed != null">#{outAvgSpeed},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="createBy != null">#{createBy},</if>
+            NOW(),
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdNoSlowDownTraffic" parameterType="SdNoSlowDownTraffic">
+        update sd_no_slow_down_traffic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="inAvgSpeed != null">in_avg_speed = #{inAvgSpeed},</if>
+            <if test="outAvgSpeed != null">out_avg_speed = #{outAvgSpeed},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdNoSlowDownTrafficById" parameterType="Long">
+        delete from sd_no_slow_down_traffic where id = #{id}
+    </delete>
+
+    <delete id="deleteSdNoSlowDownTrafficByIds" parameterType="String">
+        delete from sd_no_slow_down_traffic where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

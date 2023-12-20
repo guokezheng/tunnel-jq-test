@@ -13,9 +13,13 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.domain.vehicle.SdKvcar;
+import com.tunnel.business.domain.vehicle.SdNoSlowDownTraffic;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.mapper.vehicle.SdKvcarMapper;
+import com.tunnel.business.mapper.vehicle.SdNoSlowDownTrafficMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
@@ -89,6 +93,12 @@ public class KafkaReadListenToWanJiTopic {
     @Autowired
     @Qualifier("kafkaOneTemplate")
     private KafkaTemplate<String, String> kafkaOneTemplate;
+
+    @Autowired
+    private SdNoSlowDownTrafficMapper trafficMapper;
+
+    @Autowired
+    private SdKvcarMapper kvcarMapper;
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToWanJiTopic.class);
 
@@ -228,6 +238,44 @@ public class KafkaReadListenToWanJiTopic {
                 saveAnalysisCarsnapTwo(track,time,tunnelId,direction,timeStamp);
             }
         }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取不降速通行数据
+     * @param record
+     * @param item
+     * @param consumer
+     * @throws Exception
+     */
+    @KafkaListener(topics = {"wj_no_slow_down_traffic"}, containerFactory = "kafkaOneContainerFactory")
+    public void topicNoSlowDown(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
+        log.info("监听到万集感知数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析感知数据
+            JSONObject objects = JSONObject.parseObject(record.value());
+            saveNoSlowDownData(objects);
+        }
+        //手动提交
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取两客一危车辆数据
+     * @param record
+     * @param item
+     * @param consumer
+     * @throws Exception
+     */
+    @KafkaListener(topics = {"wj_2k1vCar"}, containerFactory = "kafkaOneContainerFactory")
+    public void topicTwokOnevCar(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
+        log.info("监听到万集感知数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析感知数据
+            JSONArray objects = JSONObject.parseArray(record.value());
+            saveKvCarData(objects);
+        }
+        //手动提交
         consumer.commitSync();
     }
 
@@ -871,4 +919,37 @@ public class KafkaReadListenToWanJiTopic {
         }
         return 0;
     }
+
+    /**
+     * 储存不降速通行数据
+     * @param object
+     */
+    public void saveNoSlowDownData(JSONObject object){
+        SdNoSlowDownTraffic noSlowDownTraffic = new SdNoSlowDownTraffic();
+        noSlowDownTraffic.setTunnelId(object.getString("tunnelId"));
+        noSlowDownTraffic.setInAvgSpeed(object.getInteger("inAvgSpeed"));
+        noSlowDownTraffic.setOutAvgSpeed(object.getInteger("outAvgSpeed"));
+        noSlowDownTraffic.setDirection(object.getString("direction"));
+        trafficMapper.insertSdNoSlowDownTraffic(noSlowDownTraffic);
+    }
+
+    /**
+     * 保存2客1危数据
+     * @param jsonArray
+     */
+    public void saveKvCarData(JSONArray jsonArray){
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            SdKvcar kvcar = new SdKvcar();
+            kvcar.setTunnelId(jsonObject.getString("tunnelId"));
+            kvcar.setDirection(jsonObject.getString("direction"));
+            kvcar.setCarColor(jsonObject.getString("color2k1v"));
+            kvcar.setCarType(jsonObject.getString("type2k1v"));
+            kvcar.setPlate(jsonObject.getString("plate"));
+            kvcar.setInTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(jsonObject.getString("frameFirstTime"))));
+            kvcar.setOutTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(jsonObject.getString("frameLastTime"))));
+            kvcarMapper.insertSdKvcar(kvcar);
+        }
+    }
+
 }

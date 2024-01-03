@@ -315,8 +315,11 @@ public class SdEventServiceImpl implements ISdEventService {
     public int updateSdEvent(SdEvent sdEvent) {
         //更新事件信息
         int count = upEvent(sdEvent);
+        sdEvent = sdEventMapper.selectSdEventById(sdEvent.getId());
         if(EventStateEnum.processed.getCode().equals(sdEvent.getEventState())){
-            sdEvent = sdEventMapper.selectSdEventById(sdEvent.getId());
+            sdEvent.setEventState("2");
+        }else {
+            sdEvent.setEventState("1");
         }
         //查询图片视频
         List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
@@ -326,7 +329,7 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEvent.setEventImgUrl(StringUtils.join(objects,","));
         sdEvent.setVideoUrl(videoList.size()>0 ? videoList.get(0).getImgUrl().split(";")[0]:"");
         //推送至物联
-        sendGsy(sdEvent);
+        sendWuLian(sdEvent);
         return count;
     }
 
@@ -369,7 +372,7 @@ public class SdEventServiceImpl implements ISdEventService {
         return count;
     }
 
-    //推送至高速云
+    //推送至高速云 暂时不用，按需使用
     public void sendGsy(SdEvent sdEvent){
         if(!EventStateEnum.processing.getCode().equals(sdEvent.getEventState())){
             Executor executor = Executors.newSingleThreadExecutor();
@@ -791,6 +794,7 @@ public class SdEventServiceImpl implements ISdEventService {
             }
             //将事件推送到前端展示
             /*eventSendWeb(jsonObject);*/
+            sdEvent.setEventState("0");
             sendWuLian(sdEvent);
         }
         //查询视频图片
@@ -858,6 +862,7 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEvent.setUpdateTime(DateUtils.parseDate(jsonObject.getString("endTime")));
         sdEventMapper.updateSdEvent(sdEvent);
         SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
+        sdEvent1.setEventState("2");
         sendWuLian(sdEvent1);
     }
 

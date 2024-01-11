@@ -574,18 +574,17 @@
         GROUP BY
             t.TIME
     </select>
-    
+
     <select id="getStatisticalDevice" resultType="hashmap">
         SELECT
             et.type_name,
             count( d.eq_id ) AS eqNum,
-            count( f.eq_id ) AS fNum,
-            ROUND(( count( f.eq_id ) / count( d.eq_id ))* 100, 1 ) AS faultPercentage,
-            ROUND((( count( d.eq_id )- count( f.eq_id ))/ count( d.eq_id ))* 100, 1 ) AS normalPercentage
+            COUNT(CASE WHEN d.eq_status != 1 AND d.eq_status IS NOT NULL THEN 1 ELSE NULL END) AS fNum,
+            ROUND((  COUNT(CASE WHEN d.eq_status != 1 AND d.eq_status IS NOT NULL THEN 1 ELSE NULL END) / count( d.eq_id ))* 100, 1 ) AS faultPercentage,
+            ROUND((( count( d.eq_id )-  COUNT(CASE WHEN d.eq_status != 1 AND d.eq_status IS NOT NULL THEN 1 ELSE NULL END))/ count( d.eq_id ))* 100, 1 ) AS normalPercentage
         FROM
             sd_devices d
                 LEFT JOIN sd_equipment_type et ON d.eq_type = et.type_id
-                LEFT JOIN sd_fault_list f ON d.eq_id = f.eq_id
         WHERE
             d.eq_tunnel_id = #{tunnelId}
         GROUP BY

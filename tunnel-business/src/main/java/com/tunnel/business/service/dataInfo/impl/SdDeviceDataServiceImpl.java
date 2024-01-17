@@ -386,6 +386,14 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     public List<SdDeviceFSFXData> handleFSFXExportRecord( SdDeviceCOVIData sdDeviceCOVIData) {
         getSelectExportParams(sdDeviceCOVIData);
         List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
+        List<SdDeviceFSFXData> list1 = sdDeviceDataMapper.selectFSFXExportDataListTwo(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
+        for(int i = 0; i < list.size(); i++){
+            if(i > list1.size() - 1){
+                list.get(i).setFx("");
+            }else {
+                list.get(i).setFx(list1.get(i).getFx());
+            }
+        }
         return list;
     }
 
@@ -631,6 +639,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             maps = sdDeviceDataMapper.selectCOVIDataList(beginTime, endTime, deviceId);
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.FENGSHUFENGXIANGITEM.getCode())) {//风速风向
             maps = sdDeviceDataMapper.selectFSFXDataList(beginTime, endTime, deviceId);
+            List<Map<String, String>> maps1 = sdDeviceDataMapper.selectFSFXDataListTwo(beginTime, endTime, deviceId);
+            for(int i = 0; i < maps.size(); i++){
+                maps.get(i).put("FX",maps1.get(i).get("FX"));
+            }
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
             maps = sdDeviceDataMapper.selectDNDataList(beginTime, endTime, deviceId);
         } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度

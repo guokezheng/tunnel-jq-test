@@ -79,6 +79,8 @@ public interface SdDeviceDataMapper
 
     public List<Map<String, String>> selectFSFXDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
+    public List<Map<String, String>> selectFSFXDataListTwo(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
+
     public List<Map<String, String>> selectDWDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
     public List<Map<String, String>> selectFJDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
@@ -123,6 +125,8 @@ public interface SdDeviceDataMapper
     List<SdDeviceCOVIData> selectCOVIExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 
     List<SdDeviceFSFXData> selectFSFXExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
+
+    List<SdDeviceFSFXData> selectFSFXExportDataListTwo(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 
     List<SdDeviceDNData> selectDNExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 

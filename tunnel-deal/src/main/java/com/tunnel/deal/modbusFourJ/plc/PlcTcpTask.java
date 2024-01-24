@@ -20,14 +20,13 @@ import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
 import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * describe: PLC modbus tcp定时任务类
@@ -115,6 +114,9 @@ public class PlcTcpTask {
     public static Long startTime;
     public static Long endTime;
 
+    @Value("${spring.profiles.active}")
+    private String active;
+
 
 //    /**
 //     * 每个PLC一个队列
@@ -139,32 +141,52 @@ public class PlcTcpTask {
     public void init()
     {
         deviceInfoCache();
-
-        //只创建一次线程
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (!queue.isEmpty()) {
-                        if(startTime == null){
-                            startTime = System.currentTimeMillis();
-                            System.out.println("第一次执行时间：startTime="+startTime);
-                        }
-                        //队列数据依次执行
-                        plcTcpControl.executeQueue();
+        if(active.equals("test") ){
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.scheduleAtFixedRate(() -> {
+                if (!queue.isEmpty()) {
+                    if (startTime == null) {
+                        startTime = System.currentTimeMillis();
+                        System.out.println("第一次执行时间：startTime=" + startTime);
+                    }
+                    //队列数据依次执行
+                    plcTcpControl.executeQueue();
 //                        modbusCmd.sleep(20);
-                    }else{
-                        if(startTime != null){
-                            endTime = System.currentTimeMillis();
-                            System.out.println("结束时间：endTime="+endTime);
-                            startTime = null;
-                        }
+                } else {
+                    if (startTime != null) {
+                        endTime = System.currentTimeMillis();
+                        System.out.println("结束时间：endTime=" + endTime);
+                        startTime = null;
                     }
                 }
+            }, 0, 1, TimeUnit.MILLISECONDS);
+        }else {
+            //只创建一次线程
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if (!queue.isEmpty()) {
+                            if (startTime == null) {
+                                startTime = System.currentTimeMillis();
+                                System.out.println("第一次执行时间：startTime=" + startTime);
+                            }
+                            //队列数据依次执行
+                            plcTcpControl.executeQueue();
+//                        modbusCmd.sleep(20);
+                        } else {
+                            if (startTime != null) {
+                                endTime = System.currentTimeMillis();
+                                System.out.println("结束时间：endTime=" + endTime);
+                                startTime = null;
+                            }
+                        }
+                    }
 
-            }
-        };
-        thread.start();
+                }
+            };
+            thread.start();
+        }
     }
 
 

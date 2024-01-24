@@ -774,7 +774,7 @@ export default {
           yAxis: {
             type: "value",
             name:'kW·h',
-            max:800,
+            max:2800,
             min:0,
             nameTextStyle:{
               color:"#fff"

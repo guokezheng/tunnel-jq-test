@@ -784,11 +784,11 @@ public class OmronFinsControlProcession {
             if(FinsQueryCodeEnum.READ_CODE.getCode().equals(queryCode)){
                 //读操作
                 String errorCode = msg.substring(24,28);
-                if(FinsCmdValues.NORMAL_REPLY_CODE.equals(errorCode)){
+                //if(FinsCmdValues.NORMAL_REPLY_CODE.equals(errorCode)){
                     //读取成功
                     String value = msg.substring(28);
                     jsonObject.put("value",value);
-                }
+                //}
 
             }
             if(FinsQueryCodeEnum.WRITE_CODE.getCode().equals(queryCode)){

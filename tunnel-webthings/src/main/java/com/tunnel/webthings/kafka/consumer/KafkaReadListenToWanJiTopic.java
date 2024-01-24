@@ -944,7 +944,7 @@ public class KafkaReadListenToWanJiTopic {
             kvcar.setTunnelId(jsonObject.getString("tunnelId"));
             kvcar.setDirection(jsonObject.getString("direction"));
             kvcar.setCarColor(jsonObject.getString("color2k1v"));
-            kvcar.setCarType(jsonObject.getString("type2k1v"));
+            kvcar.setCarType(getCarColor(jsonObject.getString("type2k1v")));
             kvcar.setPlate(jsonObject.getString("plate"));
             kvcar.setInTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(jsonObject.getString("frameFirstTime"))));
             kvcar.setOutTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(jsonObject.getString("frameLastTime"))));
@@ -952,4 +952,15 @@ public class KafkaReadListenToWanJiTopic {
         }
     }
 
+    public String getCarColor(String data){
+        switch (data){
+            case "2":
+                return "17";
+            case "3":
+                return "16";
+            case "8":
+                return "40";
+            default:return data;
+        }
+    }
 }

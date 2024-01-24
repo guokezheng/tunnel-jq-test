@@ -579,9 +579,9 @@
         SELECT
             et.type_name,
             count( d.eq_id ) AS eqNum,
-            COUNT(CASE WHEN d.eq_status != 1 AND d.eq_status IS NOT NULL THEN 1 ELSE NULL END) AS fNum,
-            ROUND((  COUNT(CASE WHEN d.eq_status != 1 AND d.eq_status IS NOT NULL THEN 1 ELSE NULL END) / count( d.eq_id ))* 100, 1 ) AS faultPercentage,
-            ROUND((( count( d.eq_id )-  COUNT(CASE WHEN d.eq_status != 1 AND d.eq_status IS NOT NULL THEN 1 ELSE NULL END))/ count( d.eq_id ))* 100, 1 ) AS normalPercentage
+            COUNT( CASE WHEN d.eq_status = '2' THEN 1 ELSE NULL END ) AS fNum,
+            ROUND((  COUNT( CASE WHEN d.eq_status = '2' THEN 1 ELSE NULL END ) / count( d.eq_id ))* 100, 1 ) AS faultPercentage,
+            ROUND((( count( d.eq_id )-  COUNT( CASE WHEN d.eq_status = '2' THEN 1 ELSE NULL END ))/ count( d.eq_id ))* 100, 1 ) AS normalPercentage
         FROM
             sd_devices d
                 LEFT JOIN sd_equipment_type et ON d.eq_type = et.type_id

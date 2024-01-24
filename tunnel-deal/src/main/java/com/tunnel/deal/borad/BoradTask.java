@@ -58,6 +58,10 @@ public class BoradTask {
     public List<SdDevices> selectBoradDeviceList(){
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(DevicesTypeEnum.VMS.getCode());
-        return sdDevicesService.selectSdDevicesList(sdDevices);
+        List<SdDevices> devicesList = sdDevicesService.selectSdDevicesList(sdDevices);
+        sdDevices.setEqType(DevicesTypeEnum.MEN_JIA_VMS.getCode());
+        List<SdDevices> devicesList1 = sdDevicesService.selectSdDevicesList(sdDevices);
+        devicesList.addAll(devicesList1);
+        return devicesList;
     }
 }

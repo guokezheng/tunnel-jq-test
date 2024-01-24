@@ -69,3 +69,12 @@ export function getVehicleSelectList(data) {
     data: data
   })
 }
+
+// 获取重点车辆列表
+export function getFocusVehicleList(query) {
+  return request({
+    url: '/system/focusVehicle/list',
+    method: 'get',
+    params: query
+  })
+}

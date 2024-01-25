@@ -52,6 +52,15 @@ export function exportType(query) {
   })
 }
 
+
+export function focusExportType(query) {
+  return request({
+    url: '/system/focusVehicle/export',
+    method: 'get',
+    params: query
+  })
+}
+
 // 校验车辆类型配置数据是否重复
 export function checkData(data) {
   return request({
@@ -78,3 +87,4 @@ export function getFocusVehicleList(query) {
     params: query
   })
 }
+

@@ -108,7 +108,6 @@
           // ids: "",
           searchValue: "",
           dateType: 0, //当前报表类型 年月日时分
-
         },
         dateRange: new Date(),
         // base_date: new Date().getFullYear(), //选择的日期 默认当前时间

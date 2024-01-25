@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.emeResource.SdFocusVehicleMapper">
+    
+    <resultMap type="sdFocusVehicle" id="SdFocusVehicleResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="direction"    column="direction"    />
+        <result property="plate"    column="plate"    />
+        <result property="carType"    column="car_type"    />
+        <result property="speed"    column="speed"    />
+        <result property="inTime"    column="in_time"    />
+        <result property="outTime"    column="out_time"    />
+        <result property="tunnelName"    column="tunnelName"    />
+    </resultMap>
+
+    <sql id="selectSdFocusVehicleVo">
+        select k.id, k.tunnel_id, k.direction, k.plate, k.car_type, k.speed, k.in_time, k.out_time from sd_kvcar k
+    </sql>
+
+    <select id="selectFocusVehicleList" parameterType="SdVehicleType" resultMap="SdFocusVehicleResult">
+        SELECT
+            k.id,
+            k.tunnel_id,
+            t.tunnel_name AS tunnelName,
+            sdd.dict_label AS direction,
+            k.plate,
+            vt.vehicle_type_name AS car_type,
+            k.speed,
+            k.in_time,
+            k.out_time
+        FROM
+            sd_kvcar k
+                LEFT JOIN sd_tunnels t ON k.tunnel_id = t.tunnel_id
+                LEFT JOIN sys_dict_data sdd ON k.direction = sdd.dict_value
+                LEFT JOIN sd_vehicle_type vt ON k.car_type = vt.vehicle_type_code
+        WHERE
+            1 = 1
+          AND sdd.dict_type = 'sd_direction'
+        <if test="tunnelId != null and tunnelId != ''">
+            AND k.tunnel_id = #{tunnelId}
+        </if>
+        <if test="carType != null and carType != ''">
+            AND k.car_type = #{carType}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND k.create_time <![CDATA[ >= ]]> #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND k.create_time <![CDATA[ <= ]]> #{endDate}
+        </if>
+        <if test="ids != null and ids != ''">
+            AND FIND_IN_SET( k.id, #{ids} ) > 0
+        </if>
+        ORDER BY k.create_time DESC
+    </select>
+
+    <select id="exportFocusVehicleList" parameterType="SdVehicleType" resultMap="SdFocusVehicleResult">
+        SELECT
+            id,
+            vehicle_type_code,
+            vehicle_type_name,
+            CASE
+            WHEN is_key_vehicle = '0' THEN
+            '否' ELSE '是'
+            END is_key_vehicle,
+            create_by,
+            create_time,
+            update_by,
+            update_time
+        FROM
+        sd_vehicle_type
+        <where>
+            <if test="vehicleTypeCode != null  and vehicleTypeCode != ''"> and INSTR(vehicle_type_code, #{vehicleTypeCode}) > 0</if>
+            <if test="vehicleTypeName != null  and vehicleTypeName != ''"> and INSTR(vehicle_type_name, #{vehicleTypeName}) > 0</if>
+            <if test="iskeyVehicle != null  and iskeyVehicle != ''"> and is_key_vehicle = #{iskeyVehicle}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(id,#{ids}) > 0</if>
+        </where>
+        ORDER BY CAST(vehicle_type_code as UNSIGNED) ASC
+    </select>
+</mapper>

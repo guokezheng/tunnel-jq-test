@@ -125,7 +125,7 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         //控制设备之前获取设备状态
         String beforeState = commonControlService.selectBeforeState(sdDevices);
         //操作日志
-        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
+        commonControlService.addOperationLog(map,sdDevices,beforeState,1);
         return 1;
         /*Integer controlState = 0;
 

@@ -31,6 +31,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     public static String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
     public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+
+    public static String YYYY_MM_DD_HH_MM_SS_SSS = "yyyy-MM-dd HH:mm:ss.SSS";
     
     private static String[] parsePatterns = {
             "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM", 
@@ -61,6 +63,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     {
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS);
     }
+
+    public static final String getMillTime()
+    {
+        return dateTimeNow(YYYY_MM_DD_HH_MM_SS_SSS);
+    }
+
     //获取月初时间
     public static final String getBeginningTime()
     {

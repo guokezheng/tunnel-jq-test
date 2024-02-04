@@ -65,7 +65,7 @@
               <i class="el-icon-video-camera" style="margin-right:15px;"></i>
               实时视频
               <span>VIDEO MONITORING</span>
-              <div class="touping" @click="handleTouping">投屏</div>
+<!--              <div class="touping" @click="handleTouping">投屏</div>-->
             </div>
             <div class="videoBox1">
               <div class="videoContent">
@@ -504,7 +504,7 @@
                 />
               </div>
               <div>
-               
+
                 <img
                   src="../../../assets/cloudControl/tunnelBox2.png"
                   @click="changeActiveMap(1)"
@@ -869,7 +869,7 @@
             <el-table
               v-show="oneKeyList.length >= 1"
               :data="item.deviceList"
-              style="width: 100%" 
+              style="width: 100%"
               class="phoneTable">
               <el-table-column
                 prop="eqName"
@@ -973,7 +973,7 @@
           class="closeRobot"
         />
       </el-dialog>
-       
+
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
     <workBench class="workBenchBox" ref="workBenchRef" :robotPositon="robotPositon"/>
 
@@ -1720,7 +1720,7 @@ export default {
         this.$nextTick(() => {
           let heightBox = document.querySelectorAll(".heightBox > *");
           let arr = []
-          
+
           for( let i = 0;i<heightBox.length;i++){
             let obj = {}
             obj.incHandContentBox = 0
@@ -1745,7 +1745,7 @@ export default {
             }
           }
         });
-        
+
         // console.log(this.incHandList,"this.incHandListthis.incHandList")
         this.getEventInfo();
         this.$forceUpdate();
@@ -1763,7 +1763,7 @@ export default {
     },
     // 事件详情
     async getListEvent() {
-      
+
       if (this.$route.query.id) {
         const param = {
           id: this.$route.query.id,

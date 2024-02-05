@@ -26,6 +26,8 @@ import com.tunnel.deal.tcp.plc.omron.fins.*;
 import com.tunnel.deal.tcp.plc.omron.task.OmronFinsTask;
 import com.tunnel.deal.tcp.util.NumberSystemConvert;
 import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,7 @@ import java.math.BigDecimal;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +54,8 @@ import static com.tunnel.deal.tcp.plc.omron.fins.FinsCmdValues.*;
  */
 @Component
 public class OmronFinsControlProcession {
+
+    private static final Logger log = LoggerFactory.getLogger(OmronFinsControlProcession.class);
 
     //定义先进先出队列
     public static Queue<Map<String, Object>> queue = new LinkedBlockingQueue<>();
@@ -174,6 +179,7 @@ public class OmronFinsControlProcession {
     public AjaxResult OmWrite(SdDevices sdDevices, String state) {
         ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
         SdDevices fDevice = sdDevicesService.selectSdDevicesById(sdDevices.getfEqId());
+        String tunnelId = sdDevices.getEqTunnelId();
         String ip = fDevice.getIp();
         String port = fDevice.getPort();
         Integer portNum = Integer.valueOf(port);
@@ -253,10 +259,18 @@ public class OmronFinsControlProcession {
         String sourceAddress = plcServer;
         //目的地址
         String destinationAddress = ip;
+        log.error("队列长度="+queue.size());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  // 指定日期时间格式
         //发送指令
+
         String command = FinsCmdGenerator.getUdpControlCommand(sourceAddress,destinationAddress,area,address,bitAddress,writeLength,controlState);
+        System.out.println("下发指令："+command+"，时间="+sdf.format(Calendar.getInstance().getTime()));
+        log.error("ip="+ip+",port="+portNum+"下发指令："+command+"，时间="+sdf.format(Calendar.getInstance().getTime()));
         try {
             String s = UdpClient(ip, portNum, command);
+            System.out.println("返回指令："+s+"，时间="+sdf.format(Calendar.getInstance().getTime()));
+            log.error("返回指令："+s+"，时间="+sdf.format(Calendar.getInstance().getTime()));
             JSONObject jsonObject = udpCommandParse(s);
         } catch (Exception e) {
             System.out.println(ip + ": "+sdDevices.getfEqId() + " 请求超时" + command + e.getMessage());
@@ -268,7 +282,10 @@ public class OmronFinsControlProcession {
             //如果点位配置了延时执行
             delayExecute(sourceAddress,destinationAddress,portNum,area,address,bitAddress,writeLength,stateJson);
         }
-
+        if("JQ-WeiFang-JiuLongYu-JJL".equals(tunnelId) || "JQ-WeiFang-JiuLongYu-MAS".equals(tunnelId)){
+            //马鞍山隧道、金家楼隧道的PLC批量控制间隔时间加长（间隔时间短的情况下依次控制同一个PLC的同一个地址，控制会失效，可能与地址内容被覆盖有关）
+            sleep(1000);
+        }
         return ajaxResult;
     }
 
@@ -311,7 +328,7 @@ public class OmronFinsControlProcession {
             return AjaxResult.error();
         }
 //        List<String> fEqIdList = new ArrayList<>();
-//        fEqIdList.add("JQ-WeiFang-YangTianShan-SZS-PLC-002");
+//        fEqIdList.add("JQ-WeiFang-JiuLongYu-JJL-PLC-001");
 
 //        sendSinglePointCmd(fEqIdList,pointType);
 
@@ -376,16 +393,62 @@ public class OmronFinsControlProcession {
         if(pList != null && pList.size() > 0){
             String sourceAddress = plcServer;
             String destinationAddress = ip;
-            String command = FinsCmdGenerator.getUdpReadCommand(sourceAddress,destinationAddress,areaCode,minAddress,"",String.valueOf(cmdLength));
-            try {
-                String s = UdpClient(ip, portNum, command);
-                JSONObject jsonObject = udpCommandParse(s);
-                handleDeviceData(pList,fEqId,jsonObject.getString("value"),minAddress,cmdLength,dataLength,areaCode);
-            } catch (Exception e) {
-                System.out.println(ip + ": "+fEqId + " 请求超时" + command + e.getMessage());
-                //updateDevStatus(fEqId);
-                return;
+
+            int intervalNum = 500;
+            Integer maxAddressNum = Integer.valueOf(maxAddress);
+            Integer minAddressNum = Integer.valueOf(minAddress);
+            Integer dataLengthNum = Integer.valueOf(dataLength);
+            Integer num = maxAddressNum - minAddressNum;
+
+            if(num > intervalNum){
+                for(int addressCursor = minAddressNum; addressCursor < maxAddressNum; ){
+                    Integer addressEnd = addressCursor + intervalNum;
+                    //超过点位最大地址，读取可能会报错，需要特殊处理
+                    if(addressEnd > maxAddressNum){
+                        addressEnd = maxAddressNum;
+                    }
+                    cmdLength = addressEnd + dataLengthNum - addressCursor;
+                    sendCmd(ip,portNum,pList,fEqId,sourceAddress,destinationAddress,areaCode, String.valueOf(addressCursor),cmdLength,dataLength);
+                    addressCursor += intervalNum;
+
+                    sleep(200);
+                }
+            }else{
+                sendCmd(ip,portNum,pList,fEqId,sourceAddress,destinationAddress,areaCode,minAddress,cmdLength,dataLength);
             }
+
+        }
+    }
+
+    /**
+     * 发送指令，解析数据
+     * @param ip
+     * @param portNum
+     * @param pList
+     * @param fEqId
+     * @param sourceAddress
+     * @param destinationAddress
+     * @param areaCode
+     * @param minAddress
+     * @param cmdLength
+     * @param dataLength
+     */
+    public void sendCmd(String ip,int portNum,List<Map> pList,String fEqId,String sourceAddress,
+                        String destinationAddress,String areaCode,String minAddress,
+                        Integer cmdLength,String dataLength){
+        String command = FinsCmdGenerator.getUdpReadCommand(sourceAddress,
+                destinationAddress,areaCode,minAddress,"",String.valueOf(cmdLength));
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  // 指定日期时间格式
+        try {
+//            System.out.println("下发指令："+command+"，时间="+sdf.format(Calendar.getInstance().getTime()));
+//            log.error("ip="+ip+",port="+portNum+"下发指令："+command+"，时间="+sdf.format(Calendar.getInstance().getTime()));
+            String s = UdpClient(ip, portNum, command);
+            JSONObject jsonObject = udpCommandParse(s);
+//            System.out.println("返回指令："+s+"，时间="+sdf.format(Calendar.getInstance().getTime()));
+//            log.error("返回指令："+s+"，时间="+sdf.format(Calendar.getInstance().getTime()));
+            handleDeviceData(pList,fEqId,jsonObject.getString("value"),minAddress,cmdLength,dataLength,areaCode);
+        } catch (Exception e) {
+            System.out.println(ip + ": "+fEqId + " 请求超时" + command + e.getMessage());
         }
     }
 
@@ -784,11 +847,11 @@ public class OmronFinsControlProcession {
             if(FinsQueryCodeEnum.READ_CODE.getCode().equals(queryCode)){
                 //读操作
                 String errorCode = msg.substring(24,28);
-                //if(FinsCmdValues.NORMAL_REPLY_CODE.equals(errorCode)){
+//                if(FinsCmdValues.NORMAL_REPLY_CODE.equals(errorCode)){
                     //读取成功
                     String value = msg.substring(28);
                     jsonObject.put("value",value);
-                //}
+//                }
 
             }
             if(FinsQueryCodeEnum.WRITE_CODE.getCode().equals(queryCode)){

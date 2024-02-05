@@ -418,9 +418,9 @@ public class BoardController extends BaseController {
                     iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                     throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
                 }
-                String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
-                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
-//                Boolean result = false;
+                /*String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
+                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);*/
+                Boolean result = false;
                 if (result) {
                     if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
                         String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
@@ -624,7 +624,8 @@ public class BoardController extends BaseController {
             }
             String content = boardContentData.get("content").toString();
             String substring = "";
-            substring = content.substring(31,content.length());
+            substring = content.substring(content.indexOf("ITEM0"), content.length());
+            //substring = content.substring(31,content.length());
                 /*if(!protocolType.startsWith(IDeviceProtocol.SANSI)){
                     substring = content.substring(31,content.length());
                 }else {
@@ -885,7 +886,7 @@ public class BoardController extends BaseController {
                     String boardContent = map.get("CONTENT").toString();
                     content.append("\\").append("W").append(boardContent);
                 }
-                AjaxResult ajaxResult = dingEnBoard(deviceIdList.stream().collect(Collectors.joining(",")), "", parameters,content);
+                /*AjaxResult ajaxResult = dingEnBoard(deviceIdList.stream().collect(Collectors.joining(",")), "", parameters,content);
                 if(ajaxResult.get("code").toString().equals("200")){
                     JSONObject boardData = new JSONObject();
                     boardData.put("deviceIds",sdDevices.getAssociatedDeviceId());
@@ -899,7 +900,8 @@ public class BoardController extends BaseController {
                         sdDevicesService.updateSdDevices(sdDevices1);
                     });
                 }
-                return ajaxResult;
+                return ajaxResult;*/
+                return null;
             }else if(protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)){
                 content.append("[PLAYLIST]<r><n>ITEM_NO=").append(String.format("%03d",parameters.size()));
                 for(int i = 0; i < parameters.size(); i++){
@@ -926,6 +928,7 @@ public class BoardController extends BaseController {
             }
             String encode = URLEncoder.encode(String.valueOf(content), "UTF-8");
             AjaxResult ajaxResult = uploadBoardEditInfo(deviceIdList.stream().collect(Collectors.joining(",")), "", encode);
+            /*AjaxResult ajaxResult = uploadBoardEditInfo(deviceIdList.stream().collect(Collectors.joining(",")), "", encode);
             if(ajaxResult.get("code").toString().equals("200")){
                 JSONObject boardData = new JSONObject();
                 boardData.put("deviceIds",sdDevices.getAssociatedDeviceId());
@@ -970,7 +973,8 @@ public class BoardController extends BaseController {
                     kafkaOneTemplate.send("baseDeviceStatus", JSON.toJSONString(list));
                 });
             }
-            return ajaxResult;
+            return ajaxResult;*/
+            return null;
         } catch (UnsupportedEncodingException e) {
             return null;
         }

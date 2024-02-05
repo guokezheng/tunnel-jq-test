@@ -927,7 +927,6 @@ public class BoardController extends BaseController {
             }
             String encode = URLEncoder.encode(String.valueOf(content), "UTF-8");
             AjaxResult ajaxResult = uploadBoardEditInfo(deviceIdList.stream().collect(Collectors.joining(",")), "", encode);
-            AjaxResult ajaxResult = uploadBoardEditInfo(deviceIdList.stream().collect(Collectors.joining(",")), "", encode);
             if(ajaxResult.get("code").toString().equals("200")){
                 JSONObject boardData = new JSONObject();
                 boardData.put("deviceIds",sdDevices.getAssociatedDeviceId());

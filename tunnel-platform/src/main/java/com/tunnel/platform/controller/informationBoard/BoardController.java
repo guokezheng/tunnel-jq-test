@@ -418,9 +418,9 @@ public class BoardController extends BaseController {
                     iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                     throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
                 }
-                /*String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
-                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);*/
-                Boolean result = false;
+                String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
+                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
+                //Boolean result = false;
                 if (result) {
                     if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
                         String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";

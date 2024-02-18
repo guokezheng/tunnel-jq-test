@@ -88,7 +88,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
             if (!data.contains("火警") && !data.contains("模块或探头故障") && !data.contains("模块或探头恢复")
-                    && !data.contains("全部声光启动") && !data.contains("全部声光停止")) {
+                    && !data.contains("全部声光启动") && !data.contains("全部声光停止") && !data.contains("控制器复位")) {
                 return;
             }
 
@@ -128,6 +128,12 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     //复位清除设备报警状态
                     SdDevices dev = new SdDevices();
                     dev.setExternalSystemId(system.getId());
+
+                    // 指定控制器进行复位
+                    if(alarmType.contains("控制器复位")){
+                        dev.setQueryPointAddress(host);
+                    }
+
                     List<SdDevices> fireComponentsList = sdDevicesMapper.selectSdDevicesList(dev);
                     SdDeviceData sdDeviceData = new SdDeviceData();
                     for (int j = 0;j < fireComponentsList.size();j++) {
@@ -143,16 +149,16 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                         }
                     }
                     //复位清除预警
-                    SdEvent sdEvent = new SdEvent();
-                    sdEvent.setEventTypeId(20L);
-                    List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
-                    for (int i = 0; i < sdEvents.size(); i++) {
-                        SdEvent event = sdEvents.get(i);
-                        event.setEventState("1");
-                        event.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
-                        event.setUpdateTime(new Date());
-                        sdEventMapper.updateSdEvent(event);
-                    }
+//                    SdEvent sdEvent = new SdEvent();
+//                    sdEvent.setEventTypeId(20L);
+//                    List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+//                    for (int i = 0; i < sdEvents.size(); i++) {
+//                        SdEvent event = sdEvents.get(i);
+//                        event.setEventState("1");
+//                        event.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+//                        event.setUpdateTime(new Date());
+//                        sdEventMapper.updateSdEvent(event);
+//                    }
                    // 模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02
 //                sdEvent.setEventTypeId(102L);
 //                sdEvents = sdEventMapper.selectSdEventList(sdEvent);
@@ -297,24 +303,44 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     }else{
                         direction = DevicesDirectionCodeEnum.WEIFANGFANGXIANG.getName()+sdDevices.getPile();
                     }
-                    //故障位置处理
-                    //存 故障清单表sd_fault_list
-                    SdFaultList sdFaultList = new SdFaultList();
-                    sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
-                    sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
-                    sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
-                    sdFaultList.setTunnelId(sdDevices.getEqTunnelId());//隧道
-                    sdFaultList.setFaultLocation(direction);//设备位置   方向+桩号拼接
-                    sdFaultList.setFaultType("6");//故障类型  其他
-                    sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
-                    sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
-                    sdFaultList.setEqId(sdDevices.getEqId());//设备id
-                    sdFaultList.setEqStatus("3");//设备状态  故障
-                    sdFaultList.setFaultLevel("0");//故障等级  一般
-                    sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
-                    sdFaultList.setFaultStatus("0");//故障状态  已发布
-                    sdFaultListMapper.insertSdFaultList(sdFaultList);
-                //    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
+
+                    // 查询 方向+桩号拼接 故障信息
+                    List<Map> faultList = sdFaultListMapper.selectSdFaultEqByDirection(direction,sdDevices.getEqId());
+
+                    // 不存在，则插入故障数据。已存在，不在插入
+                    if(faultList.size() == 0) {
+
+                        //故障位置处理
+                        //存 故障清单表sd_fault_list
+                        SdFaultList sdFaultList = new SdFaultList();
+                        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+                        sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+                        sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+                        sdFaultList.setTunnelId(sdDevices.getEqTunnelId());//隧道
+                        sdFaultList.setFaultLocation(direction);//设备位置   方向+桩号拼接
+                        sdFaultList.setFaultType("6");//故障类型  其他
+                        sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
+                        sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
+                        sdFaultList.setEqId(sdDevices.getEqId());//设备id
+                        sdFaultList.setEqStatus("3");//设备状态  故障
+                        sdFaultList.setFaultLevel("0");//故障等级  一般
+                        sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
+                        sdFaultList.setFaultStatus("0");//故障状态  已发布
+                        sdFaultListMapper.insertSdFaultList(sdFaultList);
+                        //    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
+                    }
+                }
+
+                // 设备故障恢复
+                if (alarmType.contains("恢复")) {
+                    String direction="";
+                    if(sdDevices.getEqDirection().equals(DevicesDirectionCodeEnum.JINANFANGXIANG.getCode())){
+                        direction = DevicesDirectionCodeEnum.JINANFANGXIANG.getName()+sdDevices.getPile();
+                    }else{
+                        direction = DevicesDirectionCodeEnum.WEIFANGFANGXIANG.getName()+sdDevices.getPile();
+                    }
+                    //设备故障从未消除 变成 已消除
+                    sdFaultListMapper.updateFalltRemoveStatueSuccess(direction);
                 }
 
                 // 火警产生事件

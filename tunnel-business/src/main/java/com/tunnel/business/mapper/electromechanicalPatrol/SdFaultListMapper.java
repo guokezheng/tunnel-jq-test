@@ -158,4 +158,8 @@ public interface SdFaultListMapper
     List<SdFaultList> getFaultDictValue(@Param("dictType")String dictType);
 
     List<SdEvent> selectSdFaultList(SdFaultList sdFaultListData);
+
+    List<Map> selectSdFaultEqByDirection(@Param("direction") String direction,@Param("eqId")String eqId);
+
+    void updateFalltRemoveStatueSuccess(String direction);
 }

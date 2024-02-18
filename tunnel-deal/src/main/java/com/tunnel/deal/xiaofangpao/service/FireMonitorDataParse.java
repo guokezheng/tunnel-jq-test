@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 /**
  * describe: 测控执行器数据解析类
@@ -134,24 +136,31 @@ public class FireMonitorDataParse {
                 if(deviceStateLow.substring(5,6).equals("1")){//故障
                     eqStatus = "3";
                     log.info("设备状态为故障");
-                    //故障位置处理
-                    //存 故障清单表sd_fault_list
-                    SdFaultList sdFaultList = new SdFaultList();
-                    sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
-                    sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
-                    sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
-                    sdFaultList.setTunnelId(sdDevices.getEqTunnelId());//隧道
-                    sdFaultList.setFaultLocation(direction);//设备位置   方向+桩号拼接
-                    sdFaultList.setFaultType("6");//故障类型  其他
-                    sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
-                    sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
-                    sdFaultList.setEqId(sdDevices.getEqId());//设备id
-                    sdFaultList.setEqStatus("3");//设备状态  故障
-                    sdFaultList.setFaultLevel("0");//故障等级  一般
-                    sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
-                    sdFaultList.setFaultStatus("0");//故障状态  已发布
-                    sdFaultListMapper.insertSdFaultList(sdFaultList);
-                    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
+
+                    // 查询 方向+桩号拼接 故障信息
+                    List<Map> faultList = sdFaultListMapper.selectSdFaultEqByDirection(direction,sdDevices.getEqId());
+
+                    // 不存在，则插入故障数据。已存在，不在插入
+                    if(faultList.size() == 0) {
+                        //故障位置处理
+                        //存 故障清单表sd_fault_list
+                        SdFaultList sdFaultList = new SdFaultList();
+                        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+                        sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+                        sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+                        sdFaultList.setTunnelId(sdDevices.getEqTunnelId());//隧道
+                        sdFaultList.setFaultLocation(direction);//设备位置   方向+桩号拼接
+                        sdFaultList.setFaultType("6");//故障类型  其他
+                        sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
+                        sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
+                        sdFaultList.setEqId(sdDevices.getEqId());//设备id
+                        sdFaultList.setEqStatus("3");//设备状态  故障
+                        sdFaultList.setFaultLevel("0");//故障等级  一般
+                        sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
+                        sdFaultList.setFaultStatus("0");//故障状态  已发布
+                        sdFaultListMapper.insertSdFaultList(sdFaultList);
+                        sdFaultListService.faultSendWeb(sdFaultList);//故障推送
+                    }
                 }
                 if(deviceStateLow.substring(6,7).equals("1")){//火警
                     eqStatus = "4";

@@ -480,6 +480,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND fault.fallt_remove_statue = '1'
           AND  fault.id = #{id}
     </select>
+    <select id="selectSdFaultEqByDirection" resultType="java.util.Map">
 
+        select id from sd_fault_list where fault_location = #{direction} and eq_id = #{eqId}
+
+    </select>
+
+
+    <update id="updateFalltRemoveStatueSuccess" parameterType="String">
+
+        update sd_fault_list set fallt_remove_statue = 0 ,update_time = Now() where fault_location = #{direction}
+    </update>
 
 </mapper>

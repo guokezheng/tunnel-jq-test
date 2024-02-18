@@ -159,7 +159,18 @@ public interface SdFaultListMapper
 
     List<SdEvent> selectSdFaultList(SdFaultList sdFaultListData);
 
+    /**
+     * 查询设备故障信息
+     * @param direction
+     * @param eqId
+     * @return
+     */
     List<Map> selectSdFaultEqByDirection(@Param("direction") String direction,@Param("eqId")String eqId);
 
-    void updateFalltRemoveStatueSuccess(String direction);
+    /**
+     * 设备状态
+     * @param direction
+     * @param eqId
+     */
+    void updateFalltRemoveStatueSuccess(@Param("direction") String direction,@Param("eqId")String eqId);
 }

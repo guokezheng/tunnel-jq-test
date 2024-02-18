@@ -132,6 +132,8 @@ public class FireMonitorDataParse {
                 if(deviceStateLow.substring(7).equals("1")){//正常
                     eqStatus = "1";
                     log.info("设备状态为正常");
+                    //设备故障从未消除 变成 已消除
+                    sdFaultListMapper.updateFalltRemoveStatueSuccess(direction,sdDevices.getEqId());
                 }
                 if(deviceStateLow.substring(5,6).equals("1")){//故障
                     eqStatus = "3";
@@ -189,6 +191,8 @@ public class FireMonitorDataParse {
                     dataStatus = "2";
                     log.info("设备状态为阀关");
                 }
+
+                System.out.println("消防炮状态：IP地址："+deviceAddress+"，设备状态："+eqStatus+"，数据状态："+dataStatus);
                 //更新/新增消防炮设备状态
                 fireMonitorService.updateFireMonitorStatus(deviceAddress,eqStatus,dataStatus);
             }

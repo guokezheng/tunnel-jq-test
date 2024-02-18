@@ -340,7 +340,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                         direction = DevicesDirectionCodeEnum.WEIFANGFANGXIANG.getName()+sdDevices.getPile();
                     }
                     //设备故障从未消除 变成 已消除
-                    sdFaultListMapper.updateFalltRemoveStatueSuccess(direction);
+                    sdFaultListMapper.updateFalltRemoveStatueSuccess(direction,sdDevices.getEqId());
                 }
 
                 // 火警产生事件

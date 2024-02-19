@@ -120,6 +120,10 @@ public class FireMonitorDataParse {
                 String deviceStateHigh = hex6To2(deviceState.substring(2));//高字节
                 //根据ip查询消防炮设备信息
                 SdDevices sdDevices = sdDevicesMapper.getXfpDevicesInfo(deviceAddress);
+                if(sdDevices == null){
+                    log.error("消防炮设备不存在，IP地址："+deviceAddress);
+                    continue;
+                }
                 String direction="";
                 if(sdDevices.getEqDirection().equals(DevicesDirectionCodeEnum.JINANFANGXIANG.getCode())){
                     direction = DevicesDirectionCodeEnum.JINANFANGXIANG.getName()+sdDevices.getPile();
@@ -132,13 +136,11 @@ public class FireMonitorDataParse {
                 if(deviceStateLow.substring(7).equals("1")){//正常
                     eqStatus = "1";
                     log.info("设备状态为正常");
-                    //设备故障从未消除 变成 已消除
-                    sdFaultListMapper.updateFalltRemoveStatueSuccess(direction,sdDevices.getEqId());
                 }
                 if(deviceStateLow.substring(5,6).equals("1")){//故障
                     eqStatus = "3";
                     log.info("设备状态为故障");
-
+                    System.out.println("消防炮设备状态：故障 ，IP地址："+deviceAddress + ", msg：" + deviceStateLow + "-" + deviceStateHigh);
                     // 查询 方向+桩号拼接 故障信息
                     List<Map> faultList = sdFaultListMapper.selectSdFaultEqByDirection(direction,sdDevices.getEqId());
 
@@ -163,10 +165,17 @@ public class FireMonitorDataParse {
                         sdFaultListMapper.insertSdFaultList(sdFaultList);
                         sdFaultListService.faultSendWeb(sdFaultList);//故障推送
                     }
+                }else{
+                    //设备故障从未消除 变成 已消除
+                    int count = sdFaultListMapper.updateFalltRemoveStatueSuccess(direction,sdDevices.getEqId());
+                    if(count > 0){
+                        System.out.println("消防炮设备状态：故障已消除 ，IP地址："+deviceAddress + ", msg：" + deviceStateLow + "-" + deviceStateHigh);
+                    }
                 }
                 if(deviceStateLow.substring(6,7).equals("1")){//火警
                     eqStatus = "4";
                     log.info("设备状态为火警");
+                    System.out.println("消防炮设备状态：火警 ，IP地址："+deviceAddress + ", msg：" + deviceStateLow + "-" + deviceStateHigh);
                     //存 故障清单表sd_event
                     SdEvent sdEvent = new SdEvent();
                     sdEvent.setTunnelId(sdDevices.getEqTunnelId());//隧道
@@ -186,13 +195,15 @@ public class FireMonitorDataParse {
                 if(deviceStateHigh.substring(4,5).equals("1")){//阀开
                     dataStatus = "1";
                     log.info("设备状态为阀开");
+                    System.out.println("消防炮数据状态：阀开 ，IP地址："+deviceAddress+ ", msg：" + deviceStateLow + "-" + deviceStateHigh);
                 }
                 if(deviceStateHigh.substring(5,6).equals("1")){//阀关
                     dataStatus = "2";
                     log.info("设备状态为阀关");
+                    System.out.println("消防炮数据状态：阀关 ，IP地址："+deviceAddress+ ", msg：" + deviceStateLow + "-" + deviceStateHigh);
                 }
 
-                System.out.println("消防炮状态：IP地址："+deviceAddress+"，设备状态："+eqStatus+"，数据状态："+dataStatus);
+                //System.out.println("消防炮状态：IP地址："+deviceAddress+"，设备状态："+eqStatus+"，数据状态："+dataStatus);
                 //更新/新增消防炮设备状态
                 fireMonitorService.updateFireMonitorStatus(deviceAddress,eqStatus,dataStatus);
             }
@@ -291,6 +302,8 @@ public class FireMonitorDataParse {
         return binStr;
     }
 
+
+
     public static String getValidCode(){
 
         // 创建Calendar对象表示当前时间
@@ -355,7 +368,23 @@ public class FireMonitorDataParse {
     }
 
     public static void main(String[] args) {
-        System.out.println(getValidCode());
+       // System.out.println(getValidCode());
+
+        String deviceStatusMsg = "01018344b5070a050430303839205a4b31372d39333120c9e4c1f7c3f0bbf0d7b0d6c32dd7f300001f2a10120218";
+        String deviceAddress = hex6To10(deviceStatusMsg.substring(6,14));//ip地址
+        String deviceState = deviceStatusMsg.substring(14,18);//部件状态
+        String deviceStateLow = hex6To2(deviceState.substring(0,2));//低字节
+        String deviceStateHigh = hex6To2(deviceState.substring(2));//高字节
+
+        String devState = deviceStateLow.substring(7);
+        String falState = deviceStateLow.substring(5,6);
+        String warnState = deviceStateLow.substring(6,7);
+        String openState = deviceStateHigh.substring(4,5);
+        String closeState = deviceStateHigh.substring(5,6);
+
+        System.out.println("deviceAddress:"+deviceAddress+",deviceStateLow:"+deviceStateLow+",deviceStateHigh:"+deviceStateHigh);
+
+        System.out.println("devState:"+devState+",falState:"+falState+",warnState:"+warnState+",openState:"+openState+",closeState:"+closeState);
 
        // System.out.println(makeChecksum("02 00 01 06 01 02 11 04 0A 17 00 00 00 00 00 00 00 00 00 00 00 00 24 00 02").replaceAll(" ",""));
         //System.out.println(getCode());

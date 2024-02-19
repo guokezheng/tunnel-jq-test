@@ -172,5 +172,5 @@ public interface SdFaultListMapper
      * @param direction
      * @param eqId
      */
-    void updateFalltRemoveStatueSuccess(@Param("direction") String direction,@Param("eqId")String eqId);
+    int updateFalltRemoveStatueSuccess(@Param("direction") String direction,@Param("eqId")String eqId);
 }

@@ -452,7 +452,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
-    <select id ="selectSdFaultList" resultType="hashmap" parameterType="SdFaultList">
+    <select id ="selectSdFaultList" resultType="com.tunnel.business.domain.event.SdEvent" parameterType="SdFaultList">
         SELECT
             fault.id id,
             concat(
@@ -489,7 +489,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="updateFalltRemoveStatueSuccess" parameterType="String">
 
-        update sd_fault_list set fallt_remove_statue = 0 ,fault_remove_time = = Now() ,update_time = Now() where fault_location = #{direction} and eq_id = #{eqId} and fallt_remove_statue = 1
+        update sd_fault_list set fallt_remove_statue = 0 ,fault_remove_time  = Now(),update_time = Now() where fault_location = #{direction} and eq_id = #{eqId} and fallt_remove_statue = 1
     </update>
 
 </mapper>

@@ -58,6 +58,8 @@ import scala.annotation.meta.param;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -789,6 +791,9 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }else {
             insertSdEvent(sdEvent);
+            if(sdEvent.getEventTypeId() == 1L || sdEvent.getEventTypeId() == 4L){
+                eventAudio();
+            }
             if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
                 sdEventMapper.insertEventConfidence(sdEvent);
             }
@@ -2546,6 +2551,20 @@ public class SdEventServiceImpl implements ISdEventService {
                 sendWlEvent(map);;
             });
             //radarEventServiceImpl.sendDataToOtherSystem(map);
+        }
+    }
+
+    /**
+     * 提示音
+     */
+    public void eventAudio(){
+        try {
+            File file = new File("./tunnel-business/src/main/resources/audio/ding.WAV");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

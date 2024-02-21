@@ -1347,7 +1347,7 @@ public class KafkaReadListenToHuaWeiTopic {
         image.setImgType("1");
         imageMapper.insertSdTrafficImage(image);
         //推送物联中台，事件类型过滤
-        if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){
+        /*if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){
             //如果是未处理状态改为处理中
             if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
                 event.setEventState(EventStateEnum.processing.getCode());
@@ -1359,7 +1359,7 @@ public class KafkaReadListenToHuaWeiTopic {
             noNullStringAttr(event);
             Map<String, Object> map = setEventData(event);
             radarEventServiceImpl.sendDataToOtherSystem(map);
-        }
+        }*/
         //查询主动安全事件类型
         /*SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
         SdEventType sdEventType = new SdEventType();

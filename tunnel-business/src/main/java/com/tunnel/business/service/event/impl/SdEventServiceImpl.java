@@ -862,9 +862,10 @@ public class SdEventServiceImpl implements ISdEventService {
         JSONObject jsonObject = JSONObject.parseObject(eventJson);
         SdEvent sdEvent = new SdEvent();
         sdEvent.setId(jsonObject.getLongValue("eventId"));
-        sdEvent.setEventState(EventStateEnum.processed.getCode());
+        sdEvent.setEventState(EventStateEnum.YI_QUE_REN.getCode());
         sdEvent.setEndTime(jsonObject.getString("endTime"));
         sdEvent.setUpdateTime(DateUtils.parseDate(jsonObject.getString("endTime")));
+        sdEvent.setReviewRemark("车辆已驶离");
         sdEventMapper.updateSdEvent(sdEvent);
         SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
         sdEvent1.setEventState("2");

@@ -211,8 +211,6 @@ public class SdEvent extends BaseEntity {
      */
     private String position;
 
-    private Long deptId;
-
     private String dept;
 
     /**
@@ -488,14 +486,6 @@ public class SdEvent extends BaseEntity {
         this.position = position;
     }
 
-    public Long getDeptId() {
-        return deptId;
-    }
-
-    public void setDeptId(Long deptId) {
-        this.deptId = deptId;
-    }
-
     public void setSlightInjured(int slightInjured) {
         this.slightInjured = slightInjured;
     }
@@ -689,7 +679,6 @@ public class SdEvent extends BaseEntity {
                 ", policePhone='" + policePhone + '\'' +
                 ", smallCarNum=" + smallCarNum +
                 ", tunnelStationName='" + tunnelStationName + '\'' +
-                ", deptId=" + deptId +
                 '}';
     }
 

@@ -109,6 +109,7 @@ public class FireMonitorDataParse {
             //0e 30 0b 0f 06 17 时间戳
             log.info("发送的设备状态");
             int s = Integer.parseInt(msg.substring(56, 58),16);//数目即包含多少设备
+            System.out.println("消防炮设备状态数量：" + s  +"，msg：" + msg);
             for(int i=0;i<s;i++){
                 //截取设备状态数据
                 int start = 58+92*i;
@@ -163,7 +164,7 @@ public class FireMonitorDataParse {
                         sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
                         sdFaultList.setFaultStatus("0");//故障状态  已发布
                         sdFaultListMapper.insertSdFaultList(sdFaultList);
-                        sdFaultListService.faultSendWeb(sdFaultList);//故障推送
+                       // sdFaultListService.faultSendWeb(sdFaultList);//故障推送
                     }
                 }else{
                     //设备故障从未消除 变成 已消除

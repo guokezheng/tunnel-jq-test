@@ -662,7 +662,9 @@ public class SdEventController extends BaseController
      */
     @PostMapping("/upload")
     public void upload(@RequestBody String eventJson){
-        sdEventService.upload(eventJson);
+        threadPoolTaskExecutor.execute(()->{
+            sdEventService.upload(eventJson);
+        });
     }
 
     /**

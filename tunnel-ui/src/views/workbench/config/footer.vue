@@ -1231,7 +1231,7 @@
         //然后异步执行echarts的初始化函数
         newPromise.then(() => {
           var vehicleMonitoring = echarts.init(document.getElementById("vehicleMonitoring"));
-          let xData = ['济南方向', '潍坊方向']
+          let xData = ['潍坊方向', '济南方向']
 
           let option = {
             legend: {

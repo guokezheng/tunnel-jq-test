@@ -39,6 +39,9 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
@@ -367,6 +370,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     sdEvent.setEventTime(dateZh(time));
                     sdEvent.setCreateTime(dateZh(time));
                     sdEventMapper.insertSdEvent(sdEvent);
+                    eventAudio();
                     eventSendWeb(sdEvent);
                 }
             } else {
@@ -374,6 +378,20 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }catch (Exception e){
             log.error("当前报文格式异常，请检查设备！");
+        }
+    }
+
+    /**
+     * 提示音
+     */
+    public static void eventAudio(){
+        try {
+            File file = new File(".//tunnel-deal/src/main/resources/audio/ding.WAV");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

@@ -63,6 +63,14 @@ public interface ISdDevicesService {
     int insertSdDevices(SdDevices sdDevices);
 
     /**
+     * 新增设备(插入语句中同一个字段重复出现会报错)
+     *
+     * @param sdDevices 设备
+     * @return 结果
+     */
+    int insertSdDevicesNew(SdDevices sdDevices);
+
+    /**
      * 修改设备
      *
      * @param sdDevices 设备

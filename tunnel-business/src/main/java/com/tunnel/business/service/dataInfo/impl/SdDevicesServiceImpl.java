@@ -192,6 +192,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     /**
+     * 新增设备(插入语句中同一个字段重复出现会报错)
+     *
+     * @param sdDevices 设备
+     * @return 结果
+     */
+    @Override
+    public int insertSdDevicesNew(SdDevices sdDevices) {
+        sdDevices.setCreateTime(DateUtils.getNowDate());
+        return sdDevicesMapper.insertSdDevicesNew(sdDevices);
+    }
+
+    /**
      * 修改设备
      *
      * @param sdDevices 设备

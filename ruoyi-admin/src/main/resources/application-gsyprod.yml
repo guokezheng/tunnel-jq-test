@@ -73,3 +73,5 @@ device:
 
 #万集车流量
 wj_carVolume: gsy
+
+tunnel_dept_id: YG1

@@ -111,7 +111,7 @@ public class KafkaReadListenToDevStatusTopic {
                             sdDevices.setUpdateTime(new Date());
                             sdDevicesService.updateSdDevices(sdDevices);
                         } else {
-                            sdDevicesService.insertSdDevices(sdDevices);
+                            sdDevicesService.insertSdDevicesNew(sdDevices);
                         }
                     }
                 }

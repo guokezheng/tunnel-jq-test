@@ -1673,7 +1673,7 @@ public class KafkaReadListenToHuaWeiTopic {
         SdRoadSectionStatisticsMapper sectionStatisticsMapper = SpringUtils.getBean(SdRoadSectionStatisticsMapper.class);
         sectionStatisticsMapper.insertSdRoadSectionStatistics(statistics);
         setRedis(statistics);
-        JSONObject jsonObject1 = JSONObject.parseObject(statistics.toString());
+        JSONObject jsonObject1 = JSONObject.parseObject(JSON.toJSONString(statistics));
         //推送至物联中台
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_STATISTICS_TOPIC.getCode(),jsonObject1.toString());
     }

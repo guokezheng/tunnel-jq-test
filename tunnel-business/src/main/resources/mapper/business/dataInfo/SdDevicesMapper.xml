@@ -452,6 +452,115 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+    <!--新增设备(插入语句中同一个字段重复出现会报错)-->
+    <insert id="insertSdDevicesNew" parameterType="SdDevices">
+        insert into sd_devices
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">eq_id,</if>
+            <if test="fEqId != null">f_eq_id,</if>
+            <if test="eqTunnelId != null">eq_tunnel_id,</if>
+            <if test="eqName != null">eq_name,</if>
+            <if test="eqType != null">eq_type,</if>
+            <if test="eqModel != null">eq_model,</if>
+            <if test="brandId != null">brand_id,</if>
+            <if test="externalSystemId != null">external_system_id,</if>
+            <if test="fEqType != null">f_eq_type,</if>
+            <if test="FEqType != null">f_eq_type,</if>
+            <if test="eqDirection != null">eq_direction,</if>
+            <!--去掉重复字段-->
+          <!--  <if test="direction != null">eq_direction,</if> -->
+            <if test="lane != null">lane,</if>
+            <if test="pile != null">pile,</if>
+            <if test="pileNum != null">pile_num,</if>
+            <if test="lat != null">lat,</if>
+            <if test="lng != null">lng,</if>
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="secureKey != null">secure_key,</if>
+            <if test="eqUser != null">eq_user,</if>
+            <if test="eqPwd != null">eq_pwd,</if>
+            <if test="commProtocol != null">comm_protocol,</if>
+            <if test="deliveryTime != null">delivery_time,</if>
+            <if test="warrantyEndTime != null">warranty_end_time,</if>
+            <if test="installTime != null">install_time,</if>
+            <if test="useLife != null">use_life,</if>
+            <if test="useStatus != null">use_status,</if>
+            <if test="isMonitor!= null">is_monitor,</if>
+            <if test="portStatus != null">port_status,</if>
+            <if test="portStatusTime != null">port_status_time,</if>
+            <if test="gatewayNetstatus != null">gateway_netstatus,</if>
+            <if test="gatewayNetstatusTime != null">gateway_netstatus_time,</if>
+            <if test="eqStatus != null">eq_status,</if>
+            <if test="eqStatusTime != null">eq_status_time,</if>
+            <if test="controlPointAddress != null">control_point_address,</if>
+            <if test="queryPointAddress != null">query_point_address,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="messageProtocol != null">message_protocol,</if>
+            <if test="protocolId != null">protocol_id,</if>
+            <if test="roadId != null">road_id,</if>
+            <if test="sn != null">sn,</if>
+            <if test="externalDeviceId != null">external_device_id,</if>
+            <if test="associatedDeviceId != null">associated_device_id,</if>
+            <if test="installAddr != null">install_addr,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">#{eqId},</if>
+            <if test="fEqId != null">#{fEqId},</if>
+            <if test="eqTunnelId != null">#{eqTunnelId},</if>
+            <if test="eqName != null">#{eqName},</if>
+            <if test="eqType != null">#{eqType},</if>
+            <if test="eqModel != null">#{eqModel},</if>
+            <if test="brandId != null">#{brandId},</if>
+            <if test="externalSystemId != null">#{externalSystemId},</if>
+            <if test="fEqType != null">#{fEqType},</if>
+            <if test="FEqType != null">#{FEqType},</if>
+            <if test="eqDirection != null">#{eqDirection},</if>
+            <!--去掉重复字段-->
+            <!--<if test="direction != null">#{direction},</if>-->
+            <if test="lane != null">#{lane},</if>
+            <if test="pile != null">#{pile},</if>
+            <if test="pileNum != null">#{pileNum},</if>
+            <if test="lat != null">#{lat},</if>
+            <if test="lng != null">#{lng},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="secureKey != null">#{secureKey},</if>
+            <if test="eqUser != null">#{eqUser},</if>
+            <if test="eqPwd != null">#{eqPwd},</if>
+            <if test="commProtocol != null">#{commProtocol},</if>
+            <if test="deliveryTime != null">#{deliveryTime},</if>
+            <if test="warrantyEndTime != null">#{warrantyEndTime},</if>
+            <if test="installTime != null">#{installTime},</if>
+            <if test="useLife != null">#{useLife},</if>
+            <if test="useStatus != null">#{useStatus},</if>
+            <if test="isMonitor!= null">#{isMonitor},</if>
+            <if test="portStatus != null">#{portStatus},</if>
+            <if test="portStatusTime != null">#{portStatusTime},</if>
+            <if test="gatewayNetstatus != null">#{gatewayNetstatus},</if>
+            <if test="gatewayNetstatusTime != null">#{gatewayNetstatusTime},</if>
+            <if test="eqStatus != null">#{eqStatus},</if>
+            <if test="eqStatusTime != null">#{eqStatusTime},</if>
+            <if test="controlPointAddress != null">#{controlPointAddress},</if>
+            <if test="queryPointAddress != null">#{queryPointAddress},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="messageProtocol != null">#{messageProtocol},</if>
+            <if test="protocolId != null">#{protocolId},</if>
+            <if test="roadId != null">#{roadId},</if>
+            <if test="sn != null">#{sn},</if>
+            <if test="externalDeviceId != null">#{externalDeviceId},</if>
+            <if test="associatedDeviceId != null">#{associatedDeviceId},</if>
+            <if test="installAddr != null">#{installAddr},</if>
+        </trim>
+    </insert>
+
     <update id="updateSdDevices" parameterType="SdDevices">
         update sd_devices
         <trim prefix="SET" suffixOverrides=",">

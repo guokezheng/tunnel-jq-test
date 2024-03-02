@@ -1691,7 +1691,9 @@ export default {
       getDevices(eqId).then((response) => {
         console.log(response.data, "修改按钮操作");
         this.form = response.data;
-        this.form.installAddr = String(response.data.installAddr);
+        if(response.data.installAddr){
+          this.form.installAddr = String(response.data.installAddr);
+        }
         this.form.eqType = String(response.data.eqType);
         this.open = true;
         this.submitMode = 0;

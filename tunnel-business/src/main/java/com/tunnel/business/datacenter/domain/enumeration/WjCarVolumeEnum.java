@@ -16,7 +16,7 @@ public enum WjCarVolumeEnum {
     SHUANG_ZI_SHAN("JQ-WeiFang-YangTianShan-SZS", "http://10.7.202.101:19355"),
     YANG_TIAN_SHAN("JQ-WeiFang-YangTianShan-YTS", "http://10.7.200.94:19355"),
     JIN_JIA_LOU("JQ-WeiFang-JiuLongYu-JJL", "http://10.7.204.19:19355"),
-    MA_AN_SHAN("JQ-WeiFang-JiuLongYu-MAS", "http://10.7.201.17:19355");
+    MA_AN_SHAN("JQ-WeiFang-JiuLongYu-MAS", "http://10.7.204.17:19355");
     private String code;
     private String name;
 

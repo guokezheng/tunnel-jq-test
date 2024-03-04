@@ -772,6 +772,7 @@
         planTypeData: [],
         // 表格内回显事件类型
         planTypeDataAll: [],
+        planTypeDataTable: [],
         //from表单参数
         reservePlanDrawForm: {
           planTypeId: null, //事件类型
@@ -861,6 +862,7 @@
     created() {
       this.getList();
       this.getPlanType(); //事件类型下拉
+      this.getPlanTypeTable();
       // this.getStrategyInfo();//策略下拉
       // this.getTunnelData(this.tunnelId);
       this.lightSwitchFunc();
@@ -1110,7 +1112,7 @@
         }
       },
       getPlanTypeData(id) {
-        for (var item of this.planTypeData) {
+        for (var item of this.planTypeDataTable) {
           if (item.id == id) {
             return item.eventType;
           }
@@ -2073,6 +2075,12 @@
         let data = {};
         listEventType(data).then((response) => {
           this.planTypeData = response.rows;
+        });
+      },
+      getPlanTypeTable() {
+        let data = {};
+        listEventType(data).then((response) => {
+          this.planTypeDataTable = response.rows;
         });
       },
       //关闭drawer

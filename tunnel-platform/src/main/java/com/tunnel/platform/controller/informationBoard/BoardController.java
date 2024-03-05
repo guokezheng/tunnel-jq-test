@@ -773,7 +773,7 @@ public class BoardController extends BaseController {
                     String boardContent = map.get("CONTENT").toString();
                     content.append("\\").append("W").append(boardContent);
                 }
-                /*AjaxResult ajaxResult = dsfDingEnBoard(deviceIdList.stream().collect(Collectors.joining(",")), "", parameters,content);
+                AjaxResult ajaxResult = dsfDingEnBoard(deviceIdList.stream().collect(Collectors.joining(",")), "", parameters,content);
                 if(ajaxResult.get("code").toString().equals("200")){
                     JSONObject boardData = new JSONObject();
                     boardData.put("deviceIds",sdDevices.getAssociatedDeviceId());
@@ -787,14 +787,14 @@ public class BoardController extends BaseController {
                         sdDevicesService.updateSdDevices(sdDevices1);
                     });
                 }
-                return ajaxResult;*/
-                IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+                return ajaxResult;
+                /*IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
                 iotBoardReleaseLog.setDeviceId(sdDevices.getAssociatedDeviceId().toString());
                 iotBoardReleaseLog.setReleaseTime(new Date());
                 iotBoardReleaseLog.setReleaseStatus("0");
                 iotBoardReleaseLog.setReleaseNewContent("万集："+content.toString());
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
-                return AjaxResult.success();
+                return AjaxResult.success();*/
             }else if(protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)){
                 content.append("[PLAYLIST]<r><n>ITEM_NO=").append(String.format("%03d",parameters.size()));
                 for(int i = 0; i < parameters.size(); i++){
@@ -819,7 +819,7 @@ public class BoardController extends BaseController {
                     content.append(map.get("FONT_SIZE")).append(map.get("FONT_SIZE")).append(map.get("CONTENT"));
                 }
             }
-            /*String encode = URLEncoder.encode(String.valueOf(content), "UTF-8");
+            String encode = URLEncoder.encode(String.valueOf(content), "UTF-8");
             AjaxResult ajaxResult = releaseBoardEditInfo(deviceIdList.stream().collect(Collectors.joining(",")), "", encode);
             if(ajaxResult.get("code").toString().equals("200")){
                 JSONObject boardData = new JSONObject();
@@ -834,14 +834,14 @@ public class BoardController extends BaseController {
                     sdDevicesService.updateSdDevices(sdDevices1);
                 });
             }
-            return ajaxResult;*/
-            IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+            return ajaxResult;
+            /*IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
             iotBoardReleaseLog.setDeviceId(sdDevices.getAssociatedDeviceId().toString());
             iotBoardReleaseLog.setReleaseTime(new Date());
             iotBoardReleaseLog.setReleaseStatus("0");
             iotBoardReleaseLog.setReleaseNewContent("万集："+content.toString());
             iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
-            return AjaxResult.success();
+            return AjaxResult.success();*/
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

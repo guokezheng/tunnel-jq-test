@@ -1042,7 +1042,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             }
             String content = boardContentData.get("content").toString();
             String substring = "";
-            substring = content.substring(31,content.length());
+            substring = content.substring(content.indexOf("ITEM0"), content.length());
                 /*if(!protocolType.startsWith(IDeviceProtocol.SANSI)){
                     substring = content.substring(31,content.length());
                 }else {
@@ -1069,6 +1069,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                             if(content1.contains("W")){
                                 content1 = content1.substring(1, jsonObject2.getString("CONTENT").length());
                             }
+                            content1 = content1.replaceAll("<n>", "<br>");
+                            content1 = content1.replaceAll("<r>", "\r");
+                            jsonObject2.put("CONTENT",content1);
+                        }else {
+                            String content1 = jsonObject2.getString("CONTENT");
+                            content1 = content1.replaceAll("<n>", "<br>");
+                            content1 = content1.replaceAll("<r>", "\r");
                             jsonObject2.put("CONTENT",content1);
                         }
                         list.add(jsonObject2);

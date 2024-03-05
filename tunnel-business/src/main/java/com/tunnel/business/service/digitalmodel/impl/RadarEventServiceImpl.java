@@ -973,25 +973,26 @@ public class RadarEventServiceImpl implements RadarEventService {
                 }
             } else if ("16".equals(sdRadarDevice.getDeviceType())) {
                 //隧道内情报板
-                List<Map<String, Object>> vmsData = deviceDataMapper.getVmsData(f.getEqId());
+                /*List<Map<String, Object>> vmsData = deviceDataMapper.getVmsData(f.getEqId());
                 for (int i = 0;i < vmsData.size();i++) {
-                    Map<String, Object> map = vmsData.get(i);
-                    //设备id
-                    String deviceId = map.get("deviceId").toString();
-                    SdDevices sdDevices = devicesMapper.selectSdDevicesById(deviceId);
-                    JSONObject devMap = new JSONObject();
-                    //情报板编号
-                    devMap.put("boardNo",sdDevices.getAssociatedDeviceId());
-                    //隧道id
-                    devMap.put("tunnelId",sdDevices.getEqTunnelId());
-                    //设备id
-                    devMap.put("deviceCode",sdDevices.getEqId());
-                    //情报板数据
-                    JSONObject board = getBoard(deviceId);
-                    devMap.put("list",board.getJSONArray("parameters"));
-                    sdRadarDevice.setDeviceData(devMap);
-                    list.add(sdRadarDevice);
-                }
+
+                }*/
+                //Map<String, Object> map = vmsData.get(i);
+                //设备id
+                String deviceId = sdRadarDevice.getDeviceId();
+                SdDevices sdDevices = devicesMapper.selectSdDevicesById(deviceId);
+                JSONObject devMap = new JSONObject();
+                //情报板编号
+                devMap.put("boardNo",sdDevices.getAssociatedDeviceId());
+                //隧道id
+                devMap.put("tunnelId",sdDevices.getEqTunnelId());
+                //设备id
+                devMap.put("deviceCode",sdDevices.getEqId());
+                //情报板数据
+                JSONObject board = getBoard(deviceId);
+                devMap.put("list",board.getJSONArray("parameters"));
+                sdRadarDevice.setDeviceData(devMap);
+                list.add(sdRadarDevice);
             }
             if(!"16".equals(sdRadarDevice.getDeviceType()) && !"36".equals(sdRadarDevice.getDeviceType())){
                 sdRadarDevice.setDeviceData(deviceData);

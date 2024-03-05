@@ -736,6 +736,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/commonControlBoard")
     public AjaxResult commonControlBoard(@RequestBody String objectData){
+        System.out.println("控制状态："+ wjModelNum +"万集情报板发送信息-----：" + objectData);
         if(wjModelNum == 0){
             return null;
         }
@@ -843,6 +844,7 @@ public class BoardController extends BaseController {
             iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             return AjaxResult.success();*/
         } catch (Exception e) {
+            System.out.println("万集控制情报板失败");
             throw new RuntimeException(e);
         }
     }

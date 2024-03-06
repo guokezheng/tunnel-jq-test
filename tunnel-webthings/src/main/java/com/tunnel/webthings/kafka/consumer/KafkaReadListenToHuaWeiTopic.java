@@ -686,10 +686,10 @@ public class KafkaReadListenToHuaWeiTopic {
             String deviceId = jsonObject1.getString("deviceId");
             Integer runStatus = 0;
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
-            if(DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == sdDevices1.getEqType()){
+            if(DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().equals(sdDevices1.getEqType())){
                 runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()),jsonObject1.getInteger("runStatus"));
                 itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode());
-            }else if(DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() == sdDevices1.getEqType()){
+            }else if(DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().equals(sdDevices1.getEqType())){
                 runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode()),jsonObject1.getInteger("runStatus"));
                 itemId = Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode());
             }else {

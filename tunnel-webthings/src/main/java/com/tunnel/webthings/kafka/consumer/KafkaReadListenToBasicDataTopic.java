@@ -58,7 +58,7 @@ public class KafkaReadListenToBasicDataTopic {
      */
     @KafkaListener(topics = {"tunnelDeviceBaseData"}, containerFactory = "kafkaTwoContainerFactory")
     public void devicesAccept(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
+        if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
             String deviceData = "";
             if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
                 deviceData = record.value().toString();
@@ -76,7 +76,7 @@ public class KafkaReadListenToBasicDataTopic {
      */
     @KafkaListener(topics = {"tunnelBaseData"}, containerFactory = "kafkaTwoContainerFactory")
     public void tunnelsAccept(ConsumerRecord<String,Object> record, Consumer<?,?> consumer){
-        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
+        if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
             String tunnelData = "";
             if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
                 tunnelData = record.value().toString();

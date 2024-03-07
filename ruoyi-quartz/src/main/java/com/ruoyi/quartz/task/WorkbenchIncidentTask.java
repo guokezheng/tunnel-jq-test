@@ -54,8 +54,8 @@ public class WorkbenchIncidentTask {
     }
 
     public void syncTunnelConfig(){
-        String baseLogUrl = "http://10.166.157.192:31028/prod-api/login";
-        String baseUrl = "http://10.166.157.192:31028/prod-api/tunnels";
+        String baseLogUrl = "http://10.168.65.230:7080/login";
+        String baseUrl = "http://10.168.65.230:7080/tunnels";
         String username = "admin";
         String password = "Tunnel123!@#";
         //获取token

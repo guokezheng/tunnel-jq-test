@@ -199,6 +199,15 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     }
 
     /**
+     * 查询所有可使用隧道
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectSdTunnelsLists() {
+        return sdTunnelsMapper.selectSdTunnelsLists();
+    }
+
+    /**
      * 查询隧道所属部门
      * @param tunnelId
      * @return

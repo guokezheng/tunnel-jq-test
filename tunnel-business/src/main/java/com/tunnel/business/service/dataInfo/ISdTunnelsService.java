@@ -122,6 +122,12 @@ public interface ISdTunnelsService {
     List<SdTunnels> selectAllSdTunnelsList1();
 
     /**
+     * 查询所有可使用隧道
+     * @return
+     */
+    List<SdTunnels> selectSdTunnelsLists();
+
+    /**
      * 查询隧道所属部门
      * @param tunnelId
      * @return

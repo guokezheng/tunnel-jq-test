@@ -413,6 +413,11 @@
         from sd_tunnels where poll = '0'
     </select>
 
+    <select id="selectSdTunnelsLists" resultMap="SdTunnelsResult">
+        select *
+        from sd_tunnels where poll = '0'
+    </select>
+
 
 
     <select id="selectTunnelDept" resultType="String">

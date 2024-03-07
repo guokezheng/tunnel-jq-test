@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -9,6 +10,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.quartz.task.WorkbenchIncidentTask;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
@@ -17,6 +19,8 @@ import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +41,8 @@ import java.util.List;
 @Api(tags = "隧道管理")
 public class SdTunnelsController extends BaseController
 {
+    private static final Logger log = LoggerFactory.getLogger(SdTunnelsController.class);
+
     @Autowired
     private ISdTunnelsService sdTunnelsService;
 
@@ -156,6 +162,8 @@ public class SdTunnelsController extends BaseController
     @PutMapping
     public Result edit(@RequestBody SdTunnels sdTunnels)
     {
+        log.info("------------------------");
+        log.info(JSON.toJSONString(sdTunnels));
         int i = sdTunnelsService.updateSdTunnels(sdTunnels);
         //管理站平台下推送数据
         pushData(sdTunnels,"edit",i);

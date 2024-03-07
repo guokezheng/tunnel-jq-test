@@ -54,8 +54,8 @@ public class WorkbenchIncidentTask {
     }
 
     public void syncTunnelConfig(){
-        String baseLogUrl = "http://10.166.157.185:7080/prod-api/login";
-        String baseUrl = "http://10.166.157.185:7080/prod-api/tunnels";
+        String baseLogUrl = "http://10.166.157.192:31028/prod-api/login";
+        String baseUrl = "http://10.166.157.192:31028/prod-api/tunnels";
         String username = "admin";
         String password = "Tunnel123!@#";
         //获取token
@@ -80,8 +80,9 @@ public class WorkbenchIncidentTask {
                     Request request=new Request.Builder().url(baseUrl).put(body).addHeader("Authorization", token).build();
                     response=client.newCall(request).execute();
                     JSONObject jo = JSONObject.parseObject(  response.body().string());
-                    token = jo.getString("token");
+                    log.info("同步数据返回结果",jo);
                 } catch (IOException e) {
+                    log.error("同步数据异常提示",e.getMessage());
                     e.printStackTrace();
                 }finally{
                     if(response != null){
@@ -110,6 +111,7 @@ public class WorkbenchIncidentTask {
             JSONObject jo = JSONObject.parseObject(  response.body().string());
             token = jo.getString("token");
         } catch (IOException e) {
+            log.error("同步数据登录异常提示",e.getMessage());
             e.printStackTrace();
         }finally{
             if(response != null){

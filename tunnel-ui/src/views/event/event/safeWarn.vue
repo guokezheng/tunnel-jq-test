@@ -277,7 +277,7 @@
               v-show="eventFormDetail.iconUrlList.length >= 1"
             >
               <!-- slides -->
-              <swiper-slide
+              <swiper-slide style="height: 29vh"
                 v-for="(item, index) in eventFormDetail.iconUrlList"
                 :key="index"
                 :class="'slide-' + index"
@@ -1318,7 +1318,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <img :src="alongImgUrl" style="width: 100%" />
+      <img :src="alongImgUrl" style="width: 100%; height: 83vh" />
       <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleImg = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisibleImg = false"

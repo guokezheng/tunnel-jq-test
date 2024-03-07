@@ -788,6 +788,9 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEvent.setStakeNum(jsonObject.getString("stakeNum"));
         sdEvent.setDirection(direction);
         sdEvent.setConfidenceList(jsonObject.getString("plate"));
+        if(sdEvent.getEventTypeId() == 11L || sdEvent.getEventTypeId() == 14L){
+            sdEvent.setEventDescription(jsonObject.get("eventMiddleSpeed") + "/Km");
+        }
         if(data != null){
             sdEvent.setEventState(data.getEventState());
             sdEventMapper.updateSdEvent(sdEvent);

@@ -348,6 +348,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 
                 // 火警产生事件
                 if (alarmType.contains("火警")) {
+                    //查询配置提示音事件类型
+                    SdEventType eventType = new SdEventType();
+                    eventType.setIsUsable("1");
+                    eventType.setIsConfig("1");
+                    List<SdEventType> typeList = sdEventTypeMapper.selectSdEventTypeList(eventType);
                     //存储事件到事件表
                     SdEvent sdEvent = new SdEvent();
                     sdEvent.setTunnelId(sdDevices.getEqTunnelId());
@@ -370,7 +375,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     sdEvent.setEventTime(dateZh(time));
                     sdEvent.setCreateTime(dateZh(time));
                     sdEventMapper.insertSdEvent(sdEvent);
-                    eventAudio();
+                    for(SdEventType item : typeList){
+                        if(sdEvent.getEventTypeId() == item.getId()){
+                            eventAudio();
+                        }
+                    }
                     eventSendWeb(sdEvent);
                 }
             } else {
@@ -386,7 +395,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     public static void eventAudio(){
         try {
-            File file = new File(".//tunnel-deal/src/main/resources/audio/ding.WAV");
+            File file = new File("./tunnel-deal/src/main/resources/audio/ding.WAV");
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(file));
             clip.start();

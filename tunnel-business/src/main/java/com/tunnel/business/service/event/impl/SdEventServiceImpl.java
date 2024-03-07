@@ -755,6 +755,11 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public void upload(String eventJson) {
+        //查询配置提示音事件类型
+        SdEventType sdEventType = new SdEventType();
+        sdEventType.setIsUsable("1");
+        sdEventType.setIsConfig("1");
+        List<SdEventType> typeList = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
         JSONObject jsonObject = JSONObject.parseObject(eventJson);
         //隧道id
         String tunnelId = jsonObject.getString("tunnelId");
@@ -791,8 +796,10 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }else {
             insertSdEvent(sdEvent);
-            if(sdEvent.getEventTypeId() == 1L || sdEvent.getEventTypeId() == 4L){
-                eventAudio();
+            for(SdEventType item : typeList){
+                if(sdEvent.getEventTypeId() == item.getId()){
+                    eventAudio();
+                }
             }
             if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
                 sdEventMapper.insertEventConfidence(sdEvent);
@@ -803,7 +810,8 @@ public class SdEventServiceImpl implements ISdEventService {
             sendWuLian(sdEvent);
         }
         //查询视频图片
-        List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(eventId.toString());
+        //List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(eventId.toString());
+        sdTrafficImageMapper.delImageByBusinessIds(new Long[]{eventId});
         //事件图片-视频
         String[] imgList = new String[4];
         String[] vedioList = new String[2];
@@ -824,10 +832,10 @@ public class SdEventServiceImpl implements ISdEventService {
             if(img == null || "".equals(img)){
                 continue;
             }
-            int count = checkImageData(list, img);
+            /*int count = checkImageData(list, img);
             if(count == 1){
                 continue;
-            }
+            }*/
             SdTrafficImage image = new SdTrafficImage();
             image.setImgUrl(img);
             image.setBusinessId(eventId.toString());
@@ -839,10 +847,10 @@ public class SdEventServiceImpl implements ISdEventService {
             if(vedio == null || "".equals(vedio)){
                 continue;
             }
-            int count = checkImageData(list, vedio);
+            /*int count = checkImageData(list, vedio);
             if(count == 1){
                 continue;
-            }
+            }*/
             SdTrafficImage image = new SdTrafficImage();
             image.setImgUrl(vedio);
             image.setBusinessId(eventId.toString());

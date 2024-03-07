@@ -181,6 +181,11 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
         return map;
     }
 
+    @Override
+    public int updateSdEventTypeAudio(SdEventType sdEventType) {
+        return sdEventTypeMapper.updateSdEventTypeAudio(sdEventType);
+    }
+
     public int checkData(SdEventType sdEventType){
         int count = 0;
         SdEventType type = new SdEventType();

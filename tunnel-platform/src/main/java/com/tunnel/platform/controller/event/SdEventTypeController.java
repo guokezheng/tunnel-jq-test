@@ -88,4 +88,14 @@ public class SdEventTypeController extends BaseController
     {
         return toAjax(sdEventTypeService.deleteSdEventTypeByIds(ids));
     }
+
+    /**
+     * 配置提示音
+     * @param sdEventType
+     * @return
+     */
+    @GetMapping("/updateSdEventTypeAudio")
+    public AjaxResult updateSdEventTypeAudio(SdEventType sdEventType){
+        return toAjax(sdEventTypeService.updateSdEventTypeAudio(sdEventType));
+    }
 }

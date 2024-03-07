@@ -28,6 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -182,6 +185,11 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
      * @param sdDevices
      */
     public void setEventData(String tunnelId,String pile,SdDevices sdDevices){
+        //查询配置提示音事件类型
+        SdEventType eventType = new SdEventType();
+        eventType.setIsUsable("1");
+        eventType.setIsConfig("1");
+        List<SdEventType> typeList = eventTypeMapper.selectSdEventTypeList(eventType);
         //查询隧道信息
         SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(tunnelId);
         //查询方向信息
@@ -202,6 +210,11 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         sdEvent.setDirection(sdDevices.getEqDirection());
         sdEvent.setStakeNum(sdDevices.getPile());
         sdEventMapper.insertSdEvent(sdEvent);
+        for(SdEventType item : typeList){
+            if(sdEvent.getEventTypeId() == item.getId()){
+                eventAudio();
+            }
+        }
         eventSendWeb(sdEvent);
     }
 
@@ -267,5 +280,19 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
                 }
             }
         }.start();
+    }
+
+    /**
+     * 提示音
+     */
+    public static void eventAudio(){
+        try {
+            File file = new File("./tunnel-deal/src/main/resources/audio/ding.WAV");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

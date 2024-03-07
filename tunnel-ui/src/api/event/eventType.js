@@ -81,3 +81,11 @@ export function handleStrategy(id) {
     method: 'get'
   })
 }
+
+export function updateAudio(query) {
+  return request({
+    url: '/eventType/updateSdEventTypeAudio',
+    method: 'get',
+    params: query
+  })
+}

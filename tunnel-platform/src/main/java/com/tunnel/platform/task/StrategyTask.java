@@ -40,6 +40,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -73,6 +76,9 @@ public class StrategyTask {
 
     @Autowired
     private SdStrategyRlMapper sdStrategyRlMapper;
+
+    @Autowired
+    private SdEventTypeMapper sdEventTypeMapper;
 
     @Autowired
     private ISdDevicesProtocolService sdDevicesProtocolService;
@@ -617,8 +623,8 @@ public class StrategyTask {
         //所有隧道Map
         Map<String,String> tunnelMap = SpringUtils.getBean(ISdTunnelsService.class).getTunnelNameMap();
         sdEvent.setTunnelId(s.get("tunnel_id").toString());
-//        sdEvent.setEventSource("1");
-        sdEvent.setEventSource("6");
+//        sdEvent.setEventSource("6"); 改成6 需要在 sys_dict_data
+        sdEvent.setEventSource("2");
         sdEvent.setDirection(s.get("eq_direction").toString());
         sdEvent.setStakeNum(s.get("pile").toString());
         if(s.get("lane")!=null){
@@ -679,14 +685,24 @@ public class StrategyTask {
         if(updateRows>0){
             SdEvent event = new SdEvent();
             event.setId(sdEvent.getId());
-            List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
+//            List<SdEvent> sdEventList = sdEventService.querySdEventList(event);
+            List<SdEvent> sdEventList = SpringUtils.getBean(SdEventMapper.class).selectSdEventSingleList(event);
             sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
             if(EventStateEnum.unprocessed.getCode().equals(eventState)){
                 WebSocketService.broadcast("sdEventList",object.toString());
             }
-
+            //查询配置提示音事件类型
+            SdEventType sdEventType = new SdEventType();
+            sdEventType.setIsUsable("1");
+            sdEventType.setIsConfig("1");
+            List<SdEventType> typeList = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+            for(SdEventType item : typeList){
+                if(sdEvent.getEventTypeId() == item.getId()){
+                    eventAudio();
+                }
+            }
             if(!(sdEventsList.size()>0) && sdStrategy!=null){//添加
                 // 添加事件流程记录
                 SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
@@ -946,5 +962,19 @@ public class StrategyTask {
         flow.setFlowTime(DateUtils.getNowDate());
         flow.setFlowHandler("系统自动执行");
         sdEventFlowMapper.insertSdEventFlow(flow);
+    }
+
+    /**
+     * 提示音
+     */
+    public void eventAudio(){
+        try {
+            File file = new File("./tunnel-platform/src/main/resources/audio/ding.WAV");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

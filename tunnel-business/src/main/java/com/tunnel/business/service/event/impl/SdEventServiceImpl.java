@@ -755,6 +755,11 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public void upload(String eventJson) {
+        //查询配置提示音事件类型
+        SdEventType sdEventType = new SdEventType();
+        sdEventType.setIsUsable("1");
+        sdEventType.setIsConfig("1");
+        List<SdEventType> typeList = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
         JSONObject jsonObject = JSONObject.parseObject(eventJson);
         //隧道id
         String tunnelId = jsonObject.getString("tunnelId");
@@ -791,8 +796,10 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }else {
             insertSdEvent(sdEvent);
-            if(sdEvent.getEventTypeId() == 1L || sdEvent.getEventTypeId() == 4L){
-                eventAudio();
+            for(SdEventType item : typeList){
+                if(sdEvent.getEventTypeId() == item.getId()){
+                    eventAudio();
+                }
             }
             if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
                 sdEventMapper.insertEventConfidence(sdEvent);

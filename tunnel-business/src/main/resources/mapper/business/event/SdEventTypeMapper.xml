@@ -15,11 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="simplifyName"    column="simplify_name"    />
         <result property="iconUrl"    column="icon_url"    />
         <result property="isUsable"    column="is_usable"    />
+        <result property="isConfig"    column="is_config"    />
         <result property="priority"    column="priority"    />
     </resultMap>
 
     <sql id="selectSdEventTypeVo">
-        select id, event_type, create_by, create_time, update_by, update_time, prev_control_type, simplify_name,icon_url, is_usable, priority  from sd_event_type
+        select id, event_type, create_by, create_time, update_by, update_time, prev_control_type, simplify_name,icon_url, is_usable, priority, is_config  from sd_event_type
     </sql>
 
     <select id="selectSdEventTypeList" parameterType="SdEventType" resultMap="SdEventTypeResult">
@@ -29,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="prevControlType != null  and prevControlType != ''">and prev_control_type =#{prevControlType}</if>
             <if test="id != null  and id != ''">and id = #{id}</if>
             <if test="isUsable != null and isUsable != ''">and is_usable = #{isUsable}</if>
+            <if test="isConfig != null and isConfig != ''"> and is_config = #{isConfig} </if>
         </where> order by create_time desc
     </select>
 
@@ -45,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="simplifyName != null">simplify_name,</if>
             <if test="iconUrl != null">icon_url,</if>
             <if test="isUsable != null">is_usable,</if>
+            <if test="isConfig != null">is_config,</if>
             <if test="priority != null">priority,</if>
          	create_time
  		)values(
@@ -54,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="simplifyName != null">#{simplifyName},</if>
             <if test="iconUrl != null">#{iconUrl},</if>
             <if test="isUsable != null">#{isUsable},</if>
+            <if test="isConfig != null">#{isConfig},</if>
             <if test="priority != null">#{priority},</if>
             sysdate()
          )
@@ -71,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="iconUrl != null">icon_url = #{iconUrl},</if>
             <if test="isUsable != null">is_usable = #{isUsable},</if>
+            <if test="isConfig != null">is_config = #{isConfig},</if>
             <if test="priority != null">priority = #{priority},</if>
         </trim>
         where id = #{id}
@@ -107,4 +112,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND prev_control_type = #{prevControlType}
         </if>
     </select>
+
+    <update id="updateSdEventTypeAudio" parameterType="SdEventType">
+        update sd_event_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventType != null">event_type = #{eventType},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="prevControlType != null">prev_control_type = #{prevControlType},</if>
+            <if test="simplifyName != null">simplify_name = #{simplifyName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="iconUrl != null">icon_url = #{iconUrl},</if>
+            <if test="isUsable != null">is_usable = #{isUsable},</if>
+            <if test="isConfig != null">is_config = #{isConfig},</if>
+            <if test="priority != null">priority = #{priority},</if>
+        </trim>
+        where FIND_IN_SET( id , #{ids} ) > 0
+    </update>
 </mapper>

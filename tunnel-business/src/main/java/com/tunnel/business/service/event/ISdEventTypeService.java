@@ -70,4 +70,11 @@ public interface ISdEventTypeService {
      * @return
      */
     Map<Long,String> getEventTypeMap();
+
+    /**
+     * 配置提示音
+     * @param sdEventType
+     * @return
+     */
+    int updateSdEventTypeAudio(SdEventType sdEventType);
 }

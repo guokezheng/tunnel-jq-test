@@ -39,6 +39,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -242,6 +245,11 @@ public class PhoneSpkService {
 
                 //判断设备如果数据杭山东隧道，此处对于接收到的报警信息不做处理。
                 if(!TunnelEnum.HANG_SHAN_DONG.getCode().equals(device.getEqTunnelId()) && PhoneSpkEnum.ANSWERED.getCode().equals(data)){
+                    //查询配置提示音事件类型
+                    SdEventType eventType = new SdEventType();
+                    eventType.setIsUsable("1");
+                    eventType.setIsConfig("1");
+                    List<SdEventType> typeList = sdEventTypeMapper.selectSdEventTypeList(eventType);
                     SdEventType sdEventType = new SdEventType();
                     sdEventType.setEventType("紧急电话");
                     List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
@@ -259,6 +267,11 @@ public class PhoneSpkService {
                     sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
                     sdEvent.setEventTime(DateUtils.getNowDate());
                     sdEventMapper.insertSdEvent(sdEvent);
+                    for(SdEventType item : typeList){
+                        if(sdEvent.getEventTypeId() == item.getId()){
+                            eventAudio();
+                        }
+                    }
                     eventSendWeb(sdEvent);
                 }
             }
@@ -697,4 +710,17 @@ public class PhoneSpkService {
         return resultStatus == 1 ? AjaxResult.success() : AjaxResult.error();
     }
 
+    /**
+     * 提示音
+     */
+    public static void eventAudio(){
+        try {
+            File file = new File("./tunnel-platform/src/main/resources/audio/ding.WAV");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

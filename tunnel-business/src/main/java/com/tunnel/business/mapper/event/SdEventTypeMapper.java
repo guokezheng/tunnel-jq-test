@@ -45,6 +45,8 @@ public interface SdEventTypeMapper
      */
     public int updateSdEventType(SdEventType sdEventType);
 
+    public int updateSdEventTypeAudio(SdEventType sdEventType);
+
     /**
      * 删除事件类型
      * 

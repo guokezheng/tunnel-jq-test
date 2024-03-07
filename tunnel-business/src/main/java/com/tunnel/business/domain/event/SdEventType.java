@@ -18,6 +18,8 @@ public class SdEventType extends BaseEntity
     /** 事件类型ID */
     private Long id;
 
+    private String ids;
+
     /** 事件类型 */
     @Excel(name = "事件类型")
     private String eventType;
@@ -39,6 +41,24 @@ public class SdEventType extends BaseEntity
      * 优先级
      */
     private String priority;
+
+    private String isConfig;
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
+    public String getIsConfig() {
+        return isConfig;
+    }
+
+    public void setIsConfig(String isConfig) {
+        this.isConfig = isConfig;
+    }
 
     public String getPriority() {
         return priority;

@@ -1,6 +1,7 @@
 package com.tunnel.business.mapper.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -63,5 +64,16 @@ public interface ExternalSystemMapper
      */
     public int deleteExternalSystemByIds(Long[] ids);
 
+    /**
+     *  查询需要检测网络的外部系统
+     * @return 外部系统集合
+     */
+    List<ExternalSystem> selectExternalSystemCheckList();
 
+    /**
+     * 修改网络状态
+     * @param id
+     * @param networkStatus
+     */
+    void updateExternalSystemNetWorkStatus(@Param("id") Long id, @Param("networkStatus") String networkStatus);
 }

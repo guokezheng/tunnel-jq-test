@@ -60,8 +60,54 @@ public class ExternalSystem extends BaseEntity
     @Excel(name = "系统地址")
     private String systemUrl;
 
+    /** 是否打开网络检测 */
+    private Boolean openCheckNetwork;
+
+    /** 网络类型 */
+    private String networkType;
+
+    /** 网络检测地址 */
+    private String checkNetworkUrl;
+
+    /** 网络检测超时时长（秒） */
+    private int checkNetworkTimeout;
+
+
     //系统参数
     private String param;
+
+
+    public Boolean getOpenCheckNetwork() {
+        return openCheckNetwork;
+    }
+
+    public void setOpenCheckNetwork(Boolean openCheckNetwork) {
+        this.openCheckNetwork = openCheckNetwork;
+    }
+
+    public String getNetworkType() {
+        return networkType;
+    }
+
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
+
+    public String getCheckNetworkUrl() {
+        return checkNetworkUrl;
+    }
+
+    public void setCheckNetworkUrl(String checkNetworkUrl) {
+        this.checkNetworkUrl = checkNetworkUrl;
+    }
+
+    public int getCheckNetworkTimeout() {
+        return checkNetworkTimeout;
+    }
+
+    public void setCheckNetworkTimeout(int checkNetworkTimeout) {
+        this.checkNetworkTimeout = checkNetworkTimeout;
+    }
 
     public String getParam() {
         return param;

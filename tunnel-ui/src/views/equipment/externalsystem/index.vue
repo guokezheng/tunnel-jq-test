@@ -149,12 +149,25 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="是否映射方向" align="center" prop="isDirection" />
+      <el-table-column label="系统地址" align="center" prop="systemUrl"  width="330"/>
       <el-table-column label="用户名" align="center" prop="username" />
       <el-table-column label="密码" align="center" prop="password" />
-      <el-table-column label="网络状态" align="center" prop="networkStatus" />
-      <el-table-column label="系统地址" align="center" prop="systemUrl" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="网络类型" align="center" prop="networkType"  />
+<!--      <el-table-column label="网络IP" align="center" prop="systemUrl" />-->
+<!--      <el-table-column label="是否映射方向" align="center" prop="isDirection" />-->
+
+
+      <el-table-column label="IP / 网络状态" align="center" prop="networkStatus" >
+        <template slot-scope="scope">
+          {{scope.row.checkNetworkUrl}} /
+          {{scope.row.networkStatus == '0' ? '  ' : scope.row.networkStatus == '3' ? ' 不通 ' : '通'}}
+<!--          <el-tag-->
+<!--            :type="scope.row.networkStatus == '0' ? 'primary' : 'success'"-->
+<!--            disable-transitions>{{scope.row.networkStatus == '0' ? '正常' : '异常'}}</el-tag>-->
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="系统地址" align="center" prop="systemUrl" />-->
+<!--      <el-table-column label="备注" align="center" prop="remark" />-->
       <el-table-column
         label="操作"
         align="center"
@@ -276,7 +289,28 @@
         <!--          <el-input v-model="form.isDirection" placeholder="请输入是否映射方向" />-->
         <!--        </el-form-item>-->
 
-        <el-form-item label="是否映射方向:" prop="isDirection">
+
+
+
+        <!--        <el-form-item label="网络状态">-->
+        <!--          <el-radio-group v-model="form.networkStatus">-->
+        <!--            <el-radio label="1">请选择字典生成</el-radio>-->
+        <!--          </el-radio-group>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="系统名称" prop="systemName">
+          <el-input v-model="form.systemName" placeholder="请输入系统名称" />
+        </el-form-item>
+        <el-form-item label="系统地址" prop="systemUrl">
+          <el-input v-model="form.systemUrl" placeholder="请输入系统地址" />
+        </el-form-item>
+
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="form.username" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="form.password" placeholder="请输入密码" />
+        </el-form-item>
+        <el-form-item label="是否映射方向" prop="isDirection">
           <el-select
             v-model="form.isDirection"
             placeholder="请选择是否映射方向"
@@ -291,42 +325,45 @@
             </el-option>
           </el-select>
         </el-form-item>
-
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" placeholder="请输入用户名" />
+        <el-form-item label="协议类型" prop="networkType">
+          <el-select
+            v-model="form.networkType"
+            placeholder="请选择协议类型"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in typeList"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password" placeholder="请输入密码" />
+        <el-form-item label="开启网络检测" prop="openCheckNetwork">
+          <el-switch v-model="form.openCheckNetwork" inactive-text=""> </el-switch>
         </el-form-item>
-        <!--        <el-form-item label="网络状态">-->
-        <!--          <el-radio-group v-model="form.networkStatus">-->
-        <!--            <el-radio label="1">请选择字典生成</el-radio>-->
-        <!--          </el-radio-group>-->
-        <!--        </el-form-item>-->
-        <el-form-item label="系统名称" prop="systemName">
-          <el-input v-model="form.systemName" placeholder="请输入系统名称" />
+        <el-form-item label="检测地址" prop="checkNetworkUrl" v-if="form.openCheckNetwork == '1'">
+          <el-input v-model="form.checkNetworkUrl" placeholder="请输入检测地址" />
         </el-form-item>
-        <el-form-item label="系统地址" prop="systemUrl">
-          <el-input v-model="form.systemUrl" placeholder="请输入系统地址" />
-        </el-form-item>
-
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-
-        <el-form-item label="开启网络检测" prop="remark">
-          <el-switch v-model="form.openCheck" inactive-text=""> </el-switch>
-        </el-form-item>
-        <el-form-item label="检测地址" prop="remark">
-          <el-input v-model="form.checkAddr" placeholder="请输入检测地址" />
-        </el-form-item>
-        <el-form-item label="检测间隔" prop="remark">
+        <el-form-item label="检测时长" prop="checkNetworkTimeout" v-if="form.openCheckNetwork == '1'">
           <el-input
-            v-model="form.checkTimes"
+            v-model="form.checkNetworkTimeout"
             placeholder="请输入检测间隔（秒）"
           />
         </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <!--          <el-input v-model="form.remark" placeholder="请输入备注" />-->
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入备注"
+            v-model="form.remark">
+          </el-input>
+        </el-form-item>
       </el-form>
+
+
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitForm">确 定</el-button>
         <el-button class="closeButton" @click="cancel">取 消</el-button>
@@ -373,6 +410,7 @@ export default {
       total: 0,
       // 外部系统表格数据
       systemList: [],
+      typeList: ['TCP', 'HTTP'],
       result: [], //获取选中后的checkbox的数组值
       // 弹出层标题
       title: "",

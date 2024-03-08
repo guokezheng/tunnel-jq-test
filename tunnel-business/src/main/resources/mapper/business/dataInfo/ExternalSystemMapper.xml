@@ -20,10 +20,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="param"    column="param"    />
+        <result property="openCheckNetwork"    column="open_check_network"    />
+        <result property="networkType"    column="network_type"    />
+        <result property="checkNetworkUrl"    column="check_network_url"    />
+        <result property="checkNetworkTimeout"    column="check_network_timeout"    />
+
     </resultMap>
 
     <sql id="selectExternalSystemVo">
-        select id, brand_id,tunnel_id,is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time, param from external_system
+        select id, brand_id,tunnel_id,is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time, param,open_check_network,network_type,check_network_url,check_network_timeout from external_system
     </sql>
 
     <select id="selectExternalSystemList" parameterType="ExternalSystem" resultMap="ExternalSystemResult">
@@ -39,6 +44,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="systemUrl != null  and systemUrl != ''"> and system_url = #{systemUrl}</if>
             <if test="systemName != null and systemName != ''"> and system_name = #{systemName} </if>
             <if test="systemCode != null  and systemCode != ''"> and `code` = #{systemCode}</if>
+            <if test="openCheckNetwork != null and openCheckNetwork != ''"> and `open_check_network` = #{openCheckNetwork} </if>
+            <if test="networkType != null  and networkType != ''"> and network_type = #{networkType}</if>
+            <if test="checkNetworkUrl != null and checkNetworkUrl != ''"> and check_network_url = #{checkNetworkUrl} </if>
+            <if test="checkNetworkTimeout != null  and checkNetworkTimeout != ''"> and `check_network_timeout` = #{checkNetworkTimeout}</if>
         </where>
         order by create_time desc
     </select>
@@ -48,6 +57,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectExternalSystemById" parameterType="Long" resultMap="ExternalSystemResult">
         <include refid="selectExternalSystemVo"/>
         where id = #{id}
+    </select>
+    <select id="selectExternalSystemCheckList" resultType="com.tunnel.business.domain.dataInfo.ExternalSystem">
+
+        select id, brand_id,tunnel_id,is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time, param,open_check_network,network_type,check_network_url,check_network_timeout from external_system
+        where open_check_network = 1 and network_type = 'HTTP'
+
     </select>
 
     <insert id="insertExternalSystem" parameterType="ExternalSystem" useGeneratedKeys="true" keyProperty="id">
@@ -66,7 +81,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+            <if test="openCheckNetwork != null">open_check_network,</if>
+            <if test="networkType != null">network_type,</if>
+            <if test="checkNetworkUrl != null">check_network_url,</if>
+            <if test="checkNetworkTimeout != null">check_network_timeout,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="brandId != null">#{brandId},</if>
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -81,7 +100,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+            <if test="openCheckNetwork != null">#{openCheckNetwork},</if>
+            <if test="networkType != null">#{networkType},</if>
+            <if test="checkNetworkUrl != null">#{checkNetworkUrl},</if>
+            <if test="checkNetworkTimeout != null">#{checkNetworkTimeout},</if>
+        </trim>
     </insert>
 
     <update id="updateExternalSystem" parameterType="ExternalSystem">
@@ -100,7 +123,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="openCheckNetwork != null">open_check_network = #{openCheckNetwork},</if>
+            <if test="networkType != null">network_type = #{networkType},</if>
+            <if test="checkNetworkUrl != null">check_network_url = #{checkNetworkUrl},</if>
+            <if test="checkNetworkTimeout != null">check_network_timeout = #{checkNetworkTimeout},</if>
         </trim>
+        where id = #{id}
+    </update>
+    <update id="updateExternalSystemNetWorkStatus">
+        update external_system
+        set network_status = #{networkStatus}
         where id = #{id}
     </update>
 

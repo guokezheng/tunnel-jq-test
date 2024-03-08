@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -276,4 +277,11 @@ public interface ISdEventService {
      * @param eventJson
      */
     void wjEventUpdate(String eventJson);
+
+    /**
+     * 第三方断电告警
+     * @param parameters
+     * @return
+     */
+    AjaxResult addOutageEvent(JSONObject parameters);
 }

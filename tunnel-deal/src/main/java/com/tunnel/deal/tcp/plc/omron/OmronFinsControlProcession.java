@@ -603,6 +603,22 @@ public class OmronFinsControlProcession {
     }
 
     private void dataSave(String fEqId,String eqId,String data ,String itemId){
+
+        Long itemIdt = Long.valueOf(itemId);
+        Long co = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
+        Long vi = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
+        Long fengsu = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
+       //如果数据最终的结果小于0，置为0,避免COVI等模拟量计算数据为负数
+       if(itemIdt == co || itemIdt == vi || itemIdt == fengsu ){
+           BigDecimal dValue = new BigDecimal(data);
+           if(dValue.compareTo(new BigDecimal(0)) < 0) {
+               dValue =  BigDecimal.ZERO;
+               dValue = dValue.setScale(2,BigDecimal.ROUND_HALF_UP);
+               data = String.valueOf(dValue);
+           }
+        }
+
+
         //存储实时数据
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqId(eqId);

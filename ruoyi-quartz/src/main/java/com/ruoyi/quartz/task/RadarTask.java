@@ -344,11 +344,12 @@ public class RadarTask {
         List<Map<String, String>> list = new ArrayList<>();
         String path = "/flow/today";
         Map<String, String > map = new HashMap<>();
-        if("wzb".equals(glzName)){
+        if("wzb".equals(glzName) || "gsy".equals(glzName)){
             map.put("tunnelId",WjCarVolumeEnum.HU_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.HU_SHAN.getName() + path);
             list.add(map);
-        }else if("th".equals(glzName)){
+        }
+        if("th".equals(glzName) || "gsy".equals(glzName)){
             map.put("tunnelId",WjCarVolumeEnum.QING_FENG_LING.getCode());
             map.put("url",WjCarVolumeEnum.QING_FENG_LING.getName() + path);
             list.add(map);
@@ -356,7 +357,8 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.PAN_DING_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.PAN_DING_SHAN.getName() + path);
             list.add(map);
-        }else if("mz".equals(glzName)){
+        }
+        if("mz".equals(glzName) || "gsy".equals(glzName)){
             map.put("tunnelId",WjCarVolumeEnum.TAI_HE_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.TAI_HE_SHAN.getName() + path);
             list.add(map);
@@ -364,7 +366,8 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.TIAN_CI_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.TIAN_CI_SHAN.getName() + path);
             list.add(map);
-        }else if("jly".equals(glzName)){
+        }
+        if("jly".equals(glzName) || "gsy".equals(glzName)){
             map.put("tunnelId",WjCarVolumeEnum.MA_AN_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.MA_AN_SHAN.getName() + path);
             list.add(map);
@@ -372,7 +375,8 @@ public class RadarTask {
             map.put("tunnelId",WjCarVolumeEnum.JIN_JIA_LOU.getCode());
             map.put("url",WjCarVolumeEnum.JIN_JIA_LOU.getName() + path);
             list.add(map);
-        }else if("yts".equals(glzName)){
+        }
+        if("yts".equals(glzName) || "gsy".equals(glzName)){
             map.put("tunnelId",WjCarVolumeEnum.SHUANG_ZI_SHAN.getCode());
             map.put("url",WjCarVolumeEnum.SHUANG_ZI_SHAN.getName() + path);
             list.add(map);
@@ -402,7 +406,7 @@ public class RadarTask {
                                 up = (newData - oldData) + "";
                             }else {
                                 Integer oldData = objectMap.getOriginalNum();
-                                Integer newData = Integer.valueOf(data.get("down").toString());
+                                Integer newData = Integer.valueOf(data.get("down") == null ? "0" : data.get("down").toString());
                                 down = (newData - oldData) + "";
                             }
                         }

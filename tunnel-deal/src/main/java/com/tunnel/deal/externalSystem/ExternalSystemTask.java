@@ -27,7 +27,7 @@ public class ExternalSystemTask {
     /**
      * 检测网络状态
      */
-    @Scheduled(cron="0/5 * * * * ?")
+    //@Scheduled(cron="0/5 * * * * ?")
     public void selectExternalSystemTaskStatus(){
         List<ExternalSystem> externalSystemList = selectExternalSystemCheckList();
         externalSystemList.stream().forEach(item -> {

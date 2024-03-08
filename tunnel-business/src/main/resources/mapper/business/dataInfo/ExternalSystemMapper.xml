@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectExternalSystemCheckList" resultType="com.tunnel.business.domain.dataInfo.ExternalSystem">
 
         select id, brand_id,tunnel_id,is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time, param,open_check_network,network_type,check_network_url,check_network_timeout from external_system
-        where open_check_network = 1 and network_type = 'HTTP'
+        where open_check_network = 1 and check_network_url is not null and check_network_timeout is not null and check_network_timeout !=0
 
     </select>
 

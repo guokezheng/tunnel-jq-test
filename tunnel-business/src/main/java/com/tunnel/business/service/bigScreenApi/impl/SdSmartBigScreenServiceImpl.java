@@ -526,7 +526,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String startDate = sdf.format(date)+":00:00:00";
             param.put("startDate",startDate);
-            param.put("endDate",sdf.format(date)+":59:59:59");
+            param.put("endDate",sdf.format(date)+":23:59:59");
             param.put("tunnelId",tunnelId);
             param.put("direction",2);
             List<Map<String, Object>> vehicleListsByDate = sdVehicleDataMapper.getVehicleListsByDate(param);

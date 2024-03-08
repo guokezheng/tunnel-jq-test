@@ -158,20 +158,16 @@ export default {
   },
   methods: {
     tunnelDataFind(event){
-      console.log(event,"event")
       let tunnelDataList = []
       // console.log(event)
       for (let i = 0; i < event.length; i++) {
         // event[i].tunnelId
         let tunnelData = this.tunnelList.find(item => item ==event[i].tunnelId)
-        console.log(tunnelData,"tunnelData")
         if(!!tunnelData){
-          tunnelDataList = tunnelDataList.push(event[i])
-          console.log(tunnelDataList,"tunnelDataList222")
+          tunnelDataList.push(event[i])
         }
       }
       if(tunnelDataList.length>0){
-        console.log("tunnelDataList.length>0")
         this.evtShow = true
         this.list = tunnelDataList;
       }

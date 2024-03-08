@@ -1,12 +1,15 @@
 package com.tunnel.business.service.informationBoard.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.domain.informationBoard.IotDeviceAccess;
 import com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper;
@@ -14,15 +17,20 @@ import com.tunnel.business.mapper.informationBoard.IotDeviceAccessMapper;
 import com.tunnel.business.mapper.informationBoard.SdIotDeviceMapper;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
 import com.tunnel.business.utils.util.DataUtils;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 情报板内容发布日志Service业务层处理
@@ -157,6 +165,31 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
 
         // 记录服务ip
         iotBoardReleaseLog.setReleaseIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        //推送到gsy
+        try {
+            String baseLogUrl = "http://10.166.157.192:31028/prod-api/login";
+            String baseUrl = "http://10.166.157.192:31028/prod-api/system/log/addIotBoard";
+            String username = "admin";
+            String password = "Tunnel123!@#";
+            //获取token
+            String token = login( username, password,baseLogUrl);
+            //同步数据
+            syncBoardReleaseLog(token,baseUrl,iotBoardReleaseLog);
+        }catch (Exception e){
+            logger.error("");
+        }
+        return iotBoardReleaseLogMapper.insertIotBoardReleaseLog(iotBoardReleaseLog);
+    }
+
+
+    /**
+     * 新增情报板内容发布日志
+     *
+     * @param iotBoardReleaseLog 情报板内容发布日志
+     * @return 结果
+     */
+    @Override
+    public int synIotBoardReleaseLog(IotBoardReleaseLog iotBoardReleaseLog) {
 
         return iotBoardReleaseLogMapper.insertIotBoardReleaseLog(iotBoardReleaseLog);
     }
@@ -267,5 +300,61 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
             releaseLog.setReleaseNewContent(releaseContent);
         }
         return iotBoardReleaseLogs;
+    }
+    public String login(String username, String password, String baseUrl) {
+        Response response = null;
+        String token = "";
+        try {
+            String data = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+            OkHttpClient client = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    //强行返回true 即验证成功
+                    return true;
+                }
+            }).build();
+            MediaType mediaType=MediaType.parse("application/json");
+            RequestBody body=RequestBody.create(mediaType, data);
+            Request request=new Request.Builder().url(baseUrl).post(body).build();
+            response=client.newCall(request).execute();
+            JSONObject jo = JSONObject.parseObject(  response.body().string());
+            token = jo.getString("token");
+        } catch (IOException e) {
+            logger.error("同步数据登录异常提示",e.getMessage());
+            e.printStackTrace();
+        }finally{
+            if(response != null){
+                response.close();
+            }
+        }
+        return token;
+    }
+    private void syncBoardReleaseLog(String token,String baseUrl,IotBoardReleaseLog iotBoardReleaseLog){
+        if(!StringUtils.isEmpty(token)){
+            Response response = null;
+            try {
+                String data = JSON.toJSONString(iotBoardReleaseLog);
+                OkHttpClient client = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        //强行返回true 即验证成功
+                        return true;
+                    }
+                }).connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build();
+
+                MediaType mediaType = MediaType.parse("application/json");
+                RequestBody body=RequestBody.create(mediaType, data);
+                Request request=new Request.Builder().url(baseUrl).post(body).addHeader("Authorization", token).build();
+                response=client.newCall(request).execute();
+                JSONObject jo = JSONObject.parseObject(  response.body().string());
+                logger.info("同步情报板数据返回结果",jo);
+            } catch (IOException e) {
+                logger.error("同步情报板数据异常提示",e.getMessage());
+            }finally{
+                if(response != null){
+                    response.close();
+                }
+            }
+        }
     }
 }

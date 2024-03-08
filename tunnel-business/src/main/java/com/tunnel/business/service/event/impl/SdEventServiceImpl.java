@@ -883,6 +883,30 @@ public class SdEventServiceImpl implements ISdEventService {
         sendWuLian(sdEvent1);
     }
 
+    @Override
+    public AjaxResult addOutageEvent(JSONObject parameters) {
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = sdEventTypeService.getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = tunnelsService.getTunnelNameMap();
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setTunnelId(parameters.getString("tunnelId"));//隧道
+        sdEvent.setEventSource("5");//事件来源  电力系统检测
+        sdEvent.setEventTypeId(9912L);//事件类型
+        sdEvent.setEventTime(DateUtils.parseDate(parameters.getString("eventTime")));//时间
+        sdEvent.setStartTime(parameters.getString("eventTime"));//开始时间
+        sdEvent.setEventState("3");//状态  待确认
+        sdEvent.setEventGrade("1");//事件等级 一般
+        sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
+        sdEvent.setEventTitle(getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap));//事件标题  隧道+方向+桩号+发生火警
+        int count = sdEventMapper.insertSdEvent(sdEvent);
+        if(count == 1){
+            return AjaxResult.success();
+        }else {
+            return AjaxResult.error();
+        }
+    }
+
     /**
      * 批量删除事件管理
      *

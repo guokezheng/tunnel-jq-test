@@ -642,18 +642,7 @@ public class SdEventController extends BaseController
     public AjaxResult addOutageEvent(@RequestBody String jsonData){
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
         JSONObject parameters = jsonObject.getJSONObject("parameters");
-        SdEvent sdEvent = new SdEvent();
-        sdEvent.setTunnelId(parameters.getString("tunnelId"));//隧道
-        sdEvent.setEventSource("4");//事件来源  消防炮
-        sdEvent.setEventTypeId(parameters.getLongValue("eventTypeId"));//事件类型
-        sdEvent.setEventTitle(parameters.getString("eventTitle"));//事件标题  隧道+方向+桩号+发生火警
-        sdEvent.setEventTime(DateUtils.parseDate(parameters.getString("eventTime")));//时间
-        sdEvent.setStartTime(parameters.getString("eventTime"));//开始时间
-        sdEvent.setEventState("3");//状态  待确认
-        sdEvent.setEventGrade("1");//事件等级 一般
-        sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
-        sdEventMapper.insertSdEvent(sdEvent);
-        return AjaxResult.success();
+        return sdEventService.addOutageEvent(parameters);
     }
 
     /**

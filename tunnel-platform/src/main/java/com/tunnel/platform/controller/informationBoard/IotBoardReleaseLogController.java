@@ -57,6 +57,16 @@ public class IotBoardReleaseLogController extends BaseController
     }
 
     /**
+     * 同步情报板内容发布日志
+     */
+    @Log(title = "同步情报板内容发布日志", businessType = BusinessType.INSERT)
+    @PostMapping("/addIotBoard")
+    public AjaxResult addIotBoard(@RequestBody IotBoardReleaseLog iotBoardReleaseLog)
+    {
+        return toAjax(iotBoardReleaseLogService.synIotBoardReleaseLog(iotBoardReleaseLog));
+    }
+
+    /**
      * 修改情报板内容发布日志
      */
     @Log(title = "情报板内容发布日志", businessType = BusinessType.UPDATE)

@@ -37,6 +37,14 @@ public interface IIotBoardReleaseLogService {
     int insertIotBoardReleaseLog(IotBoardReleaseLog iotBoardReleaseLog);
 
     /**
+     * 新增情报板内容发布日志
+     *
+     * @param iotBoardReleaseLog 情报板内容发布日志
+     * @return 结果
+     */
+    int synIotBoardReleaseLog(IotBoardReleaseLog iotBoardReleaseLog);
+
+    /**
      * 修改情报板内容发布日志
      *
      * @param iotBoardReleaseLog 情报板内容发布日志

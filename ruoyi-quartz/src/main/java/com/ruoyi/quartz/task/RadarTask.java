@@ -407,8 +407,8 @@ public class RadarTask {
                             }
                         }
                     }
-                    setTrafficVolumeData(item.get("tunnelId"),"1","".equals(up) ? "0" : up,data == null ? "0" : data.get("up").toString(), JSON.toJSONString(data));
-                    setTrafficVolumeData(item.get("tunnelId"),"2","".equals(down) ? "0" : down,data == null ? "0" : data.get("down").toString(),JSON.toJSONString(data));
+                    setTrafficVolumeData(item.get("tunnelId"),"1","".equals(up) ? "0" : up,data == null ? "0" : data.get("up") == null ? "0" : data.get("up").toString(), JSON.toJSONString(data));
+                    setTrafficVolumeData(item.get("tunnelId"),"2","".equals(down) ? "0" : down,data == null ? "0" : data.get("down") == null ? "0" : data.get("down").toString(),JSON.toJSONString(data));
                 }
             }catch (Exception e){
                 continue;

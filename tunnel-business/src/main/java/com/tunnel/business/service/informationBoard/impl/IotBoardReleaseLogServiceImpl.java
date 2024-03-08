@@ -344,7 +344,7 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
 
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body=RequestBody.create(mediaType, data);
-                Request request=new Request.Builder().url(baseUrl).put(body).addHeader("Authorization", token).build();
+                Request request=new Request.Builder().url(baseUrl).post(body).addHeader("Authorization", token).build();
                 response=client.newCall(request).execute();
                 JSONObject jo = JSONObject.parseObject(  response.body().string());
                 logger.info("同步情报板数据返回结果",jo);

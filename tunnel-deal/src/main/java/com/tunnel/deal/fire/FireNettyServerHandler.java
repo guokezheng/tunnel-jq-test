@@ -119,7 +119,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 //查询外部系统ID
                 ExternalSystem externalSystem = new ExternalSystem();
                 externalSystem.setSystemName("火灾报警系统");
-                externalSystem.setSystemUrl(clientIp);
+               // externalSystem.setSystemUrl(clientIp);
                 List<ExternalSystem> externalSystems = externalSystemMapper.selectExternalSystemList(externalSystem);
                 if (externalSystems.isEmpty()) {
                     return;
@@ -211,7 +211,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 SdDevices devices = new SdDevices();
                 devices.setExternalSystemId(systemId);
                 devices.setExternalDeviceId(sn);
-
+                devices.setQueryPointAddress(address);
 
 
                 // 火灾报警  1左洞 2右洞

@@ -287,7 +287,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
      */
     public static void eventAudio(){
         try {
-            File file = new File("./tunnel-deal/src/main/resources/audio/ding.WAV");
+            File file = new File("/home/tunnel/video/ding.WAV");
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(file));
             clip.start();

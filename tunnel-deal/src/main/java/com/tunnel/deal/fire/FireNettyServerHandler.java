@@ -90,7 +90,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             if ("".equals(data) || data == null) {
                 return;
             }
-            if (!data.contains("火警") && !data.contains("模块或探头故障") && !data.contains("模块或探头恢复")
+            if (!data.contains("火警") && !data.contains("模块或探头故障") && !data.contains("模块或探头恢复") && !data.contains("启动")
                     && !data.contains("全部声光启动") && !data.contains("全部声光停止") && !data.contains("控制器复位")) {
                 return;
             }
@@ -114,7 +114,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             if (data.contains(":")) {
                 String alarmType = data.substring(0, data.indexOf(":"));
                 log.info("alarmType:" + alarmType);
-                data = data.substring(data.indexOf(":") + 2);
+                data = data.substring(data.indexOf(":") + 1);
                 String host = data.substring(0, data.indexOf("号"));
                 //查询外部系统ID
                 ExternalSystem externalSystem = new ExternalSystem();
@@ -183,13 +183,13 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             data = data.substring(data.indexOf("址") + 2);
             String sourceDevice = data.substring(0, data.indexOf(" "));*/
                 //模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02
-                String address = data.substring(0, data.indexOf("号"));
+              //  String address = data.substring(0, data.indexOf("号"));
                 data = data.substring(data.indexOf("机") + 1);
                 // 左洞1 右洞2
                 String loop = data.substring(0, data.indexOf("回"));
                 data = data.substring(data.indexOf("路") + 1);
 
-                String sn = data.substring(0,data.indexOf("地"));
+                String sn = data.substring(0,data.indexOf("号地"));
                 data = data.substring(data.indexOf("址") + 2);
                 // 设备编码
                 //data = data.substring(data.indexOf("址") + 2);
@@ -211,7 +211,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 SdDevices devices = new SdDevices();
                 devices.setExternalSystemId(systemId);
                 devices.setExternalDeviceId(sn);
-                devices.setQueryPointAddress(address);
+                devices.setQueryPointAddress(host);
 
 
                 // 火灾报警  1左洞 2右洞
@@ -231,7 +231,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 devices.setExternalDeviceId(sn);
                 devices.setEqStatus(state+"");
                 devices.setEqStatusTime(new Date());
-                devices.setQueryPointAddress(address);
+                devices.setQueryPointAddress(host);
                 sdDevicesMapper.updateSdDevicesByExternalDevIdAndDirection(devices);
 
 
@@ -395,7 +395,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     public static void eventAudio(){
         try {
-            File file = new File("./tunnel-deal/src/main/resources/audio/ding.WAV");
+            File file = new File("/home/tunnel/video/ding.WAV");
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(file));
             clip.start();

@@ -94,7 +94,8 @@ public class OmronFinsControl implements GeneralControlBean, TcpClientGeneralBea
         }
         //操作日志
         commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
-        return AjaxResult.success("下发成功");
+        return AjaxResult.success(1);
+        //return AjaxResult.success("下发成功");
     }
 
     /**

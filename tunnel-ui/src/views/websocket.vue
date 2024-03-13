@@ -58,6 +58,10 @@ export default {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);
             break;
+          case "playvideo":
+            let audio = new Audio("http://10.7.200.14:7080/video/ding.WAV");
+            audio.play(); 
+            break;
           case "carList":
             this.$store.commit("CARLIST", content);
             break;

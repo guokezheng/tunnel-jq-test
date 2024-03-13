@@ -969,10 +969,11 @@ public class StrategyTask {
      */
     public void eventAudio(){
         try {
-            File file = new File("/home/tunnel/video/ding.WAV");
+            /*File file = new File("/home/tunnel/video/ding.WAV");
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(file));
-            clip.start();
+            clip.start();*/
+            WebSocketService.broadcast("playvideo",1);
         }catch (Exception e){
             e.printStackTrace();
         }

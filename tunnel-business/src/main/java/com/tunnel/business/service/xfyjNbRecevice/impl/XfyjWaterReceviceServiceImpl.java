@@ -5,11 +5,9 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.SdWarningInfo;
-import com.tunnel.business.domain.xfWaterRecord.SdXfwaterRecord;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.event.SdWarningInfoMapper;
-import com.tunnel.business.mapper.xfWaterRecord.SdXfwaterRecordMapper;
 import com.tunnel.business.service.xfyjNbRecevice.XfyjWaterReceviceService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import org.slf4j.Logger;
@@ -48,11 +46,6 @@ public class XfyjWaterReceviceServiceImpl implements XfyjWaterReceviceService {
      */
     @Autowired
     private SdWarningInfoMapper sdWarningInfoMapper;
-    /**
-     * 解析记录
-     */
-    @Autowired
-    private SdXfwaterRecordMapper sdXfwaterRecordMapper;
 
     @Resource
     private RedisCache redisCache;
@@ -118,36 +111,24 @@ public class XfyjWaterReceviceServiceImpl implements XfyjWaterReceviceService {
             SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(xfyjMaintenanceOfEquipment.getEqTunnelId());
             String zdbh = sdTunnels.getDeptId();
             // 通讯记录插入
-            SdXfwaterRecord electricalDetectorRecord = new SdXfwaterRecord();
-            electricalDetectorRecord.setDeptId(zdbh);
-            electricalDetectorRecord.setEquipmentId(strImei);
-            electricalDetectorRecord.setTunnelId(sdTunnels.getTunnelId());
-            electricalDetectorRecord.setTunnelName(sdTunnels.getTunnelName());
-            electricalDetectorRecord.setEquipmentName(xfyjMaintenanceOfEquipment.getEqName());
-            electricalDetectorRecord.setPosition(xfyjMaintenanceOfEquipment.getPile());
-            electricalDetectorRecord.setEqDirection(xfyjMaintenanceOfEquipment.getEqDirection());
             electrical = electricalHeader.substring(15);
             // 状态
             String state = electrical.substring(0, 2);
             if (state.equals(null) || state.equals("")) {
                 state = "0";
             }
-            electricalDetectorRecord.setState(state);
             // 最低值
             electrical = electrical.substring(2);
             String low = "";
             if (xfyjMaintenanceOfEquipment.getEqType() == 111) {
                 low = String.valueOf(Double.valueOf(electrical.substring(0, 4)) / 1000);
             }
-            electricalDetectorRecord.setLow(low);
             // 最高值
             electrical = electrical.substring(4);
             String height = "";
             if (xfyjMaintenanceOfEquipment.getEqType() == 111) {
                 height = String.valueOf(Double.valueOf(electrical.substring(0, 4)) / 1000);
             }
-
-            electricalDetectorRecord.setHighest(height);
             // 设备模拟量
             electrical = electrical.substring(4);
             String imitateData = "";
@@ -157,16 +138,16 @@ public class XfyjWaterReceviceServiceImpl implements XfyjWaterReceviceService {
             // 结果保留2位小数
 
             // 获取模拟量测量值
-            electricalDetectorRecord.setAnalogQuantity(imitateData);
+            /*electricalDetectorRecord.setAnalogQuantity(imitateData);
             // 创建时间
-            electricalDetectorRecord.setCreateTime(new Date());
+            electricalDetectorRecord.setCreateTime(new Date());*/
             redisCache = (RedisCache) SpringContextUtils.getBean(RedisCache.class);
-            List<SdXfwaterRecord> list = new ArrayList<>();
-            list.add(electricalDetectorRecord);
+            /*List<SdXfwaterRecord> list = new ArrayList<>();
+            list.add(electricalDetectorRecord);*/
             String keyName = "pressureRecord" + sdTunnels.getTunnelId();
-            redisCache.setCacheList(keyName, list);
+            /*redisCache.setCacheList(keyName, list);
             // 存储消防水信息
-            sdXfwaterRecordMapper.insertSdXfwaterRecord(electricalDetectorRecord);
+            sdXfwaterRecordMapper.insertSdXfwaterRecord(electricalDetectorRecord);*/
 
             String alarmContent = "";
             switch (state) {

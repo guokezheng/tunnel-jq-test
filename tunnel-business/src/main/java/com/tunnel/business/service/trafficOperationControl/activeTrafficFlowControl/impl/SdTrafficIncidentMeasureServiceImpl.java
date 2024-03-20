@@ -3,7 +3,6 @@ package com.tunnel.business.service.trafficOperationControl.activeTrafficFlowCon
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasure;
-import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlLevelConfig;
 import com.tunnel.business.mapper.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasureMapper;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ISdTrafficIncidentMeasureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +119,7 @@ public class SdTrafficIncidentMeasureServiceImpl implements ISdTrafficIncidentMe
      * @param incidentId 事件id
      * @return
      */
-    @Override
+    /*@Override
     public AjaxResult saveIncidentMeasure(SdControlLevelConfig configInfo, Long incidentId) {
         Long levelConfigId = configInfo.getId();
         SdTrafficIncidentMeasure incidentMeasure = new SdTrafficIncidentMeasure();
@@ -128,5 +127,5 @@ public class SdTrafficIncidentMeasureServiceImpl implements ISdTrafficIncidentMe
         incidentMeasure.setConfigLevelId(levelConfigId);
         sdTrafficIncidentMeasureMapper.insertSdTrafficIncidentMeasure(incidentMeasure);
         return AjaxResult.success();
-    }
+    }*/
 }

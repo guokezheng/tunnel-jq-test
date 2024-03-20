@@ -136,9 +136,9 @@
 
         this.$cache.local.set("manageStationSelect", newVal);
 
-        // if (newVal == "JQ-WeiFang-JiuLongYu-HSD") {
-        //   window.location = "http://10.7.187.28:82/WorkBench?userId=8";
-        // }
+        if (newVal == "JQ-WeiFang-JiuLongYu-HSD") {
+          window.location = "http://10.7.187.28:82/WorkBench?userId=8";
+        }
       },
       $route() {
         // this.addTags()
@@ -186,11 +186,11 @@
           this.manageStationSelect = "JQ-WeiFang-JiuLongYu-MAS";
         } else {
           if (this.$cache.local.get("manageStationSelect")) {
-            
+
             let str = ""
             for (let i = 0; i < this.manageStationList.length; i++) {
               let item = this.manageStationList[i]
-             
+
               if (item.tunnelId == this.$cache.local.get("manageStationSelect")) {
                 let arr = []
                 let itm = item.ancestors.split(",")

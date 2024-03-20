@@ -10,7 +10,6 @@ import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigCauseService;
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigMeasureService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficAccidentInfoService;
-import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficControlInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,9 +35,6 @@ public class SdTrafficIncidentInfoServiceImpl implements ISdTrafficIncidentInfoS
 
     @Autowired
     private ISdTrafficAccidentInfoService accidentInfoService;
-
-    @Autowired
-    private ISdTrafficControlInfoService controlInfoService;
 
     /**
      * 查询交通运行管控-事件信息管理
@@ -183,7 +179,6 @@ public class SdTrafficIncidentInfoServiceImpl implements ISdTrafficIncidentInfoS
 
         String tunnelName = Optional.ofNullable(itemMap.get("tunnelName")).orElse("").toString();
         String occurTime = Optional.ofNullable(itemMap.get("occurTime")).orElse("").toString();
-        String content = controlInfoService.joinPublishContent(tunnelName, occurTime, causeList, measureList);
-        return content;
+        return "content";
     }
 }

@@ -10,7 +10,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasure;
 import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlConfigMeasure;
-import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlLevelConfig;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.IncidentAndAccidentInfo;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficAccidentInfo;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo;
@@ -18,7 +17,6 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ISdTrafficIncidentMeasureService;
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigMeasureService;
-import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlLevelConfigService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficAccidentInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentProcessService;
@@ -61,9 +59,6 @@ public class SdTrafficAccidentInfoController extends BaseController
 
     @Autowired
     private ISdTunnelsService tunnelsService;
-
-    @Autowired
-    private ISdControlLevelConfigService levelConfigService;
 
     /**
      * 查询交通事故和清障信息列表
@@ -267,14 +262,14 @@ public class SdTrafficAccidentInfoController extends BaseController
 
 
 
-        SdControlLevelConfig levelConfig = new SdControlLevelConfig();
+        /*SdControlLevelConfig levelConfig = new SdControlLevelConfig();
         levelConfig.setControlLevel(controlLevel);
         levelConfig.setControlType(controlType);
 
         SdControlLevelConfig configInfo = levelConfigService.getConfigInfo(levelConfig);
         if(configInfo == null){
             return AjaxResult.error("请选择有效的管控等级配置数据！");
-        }
+        }*/
 
 
         SdTrafficIncidentInfo incidentInfo = new SdTrafficIncidentInfo();
@@ -293,7 +288,8 @@ public class SdTrafficAccidentInfoController extends BaseController
 
 
         //保存管控措施
-        AjaxResult ajaxResult = incidentMeasureService.saveIncidentMeasure(configInfo,incidentInfo.getId());
+        //AjaxResult ajaxResult = incidentMeasureService.saveIncidentMeasure(configInfo,incidentInfo.getId());
+        AjaxResult ajaxResult = new AjaxResult();
 
         return ajaxResult;
     }
@@ -329,14 +325,14 @@ public class SdTrafficAccidentInfoController extends BaseController
         //管控类别
         String controlType = jsonObject.getString("controlType");
 
-        SdControlLevelConfig levelConfig = new SdControlLevelConfig();
+        /*SdControlLevelConfig levelConfig = new SdControlLevelConfig();
         levelConfig.setControlLevel(controlLevel);
         levelConfig.setControlType(controlType);
 
         SdControlLevelConfig configInfo = levelConfigService.getConfigInfo(levelConfig);
         if(configInfo == null){
             return AjaxResult.error("请选择有效的管控等级配置数据！");
-        }
+        }*/
 
         SdTrafficIncidentInfo incidentInfo = new SdTrafficIncidentInfo();
         incidentInfo.setId(id);
@@ -359,7 +355,8 @@ public class SdTrafficAccidentInfoController extends BaseController
 
 
         //保存管控措施
-        AjaxResult ajaxResult = incidentMeasureService.saveIncidentMeasure(configInfo,incidentInfo.getId());
+        //AjaxResult ajaxResult = incidentMeasureService.saveIncidentMeasure(configInfo,incidentInfo.getId());
+        AjaxResult ajaxResult = new AjaxResult();
 
         return ajaxResult;
     }

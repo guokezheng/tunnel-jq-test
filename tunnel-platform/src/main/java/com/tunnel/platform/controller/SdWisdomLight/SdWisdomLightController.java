@@ -5,7 +5,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.tunnel.business.domain.roadState.SdRoadDetectorDataDTO;
 import com.tunnel.business.domain.wisdomLight.SdWisdomLight;
 import com.tunnel.business.service.wisdomLight.ISdWisdomLightService;
 import org.springframework.beans.factory.annotation.Autowired;

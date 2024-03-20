@@ -6,17 +6,14 @@ import com.ruoyi.system.service.ISysDictTypeService;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdIcyRoad;
 import com.tunnel.business.domain.dataInfo.SdTrafficStatistics;
-import com.tunnel.business.domain.intelligent.SdWeatherReport;
 import com.tunnel.business.domain.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasure;
 import com.tunnel.business.domain.trafficOperationControl.controlConfig.*;
 import com.tunnel.business.service.dataInfo.ISdIcyRoadService;
 import com.tunnel.business.service.dataInfo.ISdTrafficStatisticsService;
-import com.tunnel.business.service.intelligent.ISdWeatherReportService;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ISdTrafficIncidentMeasureService;
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigCauseService;
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigMeasureService;
-import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlLevelConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +34,6 @@ import java.util.stream.Collectors;
 @Service
 public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
 
-    @Autowired
-    private ISdControlLevelConfigService levelConfigService;
 
     @Autowired
     private ISdControlConfigCauseService configCauseService;
@@ -54,9 +49,6 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
 
     @Autowired
     private ISdTrafficStatisticsService trafficStatisticsService;
-
-    @Autowired
-    private ISdWeatherReportService weatherReportService;
 
     @Autowired
     private ISysDictTypeService sysDictTypeService;
@@ -92,7 +84,7 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
      * @param weatherList
      * @return
      */
-    @Override
+    /*@Override
     public BigDecimal computeVisibility(List<SdWeatherReport> weatherList) {
         //暂时按照气象记录一条数据来计算,使用1分钟能见度
         BigDecimal visibilityNum = null;
@@ -101,7 +93,7 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
             visibilityNum = new BigDecimal(visibilityValue);
         }
         return visibilityNum;
-    }
+    }*/
 
     /**
      * 获得满足条件的管控措施
@@ -183,12 +175,12 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
         if (levelConfigIdList.size() > 0) {
             Long levelConfigId = levelConfigIdList.get(0);
 
-            SdControlLevelConfig levelConfig = levelConfigService.selectSdControlLevelConfigById(levelConfigId);
+            //SdControlLevelConfig levelConfig = levelConfigService.selectSdControlLevelConfigById(levelConfigId);
             List<SdControlConfigCause> configCauseList = configCauseService.getConfigCauseByLevelId(levelConfigId);
             String causeDetail = configCauseService.getControlCauseDescription(configCauseList);
             List<SdControlConfigMeasure> configMeasureList = configMeasureService.getConfigMeasureByLevelId(levelConfigId);
             String detail = getCompleteMeasureDetail(configMeasureList);
-            jsonObject.put("levelConfig", levelConfig);
+            //jsonObject.put("levelConfig", levelConfig);
             jsonObject.put("measureList", configMeasureList);
             jsonObject.put("measureDetail", detail);
             jsonObject.put("controlReason", causeDetail);
@@ -222,20 +214,20 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
         BigDecimal avgSpeed = computeAvgSpeed(flowList);
 
         //气象记录
-        List<SdWeatherReport> weatherList = weatherReportService.selectLatestWeatherList(tunnelId);
+        //List<SdWeatherReport> weatherList = weatherReportService.selectLatestWeatherList(tunnelId);
         //计算能见度
-        BigDecimal visibilityNum = computeVisibility(weatherList);
+        //BigDecimal visibilityNum = computeVisibility(weatherList);
 
         //获得满足条件的管控措施
-        JSONObject measureData = getSatisfiedConditionMeasure(roadConditionList, avgSpeed, visibilityNum);
+        //JSONObject measureData = getSatisfiedConditionMeasure(roadConditionList, avgSpeed, visibilityNum);
 
         realData.put("icyRoadList", icyRoadList);
         realData.put("flowList", flowList);
-        realData.put("weatherList", weatherList);
+        //realData.put("weatherList", weatherList);
 
         JSONObject resultObject = new JSONObject();
         resultObject.put("realData", realData);
-        resultObject.put("measureData", measureData);
+        //resultObject.put("measureData", measureData);
         return resultObject;
     }
 
@@ -429,12 +421,12 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
         //获取管控措施列表、管控措施详情
         if (incidentMeasure != null && incidentMeasure.size() > 0) {
             Long configLevelId = incidentMeasure.get(0).getConfigLevelId();
-            SdControlLevelConfig levelConfig = levelConfigService.selectSdControlLevelConfigById(configLevelId);
+            //SdControlLevelConfig levelConfig = levelConfigService.selectSdControlLevelConfigById(configLevelId);
             List<SdControlConfigCause> causeList = configCauseService.getConfigCauseByLevelId(configLevelId);
             String causeDetail = configCauseService.getControlCauseDescription(causeList);
             List<SdControlConfigMeasure> list = configMeasureService.getConfigMeasureByLevelId(configLevelId);
             String measureDetail = getCompleteMeasureDetail(list);
-            map.put("levelConfig", levelConfig);
+            //map.put("levelConfig", levelConfig);
             map.put("controlReason", causeDetail);
             map.put("measureList", list);
             map.put("measureDetail", measureDetail);

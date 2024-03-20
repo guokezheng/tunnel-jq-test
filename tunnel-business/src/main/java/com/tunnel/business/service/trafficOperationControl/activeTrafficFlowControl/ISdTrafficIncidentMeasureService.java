@@ -2,7 +2,6 @@ package com.tunnel.business.service.trafficOperationControl.activeTrafficFlowCon
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasure;
-import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlLevelConfig;
 
 import java.util.List;
 
@@ -86,7 +85,7 @@ public interface ISdTrafficIncidentMeasureService {
      * @param incidentId 事件id
      * @return
      */
-    AjaxResult saveIncidentMeasure(SdControlLevelConfig configInfo, Long incidentId);
+    //AjaxResult saveIncidentMeasure(SdControlLevelConfig configInfo, Long incidentId);
 
 
 }

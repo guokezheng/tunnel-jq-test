@@ -2,7 +2,6 @@ package com.tunnel.business.service.trafficOperationControl.activeTrafficFlowCon
 
 import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.domain.dataInfo.SdTrafficStatistics;
-import com.tunnel.business.domain.intelligent.SdWeatherReport;
 import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlConfigMeasure;
 
 import java.math.BigDecimal;
@@ -33,7 +32,7 @@ public interface ActiveTrafficFlowService {
      * @param weatherList
      * @return
      */
-    BigDecimal computeVisibility(List<SdWeatherReport> weatherList);
+    //BigDecimal computeVisibility(List<SdWeatherReport> weatherList);
 
 
     /**

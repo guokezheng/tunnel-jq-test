@@ -33,9 +33,10 @@ public class EvacuationSign implements DeviceDataStrategyService {
             devices.put("frequency", data.getData());
         } else if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()) {
             devices.put("fireMark", data.getData());
-        } else if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode()) {
-            devices.put("fireMark", data.getData());
         }
+//        else if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode()) {
+//            devices.put("fireMark", data.getData());
+//        }
 
     }
 

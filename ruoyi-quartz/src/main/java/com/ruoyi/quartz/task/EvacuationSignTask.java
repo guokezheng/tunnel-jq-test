@@ -22,7 +22,13 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * 疏散标志定时任务调度
@@ -144,75 +150,7 @@ public class EvacuationSignTask {
         //radarEventService.sendBaseDeviceStatus(map);
     }
 
-    private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {
-        if (codeMap == null || codeMap.isEmpty() || codeMap.get("mode") == null) {
-            return;
-        }
-        String mode = codeMap.get("mode").toString();
-        if (mode.equals("1")) {
-            mode = "2";
-        } else if (mode.equals("4")) {
-            mode = "3";
-        } else if (mode.equals("0")) {
-            mode = "1";
-        }
-        String brightness = codeMap.get("brightness").toString();
-        String frequency = codeMap.get("frequency").toString();
-        if ((codeMap != null && !codeMap.isEmpty()) && codeMap.get("fireMark") != null
-                && sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).longValue()) {
-            //控制器报警点存储
-            saveDataIntoSdDeviceData(sdDevices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
-            //根据控制器的设备ID查询所有子设备保存状态数据
-            SdDevices dev = new SdDevices();
-            dev.setFEqId(sdDevices.getEqId());
-            List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
-            if (codeMap.get("fireMark").toString().equals("255") || codeMap.get("fireMark").toString().equals("0")) {
-                //如果当前是开灯或关灯状态，所有的疏散标志子设备实时状态应该是一致的总共是两种状态，要不就都是开灯，要不就都是关灯
-                if (codeMap.get("fireMark").toString().equals("0")) {
-                    mode = "1";
-                }
-                for (int i = 0;i < list.size();i++) {
-                    SdDevices devices = list.get(i);
-                    saveDataIntoSdDeviceData(devices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
-                    saveDataIntoSdDeviceData(devices, mode, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
-//                    sendDataToWanJi(sdDevices, "lightOn", mode);
-                    saveDataIntoSdDeviceData(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-                    saveDataIntoSdDeviceData(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
-                }
-            } else {
-                //此处表示标号处于0和255之前，疏散标志子设备包含三种状态，入口方向闪烁、闪烁、出口方向闪烁，对应标号处设备与控制器相同
-                //其他标号处状态对应可控三种状态外的三种状态
-                BigDecimal fireMark = new BigDecimal(codeMap.get("fireMark").toString());
-                for (int i = 0;i < list.size();i++) {
-                    SdDevices devices = list.get(i);
-                    BigDecimal addressMark = new BigDecimal(devices.getQueryPointAddress());
-                    if (fireMark.compareTo(addressMark) < 0) {
-                        mode = "6";
-                    } else if (fireMark.compareTo(addressMark) == 0) {
-                        mode = "5";
-                    } else if (fireMark.compareTo(addressMark) > 0) {
-                        mode = "4";
-                    }
-                    saveDataIntoSdDeviceData(devices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
-                    saveDataIntoSdDeviceData(devices, mode, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
-//                    sendDataToWanJi(sdDevices, "lightOn", mode);
-                    saveDataIntoSdDeviceData(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-                    saveDataIntoSdDeviceData(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
-                }
-            }
-            return;
-        }
-        saveDataIntoSdDeviceData(sdDevices, mode, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
-        sendDataToWanJi(sdDevices, "lightOn", mode);
-        saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-        saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
-        log.info("存储设备实时数据到sd_device_data完成");
-        String[] states = new String[3];
-        states[0] = mode;
-        states[1] = brightness;
-        states[2] = frequency;
-        sendNowDeviceStatusByWebsocket(sdDevices, states);
-    }
+
 
     private static void saveDataIntoSdDeviceData(SdDevices sdDevices, String value, Integer itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();
@@ -274,9 +212,9 @@ public class EvacuationSignTask {
             //全部常亮
             if (state != "" && state.equals("2")) {
                 //推送物联中台kafka内容
-                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                 //疏散标志是否开灯存储状态
-                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 //疏散标志亮度存储状态
                 saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                 //疏散标志事件标号
@@ -291,9 +229,9 @@ public class EvacuationSignTask {
                         devices.setEqStatusTime(new Date());
                         sdDevicesService.updateSdDevices(devices);
                         //疏散标志控制模式
-                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         //疏散标志是否开灯存储状态
-                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         //疏散标志亮度存储状态
                         saveDataIntoSdDeviceDataTwo(devices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                         //疏散标志事件标号
@@ -302,9 +240,9 @@ public class EvacuationSignTask {
                 }
             } else if (state != "" && state.equals("1")) {//全部关闭
                 //推送物联中台kafka内容
-                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                 //疏散标志是否开灯存储状态
-                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 //疏散标志事件标号
                 saveDataIntoSdDeviceDataTwo(sdDevices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                 //更新子设备的状态
@@ -315,9 +253,9 @@ public class EvacuationSignTask {
                         devices.setEqStatusTime(new Date());
                         sdDevicesService.updateSdDevices(devices);
                         //m模式疏散标志控制模式
-                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         //疏散标志是否开灯存储状态
-                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         //疏散标志事件标号
                         saveDataIntoSdDeviceDataTwo(devices, "0", DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                     }
@@ -326,16 +264,19 @@ public class EvacuationSignTask {
 
                 list = list.stream()
                 .sorted(Comparator.comparing(SdDevices::getPileNum))
+                        .filter(distinctByKey1(s -> s.getPile()))
                 .collect(Collectors.toList());
+
                 String fireMark = codeMap.get("fireMark").toString();
+                Integer fireMarkNum = Integer.parseInt(fireMark)-1;
                 //推送物联中台kafka内容
-                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                 //疏散标志是否开灯存储状态
-                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 //疏散标志亮度存储状态
                 saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                 //疏散标志事件标号
-                saveDataIntoSdDeviceDataTwo(sdDevices, list.get(Integer.parseInt(fireMark)).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                saveDataIntoSdDeviceDataTwo(sdDevices, list.get(fireMarkNum).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                 //疏散标志事件频率
                 saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("frequency").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                 //更新子设备的状态
@@ -345,13 +286,12 @@ public class EvacuationSignTask {
                         devices.setEqStatus("1");
                         devices.setEqStatusTime(new Date());
                         sdDevicesService.updateSdDevices(devices);
-                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         //疏散标志是否开灯存储状态
-                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
-                        //疏散标志亮度存储状态
+//                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         saveDataIntoSdDeviceDataTwo(devices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                         //疏散标志事件标号
-                        saveDataIntoSdDeviceDataTwo(devices, list.get(Integer.parseInt(fireMark)).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                        saveDataIntoSdDeviceDataTwo(devices, list.get(fireMarkNum).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                         //疏散标志事件频率
                         saveDataIntoSdDeviceDataTwo(devices, codeMap.get("frequency").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                     }
@@ -362,5 +302,9 @@ public class EvacuationSignTask {
             e.printStackTrace();
         }
         return;
+    }
+    static <T> Predicate<T> distinctByKey1(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

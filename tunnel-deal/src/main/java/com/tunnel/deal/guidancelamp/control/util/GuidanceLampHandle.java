@@ -170,7 +170,7 @@ public class GuidanceLampHandle {
                     //亮度
                     updateDeviceDatas(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                     //开灯状态
-                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                     //频率
 //                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                     //疏散标志事件标号
@@ -190,7 +190,7 @@ public class GuidanceLampHandle {
                     //控制模式
                     updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                     //开灯状态
-                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                     //亮度存贮
                     updateDeviceDatas(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                         updateDeviceDatas(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
@@ -202,7 +202,7 @@ public class GuidanceLampHandle {
                         //疏散标志事件标号
                         updateDeviceDatas(devices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                         //开灯状态
-                        updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                        updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         updateDeviceDatas(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         updateDeviceDatas(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                         updateDeviceDatas(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
@@ -213,7 +213,7 @@ public class GuidanceLampHandle {
                     //控制模式
                     updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                     //开灯状态
-                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                    updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                     //亮度存贮
                     updateDeviceDatas(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
 //                        updateDeviceDatas(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
@@ -223,7 +223,7 @@ public class GuidanceLampHandle {
                         //控制模式
                         updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         //开灯状态
-                        updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+//                        updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         //亮度存贮
                         updateDeviceDatas(devo, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
 //                        updateDeviceDatas(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());

@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
@@ -175,6 +176,7 @@ public class SdDeviceDataController extends BaseController
                 Map<String,String> itemMap = new HashMap<>();
                 itemMap.put("eqId",eqId);
                 itemMap.put("eqName",nullOrEn(deviceMap.get("eqName")));
+                itemMap.put("pile",nullOrEn(deviceMap.get("pile")));
                 itemMap.put("eqDirection",nullOrEn(deviceMap.get("eqDirection")));
                 itemMap.put("eqStatus",nullOrEn(deviceMap.get("eqStatus")));
                 itemMap.put("eqType",nullOrEn(deviceMap.get("eqType")));
@@ -199,6 +201,45 @@ public class SdDeviceDataController extends BaseController
                 itemMap.put("unit",nullOrEn(deviceMap.get("unit")));
                 String itemCode = nullOrEn(deviceMap.get("itemCode"));
                 String data = nullOrEn(deviceMap.get("dataUnit"));
+                //满足这些条件说明是疏散标志并且数据组装完成
+                try{
+                    if("5".equals(itemMap.get("state"))&&"30".equals(itemMap.get("eqType"))&&(
+                            StringUtils.isEmpty(itemMap.get("SSBZFM")) ? false : itemMap.get("SSBZFM").contains("K"))){
+                        //上行  判断当前设备桩号和报警点位大小设置state
+                        if("1".equals(itemMap.get("eqDirection"))){
+                            //当前桩号
+                            String pile = itemMap.get("pile").replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                            Integer pileNum = Integer.valueOf(pile);
+                            //报警桩号
+                            String bzPile = itemMap.get("SSBZFM").replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                            Integer bzPileNum = Integer.valueOf(bzPile);
+                            if(pileNum > bzPileNum){
+                                itemMap.put("state","6");
+                            }else if(pileNum < bzPileNum){
+                                itemMap.put("state","4");
+                            }else if(pileNum == bzPileNum){
+                                itemMap.put("state","5");
+                            }
+                        }else if("2".equals(itemMap.get("eqDirection"))){//下行
+                            //当前桩号
+                            String pile = itemMap.get("pile").replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                            Integer pileNum = Integer.valueOf(pile);
+                            //报警桩号
+                            String bzPile = itemMap.get("SSBZFM").replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                            Integer bzPileNum = Integer.valueOf(bzPile);
+                            if(pileNum > bzPileNum){
+                                itemMap.put("state","6");
+                            }else if(pileNum < bzPileNum){
+                                itemMap.put("state","4");
+                            }else if(pileNum == bzPileNum){
+                                itemMap.put("state","5");
+                            }
+                        }
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
                 if(itemCode != null && data != null){
                     itemMap.put(itemCode,data);
                 }

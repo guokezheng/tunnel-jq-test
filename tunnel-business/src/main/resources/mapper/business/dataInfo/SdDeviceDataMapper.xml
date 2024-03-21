@@ -180,6 +180,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select
             d.eq_id eqId,
             d.eq_name eqName,
+            d.pile pile,
             d.eq_tunnel_id eqTunnelId,
             d.eq_type eqType,
             ifnull(d.eq_status,2) eqStatus,

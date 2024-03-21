@@ -209,7 +209,6 @@
 import { listSensor, getSensor, delSensor, addSensor, updateSensor } from "@/api/equipment/sensor/api.js";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/sensorType/api";
-import {exportVehicleWhiteList} from "@/api/business/vehicleWhiteList";
 export default {
   name: "Sensor",
   data() {
@@ -383,24 +382,6 @@ export default {
           this.$modal.msgSuccess("删除成功");
         }).catch(function() {});
     },
-    /** 导出按钮操作 */
-    // handleExport() {
-    //   this.download('system/sensor/export', {
-    //     ...this.queryParams
-    //   }, `system_sensor.xlsx`)
-    // }
-    // handleExport() {
-    //   const queryParams = this.queryParams;
-    //   this.$confirm('是否确认导出所有数据项?', "警告", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //     type: "warning"
-    //   }).then(function() {
-    //     return exportVehicleWhiteList(queryParams);
-    //   }).then(response => {
-    //     this.$download.name(response.msg);
-    //   })
-    // }
   }
 };
 </script>

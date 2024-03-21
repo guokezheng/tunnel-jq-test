@@ -1268,9 +1268,6 @@
   import {
     getEntranceExitVideo
   } from "@/api/eventDialog/api.js";
-  import {
-    selectByEqDeno
-  } from "@/api/business/roadState.js";
   import videoPlayer from "@/views/event/vedioRecord/myVideo";
   import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
   import contentBatchEdit from "@/views/workbench/config/content-batch-edit"; //批量编辑

@@ -85,6 +85,8 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 
         try {
 
+            // 原始数据
+            String metaData = data;
 
             // 主机地址
             if ("".equals(data) || data == null) {
@@ -112,28 +114,70 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             // 回路  左右洞？
             //
             if (data.contains(":")) {
+
+                // 格式化
+                // String jn_hj = "火警: 1号机1回路166地址 手报   胡山ZK19+040左14 2024-03-15 09:18";
+                // String zb_hj = "火警: 6号机2回路121地址 手报   青风岭YK66+210右 2024-03-14 12:57:38";
+                //火警:1号机1回路166地址
+                // String wf_hj = "火警:3号机1回路83号地址 手报   000层 金家楼ZK106+945? 2024-03-12 09:07:31";
+                //火警:3号机1回路83地址手
+                // String zb_fw = "控制器复位: 1号机                    2024-03-14 12:36:00";
+                //:1号机2024-03-1412:36:00
+                // String wf_fw = "其他事件:2号机 控制器复位                   2024-03-12 09:13:13";
+
                 String alarmType = data.substring(0, data.indexOf(":"));
-                log.info("alarmType:" + alarmType);
+                if(alarmType.contains("火警")) {
+                    data = data.replace(" ","");
+                    data = data.replace("号地址","地址");
+                }else if (alarmType.contains("启动")){
+                    data = data.replace(" ","");
+                    data = data.replace("控制模块","");
+                    data = data.replace("号地址","地址");
+                }else if (alarmType.contains("故障")){
+                    data = data.replace(" ","");
+                    data = data.replace("控制模块","");
+                    data = data.replace("号地址","地址");
+                }else if (alarmType.contains("控制器复位") || alarmType.contains("其他事件")){
+                    data = data.replace(" ","");
+                    data = data.replace("其他事件","");
+                    data = data.replace("控制器复位","");
+                }
+
+                // 获取 号 机  回路  地址  设备类型
                 data = data.substring(data.indexOf(":") + 1);
                 String host = data.substring(0, data.indexOf("号"));
-                //查询外部系统ID
+
+
+
+//                String alarmTime = data.substring(data.length() - 19);
+//                Date now = new Date();
+//                try {
+//                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                    now = format.parse(alarmTime);
+//                } catch (Exception e) {
+//                    log.error("火灾报警日期转换出现异常：" + e.getMessage());
+//                }
+
+                //ip 是否可接入
                 ExternalSystem externalSystem = new ExternalSystem();
                 externalSystem.setSystemName("火灾报警系统");
-               // externalSystem.setSystemUrl(clientIp);
+                //externalSystem.setSystemUrl(clientIp);
                 List<ExternalSystem> externalSystems = externalSystemMapper.selectExternalSystemList(externalSystem);
                 if (externalSystems.isEmpty()) {
+                    log.error("火灾报警系统:IP不可接入或未配置，IP地址：{}", clientIp);
                     return;
                 }
-                ExternalSystem system = externalSystems.get(0);
 
-                if (data.contains("恢复") || data.contains("全部声光停止") || data.contains("控制器复位")) {
+                ExternalSystem system = externalSystems.get(0);
+                Long systemId = system.getId();
+                if (metaData.contains("恢复") || metaData.contains("全部声光停止") || metaData.contains("控制器复位")) {
                     log.info("主机{}进行了复位，事件类型为{}", system.getSystemUrl(), alarmType);
                     //复位清除设备报警状态
                     SdDevices dev = new SdDevices();
                     dev.setExternalSystemId(system.getId());
 
                     // 指定控制器进行复位
-                    if(alarmType.contains("控制器复位")){
+                    if(metaData.contains("控制器复位")){
                         dev.setQueryPointAddress(host);
                     }
 
@@ -171,49 +215,24 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 //                    event.setEndTime(new Date().toString());
 //                    sdEventMapper.updateSdEvent(event);
 //                }
+                    return;
                 }
 
-                Long systemId = system.getId();
-      /*      String address = data.substring(0, data.indexOf("号"));
-            data = data.substring(data.indexOf("机") + 1);
-            // 左洞1 右洞2
-            String loop = data.substring(0, data.indexOf("回"));
-            data = data.substring(data.indexOf("路") + 1);
-            // 设备编码
-            data = data.substring(data.indexOf("址") + 2);
-            String sourceDevice = data.substring(0, data.indexOf(" "));*/
-                //模块或探头故障: 5号机2回路87地址 声光   青风岭YK66+850右 2023-10-13 10:36:02
-              //  String address = data.substring(0, data.indexOf("号"));
                 data = data.substring(data.indexOf("机") + 1);
                 // 左洞1 右洞2
                 String loop = data.substring(0, data.indexOf("回"));
                 data = data.substring(data.indexOf("路") + 1);
 
-                String sn = data.substring(0,data.indexOf("号地"));
-                data = data.substring(data.indexOf("址") + 2);
-                // 设备编码
-                //data = data.substring(data.indexOf("址") + 2);
-                String sourceDevice = data.substring(0, data.indexOf("  "));
+                String sn = data.substring(0,data.indexOf("地"));
+                data = data.substring(data.indexOf("址") + 1);
 
-                //剩层号后的内容
-//            data = data.substring(data.indexOf(" ") + 1);
-                //剩地理位置后的内容
-//            data = data.substring(data.indexOf(" ") + 1);
-                String alarmTime = data.substring(data.length() - 19);
-                Date now = new Date();
-                try {
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    now = format.parse(alarmTime);
-                } catch (Exception e) {
-                    log.error("火灾报警日期转换出现异常：" + e.getMessage());
-                }
+                String sourceDevice = data;
+
                 //根据火灾报警主机外部系统ID和回路确定是哪一批设备
                 SdDevices devices = new SdDevices();
                 devices.setExternalSystemId(systemId);
                 devices.setExternalDeviceId(sn);
                 devices.setQueryPointAddress(host);
-
-
                 // 火灾报警  1左洞 2右洞
                 // 隧道平台  1右洞 2左洞
                 if(loop.equals("2")){
@@ -225,13 +244,12 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 
                 // 火灾报警 设备匹配
                 if(devicesLists == null || devicesLists.size() == 0){
-                    log.error("火灾报警externalDeviceId未找到：" + sn);
+                    log.error("火灾报警externalDeviceId未找到sn:{},host:{}",sn,host);
+                    return;
                 }
-                // 更新设备状态
-                devices.setExternalDeviceId(sn);
+
                 devices.setEqStatus(state+"");
                 devices.setEqStatusTime(new Date());
-                devices.setQueryPointAddress(host);
                 sdDevicesMapper.updateSdDevicesByExternalDevIdAndDirection(devices);
 
 
@@ -251,9 +269,6 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 //            }
                 //确定报警类型
                 Long itemId = 0L;
-                //查询当前属于什么事件类型
-                SdEventType sdEventType = new SdEventType();
-                sdEventType.setEventType("火灾");
                 if (sourceDevice.equals("手报")) {
                     sourceDevice = "智能手动报警按钮报警";
                     itemId = Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
@@ -270,7 +285,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     sourceDevice = "智能感烟探测器";
                     itemId = Long.valueOf(DevicesTypeItemEnum.ZHI_NENG_GAN_YAN_TAN_CE_QI.getCode());
                 }
+
+                //查询当前属于什么事件类型
                 Long eventTypeId = 0L;
+                SdEventType sdEventType = new SdEventType();
+                sdEventType.setEventType("火灾");
                 if (sdEventType.getEventType() != null) {
                     List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
                     eventTypeId = sdEventTypes.get(0).getId();

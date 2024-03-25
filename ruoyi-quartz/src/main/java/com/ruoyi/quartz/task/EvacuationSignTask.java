@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.task;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -262,6 +263,7 @@ public class EvacuationSignTask {
                 }
             }else  if (state != "" && state.equals("5")) {
 
+                List<SdDevices> copiedList = new ArrayList<>(list);
                 list = list.stream()
                 .sorted(Comparator.comparing(SdDevices::getPileNum))
                         .filter(distinctByKey1(s -> s.getPile()))
@@ -269,6 +271,8 @@ public class EvacuationSignTask {
 
                 String fireMark = codeMap.get("fireMark").toString();
                 Integer fireMarkNum = Integer.parseInt(fireMark)-1;
+                //报警桩号
+                String policePile = list.get(fireMarkNum).getPile();
                 //推送物联中台kafka内容
                 saveDataIntoSdDeviceDataTwo(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                 //疏散标志是否开灯存储状态
@@ -276,22 +280,35 @@ public class EvacuationSignTask {
                 //疏散标志亮度存储状态
                 saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                 //疏散标志事件标号
-                saveDataIntoSdDeviceDataTwo(sdDevices, list.get(fireMarkNum).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                saveDataIntoSdDeviceDataTwo(sdDevices, policePile, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                 //疏散标志事件频率
                 saveDataIntoSdDeviceDataTwo(sdDevices, codeMap.get("frequency").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                 //更新子设备的状态
-                if (!list.isEmpty()) {
-                    for (int i = 0;i < list.size();i++) {
-                        SdDevices devices = list.get(i);
+                if (!copiedList.isEmpty()) {
+                    for (int i = 0;i < copiedList.size();i++) {
+                        SdDevices devices = copiedList.get(i);
                         devices.setEqStatus("1");
                         devices.setEqStatusTime(new Date());
                         sdDevicesService.updateSdDevices(devices);
+                        //当前桩号
+                        String pile =copiedList.get(i).getPile().replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                        Integer pileNum = Integer.valueOf(pile);
+                        //报警桩号
+                        String bzPile = policePile.replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                        Integer bzPileNum = Integer.valueOf(bzPile);
+                        if(pileNum > bzPileNum){
+                            state = "6";
+                        }else if(pileNum < bzPileNum){
+                            state = "4";
+                        }else if(pileNum.equals(bzPileNum) ){
+                            state = "5";
+                        }
                         saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                         //疏散标志是否开灯存储状态
 //                        saveDataIntoSdDeviceDataTwo(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                         saveDataIntoSdDeviceDataTwo(devices, codeMap.get("brightness").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
                         //疏散标志事件标号
-                        saveDataIntoSdDeviceDataTwo(devices, list.get(fireMarkNum).getPile(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                        saveDataIntoSdDeviceDataTwo(devices, policePile, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                         //疏散标志事件频率
                         saveDataIntoSdDeviceDataTwo(devices, codeMap.get("frequency").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
                     }

@@ -19,6 +19,9 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /*
@@ -184,8 +187,10 @@ public class GuidanceLampHandle {
                     }
                     //疏散标志报警点更新
                 } else if (!fireMark.equals("0") && !fireMark.equals("255")) {
+//                    List<SdDevices> copiedList = new ArrayList<>(devicesListByFEqId);
 //                    devicesListByFEqId = devicesListByFEqId.stream()
 //                            .sorted(Comparator.comparing(SdDevices::getPileNum))
+//                            .filter(distinctByKey1(s -> s.getPile()))
 //                            .collect(Collectors.toList());
                     //控制模式
                     updateDeviceDatas(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
@@ -199,6 +204,19 @@ public class GuidanceLampHandle {
                     for (int i = 0;i < devicesListByFEqId.size();i++) {
                         SdDevices devices = devicesListByFEqId.get(i);
                         state = "5";
+                        //当前桩号
+                        String pile =devicesListByFEqId.get(i).getPile().replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                        Integer pileNum = Integer.valueOf(pile);
+                        //报警桩号
+                        String bzPile = fireMark.replaceAll("[a-zA-Z]|[^a-zA-Z0-9]", "");
+                        Integer bzPileNum = Integer.valueOf(bzPile);
+                        if(pileNum > bzPileNum){
+                            state = "6";
+                        }else if(pileNum < bzPileNum){
+                            state = "4";
+                        }else if(pileNum.equals(bzPileNum) ){
+                            state = "5";
+                        }
                         //疏散标志事件标号
                         updateDeviceDatas(devices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
                         //开灯状态
@@ -330,6 +348,11 @@ public class GuidanceLampHandle {
         map.put("deviceData", jsonObject);
         //todo 万集数据推送
         //radarEventService.sendBaseDeviceStatus(map);
+    }
+
+    static <T> Predicate<T> distinctByKey1(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
 }

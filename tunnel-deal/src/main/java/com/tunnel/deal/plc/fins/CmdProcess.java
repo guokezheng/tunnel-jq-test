@@ -543,7 +543,7 @@ public class CmdProcess {
          * @return
          */
         private static Object parseXTWeiBoInfo(String id, String weiboCont) {
-            List<SdTrafficStatistics> list = new ArrayList<SdTrafficStatistics>();
+            //List<SdTrafficStatistics> list = new ArrayList<SdTrafficStatistics>();
             if (weiboCont.contains("FFF9")) {
                 String strArr[] = weiboCont.split("FFF9");
                 for (int i = 0; i < strArr.length; i++) {
@@ -559,22 +559,23 @@ public class CmdProcess {
                         twoZhanyoulv = RadixUtil.hexToDecimal(str.substring(60, 64)); // 占有率
                         //按位截取=======================================
                         Date nowDate = new Date();
-                        SdTrafficStatistics sdTrs1 = new SdTrafficStatistics();//创建车流量对象
+                        /*SdTrafficStatistics sdTrs1 = new SdTrafficStatistics();//创建车流量对象
                         sdTrs1.setDeviceId(id);//设备id
                         sdTrs1.setByLane(Long.valueOf(roadId) + 1);//车道号
                         sdTrs1.setCreateTime(nowDate);
                         sdTrs1.setByVehicelNum(Long.parseLong(twoLaneCar));//车流量数
                         sdTrs1.setfSpaceOccupyRation(Long.parseLong(twoZhanyoulv));//占有率
                         sdTrs1.setBySpeed(Long.parseLong(twoPingjun));//平均速度
-                        list.add(sdTrs1);
+                        list.add(sdTrs1);*/
                     }
                 }
             }
-            return list;
+            //return list;
+            return null;
         }
 
         //转换微波数据
-        public static List<SdTrafficStatistics> parseWeiBoInfo(String id, String weiboCont) {
+        /*public static List<SdTrafficStatistics> parseWeiBoInfo(String id, String weiboCont) {
 
             String twoLaneCar = RadixUtil.hexToDecimal(weiboCont.substring(24, 26));//2车道车流量
             String twoZhanyoulv = RadixUtil.hexToDecimal(weiboCont.substring(44, 46));//2车道占有率
@@ -605,7 +606,7 @@ public class CmdProcess {
             list.add(sdTrs2);
             return list;
             //SpringUtils.getBean(ISdTrafficStatisticsService.class).insertSdTrafficStatistics(sdTrs);
-        }
+        }*/
 
         /**
          * 十六进制转二进制后补位反转

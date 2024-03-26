@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import { listSensorMessage, getDeviceInfo } from '@/api/system/sensor/api.js'
 import { listTunnels } from "@/api/equipment/tunnel/api";
 export default {
   name: "Message",
@@ -125,7 +124,7 @@ export default {
   },
   created() {
     this.getTunnels();
-    this.getEqs();
+    //this.getEqs();
     this.getList();
   },
   methods: {
@@ -136,14 +135,14 @@ export default {
       });
     },
     getTunnelSelectData(){
-      this.getEqs()
+      //this.getEqs()
     },
     /** 查询设备列表 */
-    getEqs() {
-      getDeviceInfo(this.queryParams.eqTunnelId).then(response => {
-        this.eqData = response.data;
-      });
-    },
+    // getEqs() {
+    //   getDeviceInfo(this.queryParams.eqTunnelId).then(response => {
+    //     this.eqData = response.data;
+    //   });
+    // },
     /** 查询传感器采集数据信息列表 */
     getList() {
       this.loading = true;
@@ -152,11 +151,11 @@ export default {
         this.queryParams.params["beginGettime"] = this.daterangeGettime[0];
         this.queryParams.params["endGettime"] = this.daterangeGettime[1];
       }
-      listSensorMessage(this.queryParams).then(response => {
-        this.messageList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+      // listSensorMessage(this.queryParams).then(response => {
+      //   this.messageList = response.rows;
+      //   this.total = response.total;
+      //   this.loading = false;
+      // });
     },
     // 取消按钮
     cancel() {

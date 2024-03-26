@@ -12,7 +12,6 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdAlarmModel;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdTrafficStatistics;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEmergencyDeviceService;
@@ -245,7 +244,7 @@ public class SdWarningInfoController extends BaseController
         ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
         RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
         List<SdDevices> list = sdDevicesService.selectRippleListByTunnelId(tunnelId,("Z".equals(direction) ? "1":"0"));
-        List<List<SdTrafficStatistics> > mesageList = new ArrayList<List<SdTrafficStatistics> >();
+        /*List<List<SdTrafficStatistics> > mesageList = new ArrayList<List<SdTrafficStatistics> >();
         for(SdDevices sdDevice:list){
             List<SdTrafficStatistics>   trafficStatisticsList = (List<SdTrafficStatistics>) redisCache.getCacheObject(String.valueOf(sdDevice.getEqId()));
             if (trafficStatisticsList!=null){
@@ -253,9 +252,9 @@ public class SdWarningInfoController extends BaseController
                     mesageList.add(trafficStatisticsList);
                 }
             }
-        }
+        }*/
 
-        return Result.success(mesageList);
+        return Result.success();
     }
     /**
      * 循环启动手动控制策略

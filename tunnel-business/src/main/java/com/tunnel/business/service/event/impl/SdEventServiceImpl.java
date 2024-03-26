@@ -791,29 +791,7 @@ public class SdEventServiceImpl implements ISdEventService {
         if(sdEvent.getEventTypeId() == 11L || sdEvent.getEventTypeId() == 14L){
             sdEvent.setEventDescription(jsonObject.get("eventMiddleSpeed") + "/Km");
         }
-        if(data != null){
-            sdEvent.setEventState(data.getEventState());
-            sdEventMapper.updateSdEvent(sdEvent);
-            if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
-                sdEventMapper.updateEventConfidence(sdEvent);
-            }
-        }else {
-            insertSdEvent(sdEvent);
-            for(SdEventType item : typeList){
-                if(sdEvent.getEventTypeId() == item.getId()){
-                    eventAudio();
-                }
-            }
-            if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
-                sdEventMapper.insertEventConfidence(sdEvent);
-            }
-            //将事件推送到前端展示
-            /*eventSendWeb(jsonObject);*/
-            sdEvent.setEventState("0");
-            sendWuLian(sdEvent);
-        }
         //查询视频图片
-        //List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(eventId.toString());
         sdTrafficImageMapper.delImageByBusinessIds(new Long[]{eventId});
         //事件图片-视频
         String[] imgList = new String[4];
@@ -866,6 +844,27 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         //将图片视频存入
         sdTrafficImageMapper.brachInsertFaultIconFile(imageList);
+        if(data != null){
+            sdEvent.setEventState(data.getEventState());
+            sdEventMapper.updateSdEvent(sdEvent);
+            if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+                sdEventMapper.updateEventConfidence(sdEvent);
+            }
+        }else {
+            insertSdEvent(sdEvent);
+            for(SdEventType item : typeList){
+                if(sdEvent.getEventTypeId() == item.getId()){
+                    eventAudio();
+                }
+            }
+            if(sdEvent.getConfidenceList() != null && !"".equals(sdEvent.getConfidenceList())){
+                sdEventMapper.insertEventConfidence(sdEvent);
+            }
+            //将事件推送到前端展示
+            /*eventSendWeb(jsonObject);*/
+            sdEvent.setEventState("0");
+            sendWuLian(sdEvent);
+        }
     }
 
     @Override
@@ -2580,6 +2579,16 @@ public class SdEventServiceImpl implements ISdEventService {
             String[] split = sdEvent.getEventTitle().split(",");
             String eventTitle = getEventTitle(sdEvent);
             sdEvent.setEventTitle(split[0] + "," + eventTitle);
+            SdTrafficImage image = new SdTrafficImage();
+            image.setBusinessId(sdEvent.getId().toString());
+            image.setImgType("1");
+            //查询视频
+            List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
+            sdEvent.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
+            //查询视频图片
+            List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
+            List<SdTrafficImage> collect = image1.stream().filter(age -> !"1".equals(age.getImgType())).collect(Collectors.toList());
+            sdEvent.setEventImgUrl(StringUtils.join(collect,","));
             noNullStringAttr(sdEvent);
             Map<String, Object> map = setEventData(sdEvent);
             //向物联推送事件

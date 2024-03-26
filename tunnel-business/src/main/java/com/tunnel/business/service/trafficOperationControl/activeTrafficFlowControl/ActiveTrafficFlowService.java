@@ -1,7 +1,6 @@
 package com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.business.domain.dataInfo.SdTrafficStatistics;
 import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlConfigMeasure;
 
 import java.math.BigDecimal;
@@ -23,7 +22,7 @@ public interface ActiveTrafficFlowService {
      * @param flowList 微波车检记录
      * @return
      */
-    BigDecimal computeAvgSpeed(List<SdTrafficStatistics> flowList);
+    //BigDecimal computeAvgSpeed(List<SdTrafficStatistics> flowList);
 
 
     /**

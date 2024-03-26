@@ -4,12 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.system.service.ISysDictTypeService;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
-import com.tunnel.business.domain.dataInfo.SdIcyRoad;
-import com.tunnel.business.domain.dataInfo.SdTrafficStatistics;
 import com.tunnel.business.domain.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasure;
 import com.tunnel.business.domain.trafficOperationControl.controlConfig.*;
-import com.tunnel.business.service.dataInfo.ISdIcyRoadService;
-import com.tunnel.business.service.dataInfo.ISdTrafficStatisticsService;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ISdTrafficIncidentMeasureService;
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigCauseService;
@@ -18,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,12 +40,6 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
     private ISdTrafficIncidentMeasureService incidentMeasureService;
 
     @Autowired
-    private ISdIcyRoadService icyRoadService;
-
-    @Autowired
-    private ISdTrafficStatisticsService trafficStatisticsService;
-
-    @Autowired
     private ISysDictTypeService sysDictTypeService;
 
     /**
@@ -59,7 +48,7 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
      * @param flowList 微波车检记录
      * @return
      */
-    @Override
+    /*@Override
     public BigDecimal computeAvgSpeed(List<SdTrafficStatistics> flowList) {
         //计算所有车道的平均速度  todo
         Long sum = 0L;
@@ -76,7 +65,7 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
         //平均速度保留2位小数，四舍五入
         BigDecimal avgSpeed = new BigDecimal(sum).divide(new BigDecimal(count), 2, RoundingMode.HALF_UP);
         return avgSpeed;
-    }
+    }*/
 
     /**
      * 计算实时能见度
@@ -203,15 +192,15 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
         List<String> roadConditionList = new ArrayList<>();
 
         //道路结冰记录，一条隧道两个设备，两条记录
-        List<SdIcyRoad> icyRoadList = icyRoadService.selectLatestIcyRoadList(tunnelId);
+        /*List<SdIcyRoad> icyRoadList = icyRoadService.selectLatestIcyRoadList(tunnelId);
         icyRoadList.forEach(icyRoad -> {
             roadConditionList.add(icyRoad.getRoadCondition());
-        });
+        });*/
 
-        //微波车检记录，一条隧道四个设备，四条记录
+        /*//微波车检记录，一条隧道四个设备，四条记录
         List<SdTrafficStatistics> flowList = trafficStatisticsService.selectLatestTrafficFlowList(tunnelId);
         //计算所有车道的平均速度
-        BigDecimal avgSpeed = computeAvgSpeed(flowList);
+        BigDecimal avgSpeed = computeAvgSpeed(flowList);*/
 
         //气象记录
         //List<SdWeatherReport> weatherList = weatherReportService.selectLatestWeatherList(tunnelId);
@@ -221,8 +210,8 @@ public class ActiveTrafficFlowServiceImpl implements ActiveTrafficFlowService {
         //获得满足条件的管控措施
         //JSONObject measureData = getSatisfiedConditionMeasure(roadConditionList, avgSpeed, visibilityNum);
 
-        realData.put("icyRoadList", icyRoadList);
-        realData.put("flowList", flowList);
+        //realData.put("icyRoadList", icyRoadList);
+        //realData.put("flowList", flowList);
         //realData.put("weatherList", weatherList);
 
         JSONObject resultObject = new JSONObject();

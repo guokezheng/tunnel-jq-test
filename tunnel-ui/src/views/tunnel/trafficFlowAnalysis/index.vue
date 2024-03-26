@@ -144,7 +144,6 @@
 </template>
 
 <script>
-import { analysisData ,analysisDataByTime } from "@/api/system/trafficStatistics/api.js";
 import { listTunnels  } from "@/api/equipment/tunnel/api.js";
 import LineChart from '../../tunnel/trafficFlowAnalysis/LineChart';
 import BarChart from '../../tunnel/trafficFlowAnalysis/BarChart';
@@ -219,19 +218,19 @@ export default {
       this.timePickerDay.push(yesTimes)
       this.timePickerDay.push(times)
 
-      analysisData(this.queryParams.tunnelId,this.queryParams.holes).then(response => {
-        if(response.code == 200){
-            this.yearData = response.data.yearData;
-            this.monthData = response.data.monthData;
-            // 1个月的天
-            this.dayData = response.data.dayData;
-            this.jdData = response.data.quarterData;
-            // 1天的时段
-            this.onedayData = response.data.hourData;
-            // 多个天的时段
-            this.timeData = response.data.timeData;
-        }
-      });
+      // analysisData(this.queryParams.tunnelId,this.queryParams.holes).then(response => {
+      //   if(response.code == 200){
+      //       this.yearData = response.data.yearData;
+      //       this.monthData = response.data.monthData;
+      //       // 1个月的天
+      //       this.dayData = response.data.dayData;
+      //       this.jdData = response.data.quarterData;
+      //       // 1天的时段
+      //       this.onedayData = response.data.hourData;
+      //       // 多个天的时段
+      //       this.timeData = response.data.timeData;
+      //   }
+      // });
     },
     // 获取隧道
     getTunnelList(){
@@ -280,28 +279,28 @@ export default {
         tunnelId:this.queryParams.tunnelId,
         holes:this.queryParams.holes
       }
-      analysisDataByTime(this.addDateRange(json, dateRange)).then(response => {
-        if(response.code == 200){
-            if(key == 'quarter'){
-              this.jdData = response.data;
-            }
-            // 月度
-            else if(key == 'month'){
-              this.monthData = response.data;
-            }
-            // 天
-            else if(key == 'day'){
-              this.dayData = response.data;
-            }
-            // 时段
-            else if(key == 'time'){
-              this.timeData = response.data;
-            }
-            else if(key == 'hour'){
-              this.onedayData = response.data;
-            }
-        }
-      });
+      // analysisDataByTime(this.addDateRange(json, dateRange)).then(response => {
+      //   if(response.code == 200){
+      //       if(key == 'quarter'){
+      //         this.jdData = response.data;
+      //       }
+      //       // 月度
+      //       else if(key == 'month'){
+      //         this.monthData = response.data;
+      //       }
+      //       // 天
+      //       else if(key == 'day'){
+      //         this.dayData = response.data;
+      //       }
+      //       // 时段
+      //       else if(key == 'time'){
+      //         this.timeData = response.data;
+      //       }
+      //       else if(key == 'hour'){
+      //         this.onedayData = response.data;
+      //       }
+      //   }
+      // });
     }
   }
 };

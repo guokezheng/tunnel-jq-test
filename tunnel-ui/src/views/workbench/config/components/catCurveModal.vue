@@ -185,9 +185,6 @@
     listDepId,
     listTunnels
   } from "@/api/equipment/tunnel/api";
-  import {
-    analysisDataByTime
-  } from "@/api/system/trafficStatistics/api";
   import {trafficVolumeList} from "@/api/monitor/vehicle";
 
   export default {
@@ -700,16 +697,16 @@
           );
         }
 
-        await analysisDataByTime(this.addDateRange(json, ds)).then((response) => {
-          if (response.code == 200) {
-            for (let i = 0; i < response.data.length; i++) {
-              const randomNumber = Math.floor(Math.random() * 70);
-              this.XData.push(response.data[i].date);
-              // this.yData3.push(response.data[i].byVehicelNum)
-              // this.yData3.push(response.data[i].byVehicelNum);
-            }
-          }
-        });
+        // await analysisDataByTime(this.addDateRange(json, ds)).then((response) => {
+        //   if (response.code == 200) {
+        //     for (let i = 0; i < response.data.length; i++) {
+        //       const randomNumber = Math.floor(Math.random() * 70);
+        //       this.XData.push(response.data[i].date);
+        //       // this.yData3.push(response.data[i].byVehicelNum)
+        //       // this.yData3.push(response.data[i].byVehicelNum);
+        //     }
+        //   }
+        // });
 
 
         await setTimeout(() => {
@@ -725,18 +722,18 @@
           holes: 1,
         };
         //今天
-        await analysisDataByTime(this.addDateRange(json1, ds)).then(
-          (response) => {
-            if (response.code == 200) {
-              for (let i = 0; i < response.data.length; i++) {
-                const randomNumber = Math.floor(Math.random() * 70);
-                this.XDataOne.push(response.data[i].date);
-                // this.yData3.push(response.data[i].byVehicelNum)
-                // this.yDataOne3.push(response.data[i].byVehicelNum);
-              }
-            }
-          }
-        );
+        // await analysisDataByTime(this.addDateRange(json1, ds)).then(
+        //   (response) => {
+        //     if (response.code == 200) {
+        //       for (let i = 0; i < response.data.length; i++) {
+        //         const randomNumber = Math.floor(Math.random() * 70);
+        //         this.XDataOne.push(response.data[i].date);
+        //         // this.yData3.push(response.data[i].byVehicelNum)
+        //         // this.yDataOne3.push(response.data[i].byVehicelNum);
+        //       }
+        //     }
+        //   }
+        // );
 
         await setTimeout(() => {
           this.$nextTick(() => {

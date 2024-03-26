@@ -286,9 +286,6 @@
     getUserDeptId
   } from "@/api/system/user";
   import {
-    analysisDataByTime
-  } from "@/api/system/trafficStatistics/api";
-  import {
     delStrategy,
     listStrategy,
     updateState

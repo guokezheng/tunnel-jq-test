@@ -522,7 +522,6 @@ import {dataDevicesLogInfoList, dataLogInfoLineList} from "@/api/equipment/eqTyp
 import {listDevices} from "@/api/equipment/eqlist/api";
 import {getVMSTemplatesByDevIdAndCategory, listEqTypeStateIsControl,} from "@/api/equipment/eqTypeState/api";
 import {listRl} from "@/api/event/strategyRl";
-import {analysisDataByTime} from "@/api/system/trafficStatistics/api";
 import {
   addConfig, listConfig, updateConfig
 } from "@/api/business/enhancedLighting/app.js";
@@ -2049,39 +2048,39 @@ export default {
         holes: this.catFilesModel.direction
       }
       //今天
-      analysisDataByTime(this.addDateRange(json, ds)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            const randomNumber = Math.floor(Math.random() * 70);
-            this.XData.push(response.data[i].date)
-            // this.yData3.push(response.data[i].byVehicelNum)
-            this.yData3.push(randomNumber)
-          }
-        }
-      });
+      // analysisDataByTime(this.addDateRange(json, ds)).then(response => {
+      //   if(response.code == 200){
+      //     for (let i = 0; i < response.data.length; i++) {
+      //       const randomNumber = Math.floor(Math.random() * 70);
+      //       this.XData.push(response.data[i].date)
+      //       // this.yData3.push(response.data[i].byVehicelNum)
+      //       this.yData3.push(randomNumber)
+      //     }
+      //   }
+      // });
       //昨天
-      analysisDataByTime(this.addDateRange(json, ds2)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            // this.XData.push(response.data[i].date)
-            const randomNumber = Math.floor(Math.random() * 70);
-            // this.yData2.push(response.data[i].byVehicelNum)
-            this.yData2.push(randomNumber)
-          }
-        }
-      });
+      // analysisDataByTime(this.addDateRange(json, ds2)).then(response => {
+      //   if(response.code == 200){
+      //     for (let i = 0; i < response.data.length; i++) {
+      //       // this.XData.push(response.data[i].date)
+      //       const randomNumber = Math.floor(Math.random() * 70);
+      //       // this.yData2.push(response.data[i].byVehicelNum)
+      //       this.yData2.push(randomNumber)
+      //     }
+      //   }
+      // });
       //前天
-      analysisDataByTime(this.addDateRange(json, ds1)).then(response => {
-        if(response.code == 200){
-          for (let i = 0; i < response.data.length; i++) {
-            // this.XData.push(response.data[i].date)
-            // this.yData1.push(response.data[i].byVehicelNum)
-            const randomNumber = Math.floor(Math.random() * 70);
-            this.yData1.push(randomNumber)
-          }
+      // analysisDataByTime(this.addDateRange(json, ds1)).then(response => {
+      //   if(response.code == 200){
+      //     for (let i = 0; i < response.data.length; i++) {
+      //       // this.XData.push(response.data[i].date)
+      //       // this.yData1.push(response.data[i].byVehicelNum)
+      //       const randomNumber = Math.floor(Math.random() * 70);
+      //       this.yData1.push(randomNumber)
+      //     }
 
-        }
-      });
+      //   }
+      // });
       setTimeout(() => {
         this.$nextTick(() => {
           //获取车辆数据

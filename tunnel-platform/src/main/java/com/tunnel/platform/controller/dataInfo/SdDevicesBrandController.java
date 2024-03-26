@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 import com.tunnel.business.service.dataInfo.ISdDevicesBrandService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 查询物联设备厂商列表
      */
+    @ApiOperation("查询物联设备厂商列表")
     // @PreAuthorize("@ss.hasPermi('device:brand:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDevicesBrand sdDevicesBrand) {
@@ -40,6 +42,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 导出物联设备厂商列表
      */
+    @ApiOperation("导出物联设备厂商列表")
     @PreAuthorize("@ss.hasPermi('device:brand:export')")
     @Log(title = "物联设备厂商", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -52,6 +55,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 获取物联设备厂商详细信息
      */
+    @ApiOperation("获取物联设备厂商详细信息")
     @PreAuthorize("@ss.hasPermi('device:brand:query')")
     @GetMapping(value = "/{supplierId}")
     public AjaxResult getInfo(@PathVariable("supplierId") String supplierId) {
@@ -61,6 +65,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 新增物联设备厂商
      */
+    @ApiOperation("新增物联设备厂商")
     @PreAuthorize("@ss.hasPermi('device:brand:add')")
     @Log(title = "物联设备厂商", businessType = BusinessType.INSERT)
     @PostMapping
@@ -71,6 +76,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 修改物联设备厂商
      */
+    @ApiOperation("修改物联设备厂商")
     // @PreAuthorize("@ss.hasPermi('device:brand:edit')")
     @Log(title = "物联设备厂商", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -81,6 +87,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 删除物联设备厂商
      */
+    @ApiOperation("删除物联设备厂商")
     @PreAuthorize("@ss.hasPermi('device:brand:remove')")
     @Log(title = "物联设备厂商", businessType = BusinessType.DELETE)
     @DeleteMapping("/{supplierIds}")

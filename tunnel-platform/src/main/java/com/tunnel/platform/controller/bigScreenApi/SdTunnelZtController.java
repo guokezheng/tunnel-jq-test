@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdTunnelZtService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ public class SdTunnelZtController extends BaseController {
      * 查询当天预警事件
      * @return
      */
+    @ApiOperation("查询当天预警事件")
     @PostMapping("/event")
     public AjaxResult getTunnelEventNumber(String tunnelId){
         //今天开始
@@ -51,6 +53,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-环境监测风力风向")
     @PostMapping("/getWindPowerDirection")
     public AjaxResult getWindPowerDirection(String tunnelId){
         List<Map> tunnelWindData = sdTunnelZtService.getWindPowerDirection(tunnelId);
@@ -63,6 +66,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-环境监测CO浓度")
     @PostMapping("/getCOPotency")
     public AjaxResult getCOPotency(String tunnelId){
         List<Map> tunnelCO = sdTunnelZtService.getCOPotency(tunnelId);
@@ -74,6 +78,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-环境监测能见度")
     @PostMapping("/getVisibility")
     public AjaxResult getVisibility(String tunnelId){
         List<Map> tunnelVisibility = sdTunnelZtService.getVisibility(tunnelId);
@@ -86,6 +91,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-环境监测液位")
     @PostMapping("/getLiquidLevel")
     public AjaxResult getLiquidLevel(String tunnelId){
         List<Map> tunnelLiquidLevel = sdTunnelZtService.getLiquidLevel(tunnelId);
@@ -97,6 +103,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-环境监测光照监测")
     @PostMapping("/getLightDetection")
     public AjaxResult getLightDetection(String tunnelId){
         List<Map> tunnelLightDetection = sdTunnelZtService.getLightDetection(tunnelId);
@@ -108,6 +115,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-环境监测远传压力表")
     @PostMapping("/getPressure")
     public AjaxResult getPressure(String tunnelId){
         List<Map> tunnelPressure = sdTunnelZtService.getPressure(tunnelId);
@@ -119,6 +127,7 @@ public class SdTunnelZtController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("大屏-设备数据")
     @PostMapping("/getDeviceData")
     public AjaxResult getDeviceData(String tunnelId){
         List<Map> tunnelDeviceData = sdTunnelZtService.getDeviceData(tunnelId);

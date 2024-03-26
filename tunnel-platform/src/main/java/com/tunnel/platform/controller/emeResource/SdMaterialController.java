@@ -66,6 +66,7 @@ public class SdMaterialController extends BaseController
 	/**
      * 导出应急资源列表
      */
+    @ApiOperation("导出应急资源列表")
     @Log(title = "应急资源", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdMaterial sdMaterial)

@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.dataInfo.SdCmdRl;
 import com.tunnel.business.service.dataInfo.ISdCmdRlService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdCmdRlController extends BaseController
     /**
      * 查询plc 报文关联设备列表
      */
+    @ApiOperation("查询plc 报文关联设备列表")
     @GetMapping("/list")
     public TableDataInfo list(SdCmdRl sdCmdRl)
     {
@@ -51,6 +53,7 @@ public class SdCmdRlController extends BaseController
     /**
      * 获取plc 报文关联设备详细信息
      */
+    @ApiOperation("获取plc 报文关联设备详细信息")
     @GetMapping(value = "/{cmdRlId}")
     public AjaxResult getInfo(@PathVariable("cmdRlId") Long cmdRlId)
     {
@@ -60,6 +63,7 @@ public class SdCmdRlController extends BaseController
     /**
      * 新增plc 报文关联设备
      */
+    @ApiOperation("新增plc 报文关联设备")
     @Log(title = "plc 报文关联设备", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdCmdRl sdCmdRl)
@@ -70,6 +74,7 @@ public class SdCmdRlController extends BaseController
     /**
      * 修改plc 报文关联设备
      */
+    @ApiOperation("修改plc 报文关联设备")
     @Log(title = "plc 报文关联设备", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdCmdRl sdCmdRl)
@@ -80,6 +85,7 @@ public class SdCmdRlController extends BaseController
     /**
      * 删除plc 报文关联设备
      */
+    @ApiOperation("删除plc 报文关联设备")
     @Log(title = "plc 报文关联设备", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{cmdRlIds}")
     public AjaxResult remove(@PathVariable Long[] cmdRlIds)

@@ -8,6 +8,7 @@ import com.tunnel.business.domain.energyManagement.EnergyAnalysisElectricityBill
 import com.tunnel.business.domain.energyManagement.EnergySite;
 import com.tunnel.business.service.energyManagement.EnergyAnalysisElectricityBillService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ public class EnergyAnalysisElectricityBillController extends BaseController {
      * @param energyAnalysisElectricityBill 能源分析电力账单实体
      * @return
      */
+    @ApiOperation("查询时段用电柱状图")
     @GetMapping("/selectEnergyAnalysisElectricityBillList")
     public TableDataInfo selectEnergyAnalysisElectricityBillList(EnergyAnalysisElectricityBill energyAnalysisElectricityBill){
         startPage();
@@ -45,6 +47,7 @@ public class EnergyAnalysisElectricityBillController extends BaseController {
      * 计算用能总电量
      * @return
      */
+    @ApiOperation("计算用能总电量")
     @GetMapping("/selectEnergyValueSum")
     public Result selectEnergyValueSum(EnergySite energySite){
         return Result.success(energyAnalysisElectricity.selectEnergyValueSum(energySite));
@@ -54,6 +57,7 @@ public class EnergyAnalysisElectricityBillController extends BaseController {
      * 实时电量展示
      * @return
      */
+    @ApiOperation("实时电量展示")
     @GetMapping("/getrealTimeData")
     public Result getrealTimeData(EnergySite energySite){
         return Result.success(energyAnalysisElectricity.getrealTimeData(energySite));

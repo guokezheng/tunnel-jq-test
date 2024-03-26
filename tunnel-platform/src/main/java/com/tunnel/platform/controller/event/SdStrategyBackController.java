@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdStrategyBack;
 import com.tunnel.business.service.event.ISdStrategyBackService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdStrategyBackController extends BaseController
     /**
      * 查询策略还原列表
      */
+    @ApiOperation("查询策略还原列表")
     @PreAuthorize("@ss.hasPermi('system:SdStrategyBack:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdStrategyBack SdStrategyBack)
@@ -42,6 +44,7 @@ public class SdStrategyBackController extends BaseController
     /**
      * 导出策略还原列表
      */
+    @ApiOperation("导出策略还原列表")
     @PreAuthorize("@ss.hasPermi('system:SdStrategyBack:export')")
     @Log(title = "策略还原", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -55,6 +58,7 @@ public class SdStrategyBackController extends BaseController
     /**
      * 获取策略还原详细信息
      */
+    @ApiOperation("获取策略还原详细信息")
     @PreAuthorize("@ss.hasPermi('system:SdStrategyBack:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -65,6 +69,7 @@ public class SdStrategyBackController extends BaseController
     /**
      * 新增策略还原
      */
+    @ApiOperation("新增策略还原")
     @PreAuthorize("@ss.hasPermi('system:SdStrategyBack:add')")
     @Log(title = "策略还原", businessType = BusinessType.INSERT)
     @PostMapping
@@ -76,6 +81,7 @@ public class SdStrategyBackController extends BaseController
     /**
      * 修改策略还原
      */
+    @ApiOperation("修改策略还原")
     @PreAuthorize("@ss.hasPermi('system:SdStrategyBack:edit')")
     @Log(title = "策略还原", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -87,6 +93,7 @@ public class SdStrategyBackController extends BaseController
     /**
      * 删除策略还原
      */
+    @ApiOperation("删除策略还原")
     @PreAuthorize("@ss.hasPermi('system:SdStrategyBack:remove')")
     @Log(title = "策略还原", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

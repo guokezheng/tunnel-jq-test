@@ -259,12 +259,19 @@ public class SdWarningInfoController extends BaseController
     /**
      * 循环启动手动控制策略
      */
+    @ApiOperation("循环启动手动控制策略")
     @GetMapping(value = "/handleStrategy")
     public void handleStrategy(@RequestParam("ids") Long[] ids,
                                @RequestParam("warId") Long warId)
     {
             sdStrategyService.handleStrategyByIds(ids,warId);
     }
+
+    /**
+     * 处理策略回滚
+     * @param warId
+     */
+    @ApiOperation("处理策略回滚")
     @GetMapping(value = "/handleStrategyRollBack")
     public void handleStrategyRollBack(@RequestParam("warId") Long warId)
     {
@@ -304,6 +311,12 @@ public class SdWarningInfoController extends BaseController
         sdWarningInfo.setProcessState("2");
         return Result.toResult(sdWarningInfoService.updateSdWarningInfo(sdWarningInfo));
     }
+
+    /**
+     *
+     * @return
+     */
+    @ApiOperation("oneIgnore")
     @GetMapping(value = "/oneIgnore")
     public Result oneIgnore()
     {
@@ -350,6 +363,13 @@ public class SdWarningInfoController extends BaseController
         List<SdStrategy> list = sdWarningInfoService.seeStrategyListById(warningTypeId);
         return list;
     }
+
+    /**
+     * base64转换
+     * @param url
+     * @return
+     */
+    @ApiOperation("base64转换")
     @GetMapping(value = "/ioToBase64")
     public AjaxResult ioToBase64(@RequestParam("url") String url)
     {

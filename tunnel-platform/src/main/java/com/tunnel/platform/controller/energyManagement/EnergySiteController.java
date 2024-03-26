@@ -16,6 +16,7 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.energyManagement.EnergySiteService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import com.tunnel.business.utils.util.DateUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,7 @@ public class EnergySiteController extends BaseController {
      * @param energySjfx 能源分析电力账单实体
      * @return
      */
+    @ApiOperation("查询昨天今天实时用电量")
     @GetMapping("/getEnergySiteList")
     public TableDataInfo getEnergySiteList(EnergySjfx energySjfx){
 

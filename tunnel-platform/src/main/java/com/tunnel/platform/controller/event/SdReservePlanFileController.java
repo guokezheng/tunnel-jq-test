@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdReservePlanFile;
 import com.tunnel.business.service.event.ISdReservePlanFileService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdReservePlanFileController extends BaseController
     /**
      * 查询预案文件列表
      */
+    @ApiOperation("查询预案文件列表")
     @GetMapping("/list")
     public TableDataInfo list(SdReservePlanFile sdReservePlanFile)
     {
@@ -52,6 +54,7 @@ public class SdReservePlanFileController extends BaseController
     /**
      * 获取预案文件详细信息
      */
+    @ApiOperation("获取预案文件详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -61,6 +64,7 @@ public class SdReservePlanFileController extends BaseController
     /**
      * 新增预案文件
      */
+    @ApiOperation("新增预案文件")
     @Log(title = "预案文件", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdReservePlanFile sdReservePlanFile)
@@ -71,6 +75,7 @@ public class SdReservePlanFileController extends BaseController
     /**
      * 修改预案文件
      */
+    @ApiOperation("修改预案文件")
     @Log(title = "预案文件", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdReservePlanFile sdReservePlanFile)
@@ -81,6 +86,7 @@ public class SdReservePlanFileController extends BaseController
     /**
      * 删除预案文件
      */
+    @ApiOperation("删除预案文件")
     @Log(title = "预案文件", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

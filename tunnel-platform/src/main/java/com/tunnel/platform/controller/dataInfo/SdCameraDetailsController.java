@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdCameraDetails;
 import com.tunnel.business.service.dataInfo.ISdCameraDetailsService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 查询摄像机详情列表
      */
+    @ApiOperation("查询摄像机详情列表")
     @PreAuthorize("@ss.hasPermi('system:details:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdCameraDetails sdCameraDetails) {
@@ -40,6 +42,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 导出摄像机详情列表
      */
+    @ApiOperation("导出摄像机详情列表")
     @PreAuthorize("@ss.hasPermi('system:details:export')")
     @Log(title = "摄像机详情", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -52,6 +55,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 获取摄像机详情详细信息
      */
+    @ApiOperation("获取摄像机详情详细信息")
     @PreAuthorize("@ss.hasPermi('system:details:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
@@ -61,6 +65,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 获取摄像机详情详细信息
      */
+    @ApiOperation("获取摄像机详情详细信息")
     @GetMapping(value = "/select/{id}")
     public AjaxResult getInfomation(@PathVariable("id") String camId) {
         return AjaxResult.success(sdCameraDetailsService.selectSdCameraDetailsByCamId(camId));
@@ -69,6 +74,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 新增摄像机详情
      */
+    @ApiOperation("新增摄像机详情")
     @PreAuthorize("@ss.hasPermi('system:details:add')")
     @Log(title = "摄像机详情", businessType = BusinessType.INSERT)
     @PostMapping
@@ -79,6 +85,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 修改摄像机详情
      */
+    @ApiOperation("修改摄像机详情")
     @PreAuthorize("@ss.hasPermi('system:details:edit')")
     @Log(title = "摄像机详情", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -89,6 +96,7 @@ public class SdCameraDetailsController extends BaseController {
     /**
      * 删除摄像机详情
      */
+    @ApiOperation("删除摄像机详情")
     @PreAuthorize("@ss.hasPermi('system:details:remove')")
     @Log(title = "摄像机详情", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")

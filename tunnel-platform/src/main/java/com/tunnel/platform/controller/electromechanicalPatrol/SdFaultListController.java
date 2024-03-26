@@ -76,6 +76,7 @@ public class SdFaultListController extends BaseController {
      * 查询故障清单列表
      */
     /*@PreAuthorize("@ss.hasPermi('system:list:list')")*/
+    @ApiOperation("查询故障清单列表")
     @GetMapping("/list")
     public TableDataInfo list(SdFaultList sdFaultList) {
         String deptId = SecurityUtils.getDeptId();
@@ -91,6 +92,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 导出故障清单列表
      */
+    @ApiOperation("导出故障清单列表")
     /* @PreAuthorize("@ss.hasPermi('system:list:export')")*/
     @Log(title = "故障清单", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -108,6 +110,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 获取故障清单详细信息
      */
+    @ApiOperation("获取故障清单详细信息")
     /*   @PreAuthorize("@ss.hasPermi('system:list:query')")*/
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id) {
@@ -117,6 +120,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 新增故障清单
      */
+    @ApiOperation("新增故障清单")
     /* @PreAuthorize("@ss.hasPermi('system:list:add')")*/
     @Log(title = "故障清单", businessType = BusinessType.INSERT)
     @PostMapping
@@ -129,6 +133,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 修改故障清单
      */
+    @ApiOperation("修改故障清单")
     /*@PreAuthorize("@ss.hasPermi('system:list:edit')")*/
     @Log(title = "故障清单", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -140,6 +145,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 删除故障清单
      */
+    @ApiOperation("删除故障清单")
     /*  @PreAuthorize("@ss.hasPermi('system:list:remove')")*/
     @Log(title = "故障清单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
@@ -161,6 +167,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 根据设备名称查询设备详情
      */
+    @ApiOperation("根据设备名称查询设备详情")
     @PostMapping(value = "/getEquipmentInfo")
     public Result getEquipmentInfo(@RequestBody String eqId) {
         //eqId = "JQ-JiNan-WenZuBei-CAM-RSU-012";//模拟数据
@@ -174,6 +181,7 @@ public class SdFaultListController extends BaseController {
      * @param response
      * @param faultId
      */
+    @ApiOperation("导出机电设备故障检修报告")
     @RequestMapping("/exportFaultReport")
     public void exportFaultReport(HttpServletRequest request, HttpServletResponse response, String faultId) {
         SdFaultList fault = SpringUtils.getBean(SdFaultListMapper.class).exportFaultReport(faultId);
@@ -364,6 +372,7 @@ public class SdFaultListController extends BaseController {
     /**
      * 消防炮模拟故障接口
      */
+    @ApiOperation("消防炮模拟故障接口")
     @GetMapping("/faultDemonFireMonitor")
     public void faultDemonFireMonitor() {
         String eqStatus = "3";

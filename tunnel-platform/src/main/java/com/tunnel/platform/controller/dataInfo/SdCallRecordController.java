@@ -11,6 +11,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdCallRecordService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.utils.util.InterfaceAccessUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,7 @@ public class SdCallRecordController extends BaseController
     /**
      * 查询紧急电话记录列表
      */
+	@ApiOperation("查询紧急电话记录列表")
     @GetMapping("/list")
     public AjaxResult list(SdCallRecord sdCallRecord)
     {
@@ -117,6 +119,7 @@ public class SdCallRecordController extends BaseController
     /**
      * 获取紧急电话记录详细信息
      */
+	@ApiOperation("获取紧急电话记录详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -126,6 +129,7 @@ public class SdCallRecordController extends BaseController
     /**
      * 新增紧急电话记录
      */
+	@ApiOperation("新增紧急电话记录")
     @Log(title = "紧急电话记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdCallRecord sdCallRecord)
@@ -136,6 +140,7 @@ public class SdCallRecordController extends BaseController
     /**
      * 修改紧急电话记录
      */
+	@ApiOperation("修改紧急电话记录")
     @Log(title = "紧急电话记录", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdCallRecord sdCallRecord)
@@ -146,6 +151,7 @@ public class SdCallRecordController extends BaseController
     /**
      * 删除紧急电话记录
      */
+	@ApiOperation("删除紧急电话记录")
     @Log(title = "紧急电话记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
@@ -156,6 +162,7 @@ public class SdCallRecordController extends BaseController
     /**
      * 获取位置信息列表
      */
+	@ApiOperation("获取位置信息列表")
     @GetMapping("/positionList")
     public AjaxResult positionList()
     {

@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdWarningType;
 import com.tunnel.business.service.event.ISdWarningTypeService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdWarningTypeController extends BaseController
     /**
      * 查询预警类型列表
      */
+    @ApiOperation("查询预警类型列表")
     @GetMapping("/list")
     public TableDataInfo list(SdWarningType sdWarningType)
     {
@@ -51,6 +53,7 @@ public class SdWarningTypeController extends BaseController
     /**
      * 获取预警类型详细信息
      */
+    @ApiOperation("获取预警类型详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -60,6 +63,7 @@ public class SdWarningTypeController extends BaseController
     /**
      * 新增预警类型
      */
+    @ApiOperation("新增预警类型")
     @Log(title = "预警类型", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdWarningType sdWarningType)
@@ -73,6 +77,7 @@ public class SdWarningTypeController extends BaseController
     /**
      * 修改预警类型
      */
+    @ApiOperation("修改预警类型")
     @Log(title = "预警类型", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdWarningType sdWarningType)
@@ -83,6 +88,7 @@ public class SdWarningTypeController extends BaseController
     /**
      * 删除预警类型
      */
+    @ApiOperation("删除预警类型")
     @Log(title = "预警类型", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

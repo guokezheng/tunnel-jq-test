@@ -8,6 +8,7 @@ import com.tunnel.business.datacenter.domain.enumeration.StatisticTypeEnum;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,11 @@ public class EnergySjfxElectricityController extends BaseController {
     private String active;
 
 
+    /**
+     * 变电站信息的设备
+     * @return
+     */
+    @ApiOperation("变电站信息的设备")
     @GetMapping("/substation/devicesInfo")
     public AjaxResult devicesOfSubstationInfo() {
 
@@ -79,6 +85,7 @@ public class EnergySjfxElectricityController extends BaseController {
      * @param tabType  分类类型 站点1分项3 分类4
      * @param deptCode 所属机构
      */
+    @ApiOperation("用能报表")
     @GetMapping("/getElectricityReportList")
     public AjaxResult getElectricityReportList(@RequestParam("codeList") List<String> codeList,
                                                @RequestParam Date baseTime,
@@ -121,6 +128,7 @@ public class EnergySjfxElectricityController extends BaseController {
      * @param baseTime     基础日期
      * @param type         报表类型
      */
+    @ApiOperation("能耗足迹")
     @GetMapping("/getEnergyTrackList")
     public AjaxResult getEnergyTrackList(@RequestParam("deptCodeList") List<String> deptCodeList,
                                          @RequestParam Date baseTime,
@@ -150,6 +158,7 @@ public class EnergySjfxElectricityController extends BaseController {
      * @param baseTime 时间
      * @param type 类型
      */
+    @ApiOperation("获取站点分时段用电报表")
     @GetMapping("/getSplitTimeByDept")
     public AjaxResult getSplitTimeByDept(@RequestParam List<String> deptCodeList,
                                          @RequestParam Date baseTime,
@@ -167,6 +176,7 @@ public class EnergySjfxElectricityController extends BaseController {
      * @param type
      * @return
      */
+    @ApiOperation("电费分析")
     @GetMapping("/getElectricityBillByDept")
     public AjaxResult getElectricityBillByDept(@RequestParam List<String> deptCodeList,
                                                @RequestParam Date baseTime,
@@ -177,6 +187,11 @@ public class EnergySjfxElectricityController extends BaseController {
         return AjaxResult.success(energySjfxElectricityService.getElectricityBillByDept(deptCodeList, baseTime, type));
     }
 
+    /**
+     * 测试
+     * @return
+     */
+    @ApiOperation("测试")
     @GetMapping("/test")
     public AjaxResult test() {
         List<EnergySjfx>list = energySjfxElectricityService.test();

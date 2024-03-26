@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.service.event.ISdEventTypeService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,7 @@ public class SdEventTypeController extends BaseController
     /**
      * 查询事件类型列表
      */
+    @ApiOperation("查询事件类型列表")
     @GetMapping("/list")
     public TableDataInfo list(SdEventType sdEventType)
     {
@@ -53,6 +55,7 @@ public class SdEventTypeController extends BaseController
     /**
      * 获取事件类型详细信息
      */
+    @ApiOperation("获取事件类型详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -62,6 +65,7 @@ public class SdEventTypeController extends BaseController
     /**
      * 新增事件类型
      */
+    @ApiOperation("新增事件类型")
     @Log(title = "事件类型", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestParam("file") MultipartFile[] file,SdEventType sdEventType)
@@ -72,6 +76,7 @@ public class SdEventTypeController extends BaseController
     /**
      * 修改事件类型
      */
+    @ApiOperation("修改事件类型")
     @Log(title = "事件类型", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(MultipartFile[] file,SdEventType sdEventType)
@@ -82,6 +87,7 @@ public class SdEventTypeController extends BaseController
     /**
      * 删除事件类型
      */
+    @ApiOperation("删除事件类型")
     @Log(title = "事件类型", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
@@ -90,10 +96,11 @@ public class SdEventTypeController extends BaseController
     }
 
     /**
-     * 配置提示音
+     * 修改提示音
      * @param sdEventType
      * @return
      */
+    @ApiOperation("修改提示音")
     @GetMapping("/updateSdEventTypeAudio")
     public AjaxResult updateSdEventTypeAudio(SdEventType sdEventType){
         return toAjax(sdEventTypeService.updateSdEventTypeAudio(sdEventType));

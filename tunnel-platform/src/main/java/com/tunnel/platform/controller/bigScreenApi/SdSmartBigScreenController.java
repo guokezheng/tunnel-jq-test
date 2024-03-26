@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 查询本月预警事件
      * @return
      */
+    @ApiOperation("查询本月预警事件")
     @GetMapping("/getEventWarning")
     public AjaxResult getEventWarning(String tunnelId){
         Map<String, Object> eventWarning = sdSmartBigScreenService.getEventWarning(tunnelId);
@@ -39,6 +41,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询当天报警事件")
     @GetMapping("/getToDayEventWarning")
     public AjaxResult getToDayEventWarning(String tunnelId){
         return sdSmartBigScreenService.getToDayEventWarning(tunnelId);
@@ -49,6 +52,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询本周报警事件")
     @GetMapping("/getToWeekEventWarning")
     public AjaxResult getToWeekEventWarning(String tunnelId){
         return sdSmartBigScreenService.getToWeekEventWarning(tunnelId);
@@ -59,6 +63,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询本月报警事件")
     @GetMapping("/getSameMonthEventWarning")
     public AjaxResult getSameMonthEventWarning(String tunnelId){
         return sdSmartBigScreenService.getSameMonthEventWarning(tunnelId);
@@ -69,6 +74,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("累计预警分析")
     @GetMapping("/getCumulativeAlarm")
     public AjaxResult getCumulativeAlarm(String tunnelId){
         return sdSmartBigScreenService.getCumulativeAlarm(tunnelId);
@@ -79,6 +85,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询交通事件信息列表")
     @GetMapping("/getTrafficIncident")
     public AjaxResult getTrafficIncident(String tunnelId){
         return sdSmartBigScreenService.getTrafficIncident(tunnelId);
@@ -89,6 +96,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询主动安全信息列表")
     @GetMapping("/getActiveSafety")
     public AjaxResult getActiveSafety(String tunnelId){
         return sdSmartBigScreenService.getActiveSafety(tunnelId);
@@ -99,6 +107,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询设备故障信息列表")
     @GetMapping("/getequipmentFailure")
     public AjaxResult getequipmentFailure(String tunnelId){
         return sdSmartBigScreenService.getequipmentFailure(tunnelId);
@@ -108,6 +117,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 查询预案列表
      * @return
      */
+    @ApiOperation("查询预案列表")
     @GetMapping("/getReservePlan")
     public AjaxResult getReservePlan(String tunnelId){
         return sdSmartBigScreenService.getReservePlan(tunnelId);
@@ -117,6 +127,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 查询周边物资
      * @return
      */
+    @ApiOperation("查询周边物资")
     @GetMapping("/getEmergencyMaterials")
     public AjaxResult getEmergencyMaterials(String tunnelId){
         return sdSmartBigScreenService.getEmergencyMaterials(tunnelId);
@@ -127,6 +138,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询值班人员")
     @GetMapping("/getEmergencyPer")
     public AjaxResult getEmergencyPer(String tunnelId){
         return sdSmartBigScreenService.getEmergencyPer(tunnelId);
@@ -137,6 +149,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询应急车辆")
     @GetMapping("/getEmergencyVehicle")
     public AjaxResult getEmergencyVehicle(String tunnelId){
         return sdSmartBigScreenService.getEmergencyVehicle(tunnelId);
@@ -147,6 +160,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询报警信息")
     @GetMapping("/getAlarmInformation")
     public AjaxResult getAlarmInformation(String tunnelId){
         return sdSmartBigScreenService.getAlarmInformation(tunnelId);
@@ -158,6 +172,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询风险指标")
     @GetMapping("/getRiskIndicators")
     public AjaxResult getRiskIndicators(String tunnelId){
         return sdSmartBigScreenService.getRiskIndicators(tunnelId);
@@ -170,6 +185,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param roadDir
      * @return
      */
+    @ApiOperation("查询隧道内车辆数、车辆均速")
     @GetMapping("/getTunnelVehicles")
     public AjaxResult getTunnelVehicles(String tunnelId, String roadDir){
         return sdSmartBigScreenService.getTunnelVehicles(tunnelId,roadDir);
@@ -182,6 +198,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param vehicleLicense
      * @return
      */
+    @ApiOperation("查询实时车辆")
     @GetMapping("/getRealCars")
     public AjaxResult getRealCars(String tunnelId, String vehicleLicense){
         return sdSmartBigScreenService.getRealCars(tunnelId,vehicleLicense);
@@ -192,6 +209,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询当日累计车辆")
     @GetMapping("/getCumulativeCar")
     public AjaxResult getCumulativeCar(String tunnelId){
         return sdSmartBigScreenService.getCumulativeCar(tunnelId);
@@ -202,6 +220,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询车辆在途数")
     @GetMapping("/getTransitCar")
     public AjaxResult getTransitCar(String tunnelId){
         return sdSmartBigScreenService.getTransitCar(tunnelId);
@@ -212,6 +231,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询24小时车流量")
     @GetMapping("/getHoursTrafficVolume")
     public AjaxResult getHoursTrafficVolume(String tunnelId){
         return sdSmartBigScreenService.getHoursTrafficVolume(tunnelId);
@@ -222,6 +242,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("统计设备状态")
     @GetMapping("/getStatisticalDevice")
     public AjaxResult getStatisticalDevice(String tunnelId){
         return sdSmartBigScreenService.getStatisticalDevice(tunnelId);
@@ -231,6 +252,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 模拟不降速报表数据
      * @return
      */
+    @ApiOperation("模拟不降速报表数据")
     @GetMapping("/getNoDeceleration")
     public AjaxResult getNoDeceleration(){
         Map<String, Object> map = new HashMap<>();
@@ -290,6 +312,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 隧道平均车速以及车流
      * @return
      */
+    @ApiOperation("隧道平均车速以及车流")
     @GetMapping("/getAllTunnelVehicleSpeed")
     public AjaxResult getAllTunnelVehicleSpeed(){
         return sdSmartBigScreenService.getAllTunnelVehicleSpeed();
@@ -299,6 +322,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 隧道平均车速
      * @return
      */
+    @ApiOperation("隧道平均车速")
     @GetMapping("/getTunnelSpeed")
     public AjaxResult getTunnelSpeed(){
         return sdSmartBigScreenService.getTunnelSpeed();
@@ -308,6 +332,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 获取各隧道数据
      * @return
      */
+    @ApiOperation("获取各隧道数据")
     @GetMapping("/getTunnelStatis")
     public AjaxResult getTunnelStatis(){
         return sdSmartBigScreenService.getTunnelStatis();
@@ -319,6 +344,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param deptId
      * @return
      */
+    @ApiOperation("预警统计")
     @GetMapping("/getWarningStatistics")
     public AjaxResult getWarningStatistics(@RequestParam String type,
                                            @RequestParam String deptId){
@@ -330,6 +356,7 @@ public class SdSmartBigScreenController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("当日车流量")
     @GetMapping("/getCarNumber")
     public AjaxResult getCarNumber(@RequestParam String tunnelId){
         return sdSmartBigScreenService.getCarNumber(tunnelId);
@@ -338,6 +365,7 @@ public class SdSmartBigScreenController extends BaseController {
      * 图盟公钥
      * @return
      */
+    @ApiOperation("图盟公钥")
     @GetMapping("/getEncryption")
     public AjaxResult getEncryption(){
         return sdSmartBigScreenService.getEncryption();

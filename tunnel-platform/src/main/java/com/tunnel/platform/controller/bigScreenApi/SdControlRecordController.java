@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdControlRecordService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,12 @@ public class SdControlRecordController extends BaseController {
     @Autowired
     private ISdControlRecordService iSdControlRecordService;
 
+    /**
+     * 查询近12小时控制记录
+     * @param tunnelId
+     * @return
+     */
+    @ApiOperation("查询近12小时控制记录")
     @PostMapping("/recordlist")
     public AjaxResult getRecentControlRecordMsg(String tunnelId){
         List<Map<String, Object>> recentControlRecordMsg = iSdControlRecordService.getRecentControlRecordMsg(tunnelId);

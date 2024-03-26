@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.service.digitalmodel.ISdSpecialVehicleService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class SdSpecialVehicleController extends BaseController
     /**
      * 查询重点车辆列表
      */
+    @ApiOperation("查询重点车辆列表")
     @PreAuthorize("@ss.hasPermi('special:vehicle:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdSpecialVehicles sdSpecialVehicle)
@@ -43,6 +45,7 @@ public class SdSpecialVehicleController extends BaseController
     /**
      * 导出重点车辆列表
      */
+    @ApiOperation("导出重点车辆列表")
     @PreAuthorize("@ss.hasPermi('special:vehicle:export')")
     @Log(title = "重点车辆", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -56,6 +59,7 @@ public class SdSpecialVehicleController extends BaseController
     /**
      * 获取重点车辆详细信息
      */
+    @ApiOperation("获取重点车辆详细信息")
     @PreAuthorize("@ss.hasPermi('special:vehicle:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
@@ -66,6 +70,7 @@ public class SdSpecialVehicleController extends BaseController
     /**
      * 新增重点车辆
      */
+    @ApiOperation("新增重点车辆")
     @PreAuthorize("@ss.hasPermi('special:vehicle:add')")
     @Log(title = "重点车辆", businessType = BusinessType.INSERT)
     @PostMapping
@@ -77,6 +82,7 @@ public class SdSpecialVehicleController extends BaseController
     /**
      * 修改重点车辆
      */
+    @ApiOperation("修改重点车辆")
     @PreAuthorize("@ss.hasPermi('special:vehicle:edit')")
     @Log(title = "重点车辆", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -88,6 +94,7 @@ public class SdSpecialVehicleController extends BaseController
     /**
      * 删除重点车辆
      */
+    @ApiOperation("删除重点车辆")
     @PreAuthorize("@ss.hasPermi('special:vehicle:remove')")
     @Log(title = "重点车辆", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -100,6 +107,7 @@ public class SdSpecialVehicleController extends BaseController
      * @param tunnelId
      * @return
      */
+    @ApiOperation("根据隧道id 查询24小时 重点车辆")
     @GetMapping("/specialById")
     public AjaxResult specialById(@RequestParam("tunnelId") String tunnelId)
     {

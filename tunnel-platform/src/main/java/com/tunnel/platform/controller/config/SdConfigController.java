@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.config;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.config.SdConfig;
 import com.tunnel.business.service.config.ISdConfigService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class SdConfigController extends BaseController
     /**
      * 查询数字孪生页面配置列表
      */
+    @ApiOperation("查询数字孪生页面配置列表")
     @GetMapping("/configPage")
     public AjaxResult deptList(SdConfig sdConfig)
     {
@@ -46,6 +48,7 @@ public class SdConfigController extends BaseController
     /**
      * 查询数字孪生页面配置列表
      */
+    @ApiOperation("查询数字孪生页面配置列表")
     @PreAuthorize("@ss.hasPermi('config:config:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdConfig sdConfig)
@@ -58,6 +61,7 @@ public class SdConfigController extends BaseController
     /**
      * 导出数字孪生页面配置列表
      */
+    @ApiOperation("导出数字孪生页面配置列表")
     @PreAuthorize("@ss.hasPermi('config:config:export')")
     @Log(title = "数字孪生页面配置", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -71,6 +75,7 @@ public class SdConfigController extends BaseController
     /**
      * 获取数字孪生页面配置详细信息
      */
+    @ApiOperation("获取数字孪生页面配置详细信息")
     @PreAuthorize("@ss.hasPermi('config:config:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -81,6 +86,7 @@ public class SdConfigController extends BaseController
     /**
      * 新增数字孪生页面配置
      */
+    @ApiOperation("新增数字孪生页面配置")
     @PreAuthorize("@ss.hasPermi('config:config:add')")
     @Log(title = "数字孪生页面配置", businessType = BusinessType.INSERT)
     @PostMapping
@@ -92,6 +98,7 @@ public class SdConfigController extends BaseController
     /**
      * 修改数字孪生页面配置
      */
+    @ApiOperation("修改数字孪生页面配置")
     @PreAuthorize("@ss.hasPermi('config:config:edit')")
     @Log(title = "数字孪生页面配置", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -103,6 +110,7 @@ public class SdConfigController extends BaseController
     /**
      * 删除数字孪生页面配置
      */
+    @ApiOperation("删除数字孪生页面配置")
     @PreAuthorize("@ss.hasPermi('config:config:remove')")
     @Log(title = "数字孪生页面配置", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

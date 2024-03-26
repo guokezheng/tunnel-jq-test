@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdPlanType;
 import com.tunnel.business.service.event.ISdPlanTypeService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdPlanTypeController extends BaseController
     /**
      * 查询预案类型列表
      */
+    @ApiOperation("查询预案类型列表")
     @GetMapping("/list")
     public TableDataInfo list(SdPlanType sdPlanType)
     {
@@ -52,6 +54,7 @@ public class SdPlanTypeController extends BaseController
     /**
      * 获取预案类型详细信息
      */
+    @ApiOperation("获取预案类型详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -61,6 +64,7 @@ public class SdPlanTypeController extends BaseController
     /**
      * 新增预案类型
      */
+    @ApiOperation("新增预案类型")
     @Log(title = "预案类型", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdPlanType sdPlanType)
@@ -71,6 +75,7 @@ public class SdPlanTypeController extends BaseController
     /**
      * 修改预案类型
      */
+    @ApiOperation("修改预案类型")
     @Log(title = "预案类型", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdPlanType sdPlanType)
@@ -81,6 +86,7 @@ public class SdPlanTypeController extends BaseController
     /**
      * 删除预案类型
      */
+    @ApiOperation("删除预案类型")
     @Log(title = "预案类型", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

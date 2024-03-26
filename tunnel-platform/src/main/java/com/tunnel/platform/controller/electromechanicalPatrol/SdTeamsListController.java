@@ -41,6 +41,12 @@ public class SdTeamsListController extends BaseController
     @Autowired
     private ISysUserService userService;
 
+    /**
+     * 查询班组列表
+     * @param sdTeamsList
+     * @return
+     */
+    @ApiOperation("查询班组列表")
     @GetMapping("/list")
     public TableDataInfo list(SdTeamsList sdTeamsList)
     {
@@ -93,6 +99,12 @@ public class SdTeamsListController extends BaseController
     }
 
 
+    /**
+     * 导出班组
+     * @param sdTeamsList
+     * @return
+     */
+    @ApiOperation("导出班组")
     @Log(title = "班组管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdTeamsList sdTeamsList)

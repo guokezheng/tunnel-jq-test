@@ -59,6 +59,7 @@ public class SdSparePartsWarehouseController extends BaseController
     /**
      * 导出备品备件库列表
      */
+    @ApiOperation("导出备品备件库列表")
     @PreAuthorize("@ss.hasPermi('system:warehouse:export')")
     @Log(title = "备品备件库", businessType = BusinessType.EXPORT)
     @GetMapping("/export")

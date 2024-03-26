@@ -88,6 +88,7 @@ public class SdTaskListController extends BaseController
     /**
      * 查询巡查任务列表
      */
+    @ApiOperation("查询巡查任务列表")
    /* @PreAuthorize("@ss.hasPermi('system:list:list')")*/
     @GetMapping("/list")
     public TableDataInfo<List<SdTaskList>>list(SdTaskList sdTaskList)
@@ -106,6 +107,7 @@ public class SdTaskListController extends BaseController
     /**
      * 导出巡查任务列表
      */
+    @ApiOperation("导出巡查任务列表")
     /*@PreAuthorize("@ss.hasPermi('system:list:export')")*/
     @Log(title = "巡查任务", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -128,6 +130,7 @@ public class SdTaskListController extends BaseController
      * @param id
      * @return
      */
+    @ApiOperation("获取修改任务信息")
     @GetMapping(value = "/{id}")
     public Result getInfo(@PathVariable("id") String id){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(id);
@@ -146,7 +149,7 @@ public class SdTaskListController extends BaseController
      * @param
      * @return
      */
-
+    @ApiOperation("新增巡查任务")
     @PostMapping("/addTask")
     public AjaxResult addTask(SdTaskList sdTaskList)
     {
@@ -164,7 +167,7 @@ public class SdTaskListController extends BaseController
      * @param
      * @return
      */
-
+    @ApiOperation("修改巡查任务")
     @PostMapping("/updateTask")
     public AjaxResult updateTask(SdTaskList sdTaskList)
     {
@@ -176,6 +179,7 @@ public class SdTaskListController extends BaseController
      *
      * @return
      */
+    @ApiOperation("废止巡查任务")
     @PostMapping("/abolishSdTaskList")
     public AjaxResult abolishSdTaskList(@RequestBody String id)
     {
@@ -185,6 +189,7 @@ public class SdTaskListController extends BaseController
     /**
      * 删除巡查任务
      */
+    @ApiOperation("删除巡查任务")
     @Log(title = "巡查任务", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String ids)
@@ -246,6 +251,7 @@ public class SdTaskListController extends BaseController
      * 获取隧道列表
      * @return
      */
+    @ApiOperation("获取隧道列表")
     @PostMapping("/getTunnelList")
     public Result getTunnelList(@RequestBody String deptId){
         List<SdTunnels> tunnels = tunnelsService.selectTunnelsList(deptId);
@@ -258,6 +264,7 @@ public class SdTaskListController extends BaseController
      * @param tunnelId
      * @return
      */
+    @ApiOperation("查询设备列表")
     @GetMapping("/getDevicesList")
     public TableDataInfo getDevicesList(String searchValue,String tunnelId, String deviceType,String eqType){
         startPage();
@@ -272,6 +279,7 @@ public class SdTaskListController extends BaseController
      * @param faultLevel
      * @return
      */
+    @ApiOperation("根据隧道、故障类型获取故障列表")
     @GetMapping("/getFaultList")
     public TableDataInfo getFaultList(String tunnelId,String faultLevel,String searchValue,String eqType){
         startPage();
@@ -284,6 +292,7 @@ public class SdTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @ApiOperation("任务详情")
     @PostMapping("/getTaskInfoList")
     public Result getTaskInfoList(@RequestBody String taskId){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
@@ -322,6 +331,7 @@ public class SdTaskListController extends BaseController
      * @param response
      * @param taskNo
      */
+    @ApiOperation("导出巡查任务执行报告")
     @RequestMapping("/exportPatrolTaskReport")
     public void exportPatrolTaskReport(HttpServletRequest request, HttpServletResponse response, String taskNo){
         try {
@@ -488,6 +498,7 @@ public class SdTaskListController extends BaseController
      * @param tunnelId
      * @return
      */
+    @ApiOperation("根据所选隧道查询班组")
     @PostMapping("/selectBzByTunnel")
     public Result selectBzByTunnel(@RequestBody String tunnelId){
         String bz = sdTaskListService.selectBzByTunnel(tunnelId);

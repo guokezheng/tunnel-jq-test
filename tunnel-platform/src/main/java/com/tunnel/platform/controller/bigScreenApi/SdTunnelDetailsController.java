@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdTunnelDetailsService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class SdTunnelDetailsController extends BaseController {
     /**
      * 24小时内隧道的事件事故
      * */
+    @ApiOperation("24小时内隧道的事件事故")
     @PostMapping("/incidentdetails")
     public AjaxResult getTunnelIncidentDetails(@RequestBody JSONObject jsonObject){
         List<Map<String, Object>> todayTunnelIncedentmsg = iSdTunnelDetailsService.getTodayTunnelIncedentmsg(jsonObject);
@@ -33,6 +35,7 @@ public class SdTunnelDetailsController extends BaseController {
     /**
      * 24小时内隧道的预警信息
      * */
+    @ApiOperation("24小时内隧道的预警信息")
     @PostMapping("/warningdetails")
     public AjaxResult getTunnelWarningDetails(@RequestBody JSONObject jsonObject){
         List<Map<String, Object>> todayTunnelWarningmsg = iSdTunnelDetailsService.getTodayTunnelWarningmsg(jsonObject);
@@ -42,6 +45,7 @@ public class SdTunnelDetailsController extends BaseController {
     /**
      * 24小时内隧道的事件事故、预警信息的数量
      * */
+    @ApiOperation("24小时内隧道的事件事故、预警信息的数量")
     @PostMapping("/detailedquantity")
     public AjaxResult getDetailedQuantity(@RequestBody JSONObject jsonObject){
         Map<String, Object> detailedQuantity = iSdTunnelDetailsService.getDetailedQuantity(jsonObject);
@@ -51,6 +55,7 @@ public class SdTunnelDetailsController extends BaseController {
     /**
      * 指定隧道近6个月车流量数据
      */
+    @ApiOperation("指定隧道近6个月车流量数据")
     @PostMapping("/trafficFlowData")
     public AjaxResult getTrafficFlowData(@RequestBody JSONObject jsonObject){
         List<Map<String, Object>> trafficFlowData = iSdTunnelDetailsService.getTrafficFlowData(jsonObject);

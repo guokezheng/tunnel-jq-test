@@ -128,6 +128,7 @@ public class SdEnergyAnalysisElectricityController extends BaseController
     /**
      * 获取分项树
      */
+    @ApiOperation("获取分项树")
     @GetMapping("/itemizedTreeselect")
     public AjaxResult itemizedTreeselect(EnergyConfigcenterItemized itemized) {
         List<EnergyConfigcenterItemized> itemizeds = sdEnergyAnalysisElectricityService.selectItemizedList(itemized);
@@ -151,6 +152,7 @@ public class SdEnergyAnalysisElectricityController extends BaseController
     /**
      * 获取分类树
      */
+    @ApiOperation("获取分类树")
     @GetMapping("/classificationTreeselect")
     public AjaxResult classificationTreeselect(EnergyConfigcenterClassification classification) {
         // 能耗查询只查光伏自用，市电，柴发，风电，其他

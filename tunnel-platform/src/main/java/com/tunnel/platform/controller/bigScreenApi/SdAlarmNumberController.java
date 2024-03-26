@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdAlarmNumberService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ public class SdAlarmNumberController extends BaseController {
     /**
      * 查询今日总预警事件信息
      * */
+    @ApiOperation("查询今日总预警事件信息")
     @PostMapping("/warnmsg")
     public AjaxResult getTodayWarningmsg(){
         Map<String, Object> todayWarningmsg = iSdAlarmNumberService.getTodayWarningmsg();
@@ -35,6 +37,7 @@ public class SdAlarmNumberController extends BaseController {
     /**
      * 查询今日事故事件信息
      * */
+    @ApiOperation("查询今日事故事件信息")
     @PostMapping("/accidentmsg")
     public AjaxResult getTodayAccidentmsg(){
         Map<String, Object> todayAccidentmsg = iSdAlarmNumberService.getTodayAccidentmsg();

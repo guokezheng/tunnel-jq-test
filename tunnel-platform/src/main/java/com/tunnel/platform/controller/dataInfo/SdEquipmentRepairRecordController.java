@@ -9,6 +9,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdEquipmentRepairRecord;
 import com.tunnel.business.service.dataInfo.ISdEquipmentRepairRecordService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class SdEquipmentRepairRecordController extends BaseController
     private ISdEquipmentRepairRecordService sdEquipmentRepairRecordService;
 
      /*查询设备维修记录列表*/
+    @ApiOperation("查询设备维修记录列表")
     @GetMapping("/list")
     public TableDataInfo list(SdEquipmentRepairRecord sdEquipmentRepairRecord)
     {
@@ -34,6 +36,7 @@ public class SdEquipmentRepairRecordController extends BaseController
     }
 
      /*导出设备维修记录列表*/
+     @ApiOperation("导出设备维修记录列表")
     @Log(title = "设备维修记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdEquipmentRepairRecord sdEquipmentRepairRecord)
@@ -44,6 +47,7 @@ public class SdEquipmentRepairRecordController extends BaseController
     }
 
      /*获取设备维修记录详细信息*/
+     @ApiOperation("获取设备维修记录详细信息")
     @GetMapping(value = "/{repairId}")
     public AjaxResult getInfo(@PathVariable("repairId") Long repairId)
     {
@@ -51,6 +55,7 @@ public class SdEquipmentRepairRecordController extends BaseController
     }
 
      /*新增设备维修记录*/
+     @ApiOperation("新增设备维修记录")
     @Log(title = "设备维修记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdEquipmentRepairRecord sdEquipmentRepairRecord)
@@ -59,6 +64,7 @@ public class SdEquipmentRepairRecordController extends BaseController
     }
 
      /*修改设备维修记录*/
+     @ApiOperation("修改设备维修记录")
     @Log(title = "设备维修记录", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdEquipmentRepairRecord sdEquipmentRepairRecord)
@@ -67,6 +73,7 @@ public class SdEquipmentRepairRecordController extends BaseController
     }
 
      /*删除设备维修记录*/
+     @ApiOperation("删除设备维修记录")
     @Log(title = "设备维修记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{repairIds}")
     public AjaxResult remove(@PathVariable Long[] repairIds)

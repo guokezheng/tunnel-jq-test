@@ -9,6 +9,7 @@ import com.tunnel.business.domain.dataInfo.SdDeviceCmd;
 import com.tunnel.business.service.dataInfo.ISdControlCodeService;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class SdDeviceCmdController extends BaseController
     /**
      * 查询设备指令列表
      */
+    @ApiOperation("查询设备指令列表")
     @GetMapping("/list")
     public TableDataInfo list(SdDeviceCmd sdDeviceCmd)
     {
@@ -45,6 +47,7 @@ public class SdDeviceCmdController extends BaseController
     /**
      * 获取设备指令详细信息
      */
+    @ApiOperation("获取设备指令详细信息")
     @GetMapping(value = "/{codeId}")
     public AjaxResult getInfo(@PathVariable("codeId") Long codeId)
     {
@@ -54,6 +57,7 @@ public class SdDeviceCmdController extends BaseController
     /**
      * 新增设备指令
      */
+    @ApiOperation("新增设备指令")
     @Log(title = "设备指令", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdDeviceCmd sdDeviceCmd)
@@ -92,6 +96,7 @@ public class SdDeviceCmdController extends BaseController
     /**
      * 修改设备指令
      */
+    @ApiOperation("修改设备指令")
     @Log(title = "设备指令", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdDeviceCmd sdDeviceCmd)
@@ -154,6 +159,7 @@ public class SdDeviceCmdController extends BaseController
     /**
      * 删除设备指令
      */
+    @ApiOperation("删除设备指令")
     @Log(title = "设备指令", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{codeIds}")
     public AjaxResult remove(@PathVariable Long[] codeIds)

@@ -10,6 +10,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdEquipmentCategory;
 import com.tunnel.business.service.dataInfo.ISdEquipmentCategoryService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 查询设备类型列表
      */
+    @ApiOperation("查询设备类型列表")
     @GetMapping("/list")
     public TableDataInfo list(SdEquipmentCategory sdEquipmentCategory) {
         startPage();
@@ -42,6 +44,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 导出设备类型列表
      */
+    @ApiOperation("导出设备类型列表")
     @Log(title = "设备类型", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdEquipmentCategory sdEquipmentCategory) {
@@ -53,6 +56,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 获取设备类型详细信息
      */
+    @ApiOperation("获取设备类型详细信息")
     @PreAuthorize("@ss.hasPermi('device:bigType:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
@@ -62,6 +66,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 新增设备类型
      */
+    @ApiOperation("新增设备类型")
     @PreAuthorize("@ss.hasPermi('device:bigType:add')")
     @Log(title = "设备类型", businessType = BusinessType.INSERT)
     @PostMapping
@@ -72,6 +77,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 修改设备类型
      */
+    @ApiOperation("修改设备类型")
     @PreAuthorize("@ss.hasPermi('device:bigType:edit')")
     @Log(title = "设备类型", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -82,6 +88,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 删除设备类型
      */
+    @ApiOperation("删除设备类型")
     @PreAuthorize("@ss.hasPermi('device:bigType:remove')")
     @Log(title = "设备类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
@@ -95,6 +102,7 @@ public class SdEquipmentCategoryController extends BaseController {
      * @param tunnelId 隧道ID
      * @return
      */
+    @ApiOperation("设备类型树结构")
     @GetMapping(value = "/getCategoryDeviceTree")
     public AjaxResult getCategoryDeviceTree(@RequestParam String tunnelId) {
         List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryDeviceList(tunnelId);
@@ -117,6 +125,7 @@ public class SdEquipmentCategoryController extends BaseController {
      * 二级：大类---小类
      * @return
      */
+    @ApiOperation("设备类型树结构")
     @GetMapping(value = "/getCategoryTree")
     public AjaxResult getCategoryTree() {
         List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryList();
@@ -130,6 +139,7 @@ public class SdEquipmentCategoryController extends BaseController {
      * 查询全部设备类型
      * @return
      */
+    @ApiOperation("查询全部设备类型")
     @GetMapping(value = "/getCategoryAllTree")
     public AjaxResult getCategoryAllTree() {
         List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryAllList();

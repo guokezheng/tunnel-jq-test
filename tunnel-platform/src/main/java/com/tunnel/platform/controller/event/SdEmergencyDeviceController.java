@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdEmergencyDevice;
 import com.tunnel.business.service.event.ISdEmergencyDeviceService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdEmergencyDeviceController extends BaseController
     /**
      * 查询应急物资信息列表
      */
+    @ApiOperation("查询应急物资信息列表")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyDevice:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdEmergencyDevice SdEmergencyDevice)
@@ -42,6 +44,7 @@ public class SdEmergencyDeviceController extends BaseController
     /**
      * 导出应急物资信息列表
      */
+    @ApiOperation("导出应急物资信息列表")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyDevice:export')")
     @Log(title = "应急物资信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -55,6 +58,7 @@ public class SdEmergencyDeviceController extends BaseController
     /**
      * 获取应急物资信息详细信息
      */
+    @ApiOperation("获取应急物资信息详细信息")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyDevice:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -65,6 +69,7 @@ public class SdEmergencyDeviceController extends BaseController
     /**
      * 新增应急物资信息
      */
+    @ApiOperation("新增应急物资信息")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyDevice:add')")
     @Log(title = "应急物资信息", businessType = BusinessType.INSERT)
     @PostMapping
@@ -76,6 +81,7 @@ public class SdEmergencyDeviceController extends BaseController
     /**
      * 修改应急物资信息
      */
+    @ApiOperation("修改应急物资信息")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyDevice:edit')")
     @Log(title = "应急物资信息", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -87,6 +93,7 @@ public class SdEmergencyDeviceController extends BaseController
     /**
      * 删除应急物资信息
      */
+    @ApiOperation("删除应急物资信息")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyDevice:remove')")
     @Log(title = "应急物资信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

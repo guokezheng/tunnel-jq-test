@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
 import com.tunnel.business.service.dataInfo.ISdMicrowavePeriodicStatisticsService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     /**
      * 查询车流量信息列表
      */
+    @ApiOperation("查询车流量信息列表")
     @PreAuthorize("@ss.hasPermi('microwave:statistics:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdMicrowavePeriodicStatistics sdMicrowavePeriodicStatistics)
@@ -49,6 +51,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     /**
      * 导出车流量信息列表
      */
+    @ApiOperation("导出车流量信息列表")
     @PreAuthorize("@ss.hasPermi('microwave:statistics:export')")
     @Log(title = "车流量信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -62,6 +65,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     /**
      * 获取车流量信息详细信息
      */
+    @ApiOperation("获取车流量信息详细信息")
     @PreAuthorize("@ss.hasPermi('microwave:statistics:query')")
     @GetMapping(value = "/{statisticsId}")
     public AjaxResult getInfo(@PathVariable("statisticsId") Long statisticsId)
@@ -72,6 +76,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     /**
      * 新增车流量信息
      */
+    @ApiOperation("新增车流量信息")
     @PreAuthorize("@ss.hasPermi('microwave:statistics:add')")
     @Log(title = "车流量信息", businessType = BusinessType.INSERT)
     @PostMapping
@@ -83,6 +88,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     /**
      * 修改车流量信息
      */
+    @ApiOperation("修改车流量信息")
     @PreAuthorize("@ss.hasPermi('microwave:statistics:edit')")
     @Log(title = "车流量信息", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -94,6 +100,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     /**
      * 删除车流量信息
      */
+    @ApiOperation("删除车流量信息")
     @PreAuthorize("@ss.hasPermi('microwave:statistics:remove')")
     @Log(title = "车流量信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{statisticsIds}")
@@ -108,6 +115,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
      * @param statistics
      * @return
      */
+    @ApiOperation("获取最新车流量信息")
     @GetMapping("/getStatisticsNewList")
     public AjaxResult getStatisticsNewList(SdMicrowavePeriodicStatistics statistics){
         return AjaxResult.success(sdMicrowavePeriodicStatisticsService.getStatisticsNewList(statistics));
@@ -119,6 +127,7 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
      * @param statistics
      * @return
      */
+    @ApiOperation("查询24小时之内车流量信息")
     @GetMapping("/getStatisticsRealList")
     public AjaxResult getStatisticsRealList(SdMicrowavePeriodicStatistics statistics){
         return AjaxResult.success(sdMicrowavePeriodicStatisticsService.getStatisticsRealList(statistics));

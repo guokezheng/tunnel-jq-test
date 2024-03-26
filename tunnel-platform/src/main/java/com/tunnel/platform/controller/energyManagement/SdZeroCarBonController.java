@@ -4,6 +4,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.energyManagement.SdZeroCarBonService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ public class SdZeroCarBonController {
      * 获取零碳大屏url
      * @return
      */
+    @ApiOperation("获取零碳大屏url")
     @GetMapping("/getZeroUrl")
     public AjaxResult getZeroUrl(SdTunnels sdTunnels){
         String zeroUrl = sdZeroCarBonService.getZeroUrl(sdTunnels.getTunnelId());

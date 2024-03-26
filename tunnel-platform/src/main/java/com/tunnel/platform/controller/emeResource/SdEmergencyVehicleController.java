@@ -51,6 +51,7 @@ public class SdEmergencyVehicleController extends BaseController
     /**
      * 第三方查询应急车辆列表
      */
+    @ApiOperation("第三方查询应急车辆列表")
     @GetMapping("/getVehiclelist")
     public String getVehiclelist()
     {
@@ -62,6 +63,7 @@ public class SdEmergencyVehicleController extends BaseController
      * @param sdEmergencyVehicle
      * @return
      */
+    @ApiOperation("获取车辆详细信息")
     @GetMapping("/getVehicleDetails")
     public AjaxResult getVehicleDetails(SdEmergencyVehicle sdEmergencyVehicle){
         return AjaxResult.success(sdEmergencyVehicleService.getVehicleDetails(sdEmergencyVehicle.getPlateNumber()));
@@ -132,6 +134,7 @@ public class SdEmergencyVehicleController extends BaseController
     /**
      * 新增应急车辆对应关联机构sd_emergency_org
      */
+    @ApiOperation("新增应急车辆对应关联机构")
     @GetMapping("/getOrg")
     public List<Map<String, Object>> getOrg(){
         List<Map<String, Object>> list=sdEmergencyVehicleService.getOrg();
@@ -142,6 +145,7 @@ public class SdEmergencyVehicleController extends BaseController
      * 同步应急车辆
      * @return
      */
+    @ApiOperation("同步应急车辆")
     @GetMapping("/syncVehicle")
     public AjaxResult syncVehicle(){
         String syn = sdEmergencyVehicleService.synVehicleData();

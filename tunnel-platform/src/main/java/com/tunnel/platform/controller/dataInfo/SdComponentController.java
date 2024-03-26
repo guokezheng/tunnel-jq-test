@@ -115,7 +115,7 @@ public class SdComponentController extends BaseController
      */
     @Log(title = "设备文档")
     @PostMapping(value = "/{id}")
-   // @ApiOperation("下载文件")
+    @ApiOperation("设备文档")
   //  @ApiImplicitParam(name = "id", value = "设备档案文件ID", required = true, dataType = "Long", paramType = "path",dataTypeClass = Long.class)
     public void downloadFile(HttpServletResponse response,@PathVariable("id") Long id) {
         SdEquipmentFile sdEquipmentFile = sdEquipmentFileService.selectSdEquipmentFileById(id);
@@ -192,7 +192,12 @@ public class SdComponentController extends BaseController
         return Result.toResult(sdComponentService.deleteSdComponentByIds(rlIds));
     }
 
-
+    /**
+     * 批量删除设备档案管理
+     * @param ids
+     * @return
+     */
+    @ApiOperation("批量删除设备档案管理")
     @DeleteMapping("/delbyid/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(sdComponentService.deleteSdComponentById(ids));

@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.service.event.ISdStrategyRlService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdStrategyRlController extends BaseController
     /**
      * 查询策略关联设备信息列表
      */
+    @ApiOperation("查询策略关联设备信息列表")
     @GetMapping("/list")
     public TableDataInfo list(SdStrategyRl sdStrategyRl)
     {
@@ -41,6 +43,7 @@ public class SdStrategyRlController extends BaseController
      * @param strategyId
      * @return
      */
+    @ApiOperation("根据策略id查询策略设备信息")
     @GetMapping("/getStrategyRlByStrategyId/{strategyId}")
     public TableDataInfo getStrategyRlByStrategyId(@PathVariable("strategyId") Long strategyId) {
         startPage();
@@ -64,6 +67,7 @@ public class SdStrategyRlController extends BaseController
     /**
      * 获取策略关联设备信息详细信息
      */
+    @ApiOperation("获取策略关联设备信息详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -73,6 +77,7 @@ public class SdStrategyRlController extends BaseController
     /**
      * 新增策略关联设备信息
      */
+    @ApiOperation("新增策略关联设备信息")
     @Log(title = "策略关联设备信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdStrategyRl sdStrategyRl)
@@ -83,6 +88,7 @@ public class SdStrategyRlController extends BaseController
     /**
      * 修改策略关联设备信息
      */
+    @ApiOperation("修改策略关联设备信息")
     @Log(title = "策略关联设备信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdStrategyRl sdStrategyRl)
@@ -93,6 +99,7 @@ public class SdStrategyRlController extends BaseController
     /**
      * 删除策略关联设备信息
      */
+    @ApiOperation("删除策略关联设备信息")
     @Log(title = "策略关联设备信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
@@ -103,6 +110,7 @@ public class SdStrategyRlController extends BaseController
     /**
      * 查询全部策略关联设备信息列表
      */
+    @ApiOperation("查询全部策略关联设备信息列表")
     @GetMapping("/listAll")
     public TableDataInfo listAll(SdStrategyRl sdStrategyRl)
     {

@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 
 import com.tunnel.platform.service.enhancedLighting.ISdEnhancedLightingConfigService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 查询【加强照明配置】列表
      */
+    @ApiOperation("查询【加强照明配置】列表")
     @GetMapping("/list")
     public TableDataInfo list(SdEnhancedLightingConfig sdEnhancedLightingConfig)
     {
@@ -49,6 +51,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 查询【加强照明配置】列表
      */
+    @ApiOperation("查询【加强照明配置】列表")
     @GetMapping("/getLightingConfigByParam")
     public AjaxResult getLightingConfigByParam(SdEnhancedLightingConfig sdEnhancedLightingConfig)
     {
@@ -59,6 +62,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 导出【加强照明配置】列表
      */
+    @ApiOperation("导出【加强照明配置】列表")
     @Log(title = "【加强照明配置】", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdEnhancedLightingConfig sdEnhancedLightingConfig)
@@ -71,6 +75,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 获取【加强照明配置】详细信息
      */
+    @ApiOperation("获取【加强照明配置】详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -80,6 +85,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 新增【加强照明配置】
      */
+    @ApiOperation("新增【加强照明配置】")
     @Log(title = "【加强照明配置】", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdEnhancedLightingConfig sdEnhancedLightingConfig)
@@ -90,6 +96,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 修改【加强照明配置】
      */
+    @ApiOperation("修改【加强照明配置】")
     @Log(title = "【加强照明配置】", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdEnhancedLightingConfig sdEnhancedLightingConfig)
@@ -100,6 +107,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     /**
      * 删除【加强照明配置】
      */
+    @ApiOperation("删除【加强照明配置】")
     @Log(title = "【加强照明配置】", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

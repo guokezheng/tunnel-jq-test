@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ public class SdTunnelEnergyController extends BaseController {
      * @param
      * @return
      */
+    @ApiOperation("隧道用电排行")
     @PostMapping("/electricityRankingItemized")
     public AjaxResult electricityRankingItemized(String tunnelId){
         Map<String, Object> allDataList = new HashMap<>();
@@ -106,6 +108,7 @@ public class SdTunnelEnergyController extends BaseController {
      * @param tunnelId
      * @return
      */
+    @ApiOperation("累计光伏发电和今日光产能")
     @PostMapping("/getEnergyData")
     public AjaxResult getEnergyData(String tunnelId){
         Map<String, Object> allDataList = new HashMap<>();

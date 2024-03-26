@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.dataInfo.SdInspectionFile;
 import com.tunnel.business.service.dataInfo.ISdInspectionFileService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class SdInspectionFileController extends BaseController
     /**
      * 查询巡检任务文件列表
      */
+    @ApiOperation("查询巡检任务文件列表")
     @PreAuthorize("@ss.hasPermi('system:file:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdInspectionFile sdInspectionFile)
@@ -41,6 +43,7 @@ public class SdInspectionFileController extends BaseController
     /**
      * 获取巡检任务文件详细信息
      */
+    @ApiOperation("获取巡检任务文件详细信息")
     @PreAuthorize("@ss.hasPermi('system:file:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -51,6 +54,7 @@ public class SdInspectionFileController extends BaseController
     /**
      * 新增巡检任务文件
      */
+    @ApiOperation("新增巡检任务文件")
     @PreAuthorize("@ss.hasPermi('system:file:add')")
     @Log(title = "巡检任务文件", businessType = BusinessType.INSERT)
     @PostMapping
@@ -62,6 +66,7 @@ public class SdInspectionFileController extends BaseController
     /**
      * 修改巡检任务文件
      */
+    @ApiOperation("修改巡检任务文件")
     @PreAuthorize("@ss.hasPermi('system:file:edit')")
     @Log(title = "巡检任务文件", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -73,6 +78,7 @@ public class SdInspectionFileController extends BaseController
     /**
      * 删除巡检任务文件
      */
+    @ApiOperation("删除巡检任务文件")
     @PreAuthorize("@ss.hasPermi('system:file:remove')")
     @Log(title = "巡检任务文件", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

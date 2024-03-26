@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.emeResource.SdFocusVehicle;
 import com.tunnel.business.domain.emeResource.SdVehicleType;
 import com.tunnel.business.service.emeResource.SdFocusVehicleService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ public class SdFocusVehicleController extends BaseController {
     /**
      * 查询重点车辆列表
      */
+    @ApiOperation("查询重点车辆列表")
     @PreAuthorize("@ss.hasPermi('system:focuscar:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdFocusVehicle sdFocusVehicle){
@@ -40,10 +42,11 @@ public class SdFocusVehicleController extends BaseController {
     }
 
     /**
-     * 导出
+     * 导出重点车辆
      * @param sdFocusVehicle
      * @return
      */
+    @ApiOperation("导出重点车辆")
     @PreAuthorize("@ss.hasPermi('system:focuscar:export')")
     @Log(title = "重点车辆", businessType = BusinessType.EXPORT)
     @GetMapping("/export")

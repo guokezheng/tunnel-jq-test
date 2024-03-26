@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.dataInfo.SdEquipmentFile;
 import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdEquipmentFileController extends BaseController
     /**
      * 查询设备档案文件列表
      */
+    @ApiOperation("查询设备档案文件列表")
     @GetMapping("/list")
     public TableDataInfo list(SdEquipmentFile sdEquipmentFile)
     {
@@ -52,6 +54,7 @@ public class SdEquipmentFileController extends BaseController
     /**
      * 获取设备档案文件详细信息
      */
+    @ApiOperation("获取设备档案文件详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -61,6 +64,7 @@ public class SdEquipmentFileController extends BaseController
     /**
      * 新增设备档案文件
      */
+    @ApiOperation("新增设备档案文件")
     @Log(title = "设备档案文件", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdEquipmentFile sdEquipmentFile)
@@ -71,6 +75,7 @@ public class SdEquipmentFileController extends BaseController
     /**
      * 修改设备档案文件
      */
+    @ApiOperation("修改设备档案文件")
     @Log(title = "设备档案文件", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdEquipmentFile sdEquipmentFile)
@@ -81,6 +86,7 @@ public class SdEquipmentFileController extends BaseController
     /**
      * 删除设备档案文件
      */
+    @ApiOperation("删除设备档案文件")
     @Log(title = "设备档案文件", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

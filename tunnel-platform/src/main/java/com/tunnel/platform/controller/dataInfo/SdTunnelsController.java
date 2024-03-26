@@ -61,6 +61,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
+    @ApiOperation("查询隧道列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
@@ -79,6 +80,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
+    @ApiOperation("查询隧道列表")
     @GetMapping("/list1")
     public TableDataInfo<List<SdTunnels>> list1(SdTunnels sdTunnels)
     {
@@ -97,6 +99,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
+    @ApiOperation("查询隧道列表")
     @GetMapping("/listDepId")
     public TableDataInfo<List<SdTunnels>> listDepId(SdTunnels sdTunnels)
     {
@@ -111,6 +114,12 @@ public class SdTunnelsController extends BaseController
         List<SdTunnels> list = sdTunnelsService.selectTunnelsDeptIdList(sdTunnels);
         return getDataTable(list);
     }
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    @ApiOperation("外部系统获取隧道下拉")
     @GetMapping("/listAll")
     public AjaxResult listAll() {
         List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList();
@@ -121,6 +130,7 @@ public class SdTunnelsController extends BaseController
      * 外部系统获取隧道下拉
      * @return
      */
+    @ApiOperation("外部系统获取隧道下拉")
     @GetMapping("/listAll1")
     public AjaxResult listAll1() {
         List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList1();
@@ -132,6 +142,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 获取隧道详细信息
      */
+    @ApiOperation("获取隧道详细信息")
     // @ApiOperation("获取选中隧道详细信息")
     @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path", dataTypeClass = String.class)
     @GetMapping(value = "/{tunnelId}")
@@ -197,6 +208,7 @@ public class SdTunnelsController extends BaseController
      * @param sdTunnels
      * @return
      */
+    @ApiOperation("导出")
     @Log(title = "隧道管理", businessType = BusinessType.EXPORT)
     @GetMapping("/exportTunnels")
     public AjaxResult exportTunnels(SdTunnels sdTunnels)
@@ -209,6 +221,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
+    @ApiOperation("查询隧道列表")
     // @ApiOperation("查询隧道分区列表")
     @GetMapping("/sublist")
     public TableDataInfo<List<SdTunnels>> sublist(SdTunnels sdTunnels)
@@ -217,7 +230,12 @@ public class SdTunnelsController extends BaseController
         return getDataTable(list);
     }
 
-
+    /**
+     * 查询部门列表
+     * @param deptId
+     * @return
+     */
+    @ApiOperation("查询部门列表")
     @GetMapping("/deptId")
     public Result<List<SdTunnels>> deptId(@PathParam("deptId") Long deptId)
     {
@@ -230,6 +248,7 @@ public class SdTunnelsController extends BaseController
      * @param pushType
      * @param count
      */
+    @ApiOperation("同步数据")
     public void pushData(SdTunnels sdTunnels, String pushType, int count){
         if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && count > 0){
             List<SdTunnels> sdTunnelsList = new ArrayList<>();
@@ -242,11 +261,18 @@ public class SdTunnelsController extends BaseController
      * 查询当前登录者所属
      * @return
      */
+    @ApiOperation("查询当前登录者所属")
     @GetMapping("/getJlyTunnel")
     public AjaxResult getJlyTunnel(){
         return AjaxResult.success(sdTunnelsService.getJlyTunnel());
     }
 
+    /**
+     * 查询部门列表
+     * @param ids
+     * @return
+     */
+    @ApiOperation("查询部门列表")
     @GetMapping("/deptIdList")
     public Result<List<SdTunnels>> deptIdList(@RequestParam("ids")  String[] ids)
     {

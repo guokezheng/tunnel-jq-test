@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataRecordService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class SdDeviceDataRecordController extends BaseController
     /**
      * 查询设备数据历史记录列表
      */
+    @ApiOperation("查询设备数据历史记录列表")
     @GetMapping("/list")
     public TableDataInfo list(SdDeviceDataRecord sdDeviceDataRecord)
     {
@@ -40,6 +42,7 @@ public class SdDeviceDataRecordController extends BaseController
     /**
      * 导出设备数据历史记录列表
      */
+    @ApiOperation("导出设备数据历史记录列表")
     @Log(title = "设备数据历史记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdDeviceDataRecord sdDeviceDataRecord)
@@ -52,6 +55,7 @@ public class SdDeviceDataRecordController extends BaseController
     /**
      * 获取设备数据历史记录详细信息
      */
+    @ApiOperation("获取设备数据历史记录详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -61,6 +65,7 @@ public class SdDeviceDataRecordController extends BaseController
     /**
      * 新增设备数据历史记录
      */
+    @ApiOperation("新增设备数据历史记录")
     @Log(title = "设备数据历史记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdDeviceDataRecord sdDeviceDataRecord)
@@ -71,6 +76,7 @@ public class SdDeviceDataRecordController extends BaseController
     /**
      * 修改设备数据历史记录
      */
+    @ApiOperation("修改设备数据历史记录")
     @Log(title = "设备数据历史记录", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdDeviceDataRecord sdDeviceDataRecord)
@@ -81,6 +87,7 @@ public class SdDeviceDataRecordController extends BaseController
     /**
      * 删除设备数据历史记录
      */
+    @ApiOperation("删除设备数据历史记录")
     @Log(title = "设备数据历史记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

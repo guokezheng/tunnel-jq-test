@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.tunnel.business.domain.dataInfo.SdLipowerDevice;
 import com.tunnel.business.service.dataInfo.ISdLipowerDeviceService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ public class SdLipowerDeviceController extends BaseController
     /**
      * 查询照明设备信息列表
      */
+    @ApiOperation("查询照明设备信息列表")
     @GetMapping("/list")
     public TableDataInfo list(SdLipowerDevice sdLipowerDevice)
     {
@@ -45,7 +47,12 @@ public class SdLipowerDeviceController extends BaseController
         List<SdLipowerDevice> list = sdLipowerDeviceService.selectSdLipowerDeviceList(sdLipowerDevice);
         return getDataTable(list);
     }
-    
+
+    /**
+     *查询照明设备
+     * @return
+     */
+    @ApiOperation("查询照明设备")
     @GetMapping("/getLiPowerDevice")
     public AjaxResult sdLipowerDevice() {
     	Map<String,Object> map = new HashMap<String,Object>();
@@ -53,7 +60,6 @@ public class SdLipowerDeviceController extends BaseController
     	map.put("state", state);
         return AjaxResult.success(map);
     }
-    
     @GetMapping("/initLipowerDevice")
     public void initLipowerDevice() {
     	/*String[] groupArr = {"6"};

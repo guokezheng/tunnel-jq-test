@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class SdRadarDetectDataController extends BaseController
     /**
      * 查询雷达监测感知数据列表
      */
+    @ApiOperation("查询雷达监测感知数据列表")
     @PreAuthorize("@ss.hasPermi('radar:data:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdRadarDetectData sdRadarDetectData)
@@ -43,6 +45,7 @@ public class SdRadarDetectDataController extends BaseController
     /**
      * 导出雷达监测感知数据列表
      */
+    @ApiOperation("导出雷达监测感知数据列表")
     @PreAuthorize("@ss.hasPermi('radar:data:export')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -56,6 +59,7 @@ public class SdRadarDetectDataController extends BaseController
     /**
      * 获取雷达监测感知数据详细信息
      */
+    @ApiOperation("获取雷达监测感知数据详细信息")
     @PreAuthorize("@ss.hasPermi('radar:data:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
@@ -66,6 +70,7 @@ public class SdRadarDetectDataController extends BaseController
     /**
      * 新增雷达监测感知数据
      */
+    @ApiOperation("新增雷达监测感知数据")
     @PreAuthorize("@ss.hasPermi('radar:data:add')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.INSERT)
     @PostMapping
@@ -77,6 +82,7 @@ public class SdRadarDetectDataController extends BaseController
     /**
      * 修改雷达监测感知数据
      */
+    @ApiOperation("修改雷达监测感知数据")
     @PreAuthorize("@ss.hasPermi('radar:data:edit')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -88,6 +94,7 @@ public class SdRadarDetectDataController extends BaseController
     /**
      * 删除雷达监测感知数据
      */
+    @ApiOperation("删除雷达监测感知数据")
     @PreAuthorize("@ss.hasPermi('radar:data:remove')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -101,6 +108,7 @@ public class SdRadarDetectDataController extends BaseController
      * @param tunnelId
      * @return
      */
+    @ApiOperation("根据隧道id 查询24小时 感知数据")
     @GetMapping("/byId")
     public AjaxResult eventById(@RequestParam("tunnelId") String tunnelId)
     {

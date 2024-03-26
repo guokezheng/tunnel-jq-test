@@ -48,6 +48,7 @@ public class SdDeviceChangeController extends BaseController
     /**
      * 导出设备变更列表
      */
+    @ApiOperation("导出设备变更列表")
     @PreAuthorize("@ss.hasPermi('system:change:export')")
     @Log(title = "设备变更", businessType = BusinessType.EXPORT)
     @GetMapping("/export")

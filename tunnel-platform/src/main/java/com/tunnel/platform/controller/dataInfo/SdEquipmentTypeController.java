@@ -75,6 +75,13 @@ public class SdEquipmentTypeController extends BaseController
 		List<SdEquipmentType> list = sdEquipmentTypeService.selectSdEquipmentTypeGroupByBigType();
 		return getDataTable(list);
 	}
+
+	/**
+	 * 根据类型查询列表
+	 * @param bigType
+	 * @return
+	 */
+	@ApiOperation("根据类型查询列表")
 	@GetMapping("/hasListByBigType")
 	public TableDataInfo<List<SdEquipmentType>> hasListByBigType(String bigType)
 	{
@@ -88,6 +95,7 @@ public class SdEquipmentTypeController extends BaseController
 	 * @param sdEquipmentType
 	 * @return
 	 */
+	@ApiOperation("获得设备类型和控制策略")
 	@GetMapping("/getTypeAndStrategy")
 	public Result getTypeAndStrategy(SdEquipmentType sdEquipmentType) {
 		List<Map> sdEquipmentTypes = sdEquipmentTypeService.selectTypeAndStrategy(sdEquipmentType);
@@ -194,6 +202,12 @@ public class SdEquipmentTypeController extends BaseController
         return Result.toResult(sdEquipmentTypeService.deleteSdEquipmentTypeByIds(typeIds));
     }
 
+	/**
+	 *加载图片
+	 * @param url
+	 * @return
+	 */
+	@ApiOperation("加载图片")
     @PostMapping("/loadPicture")
     public AjaxResult loadPicture(String url) {
 		String src = "";
@@ -233,6 +247,12 @@ public class SdEquipmentTypeController extends BaseController
 		return strBase64;
 	}
 
+	/**
+	 * 导出
+	 * @param sdEquipmentType
+	 * @return
+	 */
+	@ApiOperation("导出")
 	@Log(title = "设备图标", businessType = BusinessType.EXPORT)
 	@GetMapping("/export")
 	public AjaxResult export(SdEquipmentType sdEquipmentType)

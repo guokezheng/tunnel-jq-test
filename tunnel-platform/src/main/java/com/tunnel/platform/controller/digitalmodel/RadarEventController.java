@@ -7,6 +7,7 @@ import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class RadarEventController {
      * @param map
      * @return
      */
+    @ApiOperation("事件数据雷达的")
     @PostMapping("wjData/eventData")
     public AjaxResult eventData(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.insertWjEvent(map));
@@ -54,6 +56,7 @@ public class RadarEventController {
      * 事件图片
      * @param map
      */
+    @ApiOperation("事件图片")
     @PostMapping("wjData/eventImage")
     public AjaxResult eventImage(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.uploadPic(map));
@@ -62,6 +65,7 @@ public class RadarEventController {
     /**
      * 事件视频
      */
+    @ApiOperation("事件视频")
     @PostMapping("wjData/eventVideo")
     public AjaxResult eventVideo(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.eventVideo(map));
@@ -70,6 +74,7 @@ public class RadarEventController {
     /**
      * 重点车辆
      */
+    @ApiOperation("重点车辆")
     @PostMapping("wjData/specialCar")
     public AjaxResult specialCar(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.specialCar(map));
@@ -103,6 +108,7 @@ public class RadarEventController {
     /**
      * 生产者测试
      */
+    @ApiOperation("生产者测试")
     @PostMapping("wjData/send")
     public void send(@RequestBody Map<String,Object> map) throws ParseException {
 //        kafkaTemplate.send("matchResultData",  "key", "测试kafka消息");
@@ -133,6 +139,7 @@ public class RadarEventController {
      * topic	baseDeviceStatus
      * 正晨调这个接口传值
      */
+    @ApiOperation("基础设施-万集设备运行状态数据 发送")
     @PostMapping("wjData/sendBaseDeviceStatus")
     public String sendBaseDeviceStatus(@RequestBody Map<String,Object> map){
         //todo 万集数据推送
@@ -149,6 +156,7 @@ public class RadarEventController {
      * value 按照设备类型既定格式存储
      * 包含设备id  设备类型 还有类型独特字段
      */
+    @ApiOperation("设备状态数据查询")
     @PostMapping("zcData/baseDeviceStatus")
     public AjaxResult baseDeviceStatus(@RequestBody Map<String,Object> map){
         String tunnelId = (String) map.get("tunnelId");

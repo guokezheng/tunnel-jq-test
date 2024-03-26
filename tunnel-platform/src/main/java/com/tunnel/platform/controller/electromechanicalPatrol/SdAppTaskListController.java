@@ -16,6 +16,7 @@ import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +53,7 @@ public class SdAppTaskListController extends BaseController
      * app端获取任务状态
      * @return
      */
+    @ApiOperation("app端获取任务状态")
     @PostMapping("/app/getTaskStatus")
     public Result getTaskStatus(){
         List<SdTaskList> taskList = sdTaskListService.getTaskStatus();
@@ -64,6 +66,7 @@ public class SdAppTaskListController extends BaseController
      * @param sdTaskList
      * @return
      */
+    @ApiOperation("app  巡查任务列表")
     @PostMapping("/app/getTaskList")
     public TableDataInfo getTaskList(SdTaskList sdTaskList,Integer pageSize,Integer pageNum){
         String deptId = SecurityUtils.getDeptId();
@@ -146,6 +149,7 @@ public class SdAppTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @ApiOperation("app 巡检任务基本信息")
     @PostMapping("/app/getTaskInfo")
     public Result getTaskInfo(String taskId){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
@@ -157,6 +161,7 @@ public class SdAppTaskListController extends BaseController
      * @param id
      * @return
      */
+    @ApiOperation("app 端接收任务")
     @GetMapping("/app/accept")
     public AjaxResult accept(String id)
     {
@@ -170,6 +175,7 @@ public class SdAppTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @ApiOperation("app端  巡查点清单")
     @PostMapping("/app/getPatrolInfo")
     public Result getPatrolInfo(String taskId){
         List<SdPatrolList> patrolList = sdTaskListService.getPatrolInfo(taskId);
@@ -181,6 +187,7 @@ public class SdAppTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @ApiOperation("app端  获取任务现场情况")
     @PostMapping("/app/getTaskSiteCondition`")
     public Result getTaskSiteCondition(String taskId){
         String result = sdTaskListService.getTaskSiteCondition(taskId);
@@ -195,16 +202,19 @@ public class SdAppTaskListController extends BaseController
      * @param  sdTaskList
      * @return
      */
+    @ApiOperation("app 端暂存本地")
     @GetMapping("/app/saveTask")
     public AjaxResult saveTask(SdTaskList sdTaskList)
     {
         return toAjax(sdTaskListService.saveLocal(sdTaskList));
     }
 
-
-
-
-
+    /**
+     *保存控制
+     * @param sdPatrolList
+     * @return
+     */
+    @ApiOperation("保存控制")
     @PostMapping("/app/savePatrol")
     public AjaxResult savePatrolInfo(@RequestBody SdPatrolList sdPatrolList)
     {
@@ -215,6 +225,7 @@ public class SdAppTaskListController extends BaseController
      * app端首页待处理任务单
      * @return
      */
+    @ApiOperation("app端首页待处理任务单")
     @PostMapping("/app/taskToDo")
     public Result taskToDo(HttpServletRequest request){
         String deptId = SecurityUtils.getDeptId();
@@ -239,6 +250,7 @@ public class SdAppTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @ApiOperation("app端查看现场情况")
     @PostMapping("/app/getSiteInfo")
     public Result getSiteInfo(String taskId){
         List<SdTaskList> taskList = sdTaskListService.getSiteInfo(taskId);
@@ -248,6 +260,7 @@ public class SdAppTaskListController extends BaseController
     /**
      * app端删除图片
      */
+    @ApiOperation("app端删除图片")
     @DeleteMapping("/app/{id}")
     public AjaxResult remove(@PathVariable String id) {
         return toAjax(sdTaskListService.deleteSitePhoto(id));
@@ -258,6 +271,7 @@ public class SdAppTaskListController extends BaseController
      * APP 巡检任务列表
      * @return
      */
+    @ApiOperation("APP 巡检任务列表")
     @GetMapping("/app/getTaskAllList")
     public Result getTaskAllList(){
 
@@ -322,9 +336,10 @@ public class SdAppTaskListController extends BaseController
 
     /**
      * 巡查点检修情况保存
-     * @param uploadPicture
+     * @param
      * @return
      */
+    @ApiOperation("巡查点检修情况保存")
     @PostMapping("/app/uploadPicture")
     public String uploadPicture(@RequestParam(name = "file", required = false) MultipartFile[] file,
                                 @RequestParam(name = "file1", required = false) MultipartFile file1,
@@ -343,6 +358,7 @@ public class SdAppTaskListController extends BaseController
      * APP 同步巡检任务信息
      * @return
      */
+    @ApiOperation("APP 同步巡检任务信息")
     @GetMapping("/app/versionList")
     public Result versionList(String edition_type,String version_type,String edition_number){
 
@@ -355,6 +371,7 @@ public class SdAppTaskListController extends BaseController
      * APP 同步巡检任务信息
      * @return
      */
+    @ApiOperation("APP 同步巡检任务信息")
     @PostMapping("/app/modifyTaskData")
     public Result modifyTaskData(@RequestBody String reqJson){
 
@@ -366,6 +383,7 @@ public class SdAppTaskListController extends BaseController
      * APP 同步巡检任务资源信息
      * @return
      */
+    @ApiOperation("APP 同步巡检任务资源信息")
     @PostMapping("/app/modifyTaskFilesData")
     public Result modifyTaskFilesData(@RequestBody String reqJson){
         sdTaskListService.modifyTaskFilesData(reqJson);

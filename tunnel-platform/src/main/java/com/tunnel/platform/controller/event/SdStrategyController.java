@@ -40,6 +40,7 @@ public class SdStrategyController extends BaseController
     /**
      * 查询控制策略列表
      */
+    @ApiOperation("查询控制策略列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdStrategy>> list(SdStrategy sdStrategy)
     {
@@ -52,6 +53,7 @@ public class SdStrategyController extends BaseController
     /**
      * 导出策略列表
      */
+    @ApiOperation("导出策略列表")
     @Log(title = "策略", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdStrategy sdStrategy)
@@ -101,12 +103,23 @@ public class SdStrategyController extends BaseController
         return Result.success(sdStrategyService.selectSdStrategyById(id));
     }
 
+    /**
+     * 工作台分时控制抽屉
+     * @param tunnelId
+     * @return
+     */
     @GetMapping(value = "/timeSharing/{tunnelId}")
     @ApiOperation("工作台分时控制抽屉")
     public Result<List<Map>> getTimeSharingInfo(@PathVariable("tunnelId") String tunnelId) {
         return Result.success(sdStrategyService.getTimeSharingInfo(tunnelId));
     }
 
+    /**
+     * 工作台分时控制抽屉修改控制时间
+     * @param strategyId
+     * @param controlTime
+     * @return
+     */
     @GetMapping(value = "/timeSharing/updateControlTime")
     @ApiOperation("工作台分时控制抽屉修改控制时间")
     @Log(title = "控制策略分时控制", businessType = BusinessType.UPDATE)
@@ -114,12 +127,23 @@ public class SdStrategyController extends BaseController
         return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
     }
 
+    /**
+     * 工作台阈值触发抽屉
+     * @param tunnelId
+     * @return
+     */
     @GetMapping(value = "/workTriggerInfo/{tunnelId}")
     @ApiOperation("工作台阈值触发抽屉")
     public Result<List<Map>> workTriggerInfo(@PathVariable("tunnelId") String tunnelId) {
         return Result.success(sdStrategyService.workTriggerInfo(tunnelId));
     }
 
+    /**
+     * 控制策略开关
+     * @param strategyId
+     * @param change
+     * @return
+     */
     @GetMapping(value = "/switch")
     @ApiOperation("控制策略开关")
     public Result strategySwitch(@RequestParam("strategyId") Long strategyId,@RequestParam("change") String change) {
@@ -207,6 +231,12 @@ public class SdStrategyController extends BaseController
     	return guid;
     }
 
+    /**
+     * 预警处置一键执行
+     * @param strategyId
+     * @param eventId
+     * @return
+     */
     @ApiOperation("预警处置一键执行")
     @GetMapping("/implementDisposalStrategy")
     public Result implementDisposalStrategy(@RequestParam("strategyId") Long strategyId,
@@ -214,6 +244,12 @@ public class SdStrategyController extends BaseController
         return Result.success(sdStrategyService.implementDisposalStrategy(strategyId,eventId));
     }
 
+    /**
+     * 预警处置执行策略
+     * @param rlId
+     * @param eventId
+     * @return
+     */
     @ApiOperation("预警处置执行策略")
     @GetMapping("/implementDisposalStrategyRl")
     public Result implementDisposalStrategyRl(@RequestParam("rlId") Long rlId,
@@ -224,6 +260,7 @@ public class SdStrategyController extends BaseController
     /**
      * 执行手动控制策略
      */
+    @ApiOperation("执行手动控制策略")
     @Log(title = "执行手动控制策略", businessType = BusinessType.OTHER)
     @GetMapping("/handleStrategy/{id}")
     public void handleStrategy(@PathVariable Long id) throws UnknownHostException {
@@ -235,6 +272,7 @@ public class SdStrategyController extends BaseController
      * @param strategy
      * @return
      */
+    @ApiOperation("查询预警事件触发策略")
     @GetMapping("/getStrategyData")
     public AjaxResult getStrategyData(SdStrategy strategy){
         return sdStrategyService.getStrategyData(strategy);
@@ -243,6 +281,7 @@ public class SdStrategyController extends BaseController
     /**
      * 查询所有定时策略详情信息
      */
+    @ApiOperation("查询所有定时策略详情信息")
     @GetMapping("/getSdStrategyAll")
     public TableDataInfo<List<SdStrategy>> getSdStrategyAll(SdStrategy sdStrategy)
     {

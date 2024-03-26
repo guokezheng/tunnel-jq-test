@@ -31,6 +31,7 @@ public class SdTriggerController extends BaseController
     /**
      * 查询触发器列表
      */
+    @ApiOperation("查询触发器列表")
     @PreAuthorize("@ss.hasPermi('strategy:trigger:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdTrigger sdTrigger)
@@ -43,6 +44,7 @@ public class SdTriggerController extends BaseController
     /**
      * 导出触发器列表
      */
+    @ApiOperation("导出触发器列表")
     @PreAuthorize("@ss.hasPermi('strategy:trigger:export')")
     @Log(title = "触发器", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -56,6 +58,7 @@ public class SdTriggerController extends BaseController
     /**
      * 获取触发器详细信息
      */
+    @ApiOperation("获取触发器详细信息")
     @PreAuthorize("@ss.hasPermi('strategy:trigger:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -77,6 +80,7 @@ public class SdTriggerController extends BaseController
     /**
      * 新增触发器
      */
+    @ApiOperation("新增触发器")
     @PreAuthorize("@ss.hasPermi('strategy:trigger:add')")
     @Log(title = "触发器", businessType = BusinessType.INSERT)
     @PostMapping
@@ -88,6 +92,7 @@ public class SdTriggerController extends BaseController
     /**
      * 修改触发器
      */
+    @ApiOperation("修改触发器")
     @PreAuthorize("@ss.hasPermi('strategy:trigger:edit')")
     @Log(title = "触发器", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -99,6 +104,7 @@ public class SdTriggerController extends BaseController
     /**
      * 删除触发器
      */
+    @ApiOperation("删除触发器")
     @PreAuthorize("@ss.hasPermi('strategy:trigger:remove')")
     @Log(title = "触发器", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

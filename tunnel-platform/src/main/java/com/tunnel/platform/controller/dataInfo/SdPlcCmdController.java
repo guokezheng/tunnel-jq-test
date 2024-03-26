@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdPlcCmd;
 import com.tunnel.business.service.dataInfo.ISdPlcCmdService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdPlcCmdController extends BaseController
     /**
      * 查询plc 报文列表
      */
+    @ApiOperation("查询plc 报文列表")
     @GetMapping("/list")
     public TableDataInfo list(SdPlcCmd sdPlcCmd)
     {
@@ -41,6 +43,7 @@ public class SdPlcCmdController extends BaseController
     /**
      * 导出plc 报文列表
      */
+    @ApiOperation("导出plc 报文列表")
     @PreAuthorize("@ss.hasPermi('system:cmd:export')")
     @Log(title = "plc 报文", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -54,6 +57,7 @@ public class SdPlcCmdController extends BaseController
     /**
      * 获取plc 报文详细信息
      */
+    @ApiOperation("获取plc 报文详细信息")
     @GetMapping(value = "/{cmdId}")
     public AjaxResult getInfo(@PathVariable("cmdId") Long cmdId)
     {
@@ -63,6 +67,7 @@ public class SdPlcCmdController extends BaseController
     /**
      * 新增plc 报文
      */
+    @ApiOperation("新增plc 报文")
     @Log(title = "plc 报文", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdPlcCmd sdPlcCmd)
@@ -73,6 +78,7 @@ public class SdPlcCmdController extends BaseController
     /**
      * 修改plc 报文
      */
+    @ApiOperation("修改plc 报文")
     @Log(title = "plc 报文", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdPlcCmd sdPlcCmd)
@@ -83,6 +89,7 @@ public class SdPlcCmdController extends BaseController
     /**
      * 删除plc 报文
      */
+    @ApiOperation("删除plc 报文")
     @Log(title = "plc 报文", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{cmdIds}")
     public AjaxResult remove(@PathVariable Long[] cmdIds)

@@ -13,6 +13,7 @@ import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdStateStorageService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 模拟获取隧道设备状态
      */
+    @ApiOperation("模拟获取隧道设备状态")
     @GetMapping("/getDevState")
     public String getDevState(SdStateStorage storage) {
         String tunnelId = storage.getTunnelId();
@@ -80,6 +82,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 查询隧道数据存储表列表
      */
+    @ApiOperation("查询隧道数据存储表列表")
     @PreAuthorize("@ss.hasPermi('system:storage:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdStateStorage sdStateStorage) {
@@ -91,6 +94,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 导出隧道数据存储表列表
      */
+    @ApiOperation("导出隧道数据存储表列表")
     @PreAuthorize("@ss.hasPermi('system:storage:export')")
     @Log(title = "隧道数据存储表", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -103,6 +107,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 获取隧道数据存储表详细信息
      */
+    @ApiOperation("获取隧道数据存储表详细信息")
     @PreAuthorize("@ss.hasPermi('system:storage:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
@@ -112,6 +117,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 新增隧道数据存储表
      */
+    @ApiOperation("新增隧道数据存储表")
     @PreAuthorize("@ss.hasPermi('system:storage:add')")
     @Log(title = "隧道数据存储表", businessType = BusinessType.INSERT)
     @PostMapping
@@ -122,6 +128,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 修改隧道数据存储表
      */
+    @ApiOperation("修改隧道数据存储表")
     @PreAuthorize("@ss.hasPermi('system:storage:edit')")
     @Log(title = "隧道数据存储表", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -132,6 +139,7 @@ public class SdStateStorageController extends BaseController {
     /**
      * 删除隧道数据存储表
      */
+    @ApiOperation("删除隧道数据存储表")
     @PreAuthorize("@ss.hasPermi('system:storage:remove')")
     @Log(title = "隧道数据存储表", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")

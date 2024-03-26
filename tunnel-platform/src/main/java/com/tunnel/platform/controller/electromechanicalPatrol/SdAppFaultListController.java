@@ -63,6 +63,7 @@ public class SdAppFaultListController extends BaseController
     /**
      *  查询隧道列表
      */
+    @ApiOperation("查询隧道列表")
     @GetMapping("/app/tunnelList")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
@@ -81,6 +82,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 查询故障类型
      */
+    @ApiOperation("查询故障类型")
     @PostMapping("/app/getFaultType")
     public Result getFaultType(){
         String dictType = "fault_type";
@@ -91,6 +93,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 查询故障类型
      */
+    @ApiOperation("查询故障类型")
     @PostMapping("/app/faultEscalationType")
     public Result faultEscalationType(){
         String dictType = "fault_escalation_type";
@@ -101,6 +104,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 查询设备状态
      */
+    @ApiOperation("查询设备状态")
     @PostMapping("/app/eqStatue")
     public Result eqStatue(){
         String dictType = "sd_monitor_state";
@@ -112,6 +116,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 查询故障等级
      */
+    @ApiOperation("查询故障等级")
     @PostMapping("/app/faultLevel")
     public Result faultLevel(){
         String dictType = "fault_level";
@@ -135,6 +140,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 查询设备列表
      */
+    @ApiOperation("查询设备列表")
     @GetMapping("/app/deviceList")
     public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
@@ -176,6 +182,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 根据设备名称点击事件
      */
+    @ApiOperation("根据设备名称点击事件")
     @PostMapping("/app/getEquipmentInfo")
     public Result getEquipmentInfo(String eqId) {
         return Result.success(isdDevicesService.getEquipmentInfo(eqId));
@@ -188,6 +195,7 @@ public class SdAppFaultListController extends BaseController
      * @param
      * @return
      */
+    @ApiOperation("故障图片保存")
     @PostMapping("/app/faultUploadPicture")
     public AjaxResult uploadPicture(@RequestParam(name = "file", required = false) MultipartFile[] file)
     {
@@ -198,6 +206,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * 新增故障清单
      */
+    @ApiOperation("新增故障清单")
     @PostMapping("/app/saveFault")
     public AjaxResult add(@RequestBody  SdFaultList sdFaultList) {
         return toAjax(sdFaultListService.saveFault(sdFaultList));
@@ -207,6 +216,7 @@ public class SdAppFaultListController extends BaseController
     /**
      * app端删除故障图片
      */
+    @ApiOperation("app端删除故障图片")
     @DeleteMapping("/app/{id}")
     public AjaxResult remove(@PathVariable String id) {
         return toAjax(sdTaskListService.deleteSitePhoto(id));

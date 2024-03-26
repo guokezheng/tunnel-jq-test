@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDataTrafficDay;
 import com.tunnel.business.service.dataInfo.ISdDataTrafficDayService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 查询各路段日车流量统计列表
      */
+    @ApiOperation("查询各路段日车流量统计列表")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:day:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDataTrafficDay sdDataTrafficDay)
@@ -43,6 +45,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 导出各路段日车流量统计列表
      */
+    @ApiOperation("导出各路段日车流量统计列表")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:day:export')")
     @Log(title = "各路段日车流量统计", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -56,6 +59,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 获取各路段日车流量统计详细信息
      */
+    @ApiOperation("获取各路段日车流量统计详细信息")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:day:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -66,6 +70,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 新增各路段日车流量统计
      */
+    @ApiOperation("新增各路段日车流量统计")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:day:add')")
     @Log(title = "各路段日车流量统计", businessType = BusinessType.INSERT)
     @PostMapping
@@ -77,6 +82,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 修改各路段日车流量统计
      */
+    @ApiOperation("修改各路段日车流量统计")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:day:edit')")
     @Log(title = "各路段日车流量统计", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -88,6 +94,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 删除各路段日车流量统计
      */
+    @ApiOperation("删除各路段日车流量统计")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:day:remove')")
     @Log(title = "各路段日车流量统计", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -99,6 +106,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 按日、隧道查每日每个车型的数量
      */
+    @ApiOperation("按日、隧道查每日每个车型的数量")
     @PostMapping("/getCarNumberByDay")
     public AjaxResult getCarNumberByDay(@RequestBody SdDataTrafficDay sdDataTrafficDay) throws ParseException {
         return AjaxResult.success(sdDataTrafficDayService.getCarNumberByDay(sdDataTrafficDay));
@@ -107,6 +115,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 今日各隧道车流量
      */
+    @ApiOperation("今日各隧道车流量")
     @GetMapping("/getCarFlowNumberOfTodayGroupByTunnel")
     public AjaxResult getCarFlowNumberOfTodayGroupByTunnel() {
         return AjaxResult.success(sdDataTrafficDayService.getCarFlowNumberOfTodayGroupByTunnel());
@@ -115,6 +124,7 @@ public class SdDataTrafficDayController extends BaseController
     /**
      * 今日车型占比
      */
+    @ApiOperation("今日车型占比")
     @GetMapping ("/getCarTypeRatioOfToday")
     public AjaxResult getCarTypeOfToday(SdDataTrafficDay sdDataTrafficDay) {
         return AjaxResult.success(sdDataTrafficDayService.getCarTypeOfToday(sdDataTrafficDay));

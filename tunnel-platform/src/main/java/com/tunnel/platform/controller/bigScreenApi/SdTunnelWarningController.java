@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdTunnelWarningService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class SdTunnelWarningController extends BaseController {
      * 查询近30日隧道预警
      * @return
      */
+    @ApiOperation("查询近30日隧道预警")
     @GetMapping("/warningnum")
     public AjaxResult getTunnelWarningNumber(String tunnelId){
         List<Long> tunnelWarningNumber = iSdTunnelWarningService.getTunnelWarningNumber(tunnelId);
@@ -38,6 +40,7 @@ public class SdTunnelWarningController extends BaseController {
      * 查询近30日隧道预警带日期
      * @return
      */
+    @ApiOperation("查询近30日隧道预警带日期")
     @GetMapping("/getTunnelWarningNumData")
     public AjaxResult getTunnelWarningNumData(String tunnelId, String startDate, String endDate){
         List<Map<String, Object>> list = iSdTunnelWarningService.getTunnelWarningNumData(tunnelId,startDate,endDate);

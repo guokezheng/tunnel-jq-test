@@ -76,6 +76,7 @@ public class SdEquipmentStateController extends BaseController
      /**
      * 查询设备类型状态关系列表（按设备类型分组查询）
      */
+     @ApiOperation("查询设备类型状态关系列表（按设备类型分组查询）")
     @GetMapping("/getList")
     public TableDataInfo getGroupList(SdEquipmentState sdEquipmentState)
     {
@@ -137,6 +138,7 @@ public class SdEquipmentStateController extends BaseController
     /**
      * 根据设备类型获取设备类型状态信息
      */
+    @ApiOperation("根据设备类型获取设备类型状态信息")
     @GetMapping(value = "getStates/{stateTypeId}/{stateType}")
     public AjaxResult getStates(@PathVariable("stateTypeId") Long typeId,@PathVariable("stateType") String stateType)
     {

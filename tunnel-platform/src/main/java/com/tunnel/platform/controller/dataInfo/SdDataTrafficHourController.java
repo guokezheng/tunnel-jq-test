@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDataTrafficHour;
 import com.tunnel.business.service.dataInfo.ISdDataTrafficHourService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 查询各路段小时车流量统计列表
      */
+    @ApiOperation("查询各路段小时车流量统计列表")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:hour:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDataTrafficHour sdDataTrafficHour)
@@ -43,6 +45,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 导出各路段小时车流量统计列表
      */
+    @ApiOperation("导出各路段小时车流量统计列表")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:hour:export')")
     @Log(title = "各路段小时车流量统计", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -56,6 +59,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 获取各路段小时车流量统计详细信息
      */
+    @ApiOperation("获取各路段小时车流量统计详细信息")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:hour:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -66,6 +70,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 新增各路段小时车流量统计
      */
+    @ApiOperation("新增各路段小时车流量统计")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:hour:add')")
     @Log(title = "各路段小时车流量统计", businessType = BusinessType.INSERT)
     @PostMapping
@@ -77,6 +82,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 修改各路段小时车流量统计
      */
+    @ApiOperation("修改各路段小时车流量统计")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:hour:edit')")
     @Log(title = "各路段小时车流量统计", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -88,6 +94,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 删除各路段小时车流量统计
      */
+    @ApiOperation("删除各路段小时车流量统计")
     @PreAuthorize("@ss.hasPermi('trafficFlowData:hour:remove')")
     @Log(title = "各路段小时车流量统计", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -99,6 +106,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 按小时、隧道查每小时每个车型的数量
      */
+    @ApiOperation("按小时、隧道查每小时每个车型的数量")
     @PostMapping("/getCarNumberByHour")
     public AjaxResult getCarNumberByHour(@RequestBody SdDataTrafficHour sdDataTrafficHour) throws ParseException {
         return AjaxResult.success(sdDataTrafficHourService.getCarNumberByHour(sdDataTrafficHour));
@@ -107,6 +115,7 @@ public class SdDataTrafficHourController extends BaseController
     /**
      * 查询redis缓存中的实时车流量信息
      * */
+    @ApiOperation("查询redis缓存中的实时车流量信息")
     @PostMapping("/obtainNowTrafficFlowInformation")
     public AjaxResult obtainNowTrafficFlowInformation() {
         return AjaxResult.success(sdDataTrafficHourService.getCacheTrafficFlowInformation());

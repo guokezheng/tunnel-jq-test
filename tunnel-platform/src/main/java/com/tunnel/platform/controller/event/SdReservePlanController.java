@@ -51,6 +51,7 @@ public class SdReservePlanController extends BaseController {
     /**
      * 查询预案信息列表
      */
+    @ApiOperation("查询预案信息列表")
     @GetMapping("/list")
     public TableDataInfo<List<SysRole>> list(SdReservePlan sdReservePlan) {
         startPage();
@@ -105,6 +106,7 @@ public class SdReservePlanController extends BaseController {
      * @param response
      * @param id
      */
+    @ApiOperation("下载预案信息文件")
     @Log(title = "预案信息")
     @PostMapping(value = "/{id}")
     public void downloadFile(HttpServletResponse response, @PathVariable("id") Long id) {
@@ -150,6 +152,7 @@ public class SdReservePlanController extends BaseController {
     /**
      * 导出事件类型预案流程关联列表
      */
+    @ApiOperation("导出事件类型预案流程关联列表")
     @Log(title = "预案信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdReservePlan sdReservePlan)
@@ -204,17 +207,30 @@ public class SdReservePlanController extends BaseController {
      * @param sdReservePlan
      * @return
      */
+    @ApiOperation("根据分区id,预案类别 查询预案")
     @GetMapping("/getListBySId")
     public Result selectPlanBySid(SdReservePlan sdReservePlan) {
         return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
     }
 
+    /**
+     * 根据隧道id查询预案
+     * @param tunnelId
+     * @return
+     */
     @GetMapping("/getListBytId")
     @ApiOperation("根据隧道id查询预案")
     public Result selectPlanByTid(String tunnelId) {
         return Result.success(sdReservePlanService.selectSdReservePlanByTunnelId(tunnelId));
     }
 
+    /**
+     * 预案一键执行
+     * @param planId
+     * @param eventId
+     * @return
+     */
+    @ApiOperation("预案一键执行")
     @Log(title = "预案一键执行")
     @GetMapping(value = "/implementPlan")
     public AjaxResult implementPlan(@RequestParam("planId") String planId,
@@ -222,6 +238,13 @@ public class SdReservePlanController extends BaseController {
         return sdStrategyService.implementPlan(planId,eventId);
     }
 
+    /**
+     * 环节执行
+     * @param processId
+     * @param eventId
+     * @return
+     */
+    @ApiOperation("环节执行")
     @Log(title = "环节执行")
     @GetMapping(value = "/implementProcess")
     public Result implementProcess(@RequestParam("processId") Long processId,
@@ -247,6 +270,7 @@ public class SdReservePlanController extends BaseController {
      * @param sdReservePlan
      * @return
      */
+    @ApiOperation("校验预案名称")
     @GetMapping("/checkPlanName")
     public AjaxResult checkPlanName(SdReservePlan sdReservePlan){
         return sdReservePlanService.checkPlanName(sdReservePlan);

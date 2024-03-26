@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.dataInfo.SdControlCode;
 import com.tunnel.business.service.dataInfo.ISdControlCodeService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdControlCodeController extends BaseController
     /**
      * 查询控制码列表
      */
+    @ApiOperation("查询控制码列表")
     @GetMapping("/list")
     public TableDataInfo list(SdControlCode sdControlCode)
     {
@@ -52,6 +54,7 @@ public class SdControlCodeController extends BaseController
     /**
      * 获取控制码详细信息
      */
+    @ApiOperation("获取控制码详细信息")
     @GetMapping(value = "/{controlId}")
     public AjaxResult getInfo(@PathVariable("controlId") Long controlId)
     {
@@ -61,6 +64,7 @@ public class SdControlCodeController extends BaseController
     /**
      * 新增控制码
      */
+    @ApiOperation("新增控制码")
     @Log(title = "控制码", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdControlCode sdControlCode)
@@ -71,6 +75,7 @@ public class SdControlCodeController extends BaseController
     /**
      * 修改控制码
      */
+    @ApiOperation("修改控制码")
     @Log(title = "控制码", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdControlCode sdControlCode)
@@ -81,6 +86,7 @@ public class SdControlCodeController extends BaseController
     /**
      * 删除控制码
      */
+    @ApiOperation("删除控制码")
     @Log(title = "控制码", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{controlIds}")
     public AjaxResult remove(@PathVariable Long[] controlIds)

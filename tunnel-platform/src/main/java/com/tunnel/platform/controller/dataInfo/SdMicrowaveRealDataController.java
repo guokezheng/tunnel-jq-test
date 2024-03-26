@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.tunnel.business.domain.dataInfo.SdMicrowaveRealData;
 import com.tunnel.business.service.dataInfo.ISdMicrowaveRealDataService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ public class SdMicrowaveRealDataController extends BaseController
     /**
      * 查询微波车检单车实时数据列表
      */
+    @ApiOperation("查询微波车检单车实时数据列表")
     @PreAuthorize("@ss.hasPermi('microwave:data:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdMicrowaveRealData sdMicrowaveRealData)
@@ -49,6 +51,7 @@ public class SdMicrowaveRealDataController extends BaseController
     /**
      * 导出微波车检单车实时数据列表
      */
+    @ApiOperation("导出微波车检单车实时数据列表")
     @PreAuthorize("@ss.hasPermi('microwave:data:export')")
     @Log(title = "微波车检单车实时数据", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -62,6 +65,7 @@ public class SdMicrowaveRealDataController extends BaseController
     /**
      * 获取微波车检单车实时数据详细信息
      */
+    @ApiOperation("获取微波车检单车实时数据详细信息")
     @PreAuthorize("@ss.hasPermi('microwave:data:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -72,6 +76,7 @@ public class SdMicrowaveRealDataController extends BaseController
     /**
      * 新增微波车检单车实时数据
      */
+    @ApiOperation("新增微波车检单车实时数据")
     @PreAuthorize("@ss.hasPermi('microwave:data:add')")
     @Log(title = "微波车检单车实时数据", businessType = BusinessType.INSERT)
     @PostMapping
@@ -83,6 +88,7 @@ public class SdMicrowaveRealDataController extends BaseController
     /**
      * 修改微波车检单车实时数据
      */
+    @ApiOperation("修改微波车检单车实时数据")
     @PreAuthorize("@ss.hasPermi('microwave:data:edit')")
     @Log(title = "微波车检单车实时数据", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -94,6 +100,7 @@ public class SdMicrowaveRealDataController extends BaseController
     /**
      * 删除微波车检单车实时数据
      */
+    @ApiOperation("删除微波车检单车实时数据")
     @PreAuthorize("@ss.hasPermi('system:data:remove')")
     @Log(title = "微波车检单车实时数据", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

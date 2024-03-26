@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdCrashRecovery;
 import com.tunnel.business.service.dataInfo.ISdCrashRecoveryService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +36,7 @@ public class SdCrashRecoveryController extends BaseController
     /**
      * 查询应急恢复列表
      */
+    @ApiOperation("查询应急恢复列表")
     @GetMapping("/list")
     public TableDataInfo list(SdCrashRecovery sdCrashRecovery)
     {
@@ -93,6 +95,7 @@ public class SdCrashRecoveryController extends BaseController
     /**
      * 导出应急恢复列表
      */
+    @ApiOperation("导出应急恢复列表")
     @Log(title = "应急恢复", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdCrashRecovery sdCrashRecovery)
@@ -105,6 +108,7 @@ public class SdCrashRecoveryController extends BaseController
     /**
      * 获取应急恢复详细信息
      */
+    @ApiOperation("获取应急恢复详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -129,6 +133,7 @@ public class SdCrashRecoveryController extends BaseController
     /**
      * 新增应急恢复
      */
+    @ApiOperation("新增应急恢复")
     @Log(title = "应急恢复", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestParam("file") MultipartFile[] file, SdCrashRecovery sdCrashRecovery) throws IOException {
@@ -138,6 +143,7 @@ public class SdCrashRecoveryController extends BaseController
     /**
      * 修改应急恢复
      */
+    @ApiOperation("修改应急恢复")
     @Log(title = "应急恢复", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdCrashRecovery sdCrashRecovery) throws IOException {
@@ -147,6 +153,7 @@ public class SdCrashRecoveryController extends BaseController
     /**
      * 删除应急恢复
      */
+    @ApiOperation("删除应急恢复")
     @Log(title = "应急恢复", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
@@ -154,6 +161,12 @@ public class SdCrashRecoveryController extends BaseController
         return toAjax(sdCrashRecoveryService.deleteSdCrashRecoveryByIds(ids));
     }
 
+    /**
+     * 控制恢复
+     * @param sdCrashRecovery
+     * @return
+     */
+    @ApiOperation("控制恢复")
     @GetMapping("/controlRecovery")
     public AjaxResult controlRecovery(SdCrashRecovery sdCrashRecovery) {
         return AjaxResult.success(sdCrashRecoveryService.controlRecovery(sdCrashRecovery));

@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.dataInfo.SdSensor;
 import com.tunnel.business.service.dataInfo.ISdSensorService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdSensorController extends BaseController
     /**
      * 查询传感器列列表
      */
+    @ApiOperation("查询传感器列列表")
     @GetMapping("/list")
     public TableDataInfo list(SdSensor sdSensor)
     {
@@ -52,6 +54,7 @@ public class SdSensorController extends BaseController
     /**
      * 获取传感器列详细信息
      */
+    @ApiOperation("获取传感器列详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -61,6 +64,7 @@ public class SdSensorController extends BaseController
     /**
      * 新增传感器列
      */
+    @ApiOperation("新增传感器列")
     @Log(title = "传感器列", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdSensor sdSensor)
@@ -71,6 +75,7 @@ public class SdSensorController extends BaseController
     /**
      * 修改传感器列
      */
+    @ApiOperation("修改传感器列")
     @Log(title = "传感器列", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdSensor sdSensor)
@@ -81,6 +86,7 @@ public class SdSensorController extends BaseController
     /**
      * 删除传感器列
      */
+    @ApiOperation("删除传感器列")
     @Log(title = "传感器列", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -12,6 +13,8 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.service.ISysJobService;
 import com.ruoyi.quartz.util.CronUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +31,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/monitor/job")
+@Api(tags = "调度任务信息操作处理")
+@ApiSupport(order = 16)
 public class SysJobController extends BaseController
 {
     @Autowired
@@ -38,6 +43,7 @@ public class SysJobController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:list')")
     @GetMapping("/list")
+    @ApiOperation("查询定时任务列表")
     public TableDataInfo list(SysJob sysJob)
     {
         startPage();
@@ -51,6 +57,7 @@ public class SysJobController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:export')")
     @Log(title = "定时任务", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出定时任务列表")
     public AjaxResult export(SysJob sysJob)
     {
         List<SysJob> list = jobService.selectJobList(sysJob);
@@ -63,6 +70,7 @@ public class SysJobController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:query')")
     @GetMapping(value = "/{jobId}")
+    @ApiOperation("获取定时任务详细信息")
     public AjaxResult getInfo(@PathVariable("jobId") Long jobId)
     {
         return AjaxResult.success(jobService.selectJobById(jobId));
@@ -74,6 +82,7 @@ public class SysJobController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:add')")
     @Log(title = "定时任务", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增定时任务")
     public AjaxResult add(@RequestBody SysJob job) throws SchedulerException, TaskException
     {
         if (!CronUtils.isValid(job.getCronExpression()))
@@ -106,6 +115,7 @@ public class SysJobController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:edit')")
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改定时任务")
     public AjaxResult edit(@RequestBody SysJob job) throws SchedulerException, TaskException
     {
         if (!CronUtils.isValid(job.getCronExpression()))
@@ -138,6 +148,7 @@ public class SysJobController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:changeStatus')")
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
+    @ApiOperation("定时任务状态修改")
     public AjaxResult changeStatus(@RequestBody SysJob job) throws SchedulerException
     {
         SysJob newJob = jobService.selectJobById(job.getJobId());
@@ -151,6 +162,7 @@ public class SysJobController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:changeStatus')")
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PutMapping("/run")
+    @ApiOperation("定时任务立即执行一次")
     public AjaxResult run(@RequestBody SysJob job) throws SchedulerException
     {
         jobService.run(job);
@@ -161,6 +173,7 @@ public class SysJobController extends BaseController
      *
      */
     @GetMapping(value = "/select/{id}")
+    @ApiOperation("获取定时策略关联的Job信息")
     public AjaxResult getJobByRelationId(@PathVariable("id") String relationId)
     {
         SysJob job=new SysJob();
@@ -178,6 +191,7 @@ public class SysJobController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "定时任务", businessType = BusinessType.DELETE)
     @DeleteMapping("/{relationId}")
+    @ApiOperation("删除定时任务")
     public AjaxResult remove(@PathVariable String relationId) throws SchedulerException, TaskException
     {
         SysJob job=new SysJob();
@@ -200,6 +214,7 @@ public class SysJobController extends BaseController
      * @return
      */
     @PutMapping("/updateState")
+    @ApiOperation("修改定时任务执行状态")
     public AjaxResult updateState(@RequestBody SysJob job) {
         return AjaxResult.success(jobService.updateState(job));
     }
@@ -210,6 +225,7 @@ public class SysJobController extends BaseController
      * @return
      */
     @PostMapping("/batchScheduledJob")
+    @ApiOperation("批量添加定时任务")
     public AjaxResult batchAddScheduledJob(@RequestBody List<Map> maps) throws SchedulerException {
         return AjaxResult.success(jobService.batchScheduledJob(maps));
     }

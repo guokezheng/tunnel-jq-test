@@ -1,6 +1,10 @@
 package com.ruoyi.quartz.controller;
 
 import java.util.List;
+
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +28,8 @@ import com.ruoyi.quartz.service.ISysJobLogService;
  */
 @RestController
 @RequestMapping("/monitor/jobLog")
+@Api(tags = "调度日志操作处理")
+@ApiSupport(order = 16)
 public class SysJobLogController extends BaseController
 {
     @Autowired
@@ -34,6 +40,7 @@ public class SysJobLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:list')")
     @GetMapping("/list")
+    @ApiOperation("查询定时任务调度日志列表")
     public TableDataInfo list(SysJobLog sysJobLog)
     {
         startPage();
@@ -47,6 +54,7 @@ public class SysJobLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:export')")
     @Log(title = "任务调度日志", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出定时任务调度日志列表")
     public AjaxResult export(SysJobLog sysJobLog)
     {
         List<SysJobLog> list = jobLogService.selectJobLogList(sysJobLog);
@@ -59,6 +67,7 @@ public class SysJobLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:query')")
     @GetMapping(value = "/{configId}")
+    @ApiOperation("根据调度编号获取详细信息")
     public AjaxResult getInfo(@PathVariable Long jobLogId)
     {
         return AjaxResult.success(jobLogService.selectJobLogById(jobLogId));
@@ -71,6 +80,7 @@ public class SysJobLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "定时任务调度日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{jobLogIds}")
+    @ApiOperation("删除定时任务调度日志")
     public AjaxResult remove(@PathVariable Long[] jobLogIds)
     {
         return toAjax(jobLogService.deleteJobLogByIds(jobLogIds));
@@ -82,6 +92,7 @@ public class SysJobLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "调度日志", businessType = BusinessType.CLEAN)
     @DeleteMapping("/clean")
+    @ApiOperation("清空定时任务调度日志")
     public AjaxResult clean()
     {
         jobLogService.cleanJobLog();

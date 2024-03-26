@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SdEventFlowController extends BaseController
     /**
      * 查询事件处理流程列表
      */
+    @ApiOperation("查询事件处理流程列表")
     @GetMapping("/list")
     public TableDataInfo list(SdEventFlow sdEventFlow)
     {
@@ -52,6 +54,7 @@ public class SdEventFlowController extends BaseController
     /**
      * 获取事件处理流程详细信息
      */
+    @ApiOperation("获取事件处理流程详细信息")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -61,6 +64,7 @@ public class SdEventFlowController extends BaseController
     /**
      * 新增事件处理流程
      */
+    @ApiOperation("新增事件处理流程")
     @Log(title = "事件处理流程", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdEventFlow sdEventFlow)
@@ -73,6 +77,7 @@ public class SdEventFlowController extends BaseController
      * @param id
      * @return
      */
+    @ApiOperation("用户确认事件保存记录")
     @GetMapping("/userConfirm/{id}")
     public AjaxResult saveUserConfirmFlow(@PathVariable("id") String id){
         return toAjax(sdEventFlowService.saveUserConfirmFlow(id));
@@ -83,6 +88,7 @@ public class SdEventFlowController extends BaseController
      * @param id
      * @return
      */
+    @ApiOperation("用户结束事件保存记录")
     @GetMapping("/userEventEnded/{id}")
     public AjaxResult saveUserEventEnded(@PathVariable("id") String id){
         return toAjax(sdEventFlowService.saveUserEventEndedFlow(id));
@@ -91,6 +97,7 @@ public class SdEventFlowController extends BaseController
     /**
      * 修改事件处理流程
      */
+    @ApiOperation("修改事件处理流程")
     @Log(title = "事件处理流程", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdEventFlow sdEventFlow)
@@ -101,6 +108,7 @@ public class SdEventFlowController extends BaseController
     /**
      * 删除事件处理流程
      */
+    @ApiOperation("删除事件处理流程")
     @Log(title = "事件处理流程", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

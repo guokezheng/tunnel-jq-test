@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class SdIotDeviceController extends BaseController
      * 查询设备列列表
      */
     @GetMapping("/list")
+    @ApiOperation("查询设备列列表")
     public TableDataInfo list(SdIotDevice sdIotDevice)
     {
         startPage();
@@ -38,12 +40,14 @@ public class SdIotDeviceController extends BaseController
     }
 
     @GetMapping("/getIotBoardList")
+    @ApiOperation("获取设备列表对象")
     public AjaxResult getIotBoardList(SdIotDevice sdIotDevice)
     {
         return AjaxResult.success(sdIotDeviceService.getIotBoardList(sdIotDevice));
     }
 
     @GetMapping(value = "/getdevicessize")
+    @ApiOperation("获取设备列表对象")
     public AjaxResult getDevicesSize(SdIotDevice sdIotDevice)
     {
         return AjaxResult.success(sdIotDeviceService.getDevicesSize(sdIotDevice));
@@ -65,6 +69,7 @@ public class SdIotDeviceController extends BaseController
      * 大屏查询事件报警列表
      */
     @GetMapping("/bigscreenBoardList")
+    @ApiOperation("大屏查询事件报警列表")
     public String[][] bigscreenBoardList()
     {
     	/*List<SdEvent> list = sdEventService.selectSdEventList(sdEvent);
@@ -82,6 +87,7 @@ public class SdIotDeviceController extends BaseController
      * 获取设备列详细信息
      */
     @GetMapping(value = "/{deviceId}")
+    @ApiOperation("获取设备列详细信息")
     public AjaxResultb getInfo(@PathVariable("deviceId") Long deviceId)
     {
         return AjaxResultb.success(sdIotDeviceService.selectIotDeviceById(deviceId));
@@ -92,6 +98,7 @@ public class SdIotDeviceController extends BaseController
      */
     @Log(title = "设备列", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增设备列")
     public AjaxResult add(@RequestBody SdIotDevice sdIotDevice)
     {
         return toAjax(sdIotDeviceService.insertIotDevice(sdIotDevice));
@@ -102,6 +109,7 @@ public class SdIotDeviceController extends BaseController
      */
     @Log(title = "设备列", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改设备列")
     public AjaxResult edit(@RequestBody SdIotDevice sdIotDevice)
     {
         return toAjax(sdIotDeviceService.updateIotDevice(sdIotDevice));

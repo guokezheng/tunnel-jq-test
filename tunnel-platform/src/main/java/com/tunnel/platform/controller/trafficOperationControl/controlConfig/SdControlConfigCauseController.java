@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.trafficOperationControl.controlConfig.SdControlConfigCause;
 import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdControlConfigCauseService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdControlConfigCauseController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('controlConfig:cause:list')")
     @GetMapping("/list")
+    @ApiOperation("查询管控等级配置措施-管控原因列表")
     public TableDataInfo list(SdControlConfigCause sdControlConfigCause)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdControlConfigCauseController extends BaseController
     @PreAuthorize("@ss.hasPermi('controlConfig:cause:export')")
     @Log(title = "管控等级配置措施-管控原因", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("出管控等级配置措施-管控原因列表")
     public AjaxResult export(SdControlConfigCause sdControlConfigCause)
     {
         List<SdControlConfigCause> list = sdControlConfigCauseService.selectSdControlConfigCauseList(sdControlConfigCause);
@@ -57,6 +60,7 @@ public class SdControlConfigCauseController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('controlConfig:cause:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取管控等级配置措施-管控原因详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdControlConfigCauseService.selectSdControlConfigCauseById(id));
@@ -68,6 +72,7 @@ public class SdControlConfigCauseController extends BaseController
     @PreAuthorize("@ss.hasPermi('controlConfig:cause:add')")
     @Log(title = "管控等级配置措施-管控原因", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增管控等级配置措施-管控原因")
     public AjaxResult add(@RequestBody SdControlConfigCause sdControlConfigCause)
     {
         return toAjax(sdControlConfigCauseService.insertSdControlConfigCause(sdControlConfigCause));
@@ -79,6 +84,7 @@ public class SdControlConfigCauseController extends BaseController
     @PreAuthorize("@ss.hasPermi('controlConfig:cause:edit')")
     @Log(title = "管控等级配置措施-管控原因", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改管控等级配置措施-管控原因")
     public AjaxResult edit(@RequestBody SdControlConfigCause sdControlConfigCause)
     {
         return toAjax(sdControlConfigCauseService.updateSdControlConfigCause(sdControlConfigCause));
@@ -90,6 +96,7 @@ public class SdControlConfigCauseController extends BaseController
     @PreAuthorize("@ss.hasPermi('controlConfig:cause:remove')")
     @Log(title = "管控等级配置措施-管控原因", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("除管控等级配置措施-管控原因")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdControlConfigCauseService.deleteSdControlConfigCauseByIds(ids));

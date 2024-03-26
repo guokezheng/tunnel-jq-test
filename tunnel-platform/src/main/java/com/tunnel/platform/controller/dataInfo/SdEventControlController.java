@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdEventControl;
 import com.tunnel.business.service.dataInfo.ISdEventControlService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdEventControlController extends BaseController
     /**
      * 查询事件管控列表
      */
+    @ApiOperation("查询事件管控列表")
     @PreAuthorize("@ss.hasPermi('event:control:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdEventControl sdEventControl)
@@ -42,6 +44,7 @@ public class SdEventControlController extends BaseController
     /**
      * 导出事件管控列表
      */
+    @ApiOperation("导出事件管控列表")
     @PreAuthorize("@ss.hasPermi('event:control:export')")
     @Log(title = "事件管控", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -55,6 +58,7 @@ public class SdEventControlController extends BaseController
     /**
      * 获取事件管控详细信息
      */
+    @ApiOperation("获取事件管控详细信息")
     @PreAuthorize("@ss.hasPermi('event:control:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -65,6 +69,7 @@ public class SdEventControlController extends BaseController
     /**
      * 新增事件管控
      */
+    @ApiOperation("新增事件管控")
     @PreAuthorize("@ss.hasPermi('event:control:add')")
     @Log(title = "事件管控", businessType = BusinessType.INSERT)
     @PostMapping
@@ -76,6 +81,7 @@ public class SdEventControlController extends BaseController
     /**
      * 修改事件管控
      */
+    @ApiOperation("修改事件管控")
     @PreAuthorize("@ss.hasPermi('event:control:edit')")
     @Log(title = "事件管控", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -87,6 +93,7 @@ public class SdEventControlController extends BaseController
     /**
      * 删除事件管控
      */
+    @ApiOperation("删除事件管控")
     @PreAuthorize("@ss.hasPermi('event:control:remove')")
     @Log(title = "事件管控", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

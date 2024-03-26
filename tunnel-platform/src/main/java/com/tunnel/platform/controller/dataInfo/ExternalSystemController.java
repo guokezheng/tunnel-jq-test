@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 查询外部系统列表
      */
+    @ApiOperation("查询外部系统列表")
     @PreAuthorize("@ss.hasPermi('system:system:list')")
     @GetMapping("/list")
     public TableDataInfo list(ExternalSystem externalSystem)
@@ -40,6 +42,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 查询外部系统列表
      */
+    @ApiOperation("查询外部系统列表")
     @GetMapping("/listAll")
     public AjaxResult listAll(ExternalSystem externalSystem) {
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(externalSystem);
@@ -50,6 +53,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 导出外部系统列表
      */
+    @ApiOperation("导出外部系统列表")
     @PreAuthorize("@ss.hasPermi('system:system:export')")
     @Log(title = "外部系统", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -63,6 +67,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 获取外部系统详细信息
      */
+    @ApiOperation("获取外部系统详细信息")
     @PreAuthorize("@ss.hasPermi('system:system:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -73,6 +78,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 新增外部系统
      */
+    @ApiOperation("新增外部系统")
     @PreAuthorize("@ss.hasPermi('system:system:add')")
     @Log(title = "外部系统", businessType = BusinessType.INSERT)
     @PostMapping
@@ -83,6 +89,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 修改外部系统
      */
+    @ApiOperation("修改外部系统")
     @PreAuthorize("@ss.hasPermi('system:system:edit')")
     @Log(title = "外部系统", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -94,6 +101,7 @@ public class ExternalSystemController extends BaseController
     /**
      * 删除外部系统
      */
+    @ApiOperation("删除外部系统")
     @PreAuthorize("@ss.hasPermi('system:system:remove')")
     @Log(title = "外部系统", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

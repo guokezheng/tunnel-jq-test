@@ -15,6 +15,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdTrafficVolume;
 import com.tunnel.business.service.vehicle.SdTrafficVolumeService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ public class SdTrafficVolumeController extends BaseController {
     private SdTrafficVolumeService trafficVolumeService;
 
     @GetMapping("/list")
+    @ApiOperation("查询车流量列表")
     public TableDataInfo list(SdTrafficVolume sdTrafficVolume){
         startPage();
         List<SdTrafficVolume> list = trafficVolumeService.selectTrafficVolumeList(sdTrafficVolume);
@@ -45,6 +47,7 @@ public class SdTrafficVolumeController extends BaseController {
 
     @Log(title = "设备", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出车流量列表")
     public AjaxResult export(SdTrafficVolume sdTrafficVolume){
         List<SdTrafficVolume> list = trafficVolumeService.exportTrafficVolumeList(sdTrafficVolume);
         ExcelUtil<SdTrafficVolume> util = new ExcelUtil<SdTrafficVolume>(SdTrafficVolume.class);

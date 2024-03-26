@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.workspace;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ public class OptDeviceController {
     private SdDeviceControlService sdDeviceControlService;
 
     @PostMapping(value = "/optSingleDevice")
+    @ApiOperation("gsy组装控制参数")
     public AjaxResult optSingleDevice(@RequestBody Map<String, Object> params) {
         Integer workState = 0;
         if ("GSY".equals(deploymentType)) {

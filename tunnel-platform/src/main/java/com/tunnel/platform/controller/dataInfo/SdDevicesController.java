@@ -78,6 +78,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 查询设备列表
      */
+    @ApiOperation("查询设备列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
@@ -118,6 +119,12 @@ public class SdDevicesController extends BaseController {
         return getDataTable(list);
     }
 
+    /**
+     *按类型和隧道获取设备
+     * @param sdDevices
+     * @return
+     */
+    @ApiOperation("按类型和隧道获取设备")
     @GetMapping("/getDevicesByTypeAndTunnel")
     public TableDataInfo<List<Map<String, Object>>> getDevicesByTypeAndTunnel(SdDevices sdDevices) {
         List<Map<String, Object>> devicesByTypeAndTunnel = sdDevicesService.getDevicesByTypeAndTunnel(sdDevices);
@@ -127,6 +134,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 查询传感器设备列表
      */
+    @ApiOperation("查询传感器设备列表")
     @GetMapping("/sensorList")
     public Result<List<SdDevices>> sensorList(SdDevices sdDevices) {
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
@@ -136,6 +144,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 大屏查询设备数据
      */
+    @ApiOperation("大屏查询设备数据")
     @GetMapping("/bigscreenlist")
     // @ApiOperation("大屏查询设备数据")
     //  @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
@@ -170,6 +179,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 查询设备列表+情报板
      */
+    @ApiOperation("查询设备列表+情报板")
     @GetMapping("/alllist")
     public TableDataInfo<List<SdDevices>> qbblist(SdDevices sdDevices) {
         startPage();
@@ -190,6 +200,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 导出设备列表
      */
+    @ApiOperation("导出设备列表")
     @Log(title = "设备", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public AjaxResult export(SdDevices sdDevices) {
@@ -238,6 +249,12 @@ public class SdDevicesController extends BaseController {
         return Result.success(sd);
     }
 
+    /**
+     *获取防火标志清单
+     * @param eqId
+     * @return
+     */
+    @ApiOperation("获取防火标志清单")
     @GetMapping("/fireMarkList/{eqId}")
     public Result<List<String>> fireMarkList(@PathVariable("eqId") String eqId) {
         List<String> list = sdDevicesService.fireMarkList(eqId);
@@ -299,6 +316,13 @@ public class SdDevicesController extends BaseController {
         return Result.toResult(i);
     }
 
+    /**
+     *自动Id
+     * @param tunnelId
+     * @param typeId
+     * @return
+     */
+    @ApiOperation("自动Id")
     @PostMapping("/autoId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path", dataTypeClass = String.class),
@@ -364,6 +388,13 @@ public class SdDevicesController extends BaseController {
         return Result.toResult(i);
     }
 
+    /**
+     *导入模板
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @ApiOperation("导入模板")
     @PostMapping("/importTemplate")
     public AjaxResult importTemplate(HttpServletResponse response) throws IOException {
 //        util.exportExcel( list, "设备详情");
@@ -371,6 +402,14 @@ public class SdDevicesController extends BaseController {
         return util.importTemplateExcel("设备数据");
     }
 
+    /**
+     *导入数据
+     * @param file
+     * @param updateSupport
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation("导入数据")
     @Log(title = "设备管理", businessType = BusinessType.IMPORT)
     @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
@@ -398,7 +437,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 生成控制指令
      */
-    // @ApiOperation("生成控制指令")
+    @ApiOperation("生成控制指令")
     @PostMapping(value = "/createDmcontrolSeat")
     public Map createDmcontrolSeat(@RequestBody SdDevices sdDevices) {
         Map<String, String> map = new HashMap<>();
@@ -431,7 +470,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 校验指令
      */
-    // @ApiOperation("校验指令")
+    @ApiOperation("校验指令")
     @GetMapping("/checkInstruction")
     public Map checkInstruction(SdDevices sdDevices) {
         Map<String, Object> map = new HashMap<>();
@@ -456,7 +495,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 获取运营APP首页需要的设备信息
      */
-    //  @ApiOperation("获取运营APP首页需要的设备信息")
+    @ApiOperation("获取运营APP首页需要的设备信息")
     @PostMapping("/getDevicesMsgToApp")
     //  @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result getDevicesMsgToApp(String tunnelId) {
@@ -477,12 +516,24 @@ public class SdDevicesController extends BaseController {
         return Result.success(details);
     }
 
+    /**
+     *获取设备状态
+     * @param tunnelId
+     * @return
+     */
+    @ApiOperation("获取设备状态")
     @PostMapping("/getDevicesStatus")
     @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path", dataTypeClass = String.class)
     public AjaxResult getDevicesStatus(String tunnelId) {
         return AjaxResult.success(sdDevicesService.getDevicesStatus(tunnelId));
     }
 
+    /**
+     *获得设备能量消耗
+     * @param tunnelId
+     * @return
+     */
+    @ApiOperation("获得设备能量消耗")
     @PostMapping("/obtainEquipmentEnergyConsumption")
     @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path", dataTypeClass = String.class)
     public AjaxResult obtainEquipmentEnergyConsumption(String tunnelId) {
@@ -492,6 +543,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 查询可控设备列表
      */
+    @ApiOperation("查询可控设备列表")
     @GetMapping("/isControl")
     public TableDataInfo<List<SdDevices>> isControlList(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
@@ -532,6 +584,7 @@ public class SdDevicesController extends BaseController {
      * @param sdDevices
      * @return
      */
+    @ApiOperation("查询左洞或右洞的广播设备")
     @GetMapping(value = "/getSpkList")
     public AjaxResult getSpkList(SdDevices sdDevices) {
 
@@ -551,6 +604,7 @@ public class SdDevicesController extends BaseController {
      * @param sdDevices
      * @return
      */
+    @ApiOperation("查询级联选择设备列表")
     @GetMapping("/getTreeDeviceList")
     public AjaxResult getTreeDeviceList(SdDevices sdDevices){
         return sdDevicesService.getTreeDeviceList(sdDevices);
@@ -562,6 +616,7 @@ public class SdDevicesController extends BaseController {
      * @param switchType 开关状态
      * @return
      */
+    @ApiOperation("小车跑数据控制")
     @GetMapping(value = "/carSwitchType/{eqId}/{switchType}")
     public void carSwitchType(@PathVariable("eqId") String eqId,@PathVariable("switchType") String switchType){
         //获取token
@@ -611,6 +666,7 @@ public class SdDevicesController extends BaseController {
      * @param sdDevices
      * @return
      */
+    @ApiOperation("查询摄像机")
     @GetMapping("/getCamera")
     public AjaxResult getCamera(SdDevices sdDevices){
         return sdDevicesService.getCamera(sdDevices);
@@ -622,6 +678,7 @@ public class SdDevicesController extends BaseController {
      * @param configKey 参数键
      * @return 缓存键key
      */
+    @ApiOperation("设置cache key")
     private String getCacheKey(String configKey)
     {
         return Constants.CAR_TOKEN + configKey;
@@ -631,6 +688,7 @@ public class SdDevicesController extends BaseController {
      * 高速云同步设备隧道
      * @param requestData
      */
+    @ApiOperation("高速云同步设备隧道")
     @PostMapping("/syncData")
     public String syncData(@RequestBody HashMap<String, Object> requestData){
         if (PlatformAuthEnum.GSY.getCode().equals(platformName)) {

@@ -11,6 +11,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.config.ServerConfig;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,7 @@ public class SdTrafficImageController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('traffic:image:list')")
     @GetMapping("/list")
+    @ApiOperation("查询图片信息列表")
     public TableDataInfo list(SdTrafficImage sdTrafficImage)
     {
         startPage();
@@ -56,6 +58,7 @@ public class SdTrafficImageController extends BaseController
     @PreAuthorize("@ss.hasPermi('traffic:image:export')")
     @Log(title = "图片信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出图片信息列表")
     public AjaxResult export(SdTrafficImage sdTrafficImage)
     {
         List<SdTrafficImage> list = sdTrafficImageService.selectSdTrafficImageList(sdTrafficImage);
@@ -68,6 +71,7 @@ public class SdTrafficImageController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('traffic:image:query')")
     @GetMapping(value = "/{imgId}")
+    @ApiOperation("获取图片信息详细信息")
     public AjaxResult getInfo(@PathVariable("imgId") Long imgId)
     {
         return AjaxResult.success(sdTrafficImageService.selectSdTrafficImageByImgId(imgId));
@@ -79,6 +83,7 @@ public class SdTrafficImageController extends BaseController
     @PreAuthorize("@ss.hasPermi('traffic:image:add')")
     @Log(title = "图片信息", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增图片信息")
     public AjaxResult add(@RequestBody SdTrafficImage sdTrafficImage)
     {
         return toAjax(sdTrafficImageService.insertSdTrafficImage(sdTrafficImage));
@@ -90,6 +95,7 @@ public class SdTrafficImageController extends BaseController
     @PreAuthorize("@ss.hasPermi('traffic:image:edit')")
     @Log(title = "图片信息", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改图片信息")
     public AjaxResult edit(@RequestBody SdTrafficImage sdTrafficImage)
     {
         return toAjax(sdTrafficImageService.updateSdTrafficImage(sdTrafficImage));
@@ -101,6 +107,7 @@ public class SdTrafficImageController extends BaseController
     @PreAuthorize("@ss.hasPermi('traffic:image:remove')")
     @Log(title = "图片信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{imgIds}")
+    @ApiOperation("删除图片信息")
     public AjaxResult remove(@PathVariable Long[] imgIds)
     {
         return toAjax(sdTrafficImageService.deleteSdTrafficImageByImgIds(imgIds));
@@ -140,6 +147,7 @@ public class SdTrafficImageController extends BaseController
      * @throws IOException
      */
     @PostMapping("/uploadImg")
+    @ApiOperation("上传图片")
     public AjaxResult uploadImg(@RequestParam("file") MultipartFile file, SdTrafficImage trafficImage) throws IOException
     {
         // 上传文件路径
@@ -162,6 +170,7 @@ public class SdTrafficImageController extends BaseController
      * @return 返回json
      * @throws Exception
      */
+    @ApiOperation("多图片上传")
     @RequestMapping(method = RequestMethod.POST, path = "/uploadMultiImage")
     public Map<String, Object> uploadMultiImage(MultipartHttpServletRequest multipartRequest) throws Exception {
         multipartRequest.setCharacterEncoding("UTF-8");
@@ -207,6 +216,7 @@ public class SdTrafficImageController extends BaseController
      * @return
      */
     @GetMapping("/Image")
+    @ApiOperation("查询单个事件图片")
     public AjaxResult getImage(@RequestParam("businessId") Long  businessId)
     {
         return AjaxResult.success(sdTrafficImageService.selectImageByBusinessId(businessId));

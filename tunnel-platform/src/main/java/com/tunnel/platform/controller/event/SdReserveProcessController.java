@@ -96,6 +96,11 @@ public class SdReserveProcessController extends BaseController
         return AjaxResult.success(sdReserveProcessService.selectSdReserveProcessById(id));
     }
 
+    /**
+     * 获取预案流程节点
+     * @param id
+     * @return
+     */
     @GetMapping(value = "/getReservePlanProcess/{id}")
     @ApiOperation("获取预案流程节点")
     public AjaxResult getReservePlanProcess(@PathVariable("id") Long id)
@@ -205,6 +210,7 @@ public class SdReserveProcessController extends BaseController
      * @return
      * @throws UnknownHostException
      */
+    @ApiOperation("预案执行")
     @PostMapping("/implement")
     @ApiModelProperty("预案执行")
     public AjaxResult implement(@RequestBody Map<String, String> stringObjectMap) throws UnknownHostException {
@@ -303,6 +309,7 @@ public class SdReserveProcessController extends BaseController
      * @param sdReserveProcess
      * @return
      */
+    @ApiOperation("预案策略中查看情报板信息")
     @GetMapping("/selectVmsContent")
     public AjaxResult selectVmsContent(SdReserveProcess sdReserveProcess){
         return sdReserveProcessService.selectVmsContent(sdReserveProcess);

@@ -5,6 +5,7 @@ import java.util.List;
 import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdPlanFlow;
 import com.tunnel.business.service.event.ISdJoinTypeFlowService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ public class SdJoinTypeFlowController extends BaseController
     /**
      * 查询事件类型预案流程关联列表
      */
+    @ApiOperation("查询事件类型预案流程关联列表")
     @PreAuthorize("@ss.hasPermi('system:flow:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdJoinTypeFlow sdJoinTypeFlow)
@@ -50,6 +52,7 @@ public class SdJoinTypeFlowController extends BaseController
     /**
      * 导出事件类型预案流程关联列表
      */
+    @ApiOperation("导出事件类型预案流程关联列表")
     @PreAuthorize("@ss.hasPermi('system:flow:export')")
     @Log(title = "事件类型预案流程关联", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -63,6 +66,7 @@ public class SdJoinTypeFlowController extends BaseController
     /**
      * 获取事件类型预案流程关联详细信息
      */
+    @ApiOperation("获取事件类型预案流程关联详细信息")
     @PreAuthorize("@ss.hasPermi('system:flow:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -73,6 +77,7 @@ public class SdJoinTypeFlowController extends BaseController
     /**
      * 新增事件类型预案流程关联
      */
+    @ApiOperation("新增事件类型预案流程关联")
     @PreAuthorize("@ss.hasPermi('system:flow:add')")
     @Log(title = "事件类型预案流程关联", businessType = BusinessType.INSERT)
     @PostMapping
@@ -84,6 +89,7 @@ public class SdJoinTypeFlowController extends BaseController
     /**
      * 修改事件类型预案流程关联
      */
+    @ApiOperation("修改事件类型预案流程关联")
     @PreAuthorize("@ss.hasPermi('system:flow:edit')")
     @Log(title = "事件类型预案流程关联", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -95,6 +101,7 @@ public class SdJoinTypeFlowController extends BaseController
     /**
      * 删除事件类型预案流程关联
      */
+    @ApiOperation("删除事件类型预案流程关联")
     @PreAuthorize("@ss.hasPermi('system:flow:remove')")
     @Log(title = "事件类型预案流程关联", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -107,6 +114,7 @@ public class SdJoinTypeFlowController extends BaseController
      * 获取预案流程树
      * @return
      */
+    @ApiOperation("获取预案流程树")
     @GetMapping("/getTypeFlowList")
     public List<SdPlanFlow> getTypeFlowList(){
         return sdJoinTypeFlowService.getTypeFlowList();
@@ -117,6 +125,7 @@ public class SdJoinTypeFlowController extends BaseController
      * @param eventTypeId
      * @return
      */
+    @ApiOperation("校验该事件类型预案流程是否存在")
     @GetMapping("/checkData")
     public AjaxResult checkData(String eventTypeId){
         return sdJoinTypeFlowService.checkData(eventTypeId);

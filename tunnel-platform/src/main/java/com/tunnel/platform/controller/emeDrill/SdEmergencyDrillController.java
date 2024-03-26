@@ -10,6 +10,7 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.emeDrill.SdEmergencyDrill;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.emeDrill.ISdEmergencyDrillService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class SdEmergencyDrillController extends BaseController
     /**
      * 查询应急演练列表
      */
+    @ApiOperation("查询应急演练列表")
     @PreAuthorize("@ss.hasPermi('business:emeDrill:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdEmergencyDrill sdEmergencyDrill)
@@ -55,6 +57,7 @@ public class SdEmergencyDrillController extends BaseController
     /**
      * 导出应急演练列表
      */
+    @ApiOperation("导出应急演练列表")
     @PreAuthorize("@ss.hasPermi('business:emeDrill:export')")
     @Log(title = "应急演练", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -77,6 +80,7 @@ public class SdEmergencyDrillController extends BaseController
     /**
      * 获取应急演练详细信息
      */
+    @ApiOperation("获取应急演练详细信息")
     @PreAuthorize("@ss.hasPermi('business:emeDrill:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -87,6 +91,7 @@ public class SdEmergencyDrillController extends BaseController
     /**
      * 新增应急演练
      */
+    @ApiOperation("新增应急演练")
     @PreAuthorize("@ss.hasPermi('business:emeDrill:add')")
     @Log(title = "应急演练", businessType = BusinessType.INSERT)
     @PostMapping
@@ -98,6 +103,7 @@ public class SdEmergencyDrillController extends BaseController
     /**
      * 修改应急演练
      */
+    @ApiOperation("修改应急演练")
     @PreAuthorize("@ss.hasPermi('business:emeDrill:edit')")
     @Log(title = "应急演练", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -109,6 +115,7 @@ public class SdEmergencyDrillController extends BaseController
     /**
      * 删除应急演练
      */
+    @ApiOperation("删除应急演练")
     @PreAuthorize("@ss.hasPermi('business:emeDrill:remove')")
     @Log(title = "应急演练", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

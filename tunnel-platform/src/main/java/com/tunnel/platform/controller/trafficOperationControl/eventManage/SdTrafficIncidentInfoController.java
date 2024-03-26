@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class SdTrafficIncidentInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('incident:info:list')")
     @GetMapping("/list")
+    @ApiOperation("查询交通运行管控-事件信息管理列表")
     public TableDataInfo list(SdTrafficIncidentInfo sdTrafficIncidentInfo)
     {
         startPage();
@@ -46,6 +48,7 @@ public class SdTrafficIncidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('incident:info:export')")
     @Log(title = "交通运行管控-事件信息管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出交通运行管控-事件信息管理列表")
     public AjaxResult export(SdTrafficIncidentInfo sdTrafficIncidentInfo)
     {
         List<SdTrafficIncidentInfo> list = sdTrafficIncidentInfoService.selectSdTrafficIncidentInfoList(sdTrafficIncidentInfo);
@@ -58,6 +61,7 @@ public class SdTrafficIncidentInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('incident:info:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取交通运行管控-事件信息管理详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdTrafficIncidentInfoService.selectSdTrafficIncidentInfoById(id));
@@ -69,6 +73,7 @@ public class SdTrafficIncidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('incident:info:add')")
     @Log(title = "交通运行管控-事件信息管理", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增交通运行管控-事件信息管理")
     public AjaxResult add(@RequestBody SdTrafficIncidentInfo sdTrafficIncidentInfo)
     {
         return toAjax(sdTrafficIncidentInfoService.insertSdTrafficIncidentInfo(sdTrafficIncidentInfo));
@@ -80,6 +85,7 @@ public class SdTrafficIncidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('incident:info:edit')")
     @Log(title = "交通运行管控-事件信息管理", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改交通运行管控-事件信息管理")
     public AjaxResult edit(@RequestBody SdTrafficIncidentInfo sdTrafficIncidentInfo)
     {
         return toAjax(sdTrafficIncidentInfoService.updateSdTrafficIncidentInfo(sdTrafficIncidentInfo));
@@ -91,6 +97,7 @@ public class SdTrafficIncidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('incident:info:remove')")
     @Log(title = "交通运行管控-事件信息管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除交通运行管控-事件信息管理")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdTrafficIncidentInfoService.deleteSdTrafficIncidentInfoByIds(ids));
@@ -102,6 +109,7 @@ public class SdTrafficIncidentInfoController extends BaseController
      * @return
      */
     @PostMapping("/getPublishIncidentInfo")
+    @ApiOperation("获取已发布的交通事件信息")
     public AjaxResult getPublishIncidentInfo(){
         List<Map> list = sdTrafficIncidentInfoService.getPublishIncidentInfo();
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.tunnel.business.domain.product.SdProduct;
 import com.tunnel.business.service.product.ISdProductService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ public class SdProductController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:list')")
     @GetMapping("/list")
+    @ApiOperation("查询产品列表")
     public TableDataInfo list(SdProduct sdProduct)
     {
         startPage();
@@ -49,6 +51,7 @@ public class SdProductController extends BaseController
     /**
      * 导出产品列表
      */
+    @ApiOperation("导出产品列表")
     @PreAuthorize("@ss.hasPermi('product:export')")
     @Log(title = "产品", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -64,6 +67,7 @@ public class SdProductController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取产品详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdProductService.selectSdProductById(id));
@@ -75,6 +79,7 @@ public class SdProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:add')")
     @Log(title = "产品", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增产品")
     public AjaxResult add(@RequestBody SdProduct sdProduct)
     {
         return toAjax(sdProductService.insertSdProduct(sdProduct));
@@ -86,6 +91,7 @@ public class SdProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:edit')")
     @Log(title = "产品", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改产品")
     public AjaxResult edit(@RequestBody SdProduct sdProduct)
     {
         return toAjax(sdProductService.updateSdProduct(sdProduct));
@@ -97,6 +103,7 @@ public class SdProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:remove')")
     @Log(title = "产品", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除产品")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdProductService.deleteSdProductByIds(ids));

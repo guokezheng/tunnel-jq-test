@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.trafficOperationControl.activeTrafficFlowControl.SdTrafficIncidentMeasure;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ISdTrafficIncidentMeasureService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdTrafficIncidentMeasureController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficIncident:measure:list')")
     @GetMapping("/list")
+    @ApiOperation("查询交通事件推送措施列表")
     public TableDataInfo list(SdTrafficIncidentMeasure sdTrafficIncidentMeasure)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdTrafficIncidentMeasureController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:measure:export')")
     @Log(title = "交通事件推送措施", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出交通事件推送措施列表")
     public AjaxResult export(SdTrafficIncidentMeasure sdTrafficIncidentMeasure)
     {
         List<SdTrafficIncidentMeasure> list = sdTrafficIncidentMeasureService.selectSdTrafficIncidentMeasureList(sdTrafficIncidentMeasure);
@@ -57,6 +60,7 @@ public class SdTrafficIncidentMeasureController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficIncident:measure:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取交通事件推送措施详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdTrafficIncidentMeasureService.selectSdTrafficIncidentMeasureById(id));
@@ -68,6 +72,7 @@ public class SdTrafficIncidentMeasureController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:measure:add')")
     @Log(title = "交通事件推送措施", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增交通事件推送措施")
     public AjaxResult add(@RequestBody SdTrafficIncidentMeasure sdTrafficIncidentMeasure)
     {
         return toAjax(sdTrafficIncidentMeasureService.insertSdTrafficIncidentMeasure(sdTrafficIncidentMeasure));
@@ -79,6 +84,7 @@ public class SdTrafficIncidentMeasureController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:measure:edit')")
     @Log(title = "交通事件推送措施", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改交通事件推送措施")
     public AjaxResult edit(@RequestBody SdTrafficIncidentMeasure sdTrafficIncidentMeasure)
     {
         return toAjax(sdTrafficIncidentMeasureService.updateSdTrafficIncidentMeasure(sdTrafficIncidentMeasure));
@@ -90,6 +96,7 @@ public class SdTrafficIncidentMeasureController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:measure:remove')")
     @Log(title = "交通事件推送措施", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除交通事件推送措施")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdTrafficIncidentMeasureService.deleteSdTrafficIncidentMeasureByIds(ids));

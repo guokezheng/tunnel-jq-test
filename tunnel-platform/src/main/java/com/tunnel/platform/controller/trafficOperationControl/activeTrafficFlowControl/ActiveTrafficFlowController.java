@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class ActiveTrafficFlowController {
      * @return
      */
     @GetMapping("/getActiveTrafficMeasure/{id}")
+    @ApiOperation("查询管控等级配置措施-管控原因，得到实时能见度值、平均速度值、路面情况数据，进行匹配，返回对应的管控措施")
     public AjaxResult getActiveTrafficMeasure(@PathVariable("id") Long incidentId){
         SdTrafficIncidentInfo incidentInfo = incidentInfoService.selectSdTrafficIncidentInfoById(incidentId);
         String tunnelId = incidentInfo.getTunnelId();
@@ -51,6 +53,7 @@ public class ActiveTrafficFlowController {
      * @return
      */
     @GetMapping("/getActiveTrafficMeasureByTunnelId")
+    @ApiOperation("主动交通流推送管控措施")
     public AjaxResult getActiveTrafficMeasureByTunnelId(String tunnelId){
 
        JSONObject jsonObject = activeTrafficFlowService.getActiveTrafficMeasure(tunnelId);
@@ -67,6 +70,7 @@ public class ActiveTrafficFlowController {
      * @return
      */
     @GetMapping("/getActiveMeasureWithEmergencyIncident")
+    @ApiOperation("获取突发事件的主动交通流推送措施")
     public AjaxResult getActiveMeasureWithEmergencyIncident(String incidentType,String incidentGrade){
         JSONObject jsonObject = activeTrafficFlowService.getActiveMeasureWithEmergencyIncident(incidentType,incidentGrade);
         return AjaxResult.success(jsonObject);

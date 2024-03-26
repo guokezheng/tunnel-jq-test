@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.trafficBroadcasting.SdBroadcastRecord;
 import com.tunnel.business.service.trafficBroadcasting.ISdBroadcastRecordService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdBroadcastRecordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('broadcastRecord:record:list')")
     @GetMapping("/list")
+    @ApiOperation("查询广播记录列表")
     public TableDataInfo list(SdBroadcastRecord sdBroadcastRecord)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdBroadcastRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastRecord:record:export')")
     @Log(title = "广播记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出广播记录列表")
     public AjaxResult export(SdBroadcastRecord sdBroadcastRecord)
     {
         List<SdBroadcastRecord> list = sdBroadcastRecordService.selectSdBroadcastRecordList(sdBroadcastRecord);
@@ -57,6 +60,7 @@ public class SdBroadcastRecordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('broadcastRecord:record:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取广播记录详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdBroadcastRecordService.selectSdBroadcastRecordById(id));
@@ -68,6 +72,7 @@ public class SdBroadcastRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastRecord:record:add')")
     @Log(title = "广播记录", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增广播记录")
     public AjaxResult add(@RequestBody SdBroadcastRecord sdBroadcastRecord)
     {
         return toAjax(sdBroadcastRecordService.insertSdBroadcastRecord(sdBroadcastRecord));
@@ -79,6 +84,7 @@ public class SdBroadcastRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastRecord:record:edit')")
     @Log(title = "广播记录", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改广播记录")
     public AjaxResult edit(@RequestBody SdBroadcastRecord sdBroadcastRecord)
     {
         return toAjax(sdBroadcastRecordService.updateSdBroadcastRecord(sdBroadcastRecord));
@@ -90,6 +96,7 @@ public class SdBroadcastRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastRecord:record:remove')")
     @Log(title = "广播记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除广播记录")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdBroadcastRecordService.deleteSdBroadcastRecordByIds(ids));

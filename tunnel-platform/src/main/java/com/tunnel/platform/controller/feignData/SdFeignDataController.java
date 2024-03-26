@@ -7,6 +7,7 @@ import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
 import com.tunnel.business.service.event.ISdStrategyRlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class SdFeignDataController extends BaseController
      * 查询控制策略
      */
     @GetMapping("/strategy/getInfo/{jobRelationId}")
+    @ApiOperation("查询控制策略")
     public SdStrategy queryByJobReletaionId(@PathVariable String jobRelationId)
     {
     	return sdStrategyService.selectSdStrategyByJobRelationId(jobRelationId);
@@ -40,6 +42,7 @@ public class SdFeignDataController extends BaseController
      * 查询策略关联设备信息列表
      */
     @PostMapping("/strategyRl/list")
+    @ApiOperation("查询策略关联设备信息列表")
     public List<SdStrategyRl> list(@RequestBody SdStrategyRl sdStrategyRl)
     {
         List<SdStrategyRl> list = sdStrategyRlService.selectSdStrategyRlList(sdStrategyRl);
@@ -49,6 +52,7 @@ public class SdFeignDataController extends BaseController
      * 查询设备类型状态关系列表
      */
     @PostMapping("/equipmentState/list")
+    @ApiOperation("查询设备类型状态关系列表")
     public List<SdEquipmentState> list(SdEquipmentState sdEquipmentState)
     {
         List<SdEquipmentState> list = sdEquipmentStateService.selectSdEquipmentStateList(sdEquipmentState);

@@ -27,6 +27,7 @@ import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,6 +89,7 @@ public class SdAppDevicesController extends BaseController {
      *
      * @return
      */
+    @ApiOperation("app端  查询设备类型")
     @PostMapping("/app/getDevicesType")
     public Result getDevicesType() {
         List<SdEquipmentType> eqTypeList = equipmentTypeService.getDevicesType();
@@ -104,6 +106,7 @@ public class SdAppDevicesController extends BaseController {
      * @param eqStatus
      * @return
      */
+    @ApiOperation("app端获取设备列表")
     @PostMapping("/app/getAppDevicesList")
     public Map<String, Object> getAppDevicesList(String param, String eqType, String eqStatus, String tunnelId, Integer pageSize, Integer pageNum) {
         param = param.replace(" ", "+");
@@ -137,6 +140,7 @@ public class SdAppDevicesController extends BaseController {
      * @param eqId
      * @return
      */
+    @ApiOperation("app端获取设备信息")
     @GetMapping("/app/getAppDevicesInfo")
     public Result getAppDevicesInfo(String eqId) {
         Map<String, Object> map = new HashMap<>();
@@ -174,6 +178,7 @@ public class SdAppDevicesController extends BaseController {
      * @param time
      * @return
      */
+    @ApiOperation("app端获取操控日志")
     @PostMapping("/app/logList")
     public TableDataInfo getLogList(String eqId, String time, Integer pageSize, Integer pageNum) {
         String deptId = SecurityUtils.getDeptId();
@@ -200,6 +205,7 @@ public class SdAppDevicesController extends BaseController {
      * @param fireMark   标号位置信息
      * @return
      */
+    @ApiOperation("app端  设备控制接口  （仅支持广播设备）")
     @GetMapping("/app/controlDevice")
     public AjaxResult controlDevice(String eqId, String state, String brightness, String frequency, String fireMark) {
 
@@ -249,6 +255,7 @@ public class SdAppDevicesController extends BaseController {
      * @param lane       车道
      * @return
      */
+    @ApiOperation("app端  批量设备控制接口  （仅支持车道指示器，风机，卷帘门）")
     @GetMapping("/app/batchControlDevice")
     public AjaxResult batchControlDevice(String eqType,String mac,String lane,String state) {
 
@@ -306,6 +313,7 @@ public class SdAppDevicesController extends BaseController {
      * @param map
      * @return
      */
+    @ApiOperation("批量控制广播设备")
     @PostMapping(value = "/app/playVoice")
     public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
         return phoneSpkService.playVoice(map);
@@ -317,6 +325,7 @@ public class SdAppDevicesController extends BaseController {
      *
      * @return
      */
+    @ApiOperation("app端  查询控制执行器关联设备列表")
     @GetMapping("/app/getMcaDevList")
     public Result getMcaDevList() {
 
@@ -327,6 +336,7 @@ public class SdAppDevicesController extends BaseController {
      * app端  查询测控执行器列表
      * @return
      */
+    @ApiOperation("app端  查询测控执行器列表")
     @GetMapping("/app/getMcaList")
     public Result getMcaList() {
 
@@ -337,6 +347,7 @@ public class SdAppDevicesController extends BaseController {
      * 根据MAC所在隧道查询当前洞内所有测控执行器
      * @return
      */
+    @ApiOperation("根据MAC所在隧道查询当前洞内所有测控执行器")
     @GetMapping("/app/getMoreMcaListByMac")
     public Result getMoreMcaListByMac(String mac) {
 
@@ -347,6 +358,7 @@ public class SdAppDevicesController extends BaseController {
      * 根据MAC所在隧道和设备类型查询当前洞内所有设备
      * @return
      */
+    @ApiOperation("根据MAC所在隧道和设备类型查询当前洞内所有设备")
     @GetMapping("/app/getMoreDevListByMacAndEqType")
     public Result getMoreDevListByMacAndEqType(String mac,String eqType) {
 
@@ -357,6 +369,7 @@ public class SdAppDevicesController extends BaseController {
      * 获取广播文件列表
      * @return
      */
+    @ApiOperation("获取广播文件列表")
     @GetMapping("/app/getVideoItem")
     public AjaxResult getVideoItem(String dictType) {
 
@@ -374,6 +387,7 @@ public class SdAppDevicesController extends BaseController {
      *
      * @return
      */
+    @ApiOperation("查询当前登录者所属")
     @GetMapping("/app/getJlyTunnel")
     public AjaxResult getJlyTunnel() {
         return AjaxResult.success(sdTunnelsService.getJlyTunnel());
@@ -382,6 +396,7 @@ public class SdAppDevicesController extends BaseController {
     /**
      * 根据设备名称查询设备详情
      */
+    @ApiOperation("根据设备名称查询设备详情")
     @GetMapping(value = "/app/getEquipmentInfo")
     public AjaxResult getEquipmentInfo(String eqId) {
         //eqId = "JQ-JiNan-WenZuBei-CAM-RSU-012";//模拟数据
@@ -394,6 +409,7 @@ public class SdAppDevicesController extends BaseController {
      *
      * @return
      */
+    @ApiOperation("查询设备类型")
     @GetMapping(value = "/app/getCategoryTree")
     public AjaxResult getCategoryTree() {
         List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryList();
@@ -410,6 +426,7 @@ public class SdAppDevicesController extends BaseController {
      *
      * @return
      */
+    @ApiOperation("设备类型树结构")
     @GetMapping(value = "/app/getCategoryDeviceTree")
     public AjaxResult getCategoryDeviceTree() {
         List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryTypeDeviceList();

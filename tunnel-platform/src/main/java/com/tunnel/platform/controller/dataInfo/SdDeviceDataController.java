@@ -25,6 +25,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -77,6 +78,7 @@ public class SdDeviceDataController extends BaseController
     /**
      * 查询设备实时数据（存储模拟量）列表
      */
+    @ApiOperation("查询设备实时数据（存储模拟量）列表")
     @PreAuthorize("@ss.hasPermi('system:data:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDeviceData sdDeviceData)
@@ -89,6 +91,7 @@ public class SdDeviceDataController extends BaseController
     /**
      * 导出设备实时数据（存储模拟量）列表
      */
+    @ApiOperation("导出设备实时数据（存储模拟量）列表")
     @PreAuthorize("@ss.hasPermi('system:data:export')")
     @Log(title = "设备实时数据（存储模拟量）", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -102,6 +105,7 @@ public class SdDeviceDataController extends BaseController
     /**
      * 获取设备实时数据（存储模拟量）详细信息
      */
+    @ApiOperation("获取设备实时数据（存储模拟量）详细信息")
     @PreAuthorize("@ss.hasPermi('system:data:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -112,6 +116,7 @@ public class SdDeviceDataController extends BaseController
     /**
      * 新增设备实时数据（存储模拟量）
      */
+    @ApiOperation("新增设备实时数据（存储模拟量）")
     @PreAuthorize("@ss.hasPermi('system:data:add')")
     @Log(title = "设备实时数据（存储模拟量）", businessType = BusinessType.INSERT)
     @PostMapping
@@ -123,6 +128,7 @@ public class SdDeviceDataController extends BaseController
     /**
      * 修改设备实时数据（存储模拟量）
      */
+    @ApiOperation("修改设备实时数据（存储模拟量）")
     @PreAuthorize("@ss.hasPermi('system:data:edit')")
     @Log(title = "设备实时数据（存储模拟量）", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -134,6 +140,7 @@ public class SdDeviceDataController extends BaseController
     /**
      * 删除设备实时数据（存储模拟量）
      */
+    @ApiOperation("删除设备实时数据（存储模拟量）")
     @PreAuthorize("@ss.hasPermi('system:data:remove')")
     @Log(title = "设备实时数据（存储模拟量）", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -148,6 +155,7 @@ public class SdDeviceDataController extends BaseController
      * @param tunnelId 隧道id
      * @return
      */
+    @ApiOperation("根据隧道id查询当前设备的监测状态、实时数据或状态")
     @GetMapping("/getDeviceDataByTunnelId")
     public Result getDeviceDataByTunnelId(String tunnelId) {
         SdDevices sdDevices = new SdDevices();
@@ -225,6 +233,12 @@ public class SdDeviceDataController extends BaseController
         return (item == null || "".equals(item)) ? "" : item.toString();
     }
 
+    /**
+     *
+     * @param deviceId
+     * @return
+     */
+    @ApiOperation("获取COVI数据")
     @GetMapping("/getTodayCOVIData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayCOVIData(@PathVariable("deviceId") String deviceId)
@@ -233,6 +247,12 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayCOVIData);
     }
 
+    /**
+     *
+     * @param deviceId
+     * @return
+     */
+    @ApiOperation("获取风速风向数据")
     @GetMapping("/getTodayFSFXData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayFSFXData(@PathVariable("deviceId") String deviceId)
@@ -246,6 +266,7 @@ public class SdDeviceDataController extends BaseController
      * @param deviceId
      * @return
      */
+    @ApiOperation("获取远传压力表数据")
     @GetMapping("/getTodayYcylData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayYcylData(@PathVariable("deviceId") String deviceId){
@@ -253,6 +274,12 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayFSFXData);
     }
 
+    /**
+     *
+     * @param deviceId
+     * @return
+     */
+    @ApiOperation("获取亮度检测器数据")
     @GetMapping("/getTodayLDData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayLDData(@PathVariable("deviceId") String deviceId)
@@ -266,6 +293,7 @@ public class SdDeviceDataController extends BaseController
      * @param sdDeviceData
      * @return
      */
+    @ApiOperation("查询设备详情---列表数据")
     @GetMapping("/dataLogInfoList")
     public TableDataInfo dataLogInfoList(SdDeviceData sdDeviceData)
     {
@@ -273,6 +301,13 @@ public class SdDeviceDataController extends BaseController
         List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
         return getDataTable(list);
     }
+
+    /**
+     *
+     * @param sdDeviceData
+     * @return
+     */
+    @ApiOperation("数据日志信息行列表")
     @GetMapping("/dataLogInfoLineList")
     public TableDataInfo dataLogInfoLineList(SdDeviceData sdDeviceData)
     {
@@ -285,6 +320,7 @@ public class SdDeviceDataController extends BaseController
      * @param tunnelId
      * @return
      */
+    @ApiOperation("工作台能耗图表")
     @GetMapping(value = "/energyConsumptionDetection/{tunnelId}")
     public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
     {
@@ -317,6 +353,7 @@ public class SdDeviceDataController extends BaseController
      * @param deviceId
      * @return
      */
+    @ApiOperation("获取风机安全检测仪实时数据")
     @GetMapping(value = "/getFanSafeData/{deviceId}")
     public AjaxResult getFanSafeData(@PathVariable("deviceId") String deviceId){
         return sdDeviceDataService.getFanSafeData(deviceId);
@@ -327,6 +364,7 @@ public class SdDeviceDataController extends BaseController
      * @param deviceId
      * @return
      */
+    @ApiOperation("获取水浸传感器实时数据")
     @GetMapping(value = "/getLevelData/{deviceId}")
     public AjaxResult getLevelData(@PathVariable("deviceId") String deviceId){
         return sdDeviceDataService.getLevelData(deviceId);
@@ -338,6 +376,7 @@ public class SdDeviceDataController extends BaseController
      * @param sdDeviceData
      * @return
      */
+    @ApiOperation("数据设备日志信息列表")
     @GetMapping("/dataDevicesLogInfoList")
     public TableDataInfo dataDevicesLogInfoList(SdDeviceData sdDeviceData)
     {
@@ -346,8 +385,12 @@ public class SdDeviceDataController extends BaseController
         return getDataTable(list);
     }
 
-
-
+    /**
+     *
+     * @param sdDeviceData
+     * @return
+     */
+    @ApiOperation("导出数据信息选项卡")
     @Log(title = "数据报表", businessType = BusinessType.EXPORT)
     @GetMapping("/exportDatainforTab")
     public AjaxResult exportDatainforTab(SdDeviceData sdDeviceData)
@@ -357,7 +400,12 @@ public class SdDeviceDataController extends BaseController
         return util.exportExcel(list, "数据报表");
     }
 
-
+    /**
+     *
+     * @param sdDeviceCOVIData
+     * @return
+     */
+    @ApiOperation("处理导出记录")
     @Log(title = "数据报表", businessType = BusinessType.EXPORT)
     @GetMapping("/handleExportRecord")
     public AjaxResult handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData)
@@ -445,6 +493,7 @@ public class SdDeviceDataController extends BaseController
      * @param switchType
      * @return
      */
+    @ApiOperation("小车跑数据控制")
     @GetMapping(value = "/getFanSafeData/{eqId}/{switchType}")
     public void carSwitchType(@PathVariable("eqId") String eqId,@PathVariable("switchType") String switchType){
         sdDeviceDataService.getFanSafeData(eqId);

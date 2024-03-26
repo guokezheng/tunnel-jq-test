@@ -23,7 +23,7 @@ public class LaneTrajectoryController extends BaseController {
     /*
      * 戴升平台推送的实时车道轨迹数据
      * */
-  //  @ApiOperation("车道轨迹数据")
+    @ApiOperation("戴升平台推送的车道轨迹数据")
     @PostMapping("/realTimeLaneTrajectory")
     public void realTimeLaneTrajectory(@RequestBody Object roadData) {
         WebSocketService.broadcast("realTimeLaneTrajectory", roadData);

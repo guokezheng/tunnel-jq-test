@@ -11,6 +11,7 @@ import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficIncidentProcess;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentProcessService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class SdTrafficIncidentProcessController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficIncident:process:list')")
     @GetMapping("/list")
+    @ApiOperation("查询交通事件-处理流程列表")
     public TableDataInfo list(SdTrafficIncidentProcess sdTrafficIncidentProcess)
     {
         startPage();
@@ -51,6 +53,7 @@ public class SdTrafficIncidentProcessController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:process:export')")
     @Log(title = "交通事件-处理流程", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出交通事件-处理流程列表")
     public AjaxResult export(SdTrafficIncidentProcess sdTrafficIncidentProcess)
     {
         List<SdTrafficIncidentProcess> list = sdTrafficIncidentProcessService.selectSdTrafficIncidentProcessList(sdTrafficIncidentProcess);
@@ -63,6 +66,7 @@ public class SdTrafficIncidentProcessController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficIncident:process:query')")
     @GetMapping(value = "/{processId}")
+    @ApiOperation("获取交通事件-处理流程详细信息")
     public AjaxResult getInfo(@PathVariable("processId") Long processId)
     {
         return AjaxResult.success(sdTrafficIncidentProcessService.selectSdTrafficIncidentProcessByProcessId(processId));
@@ -74,6 +78,7 @@ public class SdTrafficIncidentProcessController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:process:add')")
     @Log(title = "交通事件-处理流程", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增交通事件-处理流程")
     public AjaxResult add(@RequestBody SdTrafficIncidentProcess sdTrafficIncidentProcess)
     {
         return toAjax(sdTrafficIncidentProcessService.insertSdTrafficIncidentProcess(sdTrafficIncidentProcess));
@@ -85,6 +90,7 @@ public class SdTrafficIncidentProcessController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:process:edit')")
     @Log(title = "交通事件-处理流程", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改交通事件-处理流程")
     public AjaxResult edit(@RequestBody SdTrafficIncidentProcess sdTrafficIncidentProcess)
     {
         return toAjax(sdTrafficIncidentProcessService.updateSdTrafficIncidentProcess(sdTrafficIncidentProcess));
@@ -96,6 +102,7 @@ public class SdTrafficIncidentProcessController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficIncident:process:remove')")
     @Log(title = "交通事件-处理流程", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{processIds}")
+    @ApiOperation("删除交通事件-处理流程")
     public AjaxResult remove(@PathVariable Long[] processIds)
     {
         return toAjax(sdTrafficIncidentProcessService.deleteSdTrafficIncidentProcessByProcessIds(processIds));
@@ -105,6 +112,7 @@ public class SdTrafficIncidentProcessController extends BaseController
      * 获取交通事件-处理流程列表
      */
     @GetMapping(value = "/getProcessList")
+    @ApiOperation("获取交通事件-处理流程列表")
     public AjaxResult getProcessList(Long incidentId)
     {
         return AjaxResult.success(sdTrafficIncidentProcessService.getProcessList(incidentId));
@@ -115,6 +123,7 @@ public class SdTrafficIncidentProcessController extends BaseController
      */
     @PostMapping("/saveProcessList")
 //    @Transactional(rollbackFor = Exception.class)
+    @ApiOperation("保存交通事件-处理流程")
     public AjaxResult saveProcessList(@RequestBody IncidentAndProcess incidentAndProcess)
     {
         Long incidentId = incidentAndProcess.getMeasuresId();

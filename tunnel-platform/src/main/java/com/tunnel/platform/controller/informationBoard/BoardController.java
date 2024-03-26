@@ -28,6 +28,7 @@ import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -163,6 +164,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/getBoardContent")
     @ResponseBody
+    @ApiOperation("获取单条情报板实时信息")
     public AjaxResult loadRealtimeInf(Long deviceId) {
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
         if(device == null){
@@ -224,6 +226,7 @@ public class BoardController extends BaseController {
 	 */
     @GetMapping("/getBoardInfo")
     @ResponseBody
+    @ApiOperation("获取情报板信息")
     public AjaxResult getBoardInfo(Long deviceId){
         SdIotDevice iotDevice = sdIotDeviceService.selectIotDeviceById(deviceId);
         Map map = sdIotDeviceService.selectIotDeviceAccessById(deviceId);
@@ -248,6 +251,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/getBoardEditInfo")
     @ResponseBody
+    @ApiOperation("获取单条情报板编辑信息")
     public AjaxResult getBoardEditInfo(Long deviceId) {
         AjaxResult ajaxResult = new AjaxResult();
         SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
@@ -338,6 +342,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/uploadBoardEditInfo")
     @ResponseBody
+    @ApiOperation("发布单条情报板编辑信息")
     public AjaxResult uploadBoardEditInfo(String deviceIds, String protocolType,String parameters) {
         AjaxResult ajaxResult = new AjaxResult();
         String[] devices = deviceIds.split(",");
@@ -480,6 +485,7 @@ public class BoardController extends BaseController {
 //    }
 
     @GetMapping("/getWorkBenchBoardContent/{tunnelId}")
+    @ApiOperation("情报板设备图标样式")
     public Map<String, Object> getWorkBenchBoardContent(@PathVariable String tunnelId) {
         Map<String, Object> map = new HashMap<>();
         List<Long> deviceIds = sdIotDeviceService.selectIotDevicesByTunnelId(tunnelId);
@@ -510,6 +516,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping(value = "/readBoardLightInfo")
     @ResponseBody
+    @ApiOperation("获取情报板亮度信息")
     public AjaxResult readBoardLightInfo(String deviceId) {
         // 1.获取设备状态
         Map<String, String> values = DeviceManagerFactory.getInstance().getDeviceBrightnessByDeviceId(deviceId);
@@ -523,6 +530,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/getBoardContentData")
+    @ApiOperation("获取情报板信息")
     public AjaxResult getBoardContentData(IotBoardReleaseLog boardReleaseLog){
         return AjaxResult.success(getBoard(boardReleaseLog.getDeviceId()));
     }
@@ -533,6 +541,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/getTimedReading/{tunnelId}")
+    @ApiOperation("定时查询情报板")
     public AjaxResult getTimedReading(@PathVariable String tunnelId){
         List<Long> deviceIds = sdIotDeviceService.selectIotDevicesByTunnelId(tunnelId);
         Map<Long, Object> map = new HashMap<>();
@@ -685,6 +694,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/getDeviceBase")
     @ResponseBody
+    @ApiOperation("获取单条情报板基础信息")
     public AjaxResult getDeviceBase(String deviceId) {
     	SdIotDevice iotDevice = sdIotDeviceService.selectDeviceAccessById(Long.parseLong(deviceId));
         AjaxResult ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", iotDevice);
@@ -698,6 +708,7 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/getNewBoardEditInfo")
     @ResponseBody
+    @ApiOperation("获取单条情报板编辑信息")
     public AjaxResult getNewBoardEditInfo(String deviceId) {
         AjaxResult ajaxResult = new AjaxResult();
         List<String> paramsList = new ArrayList<String>();
@@ -725,6 +736,7 @@ public class BoardController extends BaseController {
     }
 
     @GetMapping("/getFontSizeByDevicePixel/{devicePixel}")
+    @ApiOperation("根据字典类型查询字典数据")
     public AjaxResult getFontSizeByDevicePixel(@PathVariable("devicePixel") String devicePixel) {
         return AjaxResult.success(iIotBoradFontService.getFontSizeByDevicePixel(devicePixel));
     }
@@ -735,6 +747,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/commonControlBoard")
+    @ApiOperation("为第三方提供控制接口")
     public AjaxResult commonControlBoard(@RequestBody String objectData){
         System.out.println("控制状态："+ wjModelNum +"万集情报板发送信息-----：" + objectData);
         if(wjModelNum == 0){
@@ -855,6 +868,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/splicingBoard")
+    @ApiOperation("拼接情报板报文")
     public AjaxResult splicingBoard(@RequestParam Map<String, Object> mapData){
         Object objectData = mapData.get("objectData");
         JSONObject jsonObject = JSONObject.parseObject(objectData.toString());
@@ -1221,6 +1235,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/getRealTimeBoard")
+    @ApiOperation("提供情报板实时信息")
     public AjaxResult getRealTimeBoard(String deviceId){
         /*if(wjModelNum == 0){
             return null;
@@ -1397,6 +1412,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/commonControlPhone")
+    @ApiOperation("第三方控制广播")
     public AjaxResult commonControlPhone(@RequestBody String objectData){
         if(wjGbModelNum == 0){
             return null;
@@ -1440,6 +1456,7 @@ public class BoardController extends BaseController {
      * @return
      */
     @GetMapping("/setWjModel/{wjModel}")
+    @ApiOperation("对外情报板广播开启关闭")
     public AjaxResult setWjModel(@PathVariable("wjModel") int wjModel){
         wjModelNum = wjModel;
         //wjGbModelNum = wjModel;

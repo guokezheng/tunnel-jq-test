@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdDevicesProtocolController extends BaseController {
      * 查询设备协议列表
      */
     // @PreAuthorize("@ss.hasPermi('device:protocol:list')")
+    @ApiOperation("查询设备协议列表")
     @GetMapping("/list")
     public TableDataInfo list(SdDevicesProtocol sdDevicesProtocol) {
         startPage();
@@ -40,6 +42,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 导出设备协议列表
      */
+    @ApiOperation("导出设备协议列表")
     @PreAuthorize("@ss.hasPermi('device:protocol:export')")
     @Log(title = "设备协议", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -52,6 +55,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 获取设备协议详细信息
      */
+    @ApiOperation("获取设备协议详细信息")
     @PreAuthorize("@ss.hasPermi('device:protocol:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
@@ -61,6 +65,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 新增设备协议
      */
+    @ApiOperation("新增设备协议")
     @PreAuthorize("@ss.hasPermi('device:protocol:add')")
     @Log(title = "设备协议", businessType = BusinessType.INSERT)
     @PostMapping
@@ -71,6 +76,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 修改设备协议
      */
+    @ApiOperation("修改设备协议")
     @PreAuthorize("@ss.hasPermi('device:protocol:edit')")
     @Log(title = "设备协议", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -81,6 +87,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 删除设备协议
      */
+    @ApiOperation("删除设备协议")
     @PreAuthorize("@ss.hasPermi('device:protocol:remove')")
     @Log(title = "设备协议", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")

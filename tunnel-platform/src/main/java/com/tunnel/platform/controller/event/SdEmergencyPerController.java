@@ -48,6 +48,7 @@ public class SdEmergencyPerController extends BaseController
     /**
      * 导出应急人员信息列表
      */
+    @ApiOperation("导出应急人员信息列表")
     @PreAuthorize("@ss.hasPermi('business:SdEmergencyPer:export')")
     @Log(title = "应急人员信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")

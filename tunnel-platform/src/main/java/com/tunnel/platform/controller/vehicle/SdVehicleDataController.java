@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.vehicle.SdVehicleData;
 import com.tunnel.business.service.vehicle.ISdVehicleDataService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdVehicleDataController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('vehicle:data:list')")
     @GetMapping("/list")
+    @ApiOperation("查询隧道车辆数据（单车数据）列表")
     public TableDataInfo list(SdVehicleData sdVehicleData)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdVehicleDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('vehicle:data:export')")
     @Log(title = "隧道车辆数据（单车数据）", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出隧道车辆数据（单车数据）列表")
     public AjaxResult export(SdVehicleData sdVehicleData)
     {
         List<SdVehicleData> list = sdVehicleDataService.selectSdVehicleDataList(sdVehicleData);
@@ -57,6 +60,7 @@ public class SdVehicleDataController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('vehicle:data:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取隧道车辆数据（单车数据）详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdVehicleDataService.selectSdVehicleDataById(id));
@@ -68,6 +72,7 @@ public class SdVehicleDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('vehicle:data:add')")
     @Log(title = "隧道车辆数据（单车数据）", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增隧道车辆数据（单车数据）")
     public AjaxResult add(@RequestBody SdVehicleData sdVehicleData)
     {
         return toAjax(sdVehicleDataService.insertSdVehicleData(sdVehicleData));
@@ -79,6 +84,7 @@ public class SdVehicleDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('vehicle:data:edit')")
     @Log(title = "隧道车辆数据（单车数据）", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改隧道车辆数据（单车数据）")
     public AjaxResult edit(@RequestBody SdVehicleData sdVehicleData)
     {
         return toAjax(sdVehicleDataService.updateSdVehicleData(sdVehicleData));
@@ -90,6 +96,7 @@ public class SdVehicleDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('vehicle:data:remove')")
     @Log(title = "隧道车辆数据（单车数据）", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除隧道车辆数据（单车数据）")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdVehicleDataService.deleteSdVehicleDataByIds(ids));

@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.IotBoardVocabulary;
 import com.tunnel.business.service.informationBoard.IIotBoardVocabularyService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class IotBoardVocabularyController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:vocabulary:list')")
     @GetMapping("/list")
+    @ApiOperation("查询情报板敏感字管理列表")
     public TableDataInfo list(IotBoardVocabulary sdAuditVocabulary)
     {
         startPage();
@@ -48,6 +50,7 @@ public class IotBoardVocabularyController extends BaseController
     /*@PreAuthorize("@ss.hasPermi('system:vocabulary:export')")*/
     @Log(title = "情报板敏感字管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出情报板敏感字管理列表")
     public AjaxResult export(IotBoardVocabulary sdAuditVocabulary)
     {
         List<IotBoardVocabulary> list = iotBoardVocabularyService.selectIotBoardVocabularyList(sdAuditVocabulary);
@@ -60,6 +63,7 @@ public class IotBoardVocabularyController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:vocabulary:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取情报板敏感字管理详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(iotBoardVocabularyService.selectIotBoardVocabularyById(id));
@@ -71,6 +75,7 @@ public class IotBoardVocabularyController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:vocabulary:add')")
     @Log(title = "情报板敏感字管理", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增情报板敏感字管理")
     public AjaxResult add(@RequestBody IotBoardVocabulary sdAuditVocabulary)
     {
         Date currentTime = new Date();
@@ -85,6 +90,7 @@ public class IotBoardVocabularyController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:vocabulary:edit')")
     @Log(title = "情报板敏感字管理", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改情报板敏感字管理")
     public AjaxResult edit(@RequestBody IotBoardVocabulary sdAuditVocabulary)
     {
         return toAjax(iotBoardVocabularyService.updateIotBoardVocabulary(sdAuditVocabulary));
@@ -96,12 +102,14 @@ public class IotBoardVocabularyController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:vocabulary:remove')")
     @Log(title = "情报板敏感字管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除情报板敏感字管理")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(iotBoardVocabularyService.deleteIotBoardVocabularyByIds(ids));
     }
 
     @GetMapping("/checkIotBoardContent")
+    @ApiOperation("查询情报板敏感字管理列表")
     public AjaxResult checkIotBoardContent(String content) {
         return AjaxResult.success(iotBoardVocabularyService.checkIotBoardContent(content));
     }

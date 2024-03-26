@@ -4,6 +4,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdAlarmNumberService;
 import com.tunnel.business.service.dataInfo.IlluminationFluctuateService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class IlluminationFluctuateController extends BaseController {
      * 波动模式开启
      * */
     @PostMapping("/openIllumination")
+    @ApiOperation("波动模式开启")
     public AjaxResult openIllumination(){
         boolean openBoolean = lluminationFluctuateService.openIllumination();
 
@@ -38,6 +40,7 @@ public class IlluminationFluctuateController extends BaseController {
      * 波动模式关闭
      * */
     @PostMapping("/closeIllumination")
+    @ApiOperation("波动模式关闭")
     public AjaxResult closeIllumination(){
         boolean closeBoolean = lluminationFluctuateService.closeIllumination();
         return AjaxResult.success(closeBoolean);

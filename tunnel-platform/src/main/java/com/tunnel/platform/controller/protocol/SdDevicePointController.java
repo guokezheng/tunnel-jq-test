@@ -7,6 +7,7 @@ import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,7 @@ public class SdDevicePointController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('point:list')")
     @GetMapping("/list")
+    @ApiOperation("询设备点位状态详情列表")
     public TableDataInfo list(SdDevicePoint sdDevicePoint)
     {
         startPage();
@@ -56,6 +58,7 @@ public class SdDevicePointController extends BaseController
     @PreAuthorize("@ss.hasPermi('point:export')")
     @Log(title = "设备点位状态详情", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出设备点位状态详情列表")
     public AjaxResult export(SdDevicePoint sdDevicePoint)
     {
         List<SdDevicePoint> list = sdDevicePointService.selectSdDevicePointList(sdDevicePoint);
@@ -68,6 +71,7 @@ public class SdDevicePointController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('point:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取设备点位状态详情详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdDevicePointService.selectSdDevicePointById(id));
@@ -79,6 +83,7 @@ public class SdDevicePointController extends BaseController
     @PreAuthorize("@ss.hasPermi('point:add')")
     @Log(title = "设备点位状态详情", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增设备点位状态详情")
     public AjaxResult add(@RequestBody SdDevicePoint sdDevicePoint)
     {
         return toAjax(sdDevicePointService.insertSdDevicePoint(sdDevicePoint));
@@ -90,6 +95,7 @@ public class SdDevicePointController extends BaseController
     @PreAuthorize("@ss.hasPermi('point:edit')")
     @Log(title = "设备点位状态详情", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改设备点位状态详情")
     public AjaxResult edit(@RequestBody SdDevicePoint sdDevicePoint)
     {
         return toAjax(sdDevicePointService.updateSdDevicePoint(sdDevicePoint));
@@ -101,6 +107,7 @@ public class SdDevicePointController extends BaseController
     @PreAuthorize("@ss.hasPermi('point:remove')")
     @Log(title = "设备点位状态详情", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除设备点位状态详情")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdDevicePointService.deleteSdDevicePointByIds(ids));
@@ -109,6 +116,7 @@ public class SdDevicePointController extends BaseController
 
     @Log(title = "设备点位管理", businessType = BusinessType.IMPORT)
     @PostMapping("/importData")
+    @ApiOperation("设备点位管理")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
         if(file!=null){
             String str1 = file.getOriginalFilename();

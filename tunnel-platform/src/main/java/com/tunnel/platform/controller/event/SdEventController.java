@@ -103,6 +103,7 @@ public class SdEventController extends BaseController
     /**
      * 查询事件管理列表
      */
+    @ApiOperation("查询事件管理列表")
     @GetMapping("/list")
     public TableDataInfo<List<SysRole>> list(SdEvent sdEvent)
     {
@@ -113,6 +114,7 @@ public class SdEventController extends BaseController
     /**
      * 大屏查询事件报警列表
      */
+    @ApiOperation("大屏查询事件报警列表")
     @GetMapping("/bigscreenEventList")
     public Result bigscreenEventList(SdEvent sdEvent)
     {
@@ -135,6 +137,7 @@ public class SdEventController extends BaseController
     /**
      * 导出事件详情
      */
+    @ApiOperation("导出事件详情")
     @PostMapping("/detailExport")
     public void detailExport(HttpServletResponse response,@RequestBody SdEvent sdEvent) throws IOException {
         sdEventService.detailExport(response,sdEvent);
@@ -190,6 +193,7 @@ public class SdEventController extends BaseController
      * @param id
      * @return
      */
+    @ApiOperation("根据id查询事件 ---视频")
     @GetMapping("/evntId")
     public AjaxResult getById(@RequestParam("id") Long id){
         return AjaxResult.success(sdEventService.getById(id));
@@ -199,6 +203,7 @@ public class SdEventController extends BaseController
      * 预警事件查询全部
      * @return
      */
+    @ApiOperation("预警事件查询全部")
     @GetMapping("/getEvent")
     public AjaxResult getEvent(SdEvent sdEvent)
     {
@@ -245,8 +250,11 @@ public class SdEventController extends BaseController
         return Result.success(sdEventService.getSubareaByStakeNum(tunnelId,stakeNum,direction));
     }
 
-
-
+    /**
+     * 当日未处理事件数量
+     * @param tunnelId
+     * @return
+     */
     @GetMapping("/getEventUntreatedNum")
     @ApiOperation("当日未处理事件数量")
     public Result getEventUntreatedNum(String tunnelId) {
@@ -268,6 +276,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("右上角事件弹窗数据")
     @GetMapping("/eventPopData")
     public TableDataInfo eventPopData(SdEvent sdEvent){
         startPage();
@@ -286,6 +295,12 @@ public class SdEventController extends BaseController
         return Result.success(map);
     }*/
 
+    /**
+     * 应急调度一键恢复
+     * @param eventId
+     * @param handleId
+     * @return
+     */
     @GetMapping("/performRecovery")
     @ApiOperation("应急调度一键恢复")
     public Result performRecovery(@RequestParam("eventId") String eventId,
@@ -361,6 +376,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("交通事件-复核-处置获取预案流程")
     @GetMapping("/getHandle")
     public AjaxResult getHandle(SdEvent sdEvent){
         List<SdEventHandle> handle = sdEventService.getHandle(sdEvent);
@@ -375,6 +391,7 @@ public class SdEventController extends BaseController
      * 机器人移动
      * @param
      */
+    @ApiOperation("机器人移动")
     @GetMapping("/roBotDong")
     public void roBotDong(@RequestParam("eventId") Long eventId, @RequestParam("handleId") Long handleId){
         CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
@@ -421,6 +438,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("更新事件处置")
     @GetMapping("/updateHandle")
     public AjaxResult updateHandle(SdEvent sdEvent){
         return sdEventHandleService.updateSdEventHandle(sdEvent);
@@ -431,6 +449,7 @@ public class SdEventController extends BaseController
      * @param sdReservePlan
      * @return
      */
+    @ApiOperation("应急调度关联策略")
     @GetMapping("/getRelation")
     public AjaxResult getRelation(SdReservePlan sdReservePlan){
         return sdEventService.getRelation(sdReservePlan);
@@ -441,6 +460,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("计算事故点")
     @GetMapping("/getAccidentPoint")
     public AjaxResult getAccidentPoint(SdEvent sdEvent){
         return sdEventService.getAccidentPoint(sdEvent);
@@ -451,6 +471,7 @@ public class SdEventController extends BaseController
      * @param sdReservePlan
      * @return
      */
+    @ApiOperation("查询预案id")
     @GetMapping("/getReserveId")
     public AjaxResult getReserveId(SdReservePlan sdReservePlan){
         return sdEventService.getReserveId(sdReservePlan);
@@ -461,6 +482,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("查询应急调度出入口视频")
     @GetMapping("/getEntranceExitVideo")
     public AjaxResult getEntranceExitVideo(SdEvent sdEvent){
         return sdEventService.getEntranceExitVideo(sdEvent);
@@ -483,6 +505,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("警情升级返现")
     @GetMapping("/getSituationUpgrade")
     public AjaxResult getSituationUpgrade(SdEvent sdEvent){
         return sdEventService.getSituationUpgrade(sdEvent);
@@ -493,6 +516,7 @@ public class SdEventController extends BaseController
      * @param sdReserveProcess
      * @return
      */
+    @ApiOperation("应急调度-处置设备详情（单条）")
     @GetMapping("/getManagementDevice")
     public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess){
         return sdEventService.getManagementDevice(sdReserveProcess);
@@ -503,6 +527,7 @@ public class SdEventController extends BaseController
      * @param sdEventHandle
      * @return
      */
+    @ApiOperation("应急调度-处置设备详情（阶段）")
     @GetMapping("/getAllManagementDevices")
     public AjaxResult getAllManagementDevices(SdEventHandle sdEventHandle){
         return sdEventService.getAllManagementDevices(sdEventHandle);
@@ -513,6 +538,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("修改警情升级")
     @GetMapping("/updateSituationUpgrade")
     public Result updateSituationUpgrade(SdEvent sdEvent){
         return  Result.toResult(sdEventService.updateSituationUpgrade(sdEvent));
@@ -523,6 +549,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("查询事件等级以及预案名称")
     @GetMapping("/getEventInif")
     public AjaxResult getEventInif(SdEvent sdEvent){
         return sdEventService.getEventInif(sdEvent);
@@ -533,6 +560,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("查看所选预案或策略的设备详情")
     @GetMapping("/examineDeviceDetail")
     public AjaxResult examineDeviceDetail(SdEvent sdEvent){
         return sdEventService.examineDeviceDetail(sdEvent);
@@ -543,6 +571,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("批量处理事件")
     @GetMapping("/batchHandleEvent")
     public AjaxResult batchHandleEvent(SdEvent sdEvent){
         return sdEventService.batchHandleEvent(sdEvent);
@@ -553,6 +582,7 @@ public class SdEventController extends BaseController
      * @param sdEvent
      * @return
      */
+    @ApiOperation("查看历史录像")
     @GetMapping("/vedioData")
     public AjaxResult vedioData(SdEvent sdEvent){
         return sdEventService.vedioData(sdEvent);
@@ -564,6 +594,7 @@ public class SdEventController extends BaseController
      * @param playId
      * @return
      */
+    @ApiOperation("关闭相机录像视频流")
     @GetMapping("/closeVedio")
     public AjaxResult closeVedio(@RequestParam("camId") String camId, @RequestParam("playId") String playId){
         return sdEventService.closeVedio(camId,playId);
@@ -575,6 +606,7 @@ public class SdEventController extends BaseController
      * @param downLoadTime
      * @return
      */
+    @ApiOperation("下载历史录像视频")
     @GetMapping("/downLoadVedio")
     public void downLoadVedio(@RequestParam("camId") String camId, @RequestParam("downLoadTime") String downLoadTime,HttpServletResponse response){
         sdEventService.downLoadVedio(camId,downLoadTime,response);
@@ -583,6 +615,7 @@ public class SdEventController extends BaseController
     /**
      * 紧急电话火灾报警模拟事件接口
      */
+    @ApiOperation("紧急电话火灾报警模拟事件接口")
     @GetMapping("/eventDemonstrate")
     public void eventDemonstrate(String xdData,String ldData,String hzData, String model){
         if("xd".equals(model)){
@@ -601,6 +634,7 @@ public class SdEventController extends BaseController
     /**
      * 消防炮模拟事件接口
      */
+    @ApiOperation("消防炮模拟事件接口")
     @GetMapping("/eventDemonFireMonitor")
     public void eventDemonFireMonitor(){
         //log.info("设备状态为火警");
@@ -638,6 +672,7 @@ public class SdEventController extends BaseController
      * @param jsonData
      * @return
      */
+    @ApiOperation("第三方新增断电告警时间")
     @PostMapping("/addOutageEvent")
     public AjaxResult addOutageEvent(@RequestBody String jsonData){
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
@@ -649,6 +684,7 @@ public class SdEventController extends BaseController
      * 万集推送事件
      * @param eventJson
      */
+    @ApiOperation("万集推送事件")
     @PostMapping("/upload")
     public void upload(@RequestBody String eventJson){
         threadPoolTaskExecutor.execute(()->{
@@ -660,6 +696,7 @@ public class SdEventController extends BaseController
      * 万集推送结束事件
      * @param eventJson
      */
+    @ApiOperation("万集推送结束事件")
     @PostMapping("/wjEventUpdate")
     public void wjEventUpdate(@RequestBody String eventJson){
         sdEventService.wjEventUpdate(eventJson);

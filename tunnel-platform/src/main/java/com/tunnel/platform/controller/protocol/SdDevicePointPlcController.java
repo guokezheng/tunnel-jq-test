@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.protocol.SdDevicePointPlc;
 import com.tunnel.business.service.protocol.ISdDevicePointPlcService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdDevicePointPlcController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:plc:list')")
     @GetMapping("/list")
+    @ApiOperation("查询PLC设备点位(区别测控执行器)列表")
     public TableDataInfo list(SdDevicePointPlc sdDevicePointPlc)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdDevicePointPlcController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:plc:export')")
     @Log(title = "PLC设备点位(区别测控执行器)", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出PLC设备点位(区别测控执行器)列表")
     public AjaxResult export(SdDevicePointPlc sdDevicePointPlc)
     {
         List<SdDevicePointPlc> list = sdDevicePointPlcService.selectSdDevicePointPlcList(sdDevicePointPlc);
@@ -57,6 +60,7 @@ public class SdDevicePointPlcController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:plc:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取PLC设备点位(区别测控执行器)详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdDevicePointPlcService.selectSdDevicePointPlcById(id));
@@ -68,6 +72,7 @@ public class SdDevicePointPlcController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:plc:add')")
     @Log(title = "PLC设备点位(区别测控执行器)", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增PLC设备点位(区别测控执行器)")
     public AjaxResult add(@RequestBody SdDevicePointPlc sdDevicePointPlc)
     {
         return toAjax(sdDevicePointPlcService.insertSdDevicePointPlc(sdDevicePointPlc));
@@ -79,6 +84,7 @@ public class SdDevicePointPlcController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:plc:edit')")
     @Log(title = "PLC设备点位(区别测控执行器)", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改PLC设备点位(区别测控执行器)")
     public AjaxResult edit(@RequestBody SdDevicePointPlc sdDevicePointPlc)
     {
         return toAjax(sdDevicePointPlcService.updateSdDevicePointPlc(sdDevicePointPlc));
@@ -90,6 +96,7 @@ public class SdDevicePointPlcController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:plc:remove')")
     @Log(title = "PLC设备点位(区别测控执行器)", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除PLC设备点位(区别测控执行器)")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdDevicePointPlcService.deleteSdDevicePointPlcByIds(ids));

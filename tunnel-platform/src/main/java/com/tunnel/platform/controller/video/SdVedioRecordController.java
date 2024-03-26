@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.video.SdVedioRecord;
 import com.tunnel.business.service.video.ISdVedioRecordService;
 import com.tunnel.platform.controller.informationBoard.AjaxResultb;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class SdVedioRecordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:vediorecord:list')")
     @GetMapping("/list")
+    @ApiOperation("查询历史视频信息列表")
     public TableDataInfo list(SdVedioRecord sdVedioRecord)
     {
         startPage();
@@ -51,6 +53,7 @@ public class SdVedioRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:vediorecord:export')")
     @Log(title = "历史视频信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @ApiOperation("导出历史视频信息列表")
     public void export(HttpServletResponse response, SdVedioRecord sdVedioRecord) throws IOException
     {
         List<SdVedioRecord> list = sdVedioRecordService.selectSdVedioRecordList(sdVedioRecord);
@@ -63,11 +66,13 @@ public class SdVedioRecordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:vediorecord:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取历史视频信息详细信息")
     public AjaxResultb getInfo(@PathVariable("id") Long id)
     {
         return AjaxResultb.success(sdVedioRecordService.selectSdVedioRecordById(id));
     }
     @GetMapping(value = "/getVideos/{ids}")
+    @ApiOperation("通过id查询历史视频信息")
     public AjaxResultb getVideos(@PathVariable("ids") String ids)
     {
         List<SdVedioRecord> list =new ArrayList<>();
@@ -90,6 +95,7 @@ public class SdVedioRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:vediorecord:add')")
     @Log(title = "历史视频信息", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增历史视频信息")
     public AjaxResult add(@RequestBody SdVedioRecord sdVedioRecord)
     {
         return toAjax(sdVedioRecordService.insertSdVedioRecord(sdVedioRecord));
@@ -101,6 +107,7 @@ public class SdVedioRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:vediorecord:edit')")
     @Log(title = "历史视频信息", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改历史视频信息")
     public AjaxResult edit(@RequestBody SdVedioRecord sdVedioRecord)
     {
         return toAjax(sdVedioRecordService.updateSdVedioRecord(sdVedioRecord));
@@ -112,6 +119,7 @@ public class SdVedioRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:vediorecord:remove')")
     @Log(title = "历史视频信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除历史视频信息")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdVedioRecordService.deleteSdVedioRecordByIds(ids));
@@ -123,6 +131,7 @@ public class SdVedioRecordController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('business:vediorecord:list')")
     @GetMapping("/getLocalIP")
+    @ApiOperation("获取本地ip")
     public String getLocalIP() throws UnknownHostException {
         String localIpByNetcard = InetAddress.getLocalHost().getHostAddress();
         return localIpByNetcard;

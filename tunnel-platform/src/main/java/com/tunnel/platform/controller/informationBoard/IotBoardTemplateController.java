@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class IotBoardTemplateController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:templateConfig:list')")
     @GetMapping("/list")
+    @ApiOperation("查询情报板模板列表")
     public TableDataInfo list(IotBoardTemplate iotBoardTemplate)
     {
         startPage();
@@ -43,6 +45,7 @@ public class IotBoardTemplateController extends BaseController
     }
 
     @GetMapping("/getAllVmsTemplate")
+    @ApiOperation("查询全部情报板模板")
     public AjaxResult getAllVmsTemplate(String category, String devicePixel) {
         return AjaxResult.success(iotBoardTemplateService.getAllVmsTemplate(category, devicePixel));
     }
@@ -53,6 +56,7 @@ public class IotBoardTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateConfig:export')")
     @Log(title = "情报板模板", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出情报板模板列表")
     public AjaxResult export(IotBoardTemplate iotBoardTemplate)
     {
         List<IotBoardTemplate> list = iotBoardTemplateService.selectSdVmsTemplateList(iotBoardTemplate);
@@ -65,6 +69,7 @@ public class IotBoardTemplateController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:templateConfig:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取情报板模板详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(iotBoardTemplateService.selectSdVmsTemplateById(id));
@@ -76,6 +81,7 @@ public class IotBoardTemplateController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:templateConfig:add')")
     @Log(title = "情报板模板", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增情报板模板")
     public AjaxResult add(@RequestBody JSONObject jsonObject)
     {
         return AjaxResult.success(iotBoardTemplateService.insertSdVmsTemplate(jsonObject));
@@ -87,6 +93,7 @@ public class IotBoardTemplateController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:templateConfig:edit')")
     @Log(title = "情报板模板", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改情报板模板")
     public AjaxResult edit(@RequestBody JSONObject jsonObject)
     {
         return toAjax(iotBoardTemplateService.updateSdVmsTemplate(jsonObject));
@@ -98,6 +105,7 @@ public class IotBoardTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateConfig:remove')")
     @Log(title = "情报板模板", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除情报板模板")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(iotBoardTemplateService.deleteSdVmsTemplateByIds(ids));
@@ -107,6 +115,7 @@ public class IotBoardTemplateController extends BaseController
      * 情报板发布
      */
     @PostMapping("/informationBoardRelease")
+    @ApiOperation("情报板发布")
     public AjaxResult informationBoardRelease(JSONObject jsonObject) {
         return AjaxResult.success(iotBoardTemplateService.informationBoardRelease(jsonObject));
     }
@@ -115,6 +124,7 @@ public class IotBoardTemplateController extends BaseController
      * 情报板获取
      */
     @PostMapping("/informationBoardAcquisition")
+    @ApiOperation("情报板获取")
     public AjaxResult informationBoardAcquisition(JSONObject jsonObject) {
         return AjaxResult.success(iotBoardTemplateService.informationBoardAcquisition(jsonObject));
     }
@@ -123,6 +133,7 @@ public class IotBoardTemplateController extends BaseController
      * 根据设备ID和分类ID获取情报板模板数据集合
      */
     @PostMapping("/getVMSTemplatesByDevIdAndCategory")
+    @ApiOperation("根据设备ID和分类ID获取情报板模板数据集合")
     public AjaxResult getVMSTemplatesByDevIdAndCategory(@RequestBody List<String> devIds) {
         return AjaxResult.success(iotBoardTemplateService.getVMSTemplatesByDevIdAndCategory(devIds));
     }
@@ -133,6 +144,7 @@ public class IotBoardTemplateController extends BaseController
      * @return
      */
     @GetMapping("/getVmsDataList")
+    @ApiOperation("预案-除指定设备情况下查询情报板")
     public AjaxResult getVmsDataList(SdDevices sdDevices){
         return iotBoardTemplateService.getVmsDataList(sdDevices);
     }
@@ -143,6 +155,7 @@ public class IotBoardTemplateController extends BaseController
      * @return
      */
     @GetMapping("/getVmsTemplateList")
+    @ApiOperation("应急预案情报板弹框")
     public AjaxResult getVmsTemplateList(SdDevices sdDevices){
         return iotBoardTemplateService.getVmsTemplateList(sdDevices);
     }

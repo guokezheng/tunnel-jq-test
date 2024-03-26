@@ -7,6 +7,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.platformAuthApi.PlatformApiService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class PlatformApiController {
      * @param sdDevicesList 设备集合(推送)
      * @return
      */
+    @ApiOperation("设备管理推送接口")
     public void devicesPush(List<SdDevices> sdDevicesList, String pushType, String userName){
         if(sdDevicesList.size() > 0){
             platformApiService.devicesPush(sdDevicesList, pushType, userName);
@@ -46,6 +48,7 @@ public class PlatformApiController {
      * @param sdTunnelsList 隧道集合(推送)
      * @return
      */
+    @ApiOperation("隧道管理推送接口")
     public void tunnelsPush(List<SdTunnels> sdTunnelsList, String pushType){
         if(sdTunnelsList.size() > 0){
             platformApiService.tunnelsPush(sdTunnelsList, pushType);
@@ -58,6 +61,7 @@ public class PlatformApiController {
      * @return
      */
     @PostMapping(value = "/devicesAccept")
+    @ApiOperation("设备接收接口")
     public Result devicesAccept(String deviceData){
         //把map拆分
         JSONObject object = JSONObject.parseObject(deviceData);
@@ -89,6 +93,7 @@ public class PlatformApiController {
      * @return
      */
     @PostMapping(value = "/tunnelsAccept")
+    @ApiOperation("隧道接收接口")
     public Result tunnelsAccept(String tunnelData){
         //把map拆分
         JSONObject object = JSONObject.parseObject(tunnelData);

@@ -18,6 +18,7 @@ import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.domain.logRecord.SdOperationLogDTO;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.platform.controller.informationBoard.AjaxResultb;
+import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,7 @@ public class SdOperationLogController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:log:list')")
     @GetMapping("/list")
+    @ApiOperation("查询操作日志列表")
     public TableDataInfo list(SdOperationLog sdOperationLog)
     {
         int count = sdOperationLogService.selectSdOperationLogCountList(sdOperationLog);
@@ -67,6 +69,7 @@ public class SdOperationLogController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:log:export')")
     @Log(title = "操作日志", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @ApiOperation("导出操作日志列表")
     public void export(HttpServletResponse response, SdOperationLog sdOperationLog) throws IOException
     {
         List<SdOperationLog> list = sdOperationLogService.selectSdOperationLogList(sdOperationLog);
@@ -79,6 +82,7 @@ public class SdOperationLogController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:log:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取操作日志详细信息")
     public AjaxResultb getInfo(@PathVariable("id") Long id)
     {
         return AjaxResultb.success(sdOperationLogService.selectSdOperationLogById(id));
@@ -90,6 +94,7 @@ public class SdOperationLogController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:log:add')")
     @Log(title = "操作日志", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增操作日志")
     public AjaxResult add(@RequestBody SdOperationLog sdOperationLog)
     {
         return toAjax(sdOperationLogService.insertSdOperationLog(sdOperationLog));
@@ -101,6 +106,7 @@ public class SdOperationLogController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:log:edit')")
     @Log(title = "操作日志", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改操作日志")
     public AjaxResult edit(@RequestBody SdOperationLog sdOperationLog)
     {
         return toAjax(sdOperationLogService.updateSdOperationLog(sdOperationLog));
@@ -112,6 +118,7 @@ public class SdOperationLogController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:log:remove')")
     @Log(title = "操作日志", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除操作日志")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdOperationLogService.deleteSdOperationLogByIds(ids));
@@ -123,6 +130,7 @@ public class SdOperationLogController extends BaseController
      * @return
      */
     @PostMapping("/operationLog")
+    @ApiOperation("新增时 设备执行记录接口 websocket推送")
     public AjaxResult operationLog(@RequestBody SdOperationLog sdOperationLog)
     {
         return AjaxResult.success(sdOperationLogService.operationLog(sdOperationLog));
@@ -134,6 +142,7 @@ public class SdOperationLogController extends BaseController
      * @return
      */
     @GetMapping("/dispatchExecuted")
+    @ApiOperation("应急调度-已执行")
     public AjaxResult getDispatchExecuted(String eventId)
     {
         return AjaxResult.success(sdOperationLogService.getDispatchExecuted(eventId));
@@ -145,6 +154,7 @@ public class SdOperationLogController extends BaseController
      * @return
      */
     @GetMapping("/export")
+    @ApiOperation("导出操作日志")
     public AjaxResult export(SdOperationLog sdOperationLog)
     {
 

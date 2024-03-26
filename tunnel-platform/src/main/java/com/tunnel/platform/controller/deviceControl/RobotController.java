@@ -531,6 +531,7 @@ public class RobotController {
      * @param deviceId
      * @return
      */
+    @ApiOperation("机器人第三方接口")
     @GetMapping("/getWorkRobot")
     public AjaxResult getWorkRobot(@RequestParam("deviceId") String deviceId){
         ExternalSystem system = new ExternalSystem();
@@ -555,6 +556,7 @@ public class RobotController {
      * @param deviceId
      * @return
      */
+    @ApiOperation("工作台机器人")
     @GetMapping("/getWorkStagingRobot")
     public AjaxResult getWorkStagingRobot(@RequestParam("deviceId") String deviceId){
         long l = System.currentTimeMillis();

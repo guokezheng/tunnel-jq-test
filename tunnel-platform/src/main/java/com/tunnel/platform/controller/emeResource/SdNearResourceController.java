@@ -48,6 +48,7 @@ public class SdNearResourceController extends BaseController
     /**
      * 导出周边资源列表
      */
+    @ApiOperation("导出周边资源列表")
     @PreAuthorize("@ss.hasPermi('business:emeResource:export')")
     @Log(title = "周边资源", businessType = BusinessType.EXPORT)
     @GetMapping("/export")

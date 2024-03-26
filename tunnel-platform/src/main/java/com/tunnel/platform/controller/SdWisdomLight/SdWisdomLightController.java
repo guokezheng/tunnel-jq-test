@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.wisdomLight.SdWisdomLight;
 import com.tunnel.business.service.wisdomLight.ISdWisdomLightService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class SdWisdomLightController extends BaseController
      * 查询【智慧调光】列表
      */
     @GetMapping("/list")
+    @ApiOperation("查询【智慧调光】列表")
     public TableDataInfo list(SdWisdomLight sdWisdomLight)
     {
         startPage();
@@ -41,6 +43,7 @@ public class SdWisdomLightController extends BaseController
      */
     @Log(title = "【加强照明配置】", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增【智慧调光】")
     public AjaxResult add(@RequestBody SdWisdomLight sdWisdomLight)
     {
         return AjaxResult.success(sdWisdomLightService.insertSdWisdomLight(sdWisdomLight));
@@ -51,6 +54,7 @@ public class SdWisdomLightController extends BaseController
      */
     @Log(title = "【加强照明配置】", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改【智慧调光】")
     public AjaxResult edit(@RequestBody SdWisdomLight sdWisdomLight)
     {
         return toAjax(sdWisdomLightService.updateSdWisdomLight(sdWisdomLight));
@@ -60,6 +64,7 @@ public class SdWisdomLightController extends BaseController
      */
     @Log(title = "【加强照明配置】", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
+    @ApiOperation("删除【加强照明配置】")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdWisdomLightService.deleteSdWisdomLight(ids));
@@ -70,6 +75,7 @@ public class SdWisdomLightController extends BaseController
      */
     @Log(title = "【加强照明配置】", businessType = BusinessType.UPDATE)
     @PostMapping("/updateSdWisdomIsStatus")
+    @ApiOperation("删除【加强照明配置】")
     public AjaxResult updateSdWisdomIsStatus(@RequestBody SdWisdomLight sdWisdomLight) {
         return  toAjax(sdWisdomLightService.updateSdWisdomIsStatus(sdWisdomLight));
     }

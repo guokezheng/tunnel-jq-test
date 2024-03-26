@@ -5,6 +5,7 @@ import com.ruoyi.quartz.task.RadarTask;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class RadarDataController {
      * 感知数据初始化
      */
     @PostMapping("/radarDataInit")
+    @ApiOperation("感知数据初始化")
     public void radarDataInit(){
         int count1 = 0;
         SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();

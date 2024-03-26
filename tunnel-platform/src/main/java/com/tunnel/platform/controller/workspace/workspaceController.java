@@ -34,6 +34,7 @@ import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.deviceFunctions.DeviceFunctionsService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,7 @@ public class workspaceController extends BaseController {
 
     //PLC车指控制接口
     @PostMapping("/controlDevice")
+    @ApiOperation("首页设备控制接口")
     public AjaxResult controlDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备，请联系管理员");
@@ -276,6 +278,7 @@ public class workspaceController extends BaseController {
 
     //诱导灯控制接口
     @PostMapping("/controlGuidanceLampDevice")
+    @ApiOperation("诱导灯控制接口")
     public AjaxResult controlGuidanceLampDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备");
@@ -408,6 +411,7 @@ public class workspaceController extends BaseController {
 
     //警示灯带控制接口
     @PostMapping("/controlWarningLightStripDevice")
+    @ApiOperation("警示灯带控制接口")
     public AjaxResult controlWarningLightStripDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备");
@@ -491,6 +495,7 @@ public class workspaceController extends BaseController {
 
     //疏散标志控制接口
     @PostMapping("/controlEvacuationSignDevice")
+    @ApiOperation("疏散标志控制接口")
     public AjaxResult controlEvacuationSignDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备");
@@ -656,6 +661,7 @@ public class workspaceController extends BaseController {
 
 
     @PostMapping("/vehicleMonitoringInRecent24Hours")
+    @ApiOperation("车辆监测查询")
     public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map) {
         if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
@@ -675,6 +681,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/vehicleMonitoringInRecent24HoursByVehicleType")
+    @ApiOperation("车辆监测查询")
     public AjaxResult vehicleMonitoringInRecent24HoursByVehicleType(@RequestBody Map<String, Object> map) {
         if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
@@ -693,6 +700,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/specialVehicleMonitoringInRecent24Hours")
+    @ApiOperation("统计当天24小时重点车辆")
     public AjaxResult specialVehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map) {
         if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
@@ -707,6 +715,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/batchControlCarFinger")
+    @ApiOperation("车指批量控制接口")
     public AjaxResult batchControlCarFinger(@RequestBody Map<String, Object> carFingerDevices) {
         //查询所有需要批量控制的车指设备
         if (carFingerDevices == null || carFingerDevices.isEmpty()) {
@@ -773,6 +782,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/batchControlDevice")
+    @ApiOperation("批量控制设备接口")
     public AjaxResult batchControlDevice(@RequestBody Map<String, Object> deviceMap){
         List<String> eqIdList = Arrays.asList(deviceMap.get("eqId").toString().split(","));
         String state = deviceMap.get("state").toString();
@@ -831,6 +841,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/commonControl")
+    @ApiOperation("控制单个设备")
     public Integer commonControl(@RequestBody Map<String, Object> params) {
         //参数校验
         Assert.notEmpty(params, "控制设备参数为空");
@@ -851,6 +862,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/controlDeviceByParam")
+    @ApiOperation("消防水泵控制接口")
     public AjaxResult controlDeviceByParam(@RequestBody Map<String, Object> params){
         //参数校验
         if (CollectionUtils.isEmpty(params)) {
@@ -888,6 +900,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @Async(value = "induceExecutor")
+    @ApiOperation("异步控制诱导标")
     public int asynInduce(SdDevices dev, String state, String brightness, String frequency){
         System.out.println(dev.getIp() + "：进来了");
         return GuidanceLampHandle.getInstance().toControlXianKeDev(dev.getEqId(), Integer.parseInt(state), dev, brightness, frequency);

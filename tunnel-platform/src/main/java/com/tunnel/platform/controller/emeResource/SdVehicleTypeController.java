@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.tunnel.business.domain.emeResource.SdVehicleType;
 import com.tunnel.business.service.emeResource.ISdVehicleTypeService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 查询车辆类型配置列表
      */
+    @ApiOperation("查询车辆类型配置列表")
     @PreAuthorize("@ss.hasPermi('system:type:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdVehicleType sdVehicleType)
@@ -49,6 +51,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 导出车辆类型配置列表
      */
+    @ApiOperation("导出车辆类型配置列表")
     @PreAuthorize("@ss.hasPermi('system:type:export')")
     @Log(title = "车辆类型配置", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -62,6 +65,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 获取车辆类型配置详细信息
      */
+    @ApiOperation("获取车辆类型配置详细信息")
     @PreAuthorize("@ss.hasPermi('system:type:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
@@ -72,6 +76,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 新增车辆类型配置
      */
+    @ApiOperation("新增车辆类型配置")
     @PreAuthorize("@ss.hasPermi('system:type:add')")
     @Log(title = "车辆类型配置", businessType = BusinessType.INSERT)
     @PostMapping
@@ -83,6 +88,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 修改车辆类型配置
      */
+    @ApiOperation("修改车辆类型配置")
     @PreAuthorize("@ss.hasPermi('system:type:edit')")
     @Log(title = "车辆类型配置", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -94,6 +100,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 删除车辆类型配置
      */
+    @ApiOperation("删除车辆类型配置")
     @PreAuthorize("@ss.hasPermi('system:type:remove')")
     @Log(title = "车辆类型配置", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
@@ -105,6 +112,7 @@ public class SdVehicleTypeController extends BaseController
     /**
      * 校验数据是否重复
      */
+    @ApiOperation("校验数据是否重复")
     @PostMapping("/checkData")
     public AjaxResult checkData(@RequestBody SdVehicleType sdVehicleType)
     {
@@ -116,6 +124,7 @@ public class SdVehicleTypeController extends BaseController
      * @param sdVehicleType
      * @return
      */
+    @ApiOperation("获取车辆类型下拉列表")
     @PostMapping("/getVehicleSelectList")
     public List<SdVehicleType> getVehicleSelectList(@RequestBody SdVehicleType sdVehicleType){
         return sdVehicleTypeService.selectSdVehicleTypeList(sdVehicleType);

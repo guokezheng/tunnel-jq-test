@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.fireMonitor;
 
 import com.tunnel.platform.media.web.controller.media.MediaController;
 import com.tunnel.platform.media.web.domain.MediaStream;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ public class FireMonitorController {
      * 获取rtsp流地址
      */
     @GetMapping("/getRtspStreamAddr")
+    @ApiOperation("获取rtsp流地址")
     public String getRtspStreamAddr(RedirectAttributes redirectAttributes,String ip)
     {
 

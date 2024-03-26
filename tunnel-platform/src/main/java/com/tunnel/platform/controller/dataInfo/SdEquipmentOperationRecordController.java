@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdEquipmentOperationRecord;
 import com.tunnel.business.service.dataInfo.ISdEquipmentOperationRecordService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdEquipmentOperationRecordController extends BaseController
     /**
      * 查询设备运行记录列表
      */
+    @ApiOperation("查询设备运行记录列表")
     @PreAuthorize("@ss.hasPermi('system:equipmentOperationRecord:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdEquipmentOperationRecord sdEquipmentOperationRecord)
@@ -42,6 +44,7 @@ public class SdEquipmentOperationRecordController extends BaseController
     /**
      * 导出设备运行记录列表
      */
+    @ApiOperation("导出设备运行记录列表")
     @PreAuthorize("@ss.hasPermi('system:equipmentOperationRecord:export')")
     @Log(title = "设备运行记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -55,6 +58,7 @@ public class SdEquipmentOperationRecordController extends BaseController
     /**
      * 获取设备运行记录详细信息
      */
+    @ApiOperation("获取设备运行记录详细信息")
     @PreAuthorize("@ss.hasPermi('system:equipmentOperationRecord:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -65,6 +69,7 @@ public class SdEquipmentOperationRecordController extends BaseController
     /**
      * 新增设备运行记录
      */
+    @ApiOperation("新增设备运行记录")
     @PreAuthorize("@ss.hasPermi('system:equipmentOperationRecord:add')")
     @Log(title = "设备运行记录", businessType = BusinessType.INSERT)
     @PostMapping
@@ -76,6 +81,7 @@ public class SdEquipmentOperationRecordController extends BaseController
     /**
      * 修改设备运行记录
      */
+    @ApiOperation("修改设备运行记录")
     @PreAuthorize("@ss.hasPermi('system:equipmentOperationRecord:edit')")
     @Log(title = "设备运行记录", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -87,6 +93,7 @@ public class SdEquipmentOperationRecordController extends BaseController
     /**
      * 删除设备运行记录
      */
+    @ApiOperation("删除设备运行记录")
     @PreAuthorize("@ss.hasPermi('system:equipmentOperationRecord:remove')")
     @Log(title = "设备运行记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

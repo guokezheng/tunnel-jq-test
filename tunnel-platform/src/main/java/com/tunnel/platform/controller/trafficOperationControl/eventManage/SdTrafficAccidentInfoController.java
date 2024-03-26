@@ -20,6 +20,7 @@ import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdCont
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficAccidentInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentProcessService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficAccident:info:list')")
     @GetMapping("/list")
+    @ApiOperation("查询交通事故和清障信息列表")
     public TableDataInfo list(SdTrafficAccidentInfo sdTrafficAccidentInfo)
     {
         startPage();
@@ -78,6 +80,7 @@ public class SdTrafficAccidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficAccident:info:export')")
     @Log(title = "交通事故和清障信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出交通事故和清障信息列表")
     public AjaxResult export(SdTrafficAccidentInfo sdTrafficAccidentInfo)
     {
         List<SdTrafficAccidentInfo> list = sdTrafficAccidentInfoService.selectSdTrafficAccidentInfoList(sdTrafficAccidentInfo);
@@ -90,6 +93,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficAccident:info:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取交通事故和清障信息详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdTrafficAccidentInfoService.selectSdTrafficAccidentInfoById(id));
@@ -101,6 +105,7 @@ public class SdTrafficAccidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficAccident:info:add')")
     @Log(title = "交通事故和清障信息", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增交通事故和清障信息")
     public AjaxResult add(@RequestBody SdTrafficAccidentInfo sdTrafficAccidentInfo)
     {
         return toAjax(sdTrafficAccidentInfoService.insertSdTrafficAccidentInfo(sdTrafficAccidentInfo));
@@ -112,6 +117,7 @@ public class SdTrafficAccidentInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficAccident:info:edit')")
     @Log(title = "交通事故和清障信息", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改交通事故和清障信息")
     public AjaxResult edit(@RequestBody SdTrafficAccidentInfo sdTrafficAccidentInfo)
     {
         return toAjax(sdTrafficAccidentInfoService.updateSdTrafficAccidentInfo(sdTrafficAccidentInfo));
@@ -133,6 +139,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      * @return
      */
     @GetMapping(value = "/getTrafficAccidentInfo")
+    @ApiOperation("获取交通事故和清障信息")
     public JSONObject getTrafficAccidentInfo(String incidentId){
         Long id = Long.valueOf(incidentId);
         SdTrafficIncidentInfo incidentInfo = incidentInfoService.selectSdTrafficIncidentInfoById(id);
@@ -149,6 +156,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @RequestMapping("/addAccidentInfo")
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation("新增交通事故和清障信息")
     public AjaxResult addAccidentInfo(@RequestBody IncidentAndAccidentInfo incidentAndAccidentInfo){
         SdTrafficIncidentInfo incidentInfo = incidentAndAccidentInfo.getIncidentInfo();
         SdTrafficAccidentInfo accidentInfo = incidentAndAccidentInfo.getAccidentInfo();
@@ -167,6 +175,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @RequestMapping("/updateAccidentInfo")
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation("修改交通事故和清障信息")
     public AjaxResult updateAccidentInfo(@RequestBody IncidentAndAccidentInfo incidentAndAccidentInfo){
         SdTrafficIncidentInfo incidentInfo = incidentAndAccidentInfo.getIncidentInfo();
         SdTrafficAccidentInfo accidentInfo = incidentAndAccidentInfo.getAccidentInfo();
@@ -200,6 +209,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      * 查询交通事故和清障信息列表
      */
     @GetMapping("/getList")
+    @ApiOperation("查询交通事故和清障信息列表")
     public TableDataInfo getList(SdTrafficIncidentInfo incidentInfo)
     {
         Object obj = incidentInfo.getParams().get("occurTime");
@@ -221,6 +231,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      * @return
      */
     @GetMapping(value = "/getAccident/{id}")
+    @ApiOperation("获取交通事故和清障信息")
     public AjaxResult getAccident(@PathVariable("id") Long id){
         Map map = sdTrafficAccidentInfoService.getAccident(id);
 
@@ -237,6 +248,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @RequestMapping("/addAccident")
     @Transactional( rollbackFor = Exception.class)
+    @ApiOperation("新增交通事故和清障信息")
     public AjaxResult addAccident(@RequestBody JSONObject jsonObject){
 
         //隧道id
@@ -300,6 +312,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @RequestMapping("/updateAccident")
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation("修改交通事故和清障信息")
     public AjaxResult updateAccident(@RequestBody JSONObject jsonObject){
 
         //事件id
@@ -366,6 +379,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      */
     @DeleteMapping("/{ids}")
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation("删除交通事故和清障信息")
     public AjaxResult delAccident(@PathVariable Long[] ids)
     {
         for(Long id : ids) {
@@ -389,6 +403,7 @@ public class SdTrafficAccidentInfoController extends BaseController
      * @return
      */
     @GetMapping(value = "/getPublishContent/{id}")
+    @ApiOperation("获取发布内容")
     public AjaxResult getPublishContent(@PathVariable("id") Long incidentId){
         StringBuffer content = new StringBuffer();
         //查询关联的管控措施

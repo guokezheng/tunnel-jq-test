@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.trafficBroadcasting.SdBroadcastTemplate;
 import com.tunnel.business.service.trafficBroadcasting.ISdBroadcastTemplateService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdBroadcastTemplateController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('broadcastTemplate:template:list')")
     @GetMapping("/list")
+    @ApiOperation("删除广播记录")
     public TableDataInfo list(SdBroadcastTemplate sdBroadcastTemplate)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdBroadcastTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastTemplate:template:export')")
     @Log(title = "广播模板", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出广播模板列表")
     public AjaxResult export(SdBroadcastTemplate sdBroadcastTemplate)
     {
         List<SdBroadcastTemplate> list = sdBroadcastTemplateService.selectSdBroadcastTemplateList(sdBroadcastTemplate);
@@ -57,6 +60,7 @@ public class SdBroadcastTemplateController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('broadcastTemplate:template:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取广播模板详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdBroadcastTemplateService.selectSdBroadcastTemplateById(id));
@@ -68,6 +72,7 @@ public class SdBroadcastTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastTemplate:template:add')")
     @Log(title = "广播模板", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增广播模板")
     public AjaxResult add(@RequestBody SdBroadcastTemplate sdBroadcastTemplate)
     {
         return toAjax(sdBroadcastTemplateService.insertSdBroadcastTemplate(sdBroadcastTemplate));
@@ -79,6 +84,7 @@ public class SdBroadcastTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastTemplate:template:edit')")
     @Log(title = "广播模板", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改广播模板")
     public AjaxResult edit(@RequestBody SdBroadcastTemplate sdBroadcastTemplate)
     {
         return toAjax(sdBroadcastTemplateService.updateSdBroadcastTemplate(sdBroadcastTemplate));
@@ -90,6 +96,7 @@ public class SdBroadcastTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('broadcastTemplate:template:remove')")
     @Log(title = "广播模板", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除广播模板")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdBroadcastTemplateService.deleteSdBroadcastTemplateByIds(ids));

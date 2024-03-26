@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdSafetyIndex;
 import com.tunnel.business.service.event.ISdSafetyIndexService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class SdSafetyIndexController extends BaseController
     /**
      * 查询安全指数列表
      */
+    @ApiOperation("查询安全指数列表")
 //    @PreAuthorize("@ss.hasPermi('system:index:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdSafetyIndex sdSafetyIndex)
@@ -41,6 +43,7 @@ public class SdSafetyIndexController extends BaseController
     /**
      * 导出安全指数列表
      */
+    @ApiOperation("导出安全指数列表")
 //    @PreAuthorize("@ss.hasPermi('system:index:export')")
     @Log(title = "安全指数", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -54,6 +57,7 @@ public class SdSafetyIndexController extends BaseController
     /**
      * 获取安全指数详细信息
      */
+    @ApiOperation("获取安全指数详细信息")
 //    @PreAuthorize("@ss.hasPermi('system:index:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -64,6 +68,7 @@ public class SdSafetyIndexController extends BaseController
     /**
      * 新增安全指数
      */
+    @ApiOperation("新增安全指数")
 //    @PreAuthorize("@ss.hasPermi('system:index:add')")
     @Log(title = "安全指数", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,6 +80,7 @@ public class SdSafetyIndexController extends BaseController
     /**
      * 修改安全指数
      */
+    @ApiOperation("修改安全指数")
 //    @PreAuthorize("@ss.hasPermi('system:index:edit')")
     @Log(title = "安全指数", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -86,6 +92,7 @@ public class SdSafetyIndexController extends BaseController
     /**
      * 删除安全指数
      */
+    @ApiOperation("删除安全指数")
 //    @PreAuthorize("@ss.hasPermi('system:index:remove')")
     @Log(title = "安全指数", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

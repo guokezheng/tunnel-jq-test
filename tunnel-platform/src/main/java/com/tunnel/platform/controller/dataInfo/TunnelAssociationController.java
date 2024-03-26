@@ -28,6 +28,7 @@ public class TunnelAssociationController extends BaseController {
     /**
      * 查询隧道关联关系列表
      */
+    @ApiOperation("查询隧道关联关系列表")
     @PreAuthorize("@ss.hasPermi('system:association:list')")
     @GetMapping("/list")
     public TableDataInfo list(TunnelAssociation tunnelAssociation) {
@@ -39,6 +40,7 @@ public class TunnelAssociationController extends BaseController {
     /**
      * 导出隧道关联关系列表
      */
+    @ApiOperation("导出隧道关联关系列表")
     @PreAuthorize("@ss.hasPermi('system:association:export')")
     @Log(title = "隧道关联关系", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -51,12 +53,19 @@ public class TunnelAssociationController extends BaseController {
     /**
      * 获取隧道关联关系详细信息
      */
+    @ApiOperation("获取隧道关联关系详细信息")
     @PreAuthorize("@ss.hasPermi('system:association:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(tunnelAssociationService.selectTunnelAssociationById(id));
     }
 
+    /**
+     * 查询隧道关联关系详情
+     * @param tunnelId
+     * @return
+     */
+    @ApiOperation("查询隧道关联关系详情")
     @GetMapping(value = "/getDetail/{tunnelId}")
     public AjaxResult getDetail(@PathVariable("tunnelId") String tunnelId) {
         return AjaxResult.success(tunnelAssociationService.selectTunnelAssociationsByTunnelId(tunnelId));
@@ -65,6 +74,7 @@ public class TunnelAssociationController extends BaseController {
     /**
      * 新增隧道关联关系
      */
+    @ApiOperation("新增隧道关联关系")
     @PreAuthorize("@ss.hasPermi('system:association:add')")
     @Log(title = "隧道关联关系", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,6 +85,7 @@ public class TunnelAssociationController extends BaseController {
     /**
      * 修改隧道关联关系
      */
+    @ApiOperation("修改隧道关联关系")
     @PreAuthorize("@ss.hasPermi('system:association:edit')")
     @Log(title = "隧道关联关系", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -85,6 +96,7 @@ public class TunnelAssociationController extends BaseController {
     /**
      * 删除隧道关联关系
      */
+    @ApiOperation("删除隧道关联关系")
     @PreAuthorize("@ss.hasPermi('system:association:remove')")
     @Log(title = "隧道关联关系", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
@@ -92,6 +104,12 @@ public class TunnelAssociationController extends BaseController {
         return toAjax(tunnelAssociationService.deleteTunnelAssociationByIds(ids));
     }
 
+    /**
+     * 批量删除隧道关联关系
+     * @param tunnelIds
+     * @return
+     */
+    @ApiOperation("批量删除隧道关联关系")
     @DeleteMapping("/delDetials/{tunnelIds}")
     public AjaxResult removeByTunnelIds(@PathVariable String[] tunnelIds) {
         return toAjax(tunnelAssociationService.deleteTunnelAssociationByTunnelIds(tunnelIds));

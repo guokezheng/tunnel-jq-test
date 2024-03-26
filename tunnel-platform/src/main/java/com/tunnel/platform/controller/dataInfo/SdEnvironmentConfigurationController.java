@@ -47,6 +47,7 @@ public class SdEnvironmentConfigurationController extends BaseController {
     /**
      * 导出隧道环境配置列表
      */
+    @ApiOperation("导出隧道环境配置列表")
     @PreAuthorize("@ss.hasPermi('system:configuration:export')")
     @Log(title = "隧道环境配置", businessType = BusinessType.EXPORT)
     @GetMapping("/export")

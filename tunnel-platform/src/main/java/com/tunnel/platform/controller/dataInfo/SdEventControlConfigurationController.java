@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdEventControlConfiguration;
 import com.tunnel.business.service.dataInfo.ISdEventControlConfigurationService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SdEventControlConfigurationController extends BaseController
     /**
      * 查询事件管控类型配置列表
      */
+    @ApiOperation("查询事件管控类型配置列表")
     @PreAuthorize("@ss.hasPermi('eventControl:configuration:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdEventControlConfiguration sdEventControlConfiguration)
@@ -42,6 +44,7 @@ public class SdEventControlConfigurationController extends BaseController
     /**
      * 导出事件管控类型配置列表
      */
+    @ApiOperation("导出事件管控类型配置列表")
     @PreAuthorize("@ss.hasPermi('eventControl:configuration:export')")
     @Log(title = "事件管控类型配置", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -55,6 +58,7 @@ public class SdEventControlConfigurationController extends BaseController
     /**
      * 获取事件管控类型配置详细信息
      */
+    @ApiOperation("获取事件管控类型配置详细信息")
     @PreAuthorize("@ss.hasPermi('eventControl:configuration:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
@@ -65,6 +69,7 @@ public class SdEventControlConfigurationController extends BaseController
     /**
      * 新增事件管控类型配置
      */
+    @ApiOperation("新增事件管控类型配置")
     @PreAuthorize("@ss.hasPermi('eventControl:configuration:add')")
     @Log(title = "事件管控类型配置", businessType = BusinessType.INSERT)
     @PostMapping
@@ -76,6 +81,7 @@ public class SdEventControlConfigurationController extends BaseController
     /**
      * 修改事件管控类型配置
      */
+    @ApiOperation("修改事件管控类型配置")
     @PreAuthorize("@ss.hasPermi('eventControl:configuration:edit')")
     @Log(title = "事件管控类型配置", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -87,6 +93,7 @@ public class SdEventControlConfigurationController extends BaseController
     /**
      * 删除事件管控类型配置
      */
+    @ApiOperation("删除事件管控类型配置")
     @PreAuthorize("@ss.hasPermi('eventControl:configuration:remove')")
     @Log(title = "事件管控类型配置", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")

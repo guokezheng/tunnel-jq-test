@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.SdPictureUpload;
 import com.tunnel.business.service.informationBoard.ISdPictureUploadService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ public class SdPictureUploadController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:templateImage:list')")
     @GetMapping("/list")
+    @ApiOperation("查询情报板使用图片列表")
     public TableDataInfo list(SdPictureUpload sdPictureUpload)
     {
         startPage();
@@ -95,6 +97,7 @@ public class SdPictureUploadController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateImage:export')")
     @Log(title = "情报板使用图片", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出情报板使用图片列表")
     public AjaxResult export(SdPictureUpload sdPictureUpload)
     {
         List<SdPictureUpload> list = sdPictureUploadService.selectSdPictureUploadList(sdPictureUpload);
@@ -107,6 +110,7 @@ public class SdPictureUploadController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:templateImage:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取情报板使用图片详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         SdPictureUpload sdPictureUpload = sdPictureUploadService.selectSdPictureUploadById(id);
@@ -131,6 +135,7 @@ public class SdPictureUploadController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateImage:add')")
     @Log(title = "情报板使用图片", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增情报板使用图片")
     public AjaxResult add(MultipartFile[] file,
                           @RequestParam("pictureName") String pictureName,
                           @RequestParam("imageRemark") String imageRemark,
@@ -170,6 +175,7 @@ public class SdPictureUploadController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateImage:edit')")
     @Log(title = "情报板使用图片", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改情报板使用图片")
     public AjaxResult edit(MultipartFile[] file,
                            @RequestParam("id") Long id,
                            @RequestParam("pictureName") String pictureName,
@@ -208,6 +214,7 @@ public class SdPictureUploadController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateImage:remove')")
     @Log(title = "情报板使用图片", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除情报板使用图片")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdPictureUploadService.deleteSdPictureUploadByIds(ids));

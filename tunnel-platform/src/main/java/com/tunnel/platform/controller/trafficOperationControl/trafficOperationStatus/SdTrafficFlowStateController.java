@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.trafficOperationControl.trafficOperationStatus.SdTrafficFlowState;
 import com.tunnel.business.service.trafficOperationControl.trafficOperationStatus.ISdTrafficFlowStateService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SdTrafficFlowStateController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficFlow:state:list')")
     @GetMapping("/list")
+    @ApiOperation("查询【交通流状态记录】列表")
     public TableDataInfo list(SdTrafficFlowState sdTrafficFlowState)
     {
         startPage();
@@ -45,6 +47,7 @@ public class SdTrafficFlowStateController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficFlow:state:export')")
     @Log(title = "【交通流状态记录】", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出【交通流状态记录】列表")
     public AjaxResult export(SdTrafficFlowState sdTrafficFlowState)
     {
         List<SdTrafficFlowState> list = sdTrafficFlowStateService.selectSdTrafficFlowStateList(sdTrafficFlowState);
@@ -57,6 +60,7 @@ public class SdTrafficFlowStateController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trafficFlow:state:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("导出【交通流状态记录】列表")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdTrafficFlowStateService.selectSdTrafficFlowStateById(id));
@@ -68,6 +72,7 @@ public class SdTrafficFlowStateController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficFlow:state:add')")
     @Log(title = "【交通流状态记录】", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增【交通流状态记录】")
     public AjaxResult add(@RequestBody SdTrafficFlowState sdTrafficFlowState)
     {
         return toAjax(sdTrafficFlowStateService.insertSdTrafficFlowState(sdTrafficFlowState));
@@ -79,6 +84,7 @@ public class SdTrafficFlowStateController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficFlow:state:edit')")
     @Log(title = "【交通流状态记录】", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改【交通流状态记录】")
     public AjaxResult edit(@RequestBody SdTrafficFlowState sdTrafficFlowState)
     {
         return toAjax(sdTrafficFlowStateService.updateSdTrafficFlowState(sdTrafficFlowState));
@@ -90,6 +96,7 @@ public class SdTrafficFlowStateController extends BaseController
     @PreAuthorize("@ss.hasPermi('trafficFlow:state:remove')")
     @Log(title = "【交通流状态记录】", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除【交通流状态记录】")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdTrafficFlowStateService.deleteSdTrafficFlowStateByIds(ids));
@@ -103,6 +110,7 @@ public class SdTrafficFlowStateController extends BaseController
      * @return
      */
     @RequestMapping("/getChartData")
+    @ApiOperation("获取交通数据处理与分析页面-图表数据")
     public AjaxResult getChartData(String tunnelId){
 
         return AjaxResult.success(sdTrafficFlowStateService.getChartData(tunnelId));

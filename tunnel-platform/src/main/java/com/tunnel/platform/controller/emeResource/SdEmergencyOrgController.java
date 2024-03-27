@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.emeResource;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -9,6 +10,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.service.emeResource.ISdEmergencyOrgService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +26,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/system/org")
+@Api(tags = "应急机构")
+@ApiSupport(order = 16)
 public class SdEmergencyOrgController extends BaseController
 {
     @Autowired

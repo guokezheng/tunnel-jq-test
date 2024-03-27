@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import com.alibaba.fastjson.JSON;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -39,6 +40,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tunnels")
 @Api(tags = "隧道管理")
+@ApiSupport(order = 16)
 public class SdTunnelsController extends BaseController
 {
     private static final Logger log = LoggerFactory.getLogger(SdTunnelsController.class);

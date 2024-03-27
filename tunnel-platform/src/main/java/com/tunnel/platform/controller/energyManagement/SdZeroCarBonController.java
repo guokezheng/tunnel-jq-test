@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.energyManagement;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.energyManagement.SdZeroCarBonService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/zeroCarBon")
 @Api(tags = "零碳大屏")
+@ApiSupport(order = 16)
 public class SdZeroCarBonController {
 
     @Autowired

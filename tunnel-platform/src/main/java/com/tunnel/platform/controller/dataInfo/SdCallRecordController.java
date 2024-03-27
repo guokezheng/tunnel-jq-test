@@ -2,6 +2,7 @@ package com.tunnel.platform.controller.dataInfo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -11,6 +12,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdCallRecordService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.utils.util.InterfaceAccessUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,8 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/record")
+@Api(tags = "紧急电话记录")
+@ApiSupport(order = 16)
 public class SdCallRecordController extends BaseController
 {
     @Autowired

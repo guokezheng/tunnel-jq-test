@@ -2,10 +2,12 @@ package com.tunnel.platform.controller.enhancedLighting;
 
 import java.util.List;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 
 import com.tunnel.platform.service.enhancedLighting.ISdEnhancedLightingConfigService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/enhancedLighting/config")
+@Api(tags = "加强照明配置")
+@ApiSupport(order = 16)
 public class SdEnhancedLightingConfigController extends BaseController
 {
     @Autowired

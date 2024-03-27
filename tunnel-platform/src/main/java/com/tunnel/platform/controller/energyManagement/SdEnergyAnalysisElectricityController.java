@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.energyManagement;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
@@ -15,6 +16,7 @@ import com.tunnel.business.domain.energyManagement.EnergyConfigcenterItemized;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.energyManagement.ISdEnergyAnalysisElectricityService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/energy/analysis")
+@Api(tags = "能耗报表")
+@ApiSupport(order = 16)
 public class SdEnergyAnalysisElectricityController extends BaseController
 {
 

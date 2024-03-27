@@ -8,6 +8,7 @@ import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.HackLoopTableRenderPolicy;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
@@ -41,6 +42,7 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.utils.work.CustomXWPFDocument;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -67,6 +69,8 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/task/list")
+@Api(tags = "巡查任务")
+@ApiSupport(order = 16)
 public class SdTaskListController extends BaseController
 {
     @Autowired

@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.energyManagement;
 
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
@@ -8,6 +9,7 @@ import com.tunnel.business.datacenter.domain.enumeration.StatisticTypeEnum;
 import com.tunnel.business.domain.energyManagement.EnergySjfx;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 
 @RequestMapping("/analysis")
 @RestController
+@Api(tags = "用电统计")
+@ApiSupport(order = 16)
 public class EnergySjfxElectricityController extends BaseController {
 
     @Autowired

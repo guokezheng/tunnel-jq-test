@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/devices")
 @Api(tags = "设备管理")
+@ApiSupport(order = 16)
 public class SdDevicesController extends BaseController {
     @Autowired
     private ISdDevicesService sdDevicesService;

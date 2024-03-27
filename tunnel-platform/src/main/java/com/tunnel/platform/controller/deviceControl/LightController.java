@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.deviceControl;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
@@ -29,6 +30,7 @@ import java.util.Map;
 @Api(tags = "照明控制")
 @RestController
 @RequestMapping("/light")
+@ApiSupport(order = 16)
 public class LightController {
 
     @Value("${authorize.name}")

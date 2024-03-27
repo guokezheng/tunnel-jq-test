@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.deviceControl;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
@@ -31,6 +32,7 @@ import java.util.List;
 @Api(tags = "隧道机器人")
 @RestController
 @RequestMapping("/robot")
+@ApiSupport(order = 16)
 public class RobotController {
 
     @Autowired

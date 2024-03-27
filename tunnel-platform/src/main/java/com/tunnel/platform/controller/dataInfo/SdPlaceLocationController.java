@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -7,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.dataInfo.SdPlaceLocation;
 import com.tunnel.business.service.dataInfo.ISdPlaceLocationService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/location")
+@Api(tags = "安装场所")
+@ApiSupport(order = 16)
 public class SdPlaceLocationController extends BaseController
 {
     @Autowired

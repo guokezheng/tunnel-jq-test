@@ -1,8 +1,10 @@
 package com.tunnel.platform.controller.bigScreenApi;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.service.bigScreenApi.ISdControlRecordService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/controlRecord")
+@Api(tags = "近12小时控制记录信息")
+@ApiSupport(order = 16)
 public class SdControlRecordController extends BaseController {
 
 

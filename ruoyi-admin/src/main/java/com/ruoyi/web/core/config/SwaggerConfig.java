@@ -18,7 +18,7 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.Optional;
  * Swagger2的接口配置
  */
 @Configuration
-@EnableSwagger2
+@EnableSwagger2WebMvc
 public class SwaggerConfig {
     /**
      * 系统基础配置
@@ -52,6 +52,28 @@ public class SwaggerConfig {
 
 
     @Bean
+    public Docket allApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                // 是否启用Swagger
+                .enable(true)
+                .groupName("全部")
+                // 用来创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
+                .apiInfo(apiInfo())
+                // 设置哪些接口暴露给Swagger展示
+                .select()
+                // 指定扫描包的范围
+                .apis(RequestHandlerSelectors.basePackage("com"))
+                // 扫描包含@Api注解的类
+                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                // 扫描包含@ApiOperation注解的方法
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build();
+
+    }
+
+
+   /* @Bean
     public Docket sysApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 // 是否启用Swagger
@@ -72,19 +94,19 @@ public class SwaggerConfig {
 
 
         // 设置安全模式，swagger可以设置访问token
-               /* .securitySchemes(securitySchemes())
+               *//* .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts())
-                .pathMapping(pathMapping);*/
+                .pathMapping(pathMapping);*//*
     }
 
-    /**
+    *//**
      * 模块：应急处置
      *
      * 注意：若某些接口类不显示在分组中，请优先按以下三点排查
      * 1、是否加注解 @Api @ApiOperation
      * 2、列表接口 集和泛型是否嵌套了其他包装类
      * 3、导出接口 集合泛型是否嵌套了其他包装类
-     */
+     *//*
     @Bean
     public Docket sysEvent() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -160,14 +182,14 @@ public class SwaggerConfig {
                 ).build();
     }
 
-    /**
+    *//**
      * 模块：机电巡查
      *
      * 注意：若某些接口类不显示在分组中，请优先按以下三点排查
      * 1、是否加注解 @Api @ApiOperation
      * 2、列表接口 集和泛型是否嵌套了其他包装类
      * 3、导出接口 集合泛型是否嵌套了其他包装类
-     */
+     *//*
     @Bean
     public Docket electApis() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -189,14 +211,14 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /**
+    *//**
      * 模块：隧道配置
      *
      * 注意：若某些接口类不显示在分组中，请优先按以下三点排查
      * 1、是否加注解 @Api @ApiOperation
      * 2、列表接口 集和泛型是否嵌套了其他包装类
      * 3、导出接口 集合泛型是否嵌套了其他包装类
-     */
+     *//*
     @Bean
     public Docket tunnelConfigAPI() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -227,14 +249,14 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /**
+    *//**
      * 模块：设备台账
      *
      * 注意：若某些接口类不显示在分组中，请优先按以下三点排查
      * 1、是否加注解 @Api @ApiOperation
      * 2、列表接口 集和泛型是否嵌套了其他包装类
      * 3、导出接口 集合泛型是否嵌套了其他包装类
-     */
+     *//*
     @Bean
     public Docket devBookAPI() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -265,14 +287,14 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /**
+    *//**
      * 模块：情报板管理
      *
      * 注意：若某些接口类不显示在分组中，请优先按以下三点排查
      * 1、是否加注解 @Api @ApiOperation
      * 2、列表接口 集和泛型是否嵌套了其他包装类
      * 3、导出接口 集合泛型是否嵌套了其他包装类
-     */
+     *//*
     @Bean
     public Docket infoBoardAPI() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -296,7 +318,7 @@ public class SwaggerConfig {
 
 
 
-    /*@Bean
+    *//*@Bean
     public Docket ssoApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 // 是否启用Swagger
@@ -314,16 +336,16 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build();
-    }*/
+    }*//*
 
-    /**
+     *//**
      * 模块：备品备件
      *
      * 注意：若某些接口类不显示在分组中，请优先按以下三点排查
      * 1、是否加注解 @Api @ApiOperation
      * 2、列表接口 集和泛型是否嵌套了其他包装类
      * 3、导出接口 集合泛型是否嵌套了其他包装类
-     */
+     *//*
     @Bean
     public Docket sparePartAPI() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -343,7 +365,7 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.ant("/system/warehouse/**"))
                 .build();
-    }
+    }*/
 
 
     /**
@@ -358,15 +380,15 @@ public class SwaggerConfig {
     /**
      * 安全上下文
      */
-    private List<SecurityContext> securityContexts() {
-        List<SecurityContext> securityContexts = new ArrayList<>();
-        securityContexts.add(
-                SecurityContext.builder()
-                        .securityReferences(defaultAuth())
-                        .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
-                        .build());
-        return securityContexts;
-    }
+//    private List<SecurityContext> securityContexts() {
+//        List<SecurityContext> securityContexts = new ArrayList<>();
+//        securityContexts.add(
+//                SecurityContext.builder()
+//                        .securityReferences(defaultAuth())
+//                        .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
+//                        .build());
+//        return securityContexts;
+//    }
 
     /**
      * 默认的安全上引用

@@ -31,8 +31,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/monitor/job")
-@Api(tags = "调度任务信息操作处理")
-@ApiSupport(order = 16)
+@Api(tags = "调度任务管理")
+@ApiSupport(order = 99999)
 public class SysJobController extends BaseController
 {
     @Autowired

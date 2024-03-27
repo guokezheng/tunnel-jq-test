@@ -28,8 +28,8 @@ import com.ruoyi.quartz.service.ISysJobLogService;
  */
 @RestController
 @RequestMapping("/monitor/jobLog")
-@Api(tags = "调度日志操作处理")
-@ApiSupport(order = 16)
+@Api(tags = "调度任务日志管理")
+@ApiSupport(order = 99999)
 public class SysJobLogController extends BaseController
 {
     @Autowired

@@ -2,8 +2,10 @@ package com.tunnel.platform.controller.dataInfo;
 
 import java.util.List;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.tunnel.business.domain.dataInfo.SdMicrowaveRealData;
 import com.tunnel.business.service.dataInfo.ISdMicrowaveRealDataService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/microwave")
+@Api(tags = "微波车检单车实时数据")
+@ApiSupport(order = 16)
 public class SdMicrowaveRealDataController extends BaseController
 {
     @Autowired

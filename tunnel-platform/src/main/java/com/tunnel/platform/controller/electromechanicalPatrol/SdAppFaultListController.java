@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -21,6 +22,7 @@ import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/app/fault/list")
+@Api(tags = "app故障填报")
+@ApiSupport(order = 16)
 public class SdAppFaultListController extends BaseController
 {
 

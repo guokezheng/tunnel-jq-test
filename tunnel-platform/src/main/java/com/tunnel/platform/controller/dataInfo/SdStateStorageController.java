@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import com.alibaba.fastjson.JSON;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -13,6 +14,7 @@ import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdStateStorageService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +33,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/system/storage")
+@Api(tags = "隧道数据存储表")
+@ApiSupport(order = 16)
 public class SdStateStorageController extends BaseController {
     @Autowired
     private ISdStateStorageService sdStateStorageService;

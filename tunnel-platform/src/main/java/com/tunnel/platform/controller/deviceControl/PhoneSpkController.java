@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.deviceControl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import io.swagger.annotations.Api;
@@ -16,6 +17,7 @@ import java.util.Map;
 @Api(tags = "电话广播")
 @RestController
 @RequestMapping("/phoneSpk")
+@ApiSupport(order = 16)
 public class PhoneSpkController {
 
     @Autowired

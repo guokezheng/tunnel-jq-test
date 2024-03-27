@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.dataInfo;
 
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -26,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/eqType/item")
 @Api(tags = "设备类型数据项")
+@ApiSupport(order = 16)
 public class SdDeviceTypeItemController extends BaseController
 {
     @Autowired

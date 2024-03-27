@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.emeResource;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -30,6 +31,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/system/vehicle")
 @Api(tags = "应急车辆")
+@ApiSupport(order = 16)
 public class SdEmergencyVehicleController extends BaseController
 {
     @Autowired

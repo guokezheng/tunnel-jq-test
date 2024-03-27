@@ -2,6 +2,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -9,6 +10,7 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.dataReport.ExternalSystemCode;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +30,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/tunnelEnergyData")
+@Api(tags = "隧道-能耗")
+@ApiSupport(order = 16)
 public class SdTunnelEnergyController extends BaseController {
 
     @Autowired

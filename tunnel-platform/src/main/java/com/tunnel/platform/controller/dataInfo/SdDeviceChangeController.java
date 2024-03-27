@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -27,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/system/change")
 @Api(tags = "设备变更")
+@ApiSupport(order = 16)
 public class SdDeviceChangeController extends BaseController
 {
     @Autowired

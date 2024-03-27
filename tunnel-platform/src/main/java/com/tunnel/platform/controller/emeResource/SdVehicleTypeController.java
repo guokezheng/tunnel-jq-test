@@ -2,8 +2,10 @@ package com.tunnel.platform.controller.emeResource;
 
 import java.util.List;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.tunnel.business.domain.emeResource.SdVehicleType;
 import com.tunnel.business.service.emeResource.ISdVehicleTypeService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/system/type")
+@Api(tags = "车辆类型配置")
+@ApiSupport(order = 16)
 public class SdVehicleTypeController extends BaseController
 {
     @Autowired

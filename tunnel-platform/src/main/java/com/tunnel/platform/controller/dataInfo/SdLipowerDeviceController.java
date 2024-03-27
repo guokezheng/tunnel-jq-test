@@ -1,10 +1,12 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.tunnel.business.domain.dataInfo.SdLipowerDevice;
 import com.tunnel.business.service.dataInfo.ISdLipowerDeviceService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import java.util.Map;
 @Component
 @RestController
 @RequestMapping("/lipowerDevice")
+@Api(tags = "照明设备信息")
+@ApiSupport(order = 16)
 public class SdLipowerDeviceController extends BaseController
 {
     @Autowired

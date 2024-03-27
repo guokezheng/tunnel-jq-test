@@ -1,8 +1,10 @@
 package com.tunnel.platform.controller.config;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.config.SdConfig;
 import com.tunnel.business.service.config.ISdConfigService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/config")
+@Api(tags = "数字孪生页面配置")
+@ApiSupport(order = 16)
 public class SdConfigController extends BaseController
 {
     @Autowired

@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import com.alibaba.fastjson.JSON;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -24,6 +25,7 @@ import com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
@@ -47,6 +49,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/system/data")
+@Api(tags = "设备实时数据")
+@ApiSupport(order = 16)
 public class SdDeviceDataController extends BaseController
 {
     @Autowired

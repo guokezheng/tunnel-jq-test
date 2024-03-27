@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.energyManagement;
 
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.tunnel.business.datacenter.domain.enumeration.StatisticTypeEnum;
@@ -16,6 +17,7 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.energyManagement.EnergySiteService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
 import com.tunnel.business.utils.util.DateUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import java.util.stream.Collectors;
  */
 @RequestMapping("/energySiteController")
 @RestController
+@Api(tags = "用电量")
+@ApiSupport(order = 16)
 public class EnergySiteController extends BaseController {
 
     @Autowired

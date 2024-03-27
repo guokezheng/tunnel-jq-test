@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SdEquipmentCategoryDto;
@@ -27,6 +28,7 @@ import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,8 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/app/devices/list")
+@Api(tags = "app端设备")
+@ApiSupport(order = 16)
 public class SdAppDevicesController extends BaseController {
 
     @Autowired

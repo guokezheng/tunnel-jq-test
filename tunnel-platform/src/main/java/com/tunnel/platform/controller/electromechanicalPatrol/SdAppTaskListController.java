@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.electromechanicalPatrol;
 import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
@@ -16,6 +17,7 @@ import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,8 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/app/task/list")
+@Api(tags = "app端巡查任务")
+@ApiSupport(order = 16)
 public class SdAppTaskListController extends BaseController
 {
     @Autowired

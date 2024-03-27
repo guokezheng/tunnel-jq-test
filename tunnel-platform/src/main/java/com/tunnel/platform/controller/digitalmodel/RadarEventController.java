@@ -2,11 +2,13 @@ package com.tunnel.platform.controller.digitalmodel;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -33,6 +35,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/")
+@Api(tags = "事件数据雷达")
+@ApiSupport(order = 16)
 public class RadarEventController {
 
     @Autowired

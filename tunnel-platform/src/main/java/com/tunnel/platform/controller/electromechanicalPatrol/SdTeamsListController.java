@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -14,6 +15,7 @@ import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysUserService;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTeamsList;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/teams/list")
+@Api(tags = "班组")
+@ApiSupport(order = 16)
 public class SdTeamsListController extends BaseController
 {
     @Autowired

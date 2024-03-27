@@ -1,5 +1,6 @@
 package com.zc.video.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.zc.video.service.CameraSptService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/vedio/api")
 @Api(tags = "视频中台")
+@ApiSupport(order = 16)
 public class CameraSptController {
 
     @Autowired

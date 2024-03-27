@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.sso;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -30,6 +31,7 @@ import javax.annotation.Resource;
 @Api(tags="外部系统登录系统接口")
 @RestController
 @RequestMapping("/api")
+@ApiSupport(order = 16)
 public class ExternalTokenController {
 
 

@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.sso;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.service.sso.ThirdPartLoginService;
 import io.swagger.annotations.Api;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Api(tags = "单点登录")
 @RestController
 @RequestMapping("/thirdPart")
+@ApiSupport(order = 16)
 public class ThirdPartLoginController {
 
     @Autowired

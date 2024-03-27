@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.event;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -27,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/SdEmergencyPer")
 @Api(tags = "应急人员")
+@ApiSupport(order = 16)
 public class SdEmergencyPerController extends BaseController
 {
     @Autowired

@@ -1,10 +1,12 @@
 package com.tunnel.platform.controller.trafficOperationControl.activeTrafficFlowControl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo;
 import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/activeTrafficFlow")
+@Api(tags = "主动交通流")
+@ApiSupport(order = 16)
 public class ActiveTrafficFlowController {
 
     @Autowired

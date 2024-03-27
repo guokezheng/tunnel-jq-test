@@ -2,9 +2,11 @@ package com.tunnel.platform.controller.event;
 
 import java.util.List;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdPlanFlow;
 import com.tunnel.business.service.event.ISdJoinTypeFlowService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/system/flow")
+@Api(tags = "事件类型预案流程关联Controller")
+@ApiSupport(order = 16)
 public class SdJoinTypeFlowController extends BaseController
 {
     @Autowired

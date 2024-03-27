@@ -1,5 +1,6 @@
 package com.zc.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.zc.domain.informationCenterDto.*;
@@ -17,6 +18,7 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("/information")
 @Api(tags = "数据中台")
+@ApiSupport(order = 16)
 public class InformationDicController {
 
     @Autowired

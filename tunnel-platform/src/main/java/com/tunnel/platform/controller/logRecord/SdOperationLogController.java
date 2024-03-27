@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.logRecord;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
@@ -18,6 +19,7 @@ import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.domain.logRecord.SdOperationLogDTO;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.platform.controller.informationBoard.AjaxResultb;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/log")
+@Api(tags = "操作日志Controller")
+@ApiSupport(order = 16)
 public class SdOperationLogController extends BaseController
 {
     @Autowired

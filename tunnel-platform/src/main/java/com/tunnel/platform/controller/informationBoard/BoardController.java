@@ -4,6 +4,7 @@ package com.tunnel.platform.controller.informationBoard;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -28,6 +29,7 @@ import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,6 +52,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/parser/board")
+@Api(tags = "情报板操作Controller")
+@ApiSupport(order = 16)
 public class BoardController extends BaseController {
 
     private String prefix = "parser/board";

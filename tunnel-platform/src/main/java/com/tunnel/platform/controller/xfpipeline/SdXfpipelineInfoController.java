@@ -1,10 +1,12 @@
 package com.tunnel.platform.controller.xfpipeline;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.tunnel.business.domain.xfpipeline.SdXfpipelineInfo;
 import com.tunnel.business.service.xfpipeline.ISdXfpipelineInfoService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/xfpipeline")
+@Api(tags = "消防管道监测数据查询")
+@ApiSupport(order = 16)
 public class SdXfpipelineInfoController extends BaseController
 {
     @Autowired

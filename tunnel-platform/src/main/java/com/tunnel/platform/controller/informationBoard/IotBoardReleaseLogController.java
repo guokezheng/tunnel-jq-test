@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.informationBoard;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -8,6 +9,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/system/log")
+@Api(tags = "情报板内容发布日志Controller")
+@ApiSupport(order = 16)
 public class IotBoardReleaseLogController extends BaseController
 {
     @Autowired

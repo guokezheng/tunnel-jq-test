@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.event;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -18,6 +19,7 @@ import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
 import com.tunnel.platform.service.SdDeviceControlService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/plan/process")
+@Api(tags = "预案流程节点Controller")
+@ApiSupport(order = 16)
 public class SdReserveProcessController extends BaseController
 {
     @Autowired

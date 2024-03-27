@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.radarData;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.quartz.task.RadarTask;
 import com.tunnel.business.domain.event.SdRadarDetectData;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/radarData")
 @Api(tags = "感知数据初始化Controller")
+@ApiSupport(order = 16)
 public class RadarDataController {
 
     private static final Logger log = LoggerFactory.getLogger(RadarDataController.class);

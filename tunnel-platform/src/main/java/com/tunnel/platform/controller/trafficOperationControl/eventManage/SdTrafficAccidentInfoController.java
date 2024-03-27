@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.trafficOperationControl.eventManage;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -20,6 +21,7 @@ import com.tunnel.business.service.trafficOperationControl.controlConfig.ISdCont
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficAccidentInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentProcessService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +40,8 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/trafficAccident/info")
+@Api(tags = "交通事故和清障信息")
+@ApiSupport(order = 16)
 public class SdTrafficAccidentInfoController extends BaseController
 {
     @Autowired

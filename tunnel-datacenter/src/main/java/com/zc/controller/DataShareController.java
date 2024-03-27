@@ -1,5 +1,6 @@
 package com.zc.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.zc.domain.dataShareDto.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/record")
 @Api(tags = "数据中台")
+@ApiSupport(order = 16)
 public class DataShareController {
 
     @Autowired

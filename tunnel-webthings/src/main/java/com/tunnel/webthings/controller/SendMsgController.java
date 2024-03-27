@@ -1,5 +1,6 @@
 package com.tunnel.webthings.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.webthings.service.SendMsgService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sendMsg")
 @RestController
 @Api(tags = "物联中台")
+@ApiSupport(order = 16)
 public class SendMsgController {
 
     @Autowired

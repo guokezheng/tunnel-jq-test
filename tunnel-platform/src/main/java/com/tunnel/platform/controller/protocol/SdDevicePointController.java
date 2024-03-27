@@ -2,11 +2,13 @@ package com.tunnel.platform.controller.protocol;
 
 import java.util.List;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequestMapping("/point")
+@Api(tags = "设备点位状态详情Controller")
+@ApiSupport(order = 16)
 public class SdDevicePointController extends BaseController
 {
     @Autowired

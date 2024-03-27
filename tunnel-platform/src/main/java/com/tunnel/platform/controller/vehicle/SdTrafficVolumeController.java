@@ -5,6 +5,7 @@ package com.tunnel.platform.controller.vehicle;
  * @date 2023/10/16
  */
 import com.github.pagehelper.PageInfo;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
@@ -32,6 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/trafficVolume")
 @Api(tags = "车流量Controller")
+@ApiSupport(order = 16)
 public class SdTrafficVolumeController extends BaseController {
 
     @Autowired

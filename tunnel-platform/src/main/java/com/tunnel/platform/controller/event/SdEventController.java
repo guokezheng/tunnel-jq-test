@@ -5,6 +5,7 @@ import cn.afterturn.easypoi.word.WordExportUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -65,6 +66,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/event")
 @Api(tags = "事件管理")
+@ApiSupport(order = 16)
 public class SdEventController extends BaseController
 {
     @Autowired

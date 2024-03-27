@@ -1,8 +1,10 @@
 package com.tunnel.platform.controller.workspace;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/optDevice")
+@Api(tags = "gsy组装控制参数Controller")
+@ApiSupport(order = 16)
 public class OptDeviceController {
 
     @Value("${authorize.name}")

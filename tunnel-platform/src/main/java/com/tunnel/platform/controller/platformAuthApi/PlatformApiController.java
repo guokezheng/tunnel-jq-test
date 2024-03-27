@@ -2,6 +2,7 @@ package com.tunnel.platform.controller.platformAuthApi;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/platform/api")
 @Api(tags = "推送Controller")
+@ApiSupport(order = 16)
 public class PlatformApiController {
 
     @Autowired

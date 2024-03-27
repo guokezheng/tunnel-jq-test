@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.informationBoard;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -9,6 +10,7 @@ import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.SdPictureUpload;
 import com.tunnel.business.service.informationBoard.ISdPictureUploadService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +32,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/system/upload")
+@Api(tags = "情报板使用图片Controller")
+@ApiSupport(order = 16)
 public class SdPictureUploadController extends BaseController
 {
     @Autowired

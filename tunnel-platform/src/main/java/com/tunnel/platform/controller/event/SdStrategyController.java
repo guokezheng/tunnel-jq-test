@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.event;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -32,6 +33,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/strategy")
 @Api(tags = "控制策略")
+@ApiSupport(order = 16)
 public class SdStrategyController extends BaseController
 {
     @Autowired

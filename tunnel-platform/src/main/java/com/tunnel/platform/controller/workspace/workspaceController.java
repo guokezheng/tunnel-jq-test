@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.workspace;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
@@ -34,6 +35,7 @@ import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.deviceFunctions.DeviceFunctionsService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,8 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/workspace")
+@Api(tags = "工作台Controller")
+@ApiSupport(order = 16)
 public class workspaceController extends BaseController {
 
     private static final Logger log = LoggerFactory.getLogger(workspaceController.class);

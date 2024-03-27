@@ -2,8 +2,10 @@ package com.tunnel.platform.controller.product;
 
 import java.util.List;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.tunnel.business.domain.product.SdProduct;
 import com.tunnel.business.service.product.ISdProductService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/product")
+@Api(tags = "产品Controller")
+@ApiSupport(order = 16)
 public class SdProductController extends BaseController
 {
     @Autowired

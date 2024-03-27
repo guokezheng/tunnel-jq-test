@@ -1,8 +1,10 @@
 package com.tunnel.platform.controller.fireMonitor;
 
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.tunnel.platform.media.web.controller.media.MediaController;
 import com.tunnel.platform.media.web.domain.MediaStream;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @RestController
 @RequestMapping("/fireMonitor")
+@Api(tags = "消防炮操作Controller")
+@ApiSupport(order = 16)
 public class FireMonitorController {
 
     @Autowired
